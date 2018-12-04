@@ -2,3 +2,6 @@ CC = gcc
 AS = gcc
 LD = gcc
 
+ASSEMBLY_SYMBOL ?= ASSEMBLY
+AS_FLAG := -D$(ASSMEMBLY_SYMBOL)
+

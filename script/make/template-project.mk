@@ -20,4 +20,4 @@ build: prepare
 	make -f $(MAKE_PATH)/build.mk build
 
 depend:
-	make -f $(MAKE_PATH)/build.mk depend
+	make -f $(MAKE_PATH)/depend.mk

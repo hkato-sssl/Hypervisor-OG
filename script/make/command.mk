@@ -1,7 +1,10 @@
 CC = gcc
 AS = gcc
 LD = gcc
+AR = ar
 
 ASSEMBLY_SYMBOL ?= ASSEMBLY
 ASFLAGS := -D$(ASSMEMBLY_SYMBOL)
+
+ARFLAGS := rus
 

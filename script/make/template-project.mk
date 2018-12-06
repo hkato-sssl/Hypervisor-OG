@@ -9,7 +9,11 @@ PROJ_HOME := $(CURDIR)
 
 include $(MAKE_PATH)/project-env.mk
 
-TARGET ?= $(notdir $(PROJ_HOME))
+# Depending on the target you want to build,
+# uncomment either of the following two sentences.
+#TARGET ?= $(notdir $(PROJ_HOME))	# an executable
+#TARGET ?= $(notdir $(PROJ_HOME)).a	# an archive
+$(if $(TARGET),,$(error TARGET is undefined))
 
 $(OUTDIR)/$(TARGET): build
 

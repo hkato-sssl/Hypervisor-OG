@@ -1,0 +1,4 @@
+errno.py - errno.csvからerrno.hの定義部分を生成
+errno.csv - 参考URLの情報を元に作成
+
+参考URL: http://pubs.opengroup.org/onlinepubs/000095399/basedefs/errno.h.html

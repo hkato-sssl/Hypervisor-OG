@@ -2,10 +2,9 @@ export
 
 .PHONY: build prepare depend
 
-WORKSPACE_LOC = $(abspath $(PROJ_HOME)/.)
-MAKE_PATH = $(WORKSPACE_LOC)/script/make
-
 PROJ_HOME := $(CURDIR)
+WORKSPACE_LOC ?= $(abspath $(PROJ_HOME)/../)
+MAKE_PATH = $(WORKSPACE_LOC)/script/make
 
 include $(MAKE_PATH)/project-env.mk
 

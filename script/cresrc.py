@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 #
 # (C) 2018 Hidekazu Kato
 #

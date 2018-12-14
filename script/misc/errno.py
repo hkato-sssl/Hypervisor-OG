@@ -30,7 +30,7 @@ def readlines(file_name):
 
 def translate(lines):
     words = []
-    no = 1
+    no = 10
     for ln in lines:
         fields = ln.rstrip().split(',', 1)
         match = re.search(r'\[[^\s]+\]', fields[1])

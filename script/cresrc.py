@@ -48,6 +48,8 @@ extern \"C\" {{
 
 /* defines */
 
+/* types */
+
 /* variables */
 
 /* functions */

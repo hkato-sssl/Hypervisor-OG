@@ -69,6 +69,8 @@ C_FILE = COPYRIGHT + """\
 
 /* defines */
 
+/* types */
+
 /* variables */
 
 /* functions */

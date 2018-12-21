@@ -6,6 +6,7 @@ PROJ_HOME := $(CURDIR)
 WORKSPACE_LOC ?= $(abspath $(PROJ_HOME)/../)
 MAKE_PATH = $(WORKSPACE_LOC)/script/make
 
+include $(MAKE_PATH)/command.mk
 include $(MAKE_PATH)/project-env.mk
 
 # Depending on the target you want to build,

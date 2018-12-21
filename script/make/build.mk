@@ -7,7 +7,7 @@ build: $(OUTDIR)/$(TARGET)
 define template_build_c
 OBJS += $(2)
 $(2): $(1)
-	$$(CC) -c $$(INC_OPS) $$< -o $$@
+	$$(CC) -c $$(INC_OPS) $(CFLAGS) $(ADDED_CFLAGS) $$< -o $$@
 
 endef
 

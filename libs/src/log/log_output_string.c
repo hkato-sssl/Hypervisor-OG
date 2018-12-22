@@ -17,29 +17,17 @@
 
 /* functions */
 
-static int output_postfix(struct log_context *ctx)
+static int output_string(struct log_context *ctx)
 {
 	int ret;
+	int i;
+	size_t idx;
 
-	if (ctx->syntax.flags.minus) {
-		ret = log_output_pads(ctx);
-	} else {
-		ret = SUCCESS;
-	}
-			
-	return ret;
-}
-
-static int output_buff(struct log_context *ctx)
-{
-	int ret;
-	size_t i;
-
-	i = ctx->string.len;
-	if (i > 0) {
+	idx = ctx->output.string.length;
+	if (idx > 0) {
 		do {
-			ret = put_char(ctx, ctx->string.buff[--i]);
-		} while ((ret == SUCCESS) && (i > 0));
+			ret = put_char(ctx, ctx->output.string.buffer[--idx]);
+		} while ((ret == SUCCESS) && (idx > 0));
 	} else {
 		ret = -EINVAL;
 	}
@@ -47,27 +35,41 @@ static int output_buff(struct log_context *ctx)
 	return ret;
 }
 
-static int output_sign(struct log_context *ctx)
+static int output_left_alignment(struct log_context *ctx)
 {
 	int ret;
-	char sign;
 
-	sign = ctx->string.sign;
-	if (sign != EOS) {
-		ret = put_char(ctx, sign);
-	} else {
-		ret = SUCCESS;
+	ret = log_output_prefix(ctx);
+	if (ret == SUCCESS) {
+		ret = output_string(ctx);
+		if (ret == SUCCESS) {
+			ret = log_output_pads(ctx);
+		}
 	}
+
+	return ret;
 }
 
-static int output_prefix(struct log_context *ctx)
+static int output_right_alignment(struct log_context *ctx)
 {
 	int ret;
 
-	if (! ctx->syntax.flags.minus) {
-		ret = log_output_pads(ctx);
+	if (ctx->syntax.flag.zero) {
+		ret = log_output_prefix(ctx);
+		if (ret == SUCCESS) {
+			ret = log_output_pads(ctx);
+			if (ret == SUCCESS) {
+				ret = output_string(ctx);
+			}
+		}
 	} else {
-		ret = SUCCESS;
+		ret = log_output_pads(ctx);
+		if (ret == SUCCESS) {
+			ret = log_output_prefix(ctx);
+			if (ret == SUCCESS) {
+				ret = output_string(ctx);
+			}
+		}
 	}
 
 	return ret;
@@ -77,15 +79,10 @@ int log_output_string(struct log_context *ctx)
 {
 	int ret;
 
-	ret = output_prefix(ctx);
-	if (ret == SUCCESS) {
-		ret = output_sign(ctx);
-		if (ret == SUCCESS) {
-			ret = output_buff(ctx);
-			if (ret == SUCCESS) {
-				ret = output_postfix(ctx);
-			}
-		}
+	if (ctx->syntax.flag.minus) {
+		ret = output_left_alignment(ctx);
+	} else {
+		ret = output_right_alignment(ctx);
 	}
 
 	return ret;

@@ -16,20 +16,34 @@
 
 /* functions */
 
+static int string_length(struct log_context *ctx)
+{
+	int len;
+
+	len = ctx->output.string.length;
+
+	if (ctx->syntax.flag.hash) {
+		len += ctx->radix.prefix.length;
+	}
+
+	if (ctx->output.sign != EOS) {
+		++len;
+	}
+
+	return len;
+}
+
 int log_output_pads(struct log_context *ctx)
 {
 	int ret;
 	size_t len;
 
-	len = ctx->string.len;
-	if (ctx->string.sign != EOS) {
-		++len;
-	}
+	len = string_length(ctx);
 
 	if (ctx->syntax.width > len) {
 		len = ctx->syntax.width - len;
 		do {
-			ret = put_char(ctx, ctx->string.pad);
+			ret = put_char(ctx, ctx->output.pad);
 		} while ((ret == SUCCESS) && (--len > 0));
 	} else {
 		ret = SUCCESS;

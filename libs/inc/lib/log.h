@@ -52,25 +52,42 @@ struct log_cformat_syntax {
 		bool				space;
 		bool				hash;
 		bool				zero;
-	} flags;
+	} flag;
 	char					precision;
 	char					type;
 	size_t 					width;
 	enum log_cfmt_length	length;
 };
 
+struct log_radix {
+	int						number;
+	const char				*characters;
+	struct {
+		int					length;
+		const char			*string;
+	} prefix;
+};
+
 struct log_context {
 	void						*arg;
 	log_putc_func_t				putc;
-    const char 	    		 	*fmt;
-    va_list    	    		 	vargs;
-	struct log_cformat_syntax	syntax;
+
 	struct {
-		size_t					len;
+    	const char     		 	*format;
+    	va_list        		 	vargs;
+	} input;
+
+	struct log_cformat_syntax	syntax;
+	struct log_radix			radix;
+
+	struct {
 		char					sign;
 		char					pad;
-		char					buff[MAX_LOG_STR_LEN];
-	} string;
+		struct {
+			size_t				length;
+			char				buffer[MAX_LOG_STR_LEN];
+		} string;
+	} output;
 };
 
 struct log_context_configuration {

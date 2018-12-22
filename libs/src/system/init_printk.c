@@ -43,10 +43,10 @@ int printk(const char *fmt, ...)
 {
 	int ret;
 
-	ctx.fmt = fmt;
-	va_start(ctx.vargs, fmt);
+	ctx.input.format = fmt;
+	va_start(ctx.input.vargs, fmt);
 	ret = log_cformat(&ctx);
-	va_end(ctx.vargs);
+	va_end(ctx.input.vargs);
 
 	return ret;
 }

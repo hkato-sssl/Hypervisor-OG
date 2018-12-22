@@ -14,6 +14,17 @@
 
 /* variables */
 
+static char dec_chars[] = "0123456789";
+static char lower_case_hex_chars[] = "0123456789abcdef";
+static char lower_case_hex_prefix[] = "0x";
+static char upper_case_hex_chars[] = "0123456789ABCDEF";
+static char upper_case_hex_prefix[] = "0X";
+
+static struct log_radix dec = { 10, dec_chars, { 0, NULL } };
+static struct log_radix oct = { 8, dec_chars, { 0, NULL } };
+static struct log_radix lower_case_hex = { 16, lower_case_hex_chars, { 2, lower_case_hex_prefix } };
+static struct log_radix upper_case_hex = { 16, upper_case_hex_chars, { 2, upper_case_hex_prefix } };
+
 /* functions */
 
 static int parse_type(struct log_context *ctx, char ch)
@@ -28,18 +39,22 @@ static int parse_type(struct log_context *ctx, char ch)
 		ret = log_output_di(ctx);
 		break;
 	case 'u':
-		ret = log_output_u(ctx);
+		ctx->radix = dec;
+		ret = log_output_unsigned_number(ctx);
 		break;
-#if 0
 	case 'o':
-		ret = log_output_o(ctx);
+		ctx->radix = oct;
+		ret = log_output_unsigned_number(ctx);
 		break;
 	case 'x':
-		ret = log_output_x(ctx);
+		ctx->radix = lower_case_hex;
+		ret = log_output_unsigned_number(ctx);
 		break;
 	case 'X':
-		ret = log_output_upper_x(ctx);
+		ctx->radix = upper_case_hex;
+		ret = log_output_unsigned_number(ctx);
 		break;
+#if 0
 	case 'c':
 		ret = log_output_c(ctx);
 		break;
@@ -165,23 +180,23 @@ static int parse_flag(struct log_context *ctx)
 		ret = -EINVAL;
 		break;
 	case '-':
-		ctx->syntax.flags.minus = true;
+		ctx->syntax.flag.minus = true;
 		ret = parse_flag(ctx);
 		break;
 	case '+':
-		ctx->syntax.flags.plus = true;
+		ctx->syntax.flag.plus = true;
 		ret = parse_flag(ctx);
 		break;
 	case ' ':
-		ctx->syntax.flags.space = true;
+		ctx->syntax.flag.space = true;
 		ret = parse_flag(ctx);
 		break;
 	case '#':
-		ctx->syntax.flags.hash = true;
+		ctx->syntax.flag.hash = true;
 		ret = parse_flag(ctx);
 		break;
 	case '0':
-		ctx->syntax.flags.zero = true;
+		ctx->syntax.flag.zero = true;
 		ret = parse_flag(ctx);
 		break;
 	default:
@@ -202,7 +217,7 @@ static int parse_format(struct log_context *ctx)
 	return ret;
 }
 
-static int out_formatted_string(struct log_context *ctx)
+static int output_formatted_string(struct log_context *ctx)
 {
 	int ret;
 
@@ -219,7 +234,7 @@ static int cformat(struct log_context *ctx)
 	ret = SUCCESS;
 	for (ch = get_char(ctx); ch != EOS; ch = get_char(ctx)) {
 		if (ch == '%') {
-			ret = out_formatted_string(ctx);
+			ret = output_formatted_string(ctx);
 		} else {
 			ret = put_char(ctx, ch);
 		}
@@ -236,7 +251,7 @@ int log_cformat(struct log_context *ctx)
 {
 	int ret;
 
-	if ((ctx != NULL) && (ctx->putc != NULL) && (ctx->fmt != NULL)) {
+	if ((ctx != NULL) && (ctx->putc != NULL) && (ctx->input.format != NULL)) {
 		ret = cformat(ctx);
 	} else {
 		ret = -EINVAL;

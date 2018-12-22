@@ -20,26 +20,28 @@
 static int output_lldi(struct log_context *ctx, long long v)
 {
 	int ret;
-	int i;
 	char *str;
 	char ch;
+	size_t idx;
 
-	if (ctx->syntax.flags.zero) {
-		ctx->string.pad = '0';
+	if (ctx->syntax.flag.zero) {
+		ctx->output.pad = '0';
 	} else {
-		ctx->string.pad = ' ';
+		ctx->output.pad = ' ';
 	}
 
 	if (v < 0) {
-		ctx->string.sign = '-';
-	} else if (ctx->syntax.flags.plus && (v > 0)) {
-		ctx->string.sign = '+';
+		ctx->output.sign = '-';
+	} else if (ctx->syntax.flag.plus) {
+		ctx->output.sign = '+';
+	} else if (ctx->syntax.flag.space) {
+		ctx->output.sign = ' ';
 	} else {
-		ctx->string.sign = EOS;
+		ctx->output.sign = EOS;
 	}
 
-	i = 0;
-	str = ctx->string.buff;
+	idx = 0;
+	str = ctx->output.string.buffer;
 
 	do {
 		ch = v % 10;
@@ -48,10 +50,10 @@ static int output_lldi(struct log_context *ctx, long long v)
 		} else {
 			ch = '0' - ch;
 		}
-		str[i++] = ch;
+		str[idx++] = ch;
 		v /= 10;
 	} while (v != 0);
-	ctx->string.len = i;
+	ctx->output.string.length = idx;
 
 	ret = log_output_string(ctx);
 
@@ -65,23 +67,23 @@ int log_output_di(struct log_context *ctx)
 
 	switch (ctx->syntax.length) {
 	case CFL_HH:
-		v = (char)va_arg(ctx->vargs, int);
+		v = (char)va_arg(ctx->input.vargs, int);
 		ret = output_lldi(ctx, v);
 		break;
 	case CFL_H:
-		v = (short)va_arg(ctx->vargs, int);
+		v = (short)va_arg(ctx->input.vargs, int);
 		ret = output_lldi(ctx, v);
 		break;
 	case CFL_NONE:
-		v = va_arg(ctx->vargs, int);
+		v = va_arg(ctx->input.vargs, int);
 		ret = output_lldi(ctx, v);
 		break;
 	case CFL_L:
-		v = va_arg(ctx->vargs, long);
+		v = va_arg(ctx->input.vargs, long);
 		ret = output_lldi(ctx, v);
 		break;
 	case CFL_LL:
-		v = va_arg(ctx->vargs, long long);
+		v = va_arg(ctx->input.vargs, long long);
 		ret = output_lldi(ctx, v);
 		break;
 	default:

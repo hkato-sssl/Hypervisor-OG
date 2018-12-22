@@ -46,20 +46,18 @@ static inline char get_char(struct log_context *ctx)
 {
 	int ch;
 
-	ch = *((ctx->fmt)++);
+	ch = *((ctx->input.format)++);
 
 	return ch;
 }
 
+int log_output_unsigned_number(struct log_context *ctx);
 int log_output_di(struct log_context *ctx);
-int log_output_u(struct log_context *ctx);
-int log_output_o(struct log_context *ctx);
-int log_output_x(struct log_context *ctx);
-int log_output_upper_x(struct log_context *ctx);
 int log_output_c(struct log_context *ctx);
 int log_output_s(struct log_context *ctx);
 int log_output_p(struct log_context *ctx);
 int log_output_pads(struct log_context *ctx);
+int log_output_prefix(struct log_context *ctx);
 int log_output_string(struct log_context *ctx);
 
 #ifdef __cplusplus

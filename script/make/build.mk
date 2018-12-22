@@ -38,5 +38,5 @@ $(OUTDIR)/$(TARGET): $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 else
 $(OUTDIR)/$(TARGET): $(OBJS)
-	cat $(OBJS) >$@
+	gcc $(OBJS) -o $@
 endif

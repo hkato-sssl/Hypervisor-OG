@@ -55,15 +55,17 @@ static int parse_type(struct log_context *ctx, char ch)
 		ctx->radix = upper_case_hex;
 		ret = log_output_unsigned_number(ctx);
 		break;
+	case 'p':
+		ctx->radix = lower_case_hex;
+		ctx->syntax.flag.hash = true;
+		ret = log_output_unsigned_number(ctx);
+		break;
 #if 0
 	case 'c':
 		ret = log_output_c(ctx);
 		break;
 	case 's':
 		ret = log_output_s(ctx);
-		break;
-	case 'p':
-		ret = log_output_p(ctx);
 		break;
 #endif
 	case '%':

@@ -37,9 +37,11 @@ static int parse_type(struct log_context *ctx, char ch)
 	switch (ch) {
 	case 'd':
 	case 'i':
+		ctx->syntax.flag.hash = false;
 		ret = log_output_di(ctx);
 		break;
 	case 'u':
+		ctx->syntax.flag.hash = false;
 		ctx->radix = dec;
 		ret = log_output_unsigned_number(ctx);
 		break;
@@ -60,14 +62,14 @@ static int parse_type(struct log_context *ctx, char ch)
 		ctx->syntax.flag.hash = true;
 		ret = log_output_unsigned_number(ctx);
 		break;
-#if 0
 	case 'c':
+		ctx->syntax.flag.hash = false;
 		ret = log_output_c(ctx);
 		break;
 	case 's':
+		ctx->syntax.flag.hash = false;
 		ret = log_output_s(ctx);
 		break;
-#endif
 	case '%':
 		ret = put_char(ctx, ch);
 		break;

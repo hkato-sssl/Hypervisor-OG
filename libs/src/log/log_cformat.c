@@ -15,13 +15,14 @@
 /* variables */
 
 static char dec_chars[] = "0123456789";
+static char oct_prefix[] = "0";
 static char lower_case_hex_chars[] = "0123456789abcdef";
 static char lower_case_hex_prefix[] = "0x";
 static char upper_case_hex_chars[] = "0123456789ABCDEF";
 static char upper_case_hex_prefix[] = "0X";
 
 static struct log_radix dec = { 10, dec_chars, { 0, NULL } };
-static struct log_radix oct = { 8, dec_chars, { 0, NULL } };
+static struct log_radix oct = { 8, dec_chars, { 1, oct_prefix } };
 static struct log_radix lower_case_hex = { 16, lower_case_hex_chars, { 2, lower_case_hex_prefix } };
 static struct log_radix upper_case_hex = { 16, upper_case_hex_chars, { 2, upper_case_hex_prefix } };
 

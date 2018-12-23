@@ -26,7 +26,7 @@ static int output_llu(struct log_context *ctx, unsigned long long v)
 	char *str;
 	const char *char_table;
 
-	if (ctx->syntax.flag.zero) {
+	if (ctx->syntax.flag.zero && (! ctx->syntax.flag.minus)) {
 		ctx->output.pad = '0';
 	} else {
 		ctx->output.pad = ' ';

@@ -42,24 +42,24 @@ static int parse_type(struct log_context *ctx, char ch)
 		break;
 	case 'u':
 		ctx->syntax.flag.hash = false;
-		ctx->radix = dec;
+		ctx->syntax.radix = &dec;
 		ret = log_output_unsigned_number(ctx);
 		break;
 	case 'o':
-		ctx->radix = oct;
+		ctx->syntax.radix = &oct;
 		ret = log_output_unsigned_number(ctx);
 		break;
 	case 'x':
-		ctx->radix = lower_case_hex;
+		ctx->syntax.radix = &lower_case_hex;
 		ret = log_output_unsigned_number(ctx);
 		break;
 	case 'X':
-		ctx->radix = upper_case_hex;
+		ctx->syntax.radix = &upper_case_hex;
 		ret = log_output_unsigned_number(ctx);
 		break;
 	case 'p':
-		ctx->radix = lower_case_hex;
 		ctx->syntax.flag.hash = true;
+		ctx->syntax.radix = &lower_case_hex;
 		ret = log_output_unsigned_number(ctx);
 		break;
 	case 'c':

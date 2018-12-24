@@ -45,6 +45,15 @@ enum log_cfmt_length {
 	CFL_T,			/* ptrdiff_t */
 };
 
+struct log_radix {
+	int						number;
+	const char				*characters;
+	struct {
+		int					length;
+		const char			*string;
+	} prefix;
+};
+
 struct log_cformat_syntax {
 	struct {
 		bool				minus;
@@ -57,15 +66,7 @@ struct log_cformat_syntax {
 	char					type;
 	size_t 					width;
 	enum log_cfmt_length	length;
-};
-
-struct log_radix {
-	int						number;
-	const char				*characters;
-	struct {
-		int					length;
-		const char			*string;
-	} prefix;
+	const struct log_radix	*radix;
 };
 
 struct log_context {
@@ -78,7 +79,6 @@ struct log_context {
 	} input;
 
 	struct log_cformat_syntax	syntax;
-	struct log_radix			radix;
 
 	struct {
 		char					sign;

@@ -37,8 +37,8 @@ static int output_llu(struct log_context *ctx, unsigned long long v)
 	i = 0;
 	str = ctx->output.string.buffer;
 
-	radix = ctx->radix.number;
-	char_table = ctx->radix.characters;
+	radix = ctx->syntax.radix->number;
+	char_table = ctx->syntax.radix->characters;
 	do {
 		ch = (int)(v % radix);
 		str[i++] = char_table[ch];

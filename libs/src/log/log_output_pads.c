@@ -22,8 +22,8 @@ static int string_length(struct log_context *ctx)
 
 	len = ctx->output.string.length;
 
-	if (ctx->syntax.flag.hash) {
-		len += ctx->radix.prefix.length;
+	if (ctx->syntax.flag.hash && (ctx->syntax.radix != NULL)) {
+		len += ctx->syntax.radix->prefix.length;
 	}
 
 	if (ctx->output.sign != EOS) {

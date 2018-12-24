@@ -20,11 +20,15 @@
 static int output_radix(struct log_context *ctx)
 {
 	int ret;
+	const char *str;
 	size_t idx;
+	size_t len;
 
-	if (ctx->syntax.flag.hash && (ctx->radix.prefix.length > 0)) {
-		for (idx = 0; idx < ctx->radix.prefix.length; ++idx) {
-			ret = put_char(ctx, ctx->radix.prefix.string[idx]);
+	if (ctx->syntax.flag.hash && (ctx->syntax.radix != NULL) && (ctx->syntax.radix->prefix.length > 0)) {
+		len = ctx->syntax.radix->prefix.length;
+		str = ctx->syntax.radix->prefix.string;
+		for (idx = 0; idx < len; ++idx) {
+			ret = put_char(ctx, str[idx]);
 			if (ret != SUCCESS) {
 				break;
 			}

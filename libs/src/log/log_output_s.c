@@ -61,6 +61,8 @@ static int output_right_alignment(struct log_context *ctx, char *v)
 
 int log_output_s(struct log_context *ctx)
 {
+	static char null_str[] = "<NULL>";
+
 	int ret;
 	char *v;
 	size_t len;
@@ -68,6 +70,9 @@ int log_output_s(struct log_context *ctx)
 	ctx->output.pad = ' ';
 
 	v = va_arg(ctx->input.vargs, char *);
+	if (v == NULL) {
+		v = null_str;
+	}
 	len = strlen(v);
 
 	if (ctx->syntax.flag.minus) {

@@ -42,7 +42,7 @@ static inline uint64_t aarhc64_read_%s(void)
 """
 
 TEMPLATE_R32 = """\
-static inline uint32 aarhc64_read_%s(void)
+static inline uint32_t aarhc64_read_%s(void)
 {
     uint32_t d;
     __asm volatile ("mrs %%0, %s" : "=r"(d) :: "memory");

@@ -30,34 +30,37 @@ def readlines(file_name):
 
     return lines
 
-def is_record(line):
-    if len(line) == 0:
-        result = false
+def is_record(fields):
+    if len(fields) == 0:
+        result = False
     else:
-        result = re.match(r'[^#\r\n]', line)
+        result = re.match(r'[^#]', fields[0])
 
     return result
 
-def cvs_record(line):
-    fields = line.split()
-    reg = fields.pop(0)
-    access = fields.pop(0)
-    del fields[0:2]
-    if len(fields) > 0:
-        comment = " ".join(fields)
-        cvs = "{0},{1},{2}".format(reg, access, comment)
+def cvs_record(fields):
+    reg = fields[0]
+    access = fields[1]
+    width = fields[3]
+    if len(fields) > 4:
+        comment = " ".join(fields[4:])
+        cvs = reg + "," + access + "," + width + "," + comment
     else:
-        cvs = "{0},{1}".format(reg, access)
+        cvs = reg + "," + access + "," + width 
 
     return cvs
 
 def translate(lines):
     for ln in lines:
-        if is_record(ln):
-            ln = cvs_record(ln)
-            print(ln)
+        if ln.find(',') < 0:
+            fields = ln.split()
+            if is_record(fields):
+                ln = cvs_record(fields)
+                print(ln)
+            else:
+                print(ln, end="")   # output a comment or an empty line.
         else:
-            print(ln, end="")   # output a comment or an empty line.
+            raise Exception("a line has an illegal character ','")
 
 def main():
     args = docopt(__doc__)

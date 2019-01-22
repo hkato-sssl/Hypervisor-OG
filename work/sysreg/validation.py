@@ -30,10 +30,10 @@ def readlines(file_name):
     return lines
 
 def is_record(line):
-    if len(line) == 0:
-        result = false
-    else:
+    if len(line):
         result = re.match(r'[^#\r\n]', line)
+    else:
+        result = False
 
     return result
 
@@ -41,12 +41,16 @@ def validate(lines):
     no = 0
     for ln in lines:
         no += 1
+        ln = ln[0:-1]           # remove a last character
         if is_record(ln):
-            fields = ln.split()
-            if len(fields) < 4:
+            fields = ln.split(',')
+            l = len(fields)
+            if len(fields) not in [3, 4]:
+                print(ln)
                 print("#%d: Illegal line." % no)
                 break
-            elif fields[3] != "32" and fields[3] != "64":
+            elif fields[2] not in ["32", "64"]:
+                print(ln)
                 print("#%d: Illegal field[3]." % no)
                 break
 

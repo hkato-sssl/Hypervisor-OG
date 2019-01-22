@@ -12,6 +12,10 @@ SRCDIR := $(PROJ_HOME)/$(SRC_BASE)
 INC_PATHS += $(INC_BASE)
 INC_OPS := $(addprefix -I,$(INC_PATHS))
 
+ifeq ($(JOBS),)
+JOBS := 1
+endif
+
 ifdef O
 	OUTDIR := $(O)
 else

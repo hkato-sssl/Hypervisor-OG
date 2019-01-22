@@ -21,7 +21,7 @@ prepare:
 	make -f $(MAKE_PATH)/prepare.mk
 
 depend: prepare
-	make -f $(MAKE_PATH)/depend.mk
+	make -f $(MAKE_PATH)/depend.mk -j$(JOBS)
 
 build: depend
-	make -f $(MAKE_PATH)/build.mk
+	make -f $(MAKE_PATH)/build.mk -j$(JOBS)

@@ -94,7 +94,7 @@ PAR_EL1 RW UNK 64 Physical Address Register
 
 TPIDR_EL0 RW UNK 64 Thread Pointer/ID Register
 TPIDR_EL1 RW UNK 64 Thread Pointer/ID Register
-TPIDRRO_EL0 RW/RO UNK 64 Thread Pointer/ID Register, Read-Only
+TPIDRRO_EL0 RW/RO UNK 64 Thread Pointer/ID Register
 TPIDR_EL2 RW UNK 64 Thread Pointer/ID Register
 TPIDR_EL3 RW UNK 64 Thread Pointer/ID Register
 
@@ -173,7 +173,7 @@ VBAR_EL2 RW UNK 64 Vector Base Address Register
 
 TPIDR_EL0 RW UNK 64 Thread Pointer/ID Register
 TPIDR_EL1 RW UNK 64 Thread Pointer/ID Register
-TPIDRRO_EL0 RW UNK 64 Thread Pointer/ID Register, Read-Only
+TPIDRRO_EL0 RW UNK 64 Thread Pointer/ID Register
 TPIDR_EL2 RW UNK 64 Thread Pointer/ID Register
 TPIDR_EL3 RW UNK 64 Thread Pointer/ID Register
 
@@ -194,8 +194,8 @@ AMAIR_EL3 RW 0x00000000 64 Auxiliary Memory Attribute Indirection Register
 L2CTLR_EL1 RW -a 32 L2 Control Register
 L2ECTLR_EL1 RW 0x00000000 32 L2 Extended Control Register
 L2ACTLR_EL1 RW 0x80000000b 32 L2 Auxiliary Control Register
-CPUACTLR_EL1c RW 0x00000000090CA000 64 CPU Auxiliary Control Register
-CPUECTLR_EL1c RW 0x0000000000000000 64 CPU Extended Control Register
-CPUMERRSR_EL1c RW - 64 CPU Memory Error Syndrome Register
-L2MERRSR_EL1c RW - 64 L2 Memory Error Syndrome Register
+CPUACTLR_EL1 RW 0x00000000090CA000 64 CPU Auxiliary Control Register
+CPUECTLR_EL1 RW 0x0000000000000000 64 CPU Extended Control Register
+CPUMERRSR_EL1 RW - 64 CPU Memory Error Syndrome Register
+L2MERRSR_EL1 RW - 64 L2 Memory Error Syndrome Register
 CBAR_EL1 RO -d 64 Configuration Base Address Register

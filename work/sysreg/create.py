@@ -62,7 +62,7 @@ def readlines(file_name):
     return lines
 
 def output_comment(line):
-    print('/*\n * ', re.sub(r'\s+$', '', re.sub(r'#\s+', '', line)), '\n */\n');
+    print('/*\n * ' + re.sub(r'\s+$', '', re.sub(r'#\s+', '', line)) + '\n */\n');
 
 def output_write_function(fields):
     reg = fields[0]

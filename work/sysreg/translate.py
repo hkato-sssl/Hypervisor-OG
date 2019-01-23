@@ -3,8 +3,9 @@
 # (C) 2019 Hidekazu Kato
 #
 """Overview:
-    sysreg-a53.txtをCSV形式に変換
-    変換時に不要なフィールドは削除する
+    sysreg-a53.txtをCSV形式に変換。
+    変換時に不要なフィールドは削除する。
+    重複した定義が存在する場合、最初の定義以外は無視する。
 
 Usage:
     translate.py [-h] <file>
@@ -51,14 +52,21 @@ def cvs_record(fields):
     return cvs
 
 def translate(lines):
+    registers = []
+    comment = ""
     for ln in lines:
         if ln.find(',') < 0:
             fields = ln.split()
             if is_record(fields):
-                ln = cvs_record(fields)
-                print(ln)
-            else:
-                print(ln, end="")   # output a comment or an empty line.
+                if fields[0] not in registers:
+                    registers.append(fields[0])
+                    if comment != "":
+                        print('\n' + comment)
+                        comment = ""
+                    ln = cvs_record(fields)
+                    print(ln)
+            elif len(fields) > 0 and fields[0] == "#":
+                comment = ln
         else:
             raise Exception("a line has an illegal character ','")
 

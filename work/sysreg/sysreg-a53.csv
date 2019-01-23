@@ -1,3 +1,4 @@
+
 # AArch64 identification registers
 
 MIDR_EL1,RO,32,Main ID Register
@@ -140,62 +141,23 @@ SCR_EL3,RW,32,Secure Configuration Register
 SDER32_EL3,RW,32,Secure Debug Enable Register
 CPTR_EL3,RW,32,Architectural Feature Trap Register
 MDCR_EL3,RW,32,Monitor Debug Configuration Register
-AFSR0_EL3,RW,32,Auxiliary Fault Status Register 0
-AFSR1_EL3,RW,32,Auxiliary Fault Status Register 1
-VBAR_EL3,RW,64,Vector Base Address Register
 
 # AArch64 virtualization registers
 
-VPIDR_EL2,RW,32,Virtualization Processor ID Register
-VMPIDR_EL2,RW,64,Virtualization Multiprocessor ID Register
-SCTLR_EL2,RW,32,System Control Register
-ACTLR_EL2,RW,32,Auxiliary Control Register
 HCR_EL2,RW,64,Hypervisor Configuration Register
 MDCR_EL2,RW,32,Hyp Debug Control Register
 CPTR_EL2,RW,32,Architectural Feature Trap Register
 HSTR_EL2,RW,32,Hyp System Trap Register
 HACR_EL2,RW,32,Hyp Auxiliary Configuration Register
-TTBR0_EL2,RW,64,Translation Table Base Address Register 0
-TCR_EL2,RW,32,Translation Control Register
-VTTBR_EL2,RW,64,Virtualization Translation Table Base Address Register
-VTCR_EL2,RW,32,Virtualization Translation Control Register
 DACR32_EL2,RW,32,Domain Access Control Register
-AFSR0_EL2,RW,32,Auxiliary Fault Status Register 0
-AFSR1_EL2,RW,32,Auxiliary Fault Status Register 1
-ESR_EL2,RW,32,Exception Syndrome Register
-FAR_EL2,RW,64,Fault Address Register
-HPFAR_EL2,RW,64,Hypervisor IPA Fault Address Register
-MAIR_EL2,RW,64,Memory Attribute Indirection Register
-AMAIR_EL2,RW,64,Auxiliary Memory Attribute Indirection Register
-VBAR_EL2,RW,64,Vector Base Address Register
-
-# AArch64 thread registers
-
-TPIDR_EL0,RW,64,Thread Pointer/ID Register
-TPIDR_EL1,RW,64,Thread Pointer/ID Register
-TPIDRRO_EL0,RW,64,Thread Pointer/ID Register
-TPIDR_EL2,RW,64,Thread Pointer/ID Register
-TPIDR_EL3,RW,64,Thread Pointer/ID Register
 
 # AArch64 implementation defined registers
 
-ACTLR_EL1,RW,32,Auxiliary Control Register
-ACTLR_EL2,RW,32,Auxiliary Control Register
-ACTLR_EL3,RW,32,Auxiliary Control Register
-AFSR0_EL1,RW,32,Auxiliary Fault Status Register 0
-AFSR1_EL1,RW,32,Auxiliary Fault Status Register 1
-AFSR0_EL2,RW,32,Auxiliary Fault Status Register 0
-AFSR1_EL2,RW,32,Auxiliary Fault Status Register 1
-AFSR0_EL3,RW,32,Auxiliary Fault Status Register 0
-AFSR1_EL3,RW,32,Auxiliary Fault Status Register 1
-AMAIR_EL1,RW,64,Auxiliary Memory Attribute Indirection Register
-AMAIR_EL2,RW,64,Auxiliary Memory Attribute Indirection Register
-AMAIR_EL3,RW,64,Auxiliary Memory Attribute Indirection Register
 L2CTLR_EL1,RW,32,L2 Control Register
 L2ECTLR_EL1,RW,32,L2 Extended Control Register
 L2ACTLR_EL1,RW,32,L2 Auxiliary Control Register
-CPUACTLR_EL1c,RW,64,CPU Auxiliary Control Register
-CPUECTLR_EL1c,RW,64,CPU Extended Control Register
-CPUMERRSR_EL1c,RW,64,CPU Memory Error Syndrome Register
-L2MERRSR_EL1c,RW,64,L2 Memory Error Syndrome Register
+CPUACTLR_EL1,RW,64,CPU Auxiliary Control Register
+CPUECTLR_EL1,RW,64,CPU Extended Control Register
+CPUMERRSR_EL1,RW,64,CPU Memory Error Syndrome Register
+L2MERRSR_EL1,RW,64,L2 Memory Error Syndrome Register
 CBAR_EL1,RO,64,Configuration Base Address Register

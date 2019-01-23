@@ -1,5 +1,5 @@
 /*
- *  AArch64 identification registers 
+ * AArch64 identification registers
  */
 
 /* Main ID Register */
@@ -328,7 +328,7 @@ static inline uint64_t aarhc64_read_vmpidr_el2(void)
 }
 
 /*
- *  AArch64 exception handling registers 
+ * AArch64 exception handling registers
  */
 
 /* Auxiliary Fault Status Register 0 */
@@ -579,7 +579,7 @@ static inline uint64_t aarhc64_read_vbar_el3(void)
 }
 
 /*
- *  AArch64 virtual memory control registers 
+ * AArch64 virtual memory control registers
  */
 
 /* System Control Register */
@@ -849,7 +849,7 @@ static inline uint32_t aarhc64_read_contextidr_el1(void)
 }
 
 /*
- *  AArch64 other system control registers 
+ * AArch64 other system control registers
  */
 
 /* Auxiliary Control Register */
@@ -909,7 +909,7 @@ static inline uint32_t aarhc64_read_actlr_el3(void)
 }
 
 /*
- *  AArch64 address translation operations 
+ * AArch64 address translation operations
  */
 
 /* Physical Address Register */
@@ -927,7 +927,7 @@ static inline uint64_t aarhc64_read_par_el1(void)
 }
 
 /*
- *  AArch64 miscellaneous operations 
+ * AArch64 miscellaneous operations
  */
 
 /* Thread Pointer/ID Register */
@@ -1001,7 +1001,7 @@ static inline uint64_t aarhc64_read_tpidr_el3(void)
 }
 
 /*
- *  AArch64 performance monitor registers 
+ * AArch64 performance monitor registers
  */
 
 /* Performance Monitors Control Register */
@@ -1360,7 +1360,7 @@ static inline uint32_t aarhc64_read_pmccfiltr_el0(void)
 }
 
 /*
- *  AArch64 reset registers 
+ * AArch64 reset registers
  */
 
 /* Reset Vector Base Address Register */
@@ -1387,7 +1387,7 @@ static inline uint32_t aarhc64_read_rmr_el3(void)
 }
 
 /*
- *  AArch64 secure registers 
+ * AArch64 secure registers
  */
 
 /* Secure Configuration Register */
@@ -1446,107 +1446,9 @@ static inline uint32_t aarhc64_read_mdcr_el3(void)
     return d;
 }
 
-/* Auxiliary Fault Status Register 0 */
-
-static inline void aarhc64_write_afsr0_el3(uint32_t d)
-{
-    __asm volatile ("msr AFSR0_EL3, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr0_el3(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR0_EL3" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Fault Status Register 1 */
-
-static inline void aarhc64_write_afsr1_el3(uint32_t d)
-{
-    __asm volatile ("msr AFSR1_EL3, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr1_el3(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR1_EL3" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Vector Base Address Register */
-
-static inline void aarhc64_write_vbar_el3(uint64_t d)
-{
-    __asm volatile ("msr VBAR_EL3, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_vbar_el3(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, VBAR_EL3" : "=r"(d) :: "memory");
-    return d;
-}
-
 /*
- *  AArch64 virtualization registers 
+ * AArch64 virtualization registers
  */
-
-/* Virtualization Processor ID Register */
-
-static inline void aarhc64_write_vpidr_el2(uint32_t d)
-{
-    __asm volatile ("msr VPIDR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_vpidr_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, VPIDR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Virtualization Multiprocessor ID Register */
-
-static inline void aarhc64_write_vmpidr_el2(uint64_t d)
-{
-    __asm volatile ("msr VMPIDR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_vmpidr_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, VMPIDR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* System Control Register */
-
-static inline void aarhc64_write_sctlr_el2(uint32_t d)
-{
-    __asm volatile ("msr SCTLR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_sctlr_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, SCTLR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Control Register */
-
-static inline void aarhc64_write_actlr_el2(uint32_t d)
-{
-    __asm volatile ("msr ACTLR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_actlr_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, ACTLR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
 
 /* Hypervisor Configuration Register */
 
@@ -1618,62 +1520,6 @@ static inline uint32_t aarhc64_read_hacr_el2(void)
     return d;
 }
 
-/* Translation Table Base Address Register 0 */
-
-static inline void aarhc64_write_ttbr0_el2(uint64_t d)
-{
-    __asm volatile ("msr TTBR0_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_ttbr0_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, TTBR0_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Translation Control Register */
-
-static inline void aarhc64_write_tcr_el2(uint32_t d)
-{
-    __asm volatile ("msr TCR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_tcr_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, TCR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Virtualization Translation Table Base Address Register */
-
-static inline void aarhc64_write_vttbr_el2(uint64_t d)
-{
-    __asm volatile ("msr VTTBR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_vttbr_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, VTTBR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Virtualization Translation Control Register */
-
-static inline void aarhc64_write_vtcr_el2(uint32_t d)
-{
-    __asm volatile ("msr VTCR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_vtcr_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, VTCR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
 /* Domain Access Control Register */
 
 static inline void aarhc64_write_dacr32_el2(uint32_t d)
@@ -1688,363 +1534,9 @@ static inline uint32_t aarhc64_read_dacr32_el2(void)
     return d;
 }
 
-/* Auxiliary Fault Status Register 0 */
-
-static inline void aarhc64_write_afsr0_el2(uint32_t d)
-{
-    __asm volatile ("msr AFSR0_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr0_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR0_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Fault Status Register 1 */
-
-static inline void aarhc64_write_afsr1_el2(uint32_t d)
-{
-    __asm volatile ("msr AFSR1_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr1_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR1_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Exception Syndrome Register */
-
-static inline void aarhc64_write_esr_el2(uint32_t d)
-{
-    __asm volatile ("msr ESR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_esr_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, ESR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Fault Address Register */
-
-static inline void aarhc64_write_far_el2(uint64_t d)
-{
-    __asm volatile ("msr FAR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_far_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, FAR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Hypervisor IPA Fault Address Register */
-
-static inline void aarhc64_write_hpfar_el2(uint64_t d)
-{
-    __asm volatile ("msr HPFAR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_hpfar_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, HPFAR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Memory Attribute Indirection Register */
-
-static inline void aarhc64_write_mair_el2(uint64_t d)
-{
-    __asm volatile ("msr MAIR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_mair_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, MAIR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Memory Attribute Indirection Register */
-
-static inline void aarhc64_write_amair_el2(uint64_t d)
-{
-    __asm volatile ("msr AMAIR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_amair_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, AMAIR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Vector Base Address Register */
-
-static inline void aarhc64_write_vbar_el2(uint64_t d)
-{
-    __asm volatile ("msr VBAR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_vbar_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, VBAR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
 /*
- *  AArch64 thread registers 
+ * AArch64 implementation defined registers
  */
-
-/* Thread Pointer/ID Register */
-
-static inline void aarhc64_write_tpidr_el0(uint64_t d)
-{
-    __asm volatile ("msr TPIDR_EL0, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_tpidr_el0(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, TPIDR_EL0" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Thread Pointer/ID Register */
-
-static inline void aarhc64_write_tpidr_el1(uint64_t d)
-{
-    __asm volatile ("msr TPIDR_EL1, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_tpidr_el1(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, TPIDR_EL1" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Thread Pointer/ID Register */
-
-static inline void aarhc64_write_tpidrro_el0(uint64_t d)
-{
-    __asm volatile ("msr TPIDRRO_EL0, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_tpidrro_el0(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, TPIDRRO_EL0" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Thread Pointer/ID Register */
-
-static inline void aarhc64_write_tpidr_el2(uint64_t d)
-{
-    __asm volatile ("msr TPIDR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_tpidr_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, TPIDR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Thread Pointer/ID Register */
-
-static inline void aarhc64_write_tpidr_el3(uint64_t d)
-{
-    __asm volatile ("msr TPIDR_EL3, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_tpidr_el3(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, TPIDR_EL3" : "=r"(d) :: "memory");
-    return d;
-}
-
-/*
- *  AArch64 implementation defined registers 
- */
-
-/* Auxiliary Control Register */
-
-static inline void aarhc64_write_actlr_el1(uint32_t d)
-{
-    __asm volatile ("msr ACTLR_EL1, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_actlr_el1(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, ACTLR_EL1" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Control Register */
-
-static inline void aarhc64_write_actlr_el2(uint32_t d)
-{
-    __asm volatile ("msr ACTLR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_actlr_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, ACTLR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Control Register */
-
-static inline void aarhc64_write_actlr_el3(uint32_t d)
-{
-    __asm volatile ("msr ACTLR_EL3, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_actlr_el3(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, ACTLR_EL3" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Fault Status Register 0 */
-
-static inline void aarhc64_write_afsr0_el1(uint32_t d)
-{
-    __asm volatile ("msr AFSR0_EL1, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr0_el1(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR0_EL1" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Fault Status Register 1 */
-
-static inline void aarhc64_write_afsr1_el1(uint32_t d)
-{
-    __asm volatile ("msr AFSR1_EL1, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr1_el1(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR1_EL1" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Fault Status Register 0 */
-
-static inline void aarhc64_write_afsr0_el2(uint32_t d)
-{
-    __asm volatile ("msr AFSR0_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr0_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR0_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Fault Status Register 1 */
-
-static inline void aarhc64_write_afsr1_el2(uint32_t d)
-{
-    __asm volatile ("msr AFSR1_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr1_el2(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR1_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Fault Status Register 0 */
-
-static inline void aarhc64_write_afsr0_el3(uint32_t d)
-{
-    __asm volatile ("msr AFSR0_EL3, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr0_el3(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR0_EL3" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Fault Status Register 1 */
-
-static inline void aarhc64_write_afsr1_el3(uint32_t d)
-{
-    __asm volatile ("msr AFSR1_EL3, %0" :: "r"(d) : "memory");
-}
-
-static inline uint32_t aarhc64_read_afsr1_el3(void)
-{
-    uint32_t d;
-    __asm volatile ("mrs %0, AFSR1_EL3" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Memory Attribute Indirection Register */
-
-static inline void aarhc64_write_amair_el1(uint64_t d)
-{
-    __asm volatile ("msr AMAIR_EL1, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_amair_el1(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, AMAIR_EL1" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Memory Attribute Indirection Register */
-
-static inline void aarhc64_write_amair_el2(uint64_t d)
-{
-    __asm volatile ("msr AMAIR_EL2, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_amair_el2(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, AMAIR_EL2" : "=r"(d) :: "memory");
-    return d;
-}
-
-/* Auxiliary Memory Attribute Indirection Register */
-
-static inline void aarhc64_write_amair_el3(uint64_t d)
-{
-    __asm volatile ("msr AMAIR_EL3, %0" :: "r"(d) : "memory");
-}
-
-static inline uint64_t aarhc64_read_amair_el3(void)
-{
-    uint64_t d;
-    __asm volatile ("mrs %0, AMAIR_EL3" : "=r"(d) :: "memory");
-    return d;
-}
 
 /* L2 Control Register */
 
@@ -2090,57 +1582,57 @@ static inline uint32_t aarhc64_read_l2actlr_el1(void)
 
 /* CPU Auxiliary Control Register */
 
-static inline void aarhc64_write_cpuactlr_el1c(uint64_t d)
+static inline void aarhc64_write_cpuactlr_el1(uint64_t d)
 {
-    __asm volatile ("msr CPUACTLR_EL1c, %0" :: "r"(d) : "memory");
+    __asm volatile ("msr CPUACTLR_EL1, %0" :: "r"(d) : "memory");
 }
 
-static inline uint64_t aarhc64_read_cpuactlr_el1c(void)
+static inline uint64_t aarhc64_read_cpuactlr_el1(void)
 {
     uint64_t d;
-    __asm volatile ("mrs %0, CPUACTLR_EL1c" : "=r"(d) :: "memory");
+    __asm volatile ("mrs %0, CPUACTLR_EL1" : "=r"(d) :: "memory");
     return d;
 }
 
 /* CPU Extended Control Register */
 
-static inline void aarhc64_write_cpuectlr_el1c(uint64_t d)
+static inline void aarhc64_write_cpuectlr_el1(uint64_t d)
 {
-    __asm volatile ("msr CPUECTLR_EL1c, %0" :: "r"(d) : "memory");
+    __asm volatile ("msr CPUECTLR_EL1, %0" :: "r"(d) : "memory");
 }
 
-static inline uint64_t aarhc64_read_cpuectlr_el1c(void)
+static inline uint64_t aarhc64_read_cpuectlr_el1(void)
 {
     uint64_t d;
-    __asm volatile ("mrs %0, CPUECTLR_EL1c" : "=r"(d) :: "memory");
+    __asm volatile ("mrs %0, CPUECTLR_EL1" : "=r"(d) :: "memory");
     return d;
 }
 
 /* CPU Memory Error Syndrome Register */
 
-static inline void aarhc64_write_cpumerrsr_el1c(uint64_t d)
+static inline void aarhc64_write_cpumerrsr_el1(uint64_t d)
 {
-    __asm volatile ("msr CPUMERRSR_EL1c, %0" :: "r"(d) : "memory");
+    __asm volatile ("msr CPUMERRSR_EL1, %0" :: "r"(d) : "memory");
 }
 
-static inline uint64_t aarhc64_read_cpumerrsr_el1c(void)
+static inline uint64_t aarhc64_read_cpumerrsr_el1(void)
 {
     uint64_t d;
-    __asm volatile ("mrs %0, CPUMERRSR_EL1c" : "=r"(d) :: "memory");
+    __asm volatile ("mrs %0, CPUMERRSR_EL1" : "=r"(d) :: "memory");
     return d;
 }
 
 /* L2 Memory Error Syndrome Register */
 
-static inline void aarhc64_write_l2merrsr_el1c(uint64_t d)
+static inline void aarhc64_write_l2merrsr_el1(uint64_t d)
 {
-    __asm volatile ("msr L2MERRSR_EL1c, %0" :: "r"(d) : "memory");
+    __asm volatile ("msr L2MERRSR_EL1, %0" :: "r"(d) : "memory");
 }
 
-static inline uint64_t aarhc64_read_l2merrsr_el1c(void)
+static inline uint64_t aarhc64_read_l2merrsr_el1(void)
 {
     uint64_t d;
-    __asm volatile ("mrs %0, L2MERRSR_EL1c" : "=r"(d) :: "memory");
+    __asm volatile ("mrs %0, L2MERRSR_EL1" : "=r"(d) :: "memory");
     return d;
 }
 

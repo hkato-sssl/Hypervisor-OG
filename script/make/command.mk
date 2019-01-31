@@ -1,8 +1,8 @@
-CC = gcc
-AS = gcc
-LD = gcc
-AR = ar
-LD = ld
+CC = $(CROSS_COMPILE)gcc
+AS = $(CROSS_COMPILE)gcc
+LD = $(CROSS_COMPILE)gcc
+AR = $(CROSS_COMPILE)ar
+LD = $(CROSS_COMPILE)ld
 
 ASSEMBLY_SYMBOL ?= ASSEMBLY
 
@@ -10,4 +10,4 @@ CFLAGS := -O0 -g
 
 ASFLAGS := -D$(ASSMEMBLY_SYMBOL)
 
-ARFLAGS := rus
+ARFLAGS := Drs

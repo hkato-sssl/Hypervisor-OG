@@ -41,9 +41,13 @@ $(OUTDIR)/$(TARGET):
 	find $(OUTDIR) -name .srcs | xargs cat | sed -e s/\\.[csS]$$/\\.o/ -e s/^/$(OUTDIR)\\// >> $(AROPS_FILE)
 	$(AR) @$(AROPS_FILE)
 else
+ifeq ($(suffix $(TARGET)),.elf)
 $(OUTDIR)/$(TARGET):
 	echo -o $@ > $(LDOPS_FILE)
 	echo $(LDFLAGS) >> $(LDOPS_FILE)
 	find $(OUTDIR) -name .srcs | xargs cat | sed -e s/\\.[csS]$$/\\.o/ -e s/^/$(OUTDIR)\\// >> $(LDOPS_FILE)
 	$(LD) @$(LDOPS_FILE)
+else
+$(error Unknown suffix of $$(TARGET).)
+endif
 endif

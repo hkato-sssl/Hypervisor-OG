@@ -10,7 +10,7 @@ endef
 define template_depend_asm
 depend: $(OUTDIR)/$(1).d
 $(OUTDIR)/$(1).d: $(1)
-	$$(CC) -MM -MP -MT $(OUTDIR)/$(1:%.S=%.o) $$(INC_OPS) $$(ASFLAGS) $(1) >$$@
+	$$(CC) -MM -MP -MT $(OUTDIR)/$(1:%.S=%.o) $$(INC_OPS) $$(ASFLAGS) $$< >$$@
 
 endef
 

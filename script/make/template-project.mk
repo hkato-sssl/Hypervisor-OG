@@ -7,12 +7,12 @@ WORKSPACE_LOC ?= $(abspath $(PROJ_HOME)/../)
 MAKE_PATH = $(WORKSPACE_LOC)/script/make
 #CROSS_COMPILE ?= aarch64-elf-
 
-include $(MAKE_PATH)/command.mk
 include $(MAKE_PATH)/project-env.mk
+include $(MAKE_PATH)/command.mk
 
 # Depending on the target you want to build,
 # uncomment either of the following two sentences.
-#TARGET ?= $(notdir $(PROJ_HOME))	# an executable
+#TARGET ?= $(notdir $(PROJ_HOME)).elf	# an executable
 #TARGET ?= $(notdir $(PROJ_HOME)).a	# an archive
 $(if $(TARGET),,$(error TARGET is undefined))
 

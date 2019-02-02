@@ -6,6 +6,7 @@ build: $(OUTDIR)/$(TARGET)
 
 define template_build_c
 OBJS += $(2)
+$$(OUTDIR)/$$(TARGET): $(2)
 $(2): $(1)
 	$$(CC) -c $$(INC_OPS) $(CFLAGS) $(ADDED_CFLAGS) $$< -o $$@
 
@@ -13,6 +14,7 @@ endef
 
 define template_build_asm
 OBJS += $(2)
+$$(OUTDIR)/$$(TARGET): $(2)
 $(2): $(1)
 	$$(CC) -c $$(INC_OPS) $$(ASFLAGS) $(1) -o $$@
 
@@ -34,9 +36,14 @@ $(eval $(foreach DIR,$(SRCDIRS),$(call create_builds,$(call srcs,$(DIR)))))
 #### link or archive ####
 
 ifeq ($(suffix $(TARGET)),.a)
-$(OUTDIR)/$(TARGET): $(OBJS)
-	$(AR) $(ARFLAGS) $@ $(OBJS)
+$(OUTDIR)/$(TARGET):
+	echo $(ARFLAGS) $@ >$(AROPS_FILE)
+	find $(OUTDIR) -name .srcs | xargs cat | sed -e s/\\.[csS]$$/\\.o/ -e s/^/$(OUTDIR)\\// >> $(AROPS_FILE)
+	$(AR) @$(AROPS_FILE)
 else
-$(OUTDIR)/$(TARGET): $(OBJS)
-	gcc $(OBJS) -o $@
+$(OUTDIR)/$(TARGET):
+	echo -o $@ > $(LDOPS_FILE)
+	echo $(LDFLAGS) >> $(LDOPS_FILE)
+	find $(OUTDIR) -name .srcs | xargs cat | sed -e s/\\.[csS]$$/\\.o/ -e s/^/$(OUTDIR)\\// >> $(LDOPS_FILE)
+	$(LD) @$(LDOPS_FILE)
 endif

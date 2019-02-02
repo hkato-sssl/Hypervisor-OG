@@ -77,9 +77,9 @@ C_FILE = COPYRIGHT + """\
 """
 
 S_FILE = COPYRIGHT + """\
-        .global     XXXX
-        .section    ".text.XXXX", "ax", %progbits
-        .type       XXXX, %function
+        .global         XXXX
+        .section        ".text.XXXX", "ax", %progbits
+        .type           XXXX, %function
         .thumb_func
 
         .end

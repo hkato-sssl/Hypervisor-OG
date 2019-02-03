@@ -42,7 +42,7 @@ $(OUTDIR)/$(TARGET):
 	$(AR) @$(AROPS_FILE)
 else
 ifeq ($(suffix $(TARGET)),.elf)
-$(OUTDIR)/$(TARGET):
+$(OUTDIR)/$(TARGET): $(LD_SCRIPT_FILE)
 	echo -o $@ > $(LDOPS_FILE)
 	echo -T config/memory.lds >>$(LDOPS_FILE)
 	echo $(LDFLAGS) >> $(LDOPS_FILE)

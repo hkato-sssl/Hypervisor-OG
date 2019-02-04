@@ -5,6 +5,7 @@
  */
 
 #include "config/system.h"
+#include "lib/aarch64.h"
 
 	.extern		init_exception_vector
 	.extern		main_stack_region
@@ -15,7 +16,7 @@
 _start:
 	// set initial status
 
-	msr		DAIFset, #0x0f
+	msr		DAIFset, #DAIF_ALL
 	msr		SPsel, #1
 	adr		x1, init_exception_vector
 	msr		VBAR_EL2, x1

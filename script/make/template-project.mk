@@ -5,7 +5,14 @@ export
 PROJ_HOME := $(CURDIR)
 WORKSPACE_LOC ?= $(abspath $(PROJ_HOME)/../)
 MAKE_PATH = $(WORKSPACE_LOC)/script/make
-#CROSS_COMPILE ?= aarch64-elf-
+
+WORKSPACE_LIBRARY_PATH := $(WORKSPACE_LOC)/lib
+#WORKSPACE_LIBRARY :=
+
+CROSS_COMPILE ?= aarch64-elf-
+TARGET_ARCH := aarch64
+TARGET_BOARD := zcu104
+LOAD_TYPE := ram
 
 include $(MAKE_PATH)/project-env.mk
 include $(MAKE_PATH)/command.mk
@@ -26,3 +33,10 @@ depend: prepare
 
 build: depend
 	make -f $(MAKE_PATH)/build.mk -j$(JOBS)
+
+ifeq ($(suffix $(TARGET)),.a)
+.PHONY: install
+install: build
+	@mkdir -p $(WORKSPACE_LIBRARY_PATH)
+	@cp -v $(OUTDIR)/$(TARGET) $(WORKSPACE_LIBRARY_PATH)
+endif

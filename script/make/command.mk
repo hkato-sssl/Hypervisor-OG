@@ -22,4 +22,8 @@ ifdef LD_SCRIPT_FILE
 LDFLAGS += -T $(LD_SCRIPT_FILE)
 endif
 
+ifdef WORKSPACE_LIBRARY
+LDFLAGS += $(addprefix $(WORKSPACE_LIBRARY_PATH)/,$(addsuffix .a,$(WORKSPACE_LIBRARY)))
+endif
+
 LDOPS_FILE := $(OUTDIR)/.ldops

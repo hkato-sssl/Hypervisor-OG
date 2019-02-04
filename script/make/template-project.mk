@@ -7,12 +7,15 @@ WORKSPACE_LOC ?= $(abspath $(PROJ_HOME)/../)
 MAKE_PATH = $(WORKSPACE_LOC)/script/make
 
 WORKSPACE_LIBRARY_PATH := $(WORKSPACE_LOC)/lib
-#WORKSPACE_LIBRARY :=
+WORKSPACE_LIBRARY := libs
 
 CROSS_COMPILE ?= aarch64-elf-
 TARGET_ARCH := aarch64
 TARGET_BOARD := zcu104
 LOAD_TYPE := ram
+
+SRC_BASES := src
+INCS := inc
 
 include $(MAKE_PATH)/project-env.mk
 include $(MAKE_PATH)/command.mk
@@ -40,3 +43,4 @@ install: build
 	@mkdir -p $(WORKSPACE_LIBRARY_PATH)
 	@cp -v $(OUTDIR)/$(TARGET) $(WORKSPACE_LIBRARY_PATH)
 endif
+	

@@ -12,7 +12,7 @@ outdir:
 	find $(OUTDIR) -name $(SRCS_FILE) | xargs rm -f
 
 srcdirs:
-	find $(SRC_BASE) -type d -fprint $(OUTDIR)/$(SRCDIRS_FILE)
+	find $(SRC_BASES) -type d -fprint $(OUTDIR)/$(SRCDIRS_FILE)
 
 srcs:
 	$(foreach DIR,$(SRCDIRS),$(call srcs_list,$(DIR)))

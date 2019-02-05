@@ -5,6 +5,7 @@
  */
 
 #include <stdint.h>
+#include "driver/aarch64/exception.h"
 
 /* defines */
 

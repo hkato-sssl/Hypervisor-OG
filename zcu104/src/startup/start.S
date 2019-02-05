@@ -15,7 +15,7 @@
 	.extern		main
 
         .global         _start
-        .section        ".text.start", "ax", %progbits
+        .section        ".text.startup", "ax", %progbits
         .type           _start, %function
 _start:
 	// set initial status

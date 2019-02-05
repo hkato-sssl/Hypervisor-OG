@@ -13,5 +13,6 @@
 
 /* variables */
 
-uint8_t main_stack_region[NR_CPUS][STACK_SIZE] __attribute__ ((section(".stack.main")));
+uint8_t main_stack_region[NR_CPUS][STACK_SIZE] __attribute__ ((section(".stack.main"), aligned(8)));
+uint8_t exc_stack_region[NR_CPUS][STACK_SIZE] __attribute__ ((section(".stack.exc"), aligned(8)));
 

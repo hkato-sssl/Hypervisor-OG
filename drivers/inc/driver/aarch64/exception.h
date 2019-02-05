@@ -1,25 +1,15 @@
 /*
- * lib/aarch64.h
+ * driver/aarch64/exception.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef LIB_AARCH64_H
-#define LIB_AARCH64_H
+#ifndef DRIVER_AARCH64_EXCEPTION_H
+#define DRIVER_AARCH64_EXCEPTION_H
 
 /* includes */
 
-#include "lib/bit.h"
-
 /* defines */
-
-/* DAIF */
-
-#define	DAIF_D		BIT(3)
-#define	DAIF_A		BIT(2)
-#define	DAIF_I		BIT(1)
-#define	DAIF_F		BIT(0)
-#define	DAIF_ALL	BITS(3, 0)
 
 #ifndef ASSEMBLER
 
@@ -37,11 +27,13 @@ extern "C" {
 
 /* functions */
 
+const char *aarch64_esr_ec_message(uint32_t ec);
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* ASSEMBLER */
 
-#endif /* LIB_AARCH64_H */
+#endif /* DRIVER_AARCH64_EXCEPTION_H */
 

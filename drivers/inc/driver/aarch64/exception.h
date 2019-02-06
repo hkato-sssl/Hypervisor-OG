@@ -15,12 +15,10 @@
 
 #define EXC_VECTOR      0
 #define EXC_ESR         1
-#define EXC_IFSR32      2
-#define EXC_FAR         3
-#define EXC_SPSR        4
-#define EXC_ELR         5
-#define EXC_SP          6
-#define EXC_X0          7
+#define EXC_SPSR        2
+#define EXC_ELR         3
+#define EXC_SP          4
+#define EXC_X0          5
 #define EXC_X1          (EXC_X0 + 1)
 #define EXC_X2          (EXC_X0 + 2)            
 #define EXC_X3          (EXC_X0 + 3)            

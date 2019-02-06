@@ -5,7 +5,7 @@
  */
 
 #include "config/system.h"
-#include "lib/aarch64.h"
+#include "driver/aarch64/system_register.h"
 
 	.extern		init_exception_vector
 	.extern		main_stack_region

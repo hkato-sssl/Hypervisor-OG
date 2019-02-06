@@ -19,7 +19,7 @@ import string
 import datetime
 
 OWNER = "Hidekazu Kato"
-ASM_GUARD = "ASSEMBLER"
+ASM_GUARD = "ASSEMBLY"
 
 COPYRIGHT = """\
 /*

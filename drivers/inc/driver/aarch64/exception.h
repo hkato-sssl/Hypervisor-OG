@@ -19,9 +19,8 @@
 #define EXC_FAR         3
 #define EXC_SPSR        4
 #define EXC_ELR         5
-#define EXC_SP0         6
-#define EXC_SP1         7
-#define EXC_X0          6
+#define EXC_SP          6
+#define EXC_X0          7
 #define EXC_X1          (EXC_X0 + 1)
 #define EXC_X2          (EXC_X0 + 2)            
 #define EXC_X3          (EXC_X0 + 3)            
@@ -52,9 +51,8 @@
 #define EXC_X28         (EXC_X0 + 28)           
 #define EXC_X29         (EXC_X0 + 29)           
 #define EXC_X30         (EXC_X0 + 30)           
-#define EXC_DUMMY       (EXC_X0 + 31)   /* for 16-byte alignment */
 
-#define	NR_EXC_REGS	    (EXC_DUMMY + 1)
+#define	NR_EXC_REGS     (EXC_X30 + 1)
 
 #ifndef ASSEMBLY
 

@@ -11,7 +11,7 @@
 
 /* defines */
 
-#ifndef ASSEMBLER
+#ifndef ASSEMBLY
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,7 +33,7 @@ const char *aarch64_esr_ec_message(uint32_t ec);
 }
 #endif
 
-#endif /* ASSEMBLER */
+#endif /* ASSEMBLY */
 
 #endif /* DRIVER_AARCH64_EXCEPTION_H */
 

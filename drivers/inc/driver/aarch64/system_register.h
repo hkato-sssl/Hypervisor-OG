@@ -21,7 +21,7 @@
 #define DAIF_F          BIT(0)
 #define DAIF_ALL        BITS(3, 0)
 
-#ifndef ASSEMBLER
+#ifndef ASSEMBLY
 
 #ifdef __cplusplus
 extern "C" {
@@ -1689,7 +1689,7 @@ static inline uint64_t aarhc64_read_cbar_el1(void)
 }
 #endif
 
-#endif /* ASSEMBLER */
+#endif /* ASSEMBLY */
 
 #endif /* DRIVER_AARCH64_SYSTEM_REGISTER_H */
 

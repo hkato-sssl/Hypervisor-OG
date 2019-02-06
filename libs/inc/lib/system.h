@@ -12,10 +12,10 @@
 /* defines */
 
 #ifdef	__ARMASM__	/* DS-5 assembler */
-#define ASSEMBLER
+#define ASSEMBLY
 #endif
 
-#ifndef ASSEMBLER
+#ifndef ASSEMBLY
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,7 +33,7 @@ extern "C" {
 }
 #endif
 
-#endif /* ASSEMBLER */
+#endif /* ASSEMBLY */
 
 #endif /* LIB_SYSTEM_H */
 

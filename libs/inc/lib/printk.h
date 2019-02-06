@@ -11,7 +11,7 @@
 
 /* defines */
 
-#ifndef ASSEMBLER
+#ifndef ASSEMBLY
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,7 +33,7 @@ int printk(const char *fmt, ...);
 }
 #endif
 
-#endif /* ASSEMBLER */
+#endif /* ASSEMBLY */
 
 #endif /* LIB_PRINTK_H */
 

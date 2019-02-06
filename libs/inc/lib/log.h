@@ -11,7 +11,7 @@
 
 /* defines */
 
-#ifndef ASSEMBLER
+#ifndef ASSEMBLY
 
 #ifdef __cplusplus
 extern "C" {
@@ -106,7 +106,7 @@ int log_cformat(struct log_context *ctx);
 }
 #endif
 
-#endif /* ASSEMBLER */
+#endif /* ASSEMBLY */
 
 #endif /* LIB_LOG_H */
 

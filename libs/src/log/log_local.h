@@ -15,7 +15,7 @@
 #define	EOS			'\0'
 #endif
 
-#ifndef ASSEMBLER
+#ifndef ASSEMBLY
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,7 +64,7 @@ int log_output_string(struct log_context *ctx);
 }
 #endif
 
-#endif /* ASSEMBLER */
+#endif /* ASSEMBLY */
 
 #endif /* SRC_LOG_LOG_LOCAL_H */
 

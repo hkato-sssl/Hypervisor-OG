@@ -11,7 +11,7 @@
 
 /* defines */
 
-#ifndef ASSEMBLER
+#ifndef ASSEMBLY
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,7 +31,7 @@ extern "C" {
 }
 #endif
 
-#endif /* ASSEMBLER */
+#endif /* ASSEMBLY */
 
 #endif /* LIBS_SYSTEM_PRINTK_H */
 

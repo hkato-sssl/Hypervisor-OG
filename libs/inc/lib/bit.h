@@ -7,14 +7,14 @@
 #ifndef LIB_BIT_H
 #define LIB_BIT_H
 
-#ifdef ASSEMBLER
+#ifdef ASSEMBLY
 
 /* defines */
 
 #define BIT(n)          (1 << (n))
 #define BITS(m, l)      ((BIT(m) | (BIT(m) - 1)) ^ (BIT(l) - 1))
 
-#else /* ASSEMBLER */
+#else /* ASSEMBLY */
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,7 +37,7 @@ extern "C" {
 }
 #endif
 
-#endif /* ASSEMBLER */
+#endif /* ASSEMBLY */
 
 #endif /* LIB_BIT_H */
 

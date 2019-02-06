@@ -17,43 +17,27 @@ excvec_el2:
 
         /* Synchronous */
         .org            0x0000
-        sub             sp,  sp,  #(NR_EXC_REGS * 8)
-        stp             x0,  x1,  [sp,  #(EXC_X0 * 8)]
-        mrs             x0,  SP_EL0
-        add             x1,  sp,  #(NR_EXC_REGS * 8)
-        mov             x0,  #0x0000
-        str             x0,  [sp,  #(EXC_VECTOR * 8)]
-        b               save_registers
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0000
+        b               save_rest_registers
 
         /* IRQ */
         .org            0x0080
-        sub             sp,  sp,  #(NR_EXC_REGS * 8)
-        stp             x0,  x1,  [sp,  #(EXC_X0 * 8)]
-        mrs             x0,  SP_EL0
-        add             x1,  sp,  #(NR_EXC_REGS * 8)
-        mov             x0,  #0x0080
-        str             x0,  [sp,  #(EXC_VECTOR * 8)]
-        b               save_registers
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0080
+        b               save_rest_registers
 
         /* FIQ */
         .org            0x0100
-        sub             sp,  sp,  #(NR_EXC_REGS * 8)
-        stp             x0,  x1,  [sp,  #(EXC_X0 * 8)]
-        mrs             x0,  SP_EL0
-        add             x1,  sp,  #(NR_EXC_REGS * 8)
-        mov             x0,  #0x0100
-        str             x0,  [sp,  #(EXC_VECTOR * 8)]
-        b               save_registers
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0100
+        b               save_rest_registers
 
         /* SError */
         .org            0x0180
-        sub             sp,  sp,  #(NR_EXC_REGS * 8)
-        stp             x0,  x1,  [sp,  #(EXC_X0 * 8)]
-        mrs             x0,  SP_EL0
-        add             x1,  sp,  #(NR_EXC_REGS * 8)
-        mov             x0,  #0x0180
-        str             x0,  [sp,  #(EXC_VECTOR * 8)]
-        b               save_registers
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0180
+        b               save_rest_registers
 
         /*
          * current EL with SPx
@@ -61,19 +45,27 @@ excvec_el2:
 
         /* Synchronous */
         .org            0x0200
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0200
+        b               save_rest_registers
 
         /* IRQ */
         .org            0x0280
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0280
+        b               save_rest_registers
 
         /* FIQ */
         .org            0x0300
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0300
+        b               save_rest_registers
 
         /* SError */
         .org            0x0380
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0380
+        b               save_rest_registers
 
         /*
          * lower EL using AArch64
@@ -81,19 +73,27 @@ excvec_el2:
 
         /* Synchronous */
         .org            0x0400
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0400
+        b               save_rest_registers
 
         /* IRQ */
         .org            0x0480
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0480
+        b               save_rest_registers
 
         /* FIQ */
         .org            0x0500
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0500
+        b               save_rest_registers
 
         /* SError */
         .org            0x0580
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0580
+        b               save_rest_registers
 
         /*
          * lower EL using AArch32
@@ -101,45 +101,54 @@ excvec_el2:
 
         /* Synchronous */
         .org            0x0600
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0600
+        b               save_rest_registers
 
         /* IRQ */
         .org            0x0680
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0680
+        b               save_rest_registers
 
         /* FIQ */
         .org            0x0700
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0700
+        b               save_rest_registers
 
         /* SError */
         .org            0x0780
-        b               .
+        stp             x29, x30, [sp,  #-16]!
+        mov             x30, #0x0780
+        b               save_rest_registers
 
-        /* sp - the base address of a register array */
-save_registers:
-        mrs             x0,  ESR_EL2
-        str             x0,  [sp,  #(EXC_ESR * 8)]
-        mrs             x0,  IFSR32_EL2
-        mrs             x1,  FAR_EL2
-        stp             x0,  x1,  [sp,  #(EXC_IFSR32 * 8)]
-        mrs             x0,  SPSR_EL2
-        mrs             x1,  ELR_EL2
-        stp             x0,  x1,  [sp,  #(EXC_SPSR * 2)]
+save_rest_registers:
+        stp             x27, x28, [sp,  #-16]!
+        stp             x25, x26, [sp,  #-16]!
+        stp             x23, x24, [sp,  #-16]!
+        stp             x21, x22, [sp,  #-16]!
+        stp             x19, x20, [sp,  #-16]!
+        stp             x17, x18, [sp,  #-16]!
+        stp             x15, x16, [sp,  #-16]!
+        stp             x13, x14, [sp,  #-16]!
+        stp             x11, x12, [sp,  #-16]!
+        stp             x9,  x10, [sp,  #-16]!
+        stp             x7,  x8,  [sp,  #-16]!
+        stp             x5,  x6,  [sp,  #-16]!
+        stp             x3,  x4,  [sp,  #-16]!
+        stp             x1,  x2,  [sp,  #-16]!
 
-        stp             x4,  x5,  [sp,  #(EXC_X4 * 8)]
-        stp             x6,  x7,  [sp,  #(EXC_X6 * 8)]
-        stp             x8,  x9,  [sp,  #(EXC_X8 * 8)]
-        stp             x10, x11, [sp,  #(EXC_X10 * 8)]
-        stp             x12, x13, [sp,  #(EXC_X12 * 8)]
-        stp             x14, x15, [sp,  #(EXC_X14 * 8)]
-        stp             x16, x17, [sp,  #(EXC_X16 * 8)]
-        stp             x18, x19, [sp,  #(EXC_X18 * 8)]
-        stp             x20, x21, [sp,  #(EXC_X20 * 8)]
-        stp             x22, x23, [sp,  #(EXC_X22 * 8)]
-        stp             x24, x25, [sp,  #(EXC_X24 * 8)]
-        stp             x26, x27, [sp,  #(EXC_X26 * 8)]
-        stp             x28, x29, [sp,  #(EXC_X28 * 8)]
-        str             x30, [sp,  #(EXC_X30 * 8)]
+        mrs             x1,  ESR_EL2
+        mrs             x2,  IFSR32_EL2
+        mrs             x3,  FAR_EL2
+        mrs             x4,  SPSR_EL2
+        mrs             x5,  ELR_EL2
+        stp             x4,  x5,  [sp,  #-32]!
+        stp             x2,  x3,  [sp,  #-16]!
+        stp             x30, x1,  [sp,  #-16]!
+        add             x1,  sp,  #(NR_EXC_REGS * 8)
+        stp             x1,  x0,  [sp,  #(EXC_SP * 8)]
 
         mov             x0,  sp
         bl              exception_entry_el2

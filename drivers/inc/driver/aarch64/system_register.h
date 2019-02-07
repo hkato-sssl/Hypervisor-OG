@@ -13,13 +13,28 @@
 
 /* defines */
 
-/* DAIF */
+/* PSTATE */
 
-#define DAIF_D          BIT(3)
-#define DAIF_A          BIT(2)
-#define DAIF_I          BIT(1)
-#define DAIF_F          BIT(0)
-#define DAIF_ALL        BITS(3, 0)
+#define PSTATE_N            BIT(31)
+#define PSTATE_Z            BIT(30)
+#define PSTATE_C            BIT(29)
+#define PSTATE_V            BIT(28)
+#define PSTATE_DIT          BIT(24)     /* ARMv8.4 */
+#define PSTATE_UAO          BIT(23)     /* ARMv8.2 */
+#define PSTATE_PAN          BIT(22)     /* ARMv8.1 */
+#define PSTATE_D            BIT(9)
+#define PSTATE_A            BIT(8)
+#define PSTATE_I            BIT(7)
+#define PSTATE_F            BIT(6)
+#define PSTATE_SP           BIT(0)
+
+/* DAIFset/DAIFclr */
+
+#define DAIF_D              BIT(3)
+#define DAIF_A              BIT(2)
+#define DAIF_I              BIT(1)
+#define DAIF_F              BIT(0)
+#define DAIF_ALL            BITS(3, 0)
 
 #ifndef ASSEMBLY
 

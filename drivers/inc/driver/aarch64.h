@@ -19,6 +19,8 @@ extern "C" {
 
 /* includes */
 
+#include <stdbool.h>
+
 /* defines */
 
 /* types */
@@ -27,8 +29,8 @@ extern "C" {
 
 /* functions */
 
-uint32_t aarch64_lock(void);
-uint32_t aarch64_unlock(uint32_t lock);
+bool aarch64_lock(void);
+void aarch64_unlock(bool lock);
 
 #ifdef __cplusplus
 }

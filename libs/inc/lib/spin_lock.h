@@ -20,18 +20,21 @@ extern "C" {
 /* includes */
 
 #include <stdint.h>
+#include "lib/system/errno.h"
 
 /* defines */
 
 /* types */
 
-typedef int32_t spin_lock_t;
+typedef uint32_t spin_lock_t;
 
 /* variables */
 
 /* functions */
 
-int spin_lock(spin_lock_t *lock);
+errno_t spin_lock_init(spin_lock_t *lock);
+errno_t spin_trylock(spin_lock_t *lock);
+void spin_lock(spin_lock_t *lock);
 void spin_unlock(spin_lock_t *lock);
 
 #ifdef __cplusplus

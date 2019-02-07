@@ -3,6 +3,9 @@
  *
  * (C) 2019 Hidekazu Kato
  */
+
+#include "lib/system/errno.h"
+
         .global         aarch64_spin_lock_init
         .global         aarch64_spin_trylock
         .global         aarch64_spin_lock
@@ -14,6 +17,7 @@
 aarch64_spin_lock_init:
         str             wzr, [x0]
         dmb             ish
+        mov             x0,  xzr
         ret
 
         .section        ".text.aarch64_spin_trylock", "ax", %progbits
@@ -29,7 +33,7 @@ aarch64_spin_trylock:
         ret
 
 already_locked:
-        mov             x0,  #-1
+        mov             x0,  #-EBUSY
         ret
 
         .section        ".text.aarch64_spin_lock", "ax", %progbits

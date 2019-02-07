@@ -9,6 +9,7 @@
 
 /* includes */
 
+#include "lib/system/errno.h"
 #include "lib/spin_lock.h"
 
 /* defines */
@@ -29,7 +30,9 @@ extern "C" {
 
 /* functions */
 
-int aarch64_spin_lock(spin_lock_t *lock);
+errno_t aarch64_spin_lock_init(spin_lock_t *lock);
+errno_t aarch64_spin_trylock(spin_lock_t *lock);
+void aarch64_spin_lock(spin_lock_t *lock);
 void aarch64_spin_unlock(spin_lock_t *lock);
 
 #ifdef __cplusplus

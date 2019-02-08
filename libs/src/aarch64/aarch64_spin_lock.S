@@ -45,12 +45,7 @@ already_locked:
 lock_loop:
         bl              aarch64_spin_trylock
         cbz             x0, lock_exit
-
-        /* delay */
-        yield
-        yield
-        yield
-        yield
+        wfe
 
         /* try again */
         mov             x0,  x19

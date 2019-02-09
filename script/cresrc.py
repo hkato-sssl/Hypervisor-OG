@@ -71,6 +71,8 @@ C_FILE = COPYRIGHT + """\
 
 /* types */
 
+/* prototypes */
+
 /* variables */
 
 /* functions */

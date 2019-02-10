@@ -50,8 +50,8 @@ aarch64_dcache_op_all:
         mov             ip0, x0
         mov             ip1, lr
 
-        // ip0 - the maintenance function
-        // ip1 - old LR
+        // ip0 : the maintenance function
+        // ip1 : old LR
 
         mrs             x9,  CLIDR_EL1
         lsl             x10, x9,  #(24 - 1)
@@ -60,9 +60,9 @@ aarch64_dcache_op_all:
 
         mov             x1,  #(0 << 1)
 
-        // x1  - (index of cache line) << 1
-        // x9  - CLIDR_EL1
-        // x10 - LoC << 1
+        // x1  : (index of cache level) << 1
+        // x9  : CLIDR_EL1
+        // x10 : LoC << 1
 loop_level:
         msr             CSSELR_EL1, x1
         isb
@@ -72,40 +72,40 @@ loop_level:
         lsr             w13, w11, #3
         lsr             x14, x11, #32
 
-        // x11 - CSSIDR_EL1
-        // x12 - log2(number of bytes in cache line)
-        // x13 - (aasociativity of cache) - 1
-        // x14 - (numner of sets) - 1
+        // x11 : CSSIDR_EL1
+        // x12 : log2(number of bytes in cache line)
+        // x13 : (aasociativity of cache) - 1
+        // x14 : (numner of sets) - 1
 
-        clz             w0,  w13
-        mov             x15, #32
-        sub             x15, x15, x0
+        clz             w15, w13
 
-        // x15  - A = log2(ASSOSIATIVITY)
+        // x15 : (32 - A) = 32 - log2(ASSOSIATIVITY)
 
         mov             x2,  xzr
 loop_set:
+        lsl             x4,  x2,  x12
+        orr             x4,  x4,  x1
         mov             x3,  xzr
+        // x2  : index of set
+        // x3  : index of associativity
+        // x4  : part of SetWay
 loop_way:
-        lsl             x0,  x2,  x15
-        lsl             x4,  x1,  x12
+        lsl             x0,  x3,  x15
         orr             x0,  x0,  x4
-        orr             x0,  x0,  x1
         bl              ip0
         add             x3,  x3,  #1
         cmp             x13, x3
-        bcs             loop_way
+        b.cs            loop_way
 
         add             x2,  x2,  #1
         cmp             x14, x2
-        bcs             loop_set
+        b.cs            loop_set
 
         add             x1,  x1,  #(1 << 1)
         cmp             x10, x1
-        bcs             loop_level
+        b.cs            loop_level
 exit:
         br              ip1
         ret
 
         .end
-

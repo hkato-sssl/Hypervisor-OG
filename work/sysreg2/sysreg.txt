@@ -1,0 +1,5 @@
+mair,rw
+amair,rw
+tcr,rw
+ttbr0,rw
+sctlr,rw

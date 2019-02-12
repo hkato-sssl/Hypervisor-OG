@@ -13,6 +13,11 @@
 
 /* defines */
 
+#define CURRENT_EL0         0
+#define CURRENT_EL1         (1 << 2)
+#define CURRENT_EL2         (2 << 2)
+#define CURRENT_EL3         (3 << 2)
+
 /* PSTATE */
 
 #define PSTATE_N            BIT(31)
@@ -1699,6 +1704,27 @@ static inline uint64_t aarhc64_read_cbar_el1(void)
     return d;
 }
 
+/* part of PSATE */
+
+static inline uint64_t aarch64_read_current_el(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, CurrentEL" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* system register APIs in current exception level */
+
+void aarch64_write_mair(uint64_t d);
+uint64_t aarch64_read_mair(void);
+void aarch64_write_amair(uint64_t d);
+uint64_t aarch64_read_amair(void);
+void aarch64_write_tcr(uint64_t d);
+uint64_t aarch64_read_tcr(void);
+void aarch64_wrte_ttbr0(uint64_t d);
+uint64_t aarch64_read_ttbr0(void);
+void aarch64_wrte_sctlr(uint64_t d);
+uint64_t aarch64_read_sctlr(void);
 
 #ifdef __cplusplus
 }

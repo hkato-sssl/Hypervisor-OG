@@ -19,21 +19,21 @@ import sys
 import string
 
 TEMPLATE_W64 = """\
-static inline void aarhc64_write_%s(uint64_t d)
+static inline void aarch64_write_%s(uint64_t d)
 {
     __asm volatile ("msr %s, %%0" :: "r"(d) : "memory");
 }
 """
 
 TEMPLATE_W32 = """\
-static inline void aarhc64_write_%s(uint32_t d)
+static inline void aarch64_write_%s(uint32_t d)
 {
     __asm volatile ("msr %s, %%0" :: "r"(d) : "memory");
 }
 """
 
 TEMPLATE_R64 = """\
-static inline uint64_t aarhc64_read_%s(void)
+static inline uint64_t aarch64_read_%s(void)
 {
     uint64_t d;
     __asm volatile ("mrs %%0, %s" : "=r"(d) :: "memory");
@@ -42,7 +42,7 @@ static inline uint64_t aarhc64_read_%s(void)
 """
 
 TEMPLATE_R32 = """\
-static inline uint32_t aarhc64_read_%s(void)
+static inline uint32_t aarch64_read_%s(void)
 {
     uint32_t d;
     __asm volatile ("mrs %%0, %s" : "=r"(d) :: "memory");

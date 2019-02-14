@@ -161,3 +161,10 @@ CPUECTLR_EL1,RW,64,CPU Extended Control Register
 CPUMERRSR_EL1,RW,64,CPU Memory Error Syndrome Register
 L2MERRSR_EL1,RW,64,L2 Memory Error Syndrome Register
 CBAR_EL1,RO,64,Configuration Base Address Register
+
+# Part of PSTATE
+
+SPSel,RW,64,SPSel
+CurrentEL,RW,64,CurrentEL
+DAIF,RW,64,DAIF
+NZCV,RW,64,NZCV

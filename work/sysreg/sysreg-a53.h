@@ -1645,3 +1645,63 @@ static inline uint64_t aarch64_read_cbar_el1(void)
     return d;
 }
 
+/*
+ * Part of PSTATE
+ */
+
+/* SPSel */
+
+static inline void aarch64_write_spsel(uint64_t d)
+{
+    __asm volatile ("msr SPSel, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_spsel(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, SPSel" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* CurrentEL */
+
+static inline void aarch64_write_currentel(uint64_t d)
+{
+    __asm volatile ("msr CurrentEL, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_currentel(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, CurrentEL" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* DAIF */
+
+static inline void aarch64_write_daif(uint64_t d)
+{
+    __asm volatile ("msr DAIF, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_daif(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, DAIF" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* NZCV */
+
+static inline void aarch64_write_nzcv(uint64_t d)
+{
+    __asm volatile ("msr NZCV, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_nzcv(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, NZCV" : "=r"(d) :: "memory");
+    return d;
+}
+

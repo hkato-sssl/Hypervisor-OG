@@ -6,15 +6,12 @@
 
 /* CAUTION:
  *
- * ここで実装されるAPIはNon-secure mode専用となる。
- * Secure modeで動作させる場合は、PSTATE_MASK/DAIF_BITSの定義を修正
- * する必要がある。
+ * ここでの実装はDAIF.Iのみを操作対象としている為、Non-secure mode専用
+ * APIとなる。
+ * Secure modeで動作させる場合は、実装そのものを変更する必要がある。
  */
 
 #include "driver/aarch64/system_register.h"
-
-#define PSTATE_MASK     PSTATE_I
-#define DAIF_BITS       DAIF_I
 
         .global         aarch64_lock
         .global         aarch64_unlock
@@ -24,22 +21,23 @@
         .balign         4
 aarch64_lock:
         mrs             x0,  DAIF
-        ands            x0,  x0,  #PSTATE_MASK
-        beq             lock_exit
+        tbnz            x0,  #7, no_lock        /* test DAIF.I */
 
-        /* disable interrupts */
-        msr             DAIFSet, #DAIF_BITS
+        /* mask interrupts */
+        msr             DAIFSet, #DAIF_I
         mov             x0,  #1
-lock_exit:
+        ret
+no_lock:
+        mov             x0,  #0
         ret
 
         .section        ".text.aarch64_unlock", "ax", %progbits
         .type           aarch64_unlock, %function
         .balign         4
 aarch64_unlock:
-        cbz             x0,  exit
-        msr             DAIFClr, #DAIF_BITS
-exit:
+        cbz             x0,  no_unlock
+        msr             DAIFClr, #DAIF_I
+no_unlock:
         ret
 
         .end

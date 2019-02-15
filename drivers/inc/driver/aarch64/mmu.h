@@ -120,7 +120,7 @@ struct aarch64_mmu_attr {
     uint8_t         attrindx:3;
 };
 
-struct aarch64_mmu_ttbr {
+struct aarch64_mmu_trans_table {
     uint64_t        *addr;
     uint16_t        asid;
     struct {
@@ -136,12 +136,12 @@ struct aarch64_mmu_ttbr {
 /* functions */
 
 errno_t aarch64_mmu_set_mair(uint8_t const *attributes);
-errno_t aarch64_mmu_set_ttbr0_el1(struct aarch64_mmu_ttbr const *ttbr);
-errno_t aarch64_mmu_set_ttbr0_el2(struct aarch64_mmu_ttbr const *ttbr);
-errno_t aarch64_mmu_set_ttbr0_el3(struct aarch64_mmu_ttbr const *ttbr);
-errno_t aarch64_mmu_set_ttbr1_el1(struct aarch64_mmu_ttbr const *ttbr);
-errno_t aarch64_mmu_map(struct aarch64_mmu_ttbr *ttbr, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
-errno_t aarch64_mmu_map_4KB(struct aarch64_mmu_ttbr *ttbr, void *va, void *pa, struct aarch64_mmu_attr const *attr);
+errno_t aarch64_mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt);
+errno_t aarch64_mmu_set_ttbr0_el2(struct aarch64_mmu_trans_table const *tt);
+errno_t aarch64_mmu_set_ttbr0_el3(struct aarch64_mmu_trans_table const *tt);
+errno_t aarch64_mmu_set_ttbr1_el1(struct aarch64_mmu_trans_table const *tt);
+errno_t aarch64_mmu_map(struct aarch64_mmu_trans_table *tt, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
+errno_t aarch64_mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr);
 
 #ifdef __cplusplus
 }

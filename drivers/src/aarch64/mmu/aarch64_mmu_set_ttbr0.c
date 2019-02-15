@@ -24,12 +24,12 @@
 
 /* functions */
 
-static bool is_valid_ttbr(struct aarch64_mmu_ttbr const *ttbr)
+static bool is_valid_tt(struct aarch64_mmu_trans_table const *tt)
 {
     bool valid;
 
-    if ((ttbr != NULL) &&
-        (ttbr->addr != NULL) && (((uintptr_t)(ttbr->addr) & 63) == 0)) {
+    if ((tt != NULL) &&
+        (tt->addr != NULL) && (((uintptr_t)(tt->addr) & 63) == 0)) {
         valid = true;
     } else {
         valid = false;
@@ -39,15 +39,15 @@ static bool is_valid_ttbr(struct aarch64_mmu_ttbr const *ttbr)
 }
 
 
-static void mmu_set_ttbr0(struct aarch64_mmu_ttbr const *ttbr)
+static void mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt)
 {
     uint64_t d;
 
-    d = ((uint64_t)(ttbr->asid) << 48) | ((uintptr_t)(ttbr->addr) & BITS(47, 0));
+    d = ((uint64_t)(tt->asid) << 48) | ((uintptr_t)(tt->addr) & BITS(47, 0));
     aarch64_write_ttbr0(d);
 }
 
-static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_ttbr const *ttbr)
+static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt)
 {
     bool lock;
     uint64_t d;
@@ -57,10 +57,10 @@ static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_ttbr const *ttbr)
     d = BIT(36) | (1ULL << 32) | 0x8000;
 
     /* set SH0, ORGN0, IRGN0 and T0SZ */
-    d |= (uint64_t)(ttbr->tcr.sh) << 12;
-    d |= (uint64_t)(ttbr->tcr.orgn) << 10;
-    d |= (uint64_t)(ttbr->tcr.irgn) << 8;
-    d |= (uint64_t)(ttbr->tcr.sz);
+    d |= (uint64_t)(tt->tcr.sh) << 12;
+    d |= (uint64_t)(tt->tcr.orgn) << 10;
+    d |= (uint64_t)(tt->tcr.irgn) << 8;
+    d |= (uint64_t)(tt->tcr.sz);
 
     lock = aarch64_lock();
 
@@ -68,19 +68,19 @@ static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_ttbr const *ttbr)
     d |= d0 & BITS(31, 16);
     aarch64_write_tcr_el1(d);
 
-    mmu_set_ttbr0(ttbr);
+    mmu_set_ttbr0(tt);
 
     aarch64_unlock(lock);
 
     return SUCCESS;
 }
 
-errno_t aarch64_mmu_set_ttbr0_el1(struct aarch64_mmu_ttbr const *ttbr)
+errno_t aarch64_mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt)
 {
     errno_t ret;
 
-    if (is_valid_ttbr(ttbr)) {
-        ret = mmu_set_ttbr0_el1(ttbr);
+    if (is_valid_tt(tt)) {
+        ret = mmu_set_ttbr0_el1(tt);
     } else {
         ret = -EINVAL;
     }
@@ -88,7 +88,7 @@ errno_t aarch64_mmu_set_ttbr0_el1(struct aarch64_mmu_ttbr const *ttbr)
     return ret;
 }
 
-static errno_t mmu_set_ttbr0_el2(struct aarch64_mmu_ttbr const *ttbr)
+static errno_t mmu_set_ttbr0_el2(struct aarch64_mmu_trans_table const *tt)
 {
     bool lock;
     uint32_t d;
@@ -98,10 +98,10 @@ static errno_t mmu_set_ttbr0_el2(struct aarch64_mmu_ttbr const *ttbr)
     d = (1UL << 16) | TCR_EL2_RES1;
 
     /* set SH0, ORGN0, IRGN0 and T0SZ */
-    d |= (uint32_t)(ttbr->tcr.sh) << 12;
-    d |= (uint32_t)(ttbr->tcr.orgn) << 10;
-    d |= (uint32_t)(ttbr->tcr.irgn) << 8;
-    d |= (uint32_t)(ttbr->tcr.sz);
+    d |= (uint32_t)(tt->tcr.sh) << 12;
+    d |= (uint32_t)(tt->tcr.orgn) << 10;
+    d |= (uint32_t)(tt->tcr.irgn) << 8;
+    d |= (uint32_t)(tt->tcr.sz);
 
     lock = aarch64_lock();
 
@@ -109,19 +109,19 @@ static errno_t mmu_set_ttbr0_el2(struct aarch64_mmu_ttbr const *ttbr)
     d |= d0 & BITS(31, 16);
     aarch64_write_tcr_el2(d);
 
-    mmu_set_ttbr0(ttbr);
+    mmu_set_ttbr0(tt);
 
     aarch64_unlock(lock);
 
     return SUCCESS;
 }
 
-errno_t aarch64_mmu_set_ttbr0_el2(struct aarch64_mmu_ttbr const *ttbr)
+errno_t aarch64_mmu_set_ttbr0_el2(struct aarch64_mmu_trans_table const *tt)
 {
     errno_t ret;
 
-    if (is_valid_ttbr(ttbr)) {
-        ret = mmu_set_ttbr0_el2(ttbr);
+    if (is_valid_tt(tt)) {
+        ret = mmu_set_ttbr0_el2(tt);
     } else {
         ret = -EINVAL;
     }
@@ -129,7 +129,7 @@ errno_t aarch64_mmu_set_ttbr0_el2(struct aarch64_mmu_ttbr const *ttbr)
     return ret;
 }
 
-static errno_t mmu_set_ttbr0_el3(struct aarch64_mmu_ttbr const *ttbr)
+static errno_t mmu_set_ttbr0_el3(struct aarch64_mmu_trans_table const *tt)
 {
     bool lock;
     uint32_t d;
@@ -139,10 +139,10 @@ static errno_t mmu_set_ttbr0_el3(struct aarch64_mmu_ttbr const *ttbr)
     d = (1UL << 16) | TCR_EL3_RES1;
 
     /* set SH0, ORGN0, IRGN0 and T0SZ */
-    d |= (uint32_t)(ttbr->tcr.sh) << 12;
-    d |= (uint32_t)(ttbr->tcr.orgn) << 10;
-    d |= (uint32_t)(ttbr->tcr.irgn) << 8;
-    d |= (uint32_t)(ttbr->tcr.sz);
+    d |= (uint32_t)(tt->tcr.sh) << 12;
+    d |= (uint32_t)(tt->tcr.orgn) << 10;
+    d |= (uint32_t)(tt->tcr.irgn) << 8;
+    d |= (uint32_t)(tt->tcr.sz);
 
     lock = aarch64_lock();
 
@@ -150,19 +150,19 @@ static errno_t mmu_set_ttbr0_el3(struct aarch64_mmu_ttbr const *ttbr)
     d |= d0 & BITS(31, 16);
     aarch64_write_tcr_el3(d);
 
-    mmu_set_ttbr0(ttbr);
+    mmu_set_ttbr0(tt);
 
     aarch64_unlock(lock);
 
     return SUCCESS;
 }
 
-errno_t aarch64_mmu_set_ttbr0_el3(struct aarch64_mmu_ttbr const *ttbr)
+errno_t aarch64_mmu_set_ttbr0_el3(struct aarch64_mmu_trans_table const *tt)
 {
     errno_t ret;
 
-    if (is_valid_ttbr(ttbr)) {
-        ret = mmu_set_ttbr0_el3(ttbr);
+    if (is_valid_tt(tt)) {
+        ret = mmu_set_ttbr0_el3(tt);
     } else {
         ret = -EINVAL;
     }

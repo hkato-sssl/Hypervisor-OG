@@ -13,8 +13,7 @@
 
 /* defines */
 
-#define TCR_EL2_RES1    (BIT(31) | BIT(23))
-#define TCR_EL3_RES1    (BIT(31) | BIT(23))
+#define TCR_EL23_RES1   (BIT(31) | BIT(23))
 
 /* types */
 
@@ -53,8 +52,8 @@ static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt)
     uint64_t d;
     uint64_t d0;
 
-    /* TBI0=0, TBI1=0, AS=1, IPS=0b001(36 bits,64GB), TG0=0b10(4KB), EPD0=0 */ 
-    d = BIT(36) | (1ULL << 32) | 0x8000;
+    /* TBI0=0, TBI1=0, AS=1, IPS=0b001(36 bits,64GB), TG0=0b00(4KB), EPD0=0 */ 
+    d = BIT(36) | (1ULL << 32);
 
     /* set SH0, ORGN0, IRGN0 and T0SZ */
     d |= (uint64_t)(tt->tcr.sh) << 12;
@@ -65,7 +64,8 @@ static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt)
     lock = aarch64_lock();
 
     d0 = aarch64_read_tcr_el1();
-    d |= d0 & BITS(31, 16);
+    /* A1=0 */
+    d |= d0 & (BITS(31, 23) | BITS(21, 16));
     aarch64_write_tcr_el1(d);
 
     mmu_set_ttbr0(tt);
@@ -75,27 +75,13 @@ static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt)
     return SUCCESS;
 }
 
-errno_t aarch64_mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt)
-{
-    errno_t ret;
-
-    if (is_valid_tt(tt)) {
-        ret = mmu_set_ttbr0_el1(tt);
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t mmu_set_ttbr0_el2(struct aarch64_mmu_trans_table const *tt)
+static errno_t mmu_set_ttbr0_el23(struct aarch64_mmu_trans_table const *tt)
 {
     bool lock;
     uint32_t d;
-    uint32_t d0;
 
     /* TBI=0, PS=0b001(36 bits,64GB), TG0=0b00(4KB) */ 
-    d = (1UL << 16) | TCR_EL2_RES1;
+    d = (1UL << 16) | TCR_EL23_RES1;
 
     /* set SH0, ORGN0, IRGN0 and T0SZ */
     d |= (uint32_t)(tt->tcr.sh) << 12;
@@ -105,10 +91,7 @@ static errno_t mmu_set_ttbr0_el2(struct aarch64_mmu_trans_table const *tt)
 
     lock = aarch64_lock();
 
-    d0 = aarch64_read_tcr_el2();
-    d |= d0 & BITS(31, 16);
-    aarch64_write_tcr_el2(d);
-
+    aarch64_write_tcr(d);
     mmu_set_ttbr0(tt);
 
     aarch64_unlock(lock);
@@ -116,53 +99,30 @@ static errno_t mmu_set_ttbr0_el2(struct aarch64_mmu_trans_table const *tt)
     return SUCCESS;
 }
 
-errno_t aarch64_mmu_set_ttbr0_el2(struct aarch64_mmu_trans_table const *tt)
+errno_t aarch64_mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt)
 {
     errno_t ret;
+    uint64_t el;
 
     if (is_valid_tt(tt)) {
-        ret = mmu_set_ttbr0_el2(tt);
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t mmu_set_ttbr0_el3(struct aarch64_mmu_trans_table const *tt)
-{
-    bool lock;
-    uint32_t d;
-    uint32_t d0;
-
-    /* TBI=0, PS=0b001(36 bits,64GB), TG0=0b00(4KB) */ 
-    d = (1UL << 16) | TCR_EL3_RES1;
-
-    /* set SH0, ORGN0, IRGN0 and T0SZ */
-    d |= (uint32_t)(tt->tcr.sh) << 12;
-    d |= (uint32_t)(tt->tcr.orgn) << 10;
-    d |= (uint32_t)(tt->tcr.irgn) << 8;
-    d |= (uint32_t)(tt->tcr.sz);
-
-    lock = aarch64_lock();
-
-    d0 = aarch64_read_tcr_el3();
-    d |= d0 & BITS(31, 16);
-    aarch64_write_tcr_el3(d);
-
-    mmu_set_ttbr0(tt);
-
-    aarch64_unlock(lock);
-
-    return SUCCESS;
-}
-
-errno_t aarch64_mmu_set_ttbr0_el3(struct aarch64_mmu_trans_table const *tt)
-{
-    errno_t ret;
-
-    if (is_valid_tt(tt)) {
-        ret = mmu_set_ttbr0_el3(tt);
+        el = aarch64_read_currentel();
+        switch (el) {
+        case CURRENT_EL1:
+            ret = mmu_set_ttbr0_el1(tt);
+            break;
+        case CURRENT_EL2:
+            ret = mmu_set_ttbr0_el23(tt);
+            break;
+        case CURRENT_EL3:
+            if (tt->asid == 0) {
+                ret = mmu_set_ttbr0_el23(tt);
+            } else {
+                ret = -EINVAL;
+            }
+            break;
+        default:
+            ret = -ENOSYS;
+        }
     } else {
         ret = -EINVAL;
     }

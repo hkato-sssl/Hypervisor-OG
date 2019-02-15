@@ -22,10 +22,13 @@ extern "C" {
 
 /* includes */
 
+#include <stdint.h>
+
 /* defines */
 
 #define BIT(n)          (1ULL << (n))
 #define BITS(m, l)      ((BIT(m) | (BIT(m) - 1)) ^ (BIT(l) - 1))
+#define IS_ALIGN(n, a)  (((uintptr_t)(n) & ((uintptr_t)(a) - 1)) == 0)
 
 /* types */
 

@@ -14,7 +14,11 @@
 
 /* includes */
 
+#include <stddef.h>
+#include <stdint.h>
 #include "lib/bit.h"
+#include "lib/list.h"
+#include "lib/errno.h"
 
 /* defines */
 
@@ -131,6 +135,27 @@ struct aarch64_mmu_trans_table {
     } tcr;
 };
 
+struct aarch64_mmu_block_pool {
+    size_t          block_sz;
+    struct list     block_list;
+    struct {
+        void        *addr;
+        size_t      size;
+    } block_region;
+    struct {
+        uint64_t    alloc;
+        uint64_t    free;
+    } counter;
+};
+
+struct aarch64_mmu_block_pool_configure {
+    size_t          block_sz;
+    struct {
+        void        *addr;
+        size_t      size;
+    } block_region;
+};
+
 /* variables */
 
 /* functions */
@@ -139,6 +164,10 @@ errno_t aarch64_mmu_set_mair(uint8_t const *attributes);
 errno_t aarch64_mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt);
 errno_t aarch64_mmu_map(struct aarch64_mmu_trans_table *tt, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
 errno_t aarch64_mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr);
+
+errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configure const *conf);
+void *aarch64_mmu_block_alloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);
+errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block, size_t block_sz);
 
 #ifdef __cplusplus
 }

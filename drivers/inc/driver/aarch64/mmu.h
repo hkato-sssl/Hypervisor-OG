@@ -124,17 +124,6 @@ struct aarch64_mmu_attr {
     uint8_t         attrindx:3;
 };
 
-struct aarch64_mmu_trans_table {
-    uint64_t        *addr;
-    uint16_t        asid;
-    struct {
-        uint8_t     sz:6;
-        uint8_t     sh:2;
-        uint8_t     irgn:2;
-        uint8_t     orgn:2;
-    } tcr;
-};
-
 struct aarch64_mmu_block_pool {
     size_t          block_sz;
     struct list     block_list;
@@ -156,12 +145,32 @@ struct aarch64_mmu_block_pool_configure {
     } block_region;
 };
 
+struct aarch64_mmu_trans_table {
+    uint64_t        *addr;
+    uint16_t        asid;
+    struct {
+        uint8_t     sz:6;
+        uint8_t     sh:2;
+        uint8_t     irgn:2;
+        uint8_t     orgn:2;
+    } tcr;
+    struct aarch64_mmu_block_pool pool;
+};
+
+struct aarch64_mmu_trans_table_configure {
+    uint16_t        asid;
+    struct aarch64_mmu_block_pool_configure pool;
+};
+
 /* variables */
 
 /* functions */
 
+errno_t aarch64_mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *conf);
+
 errno_t aarch64_mmu_set_mair(uint8_t const *attributes);
 errno_t aarch64_mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt);
+
 errno_t aarch64_mmu_map(struct aarch64_mmu_trans_table *tt, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
 errno_t aarch64_mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr);
 

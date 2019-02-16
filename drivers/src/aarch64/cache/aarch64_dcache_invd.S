@@ -12,6 +12,7 @@
         .type           aarch64_dcache_invd, %function
         .balign         4
 aarch64_dcache_invd:
+        dsb             osh
         dc              ivac, x0
         dsb             osh
         ret
@@ -20,6 +21,8 @@ aarch64_dcache_invd:
         .type           aarch64_dcache_invd_range, %function
         .balign         4
 aarch64_dcache_invd_range:
+        dsb             osh
+
         str             lr,  [sp,  #-16]!
         stp             x0,  x1,  [sp,  #-16]!
         bl              aarch64_poc_line_sz

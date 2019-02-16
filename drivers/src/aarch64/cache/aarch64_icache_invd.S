@@ -14,6 +14,7 @@
         .type           aarch64_icache_invd_all, %function
         .balign         4
 aarch46_icache_invd_all:
+        dsb             ish
         ic              ialluis
         dsb             ish
         isb
@@ -23,6 +24,7 @@ aarch46_icache_invd_all:
         .type           aarch64_icache_invd, %function
         .balign         4
 aarch46_icache_invd:
+        dsb             ish
         ic              ivau, x0
         dsb             ish
         isb
@@ -33,6 +35,8 @@ aarch46_icache_invd:
         .type           aarch64_icache_invd_range, %function
         .balign         4
 aarch64_icache_invd_range:
+        dsb             ish
+
         cmp             x1,  x0         // if (x0 > x1)
         bmi             error_einval    //   return -EINVAL
 
@@ -58,9 +62,9 @@ invd_loop:
         add             x0,  x0,  x2
         bne             invd_loop
 
+exit:
         dsb             ish
         isb
-exit:
         mov             x0,  xzr
         ret
         

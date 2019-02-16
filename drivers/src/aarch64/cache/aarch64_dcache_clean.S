@@ -12,6 +12,7 @@
         .type           aarch64_dcache_clean, %function
         .balign         4
 aarch64_dcache_clean:
+        dsb             osh
         dc              cvac, x0
         dsb             osh
         ret
@@ -20,6 +21,8 @@ aarch64_dcache_clean:
         .type           aarch64_dcache_clean_range, %function
         .balign         4
 aarch64_dcache_clean_range:
+        dsb             osh
+
         str             lr,  [sp,  #-16]!
         stp             x0,  x1,  [sp,  #-16]!
         bl              aarch64_poc_line_sz

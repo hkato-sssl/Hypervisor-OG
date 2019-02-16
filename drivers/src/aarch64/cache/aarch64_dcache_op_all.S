@@ -47,6 +47,8 @@ op_clean_invd:
          * x0 - the maintenance function
          */
 aarch64_dcache_op_all:
+        dsb             osh
+
         mov             ip0, x0
         mov             ip1, lr
 
@@ -105,7 +107,7 @@ loop_way:
         cmp             x10, x1
         b.cs            loop_level
 exit:
+        dsb             osh
         br              ip1
-        ret
 
         .end

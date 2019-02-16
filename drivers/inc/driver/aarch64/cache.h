@@ -1,11 +1,11 @@
 /*
- * lib/aarch64/cache.h
+ * driver/aarch64/cache.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef LIB_AARCH64_CACHE_H
-#define LIB_AARCH64_CACHE_H
+#ifndef DRIVER_AARCH64_CACHE_H
+#define DRIVER_AARCH64_CACHE_H
 
 /* includes */
 
@@ -53,5 +53,5 @@ errno_t aarch64_dcache_clean_invd_range(void *st, void *ed);
 
 #endif /* ASSEMBLY */
 
-#endif /* LIB_AARCH64_CACHE_H */
+#endif /* DRIVER_AARCH64_CACHE_H */
 

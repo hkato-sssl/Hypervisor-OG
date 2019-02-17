@@ -28,10 +28,10 @@ static bool is_valid_parameters(struct aarch64_mmu_block_pool *pool, struct aarc
 
     if ((pool != NULL) && (conf != NULL) &&
         (conf->block_region.addr != NULL) &&
-        (IS_ALIGN(conf->block_region.addr, 4096)) &&
+        (IS_ALIGNED(conf->block_region.addr, 4096)) &&
         (conf->block_sz == 4096) &&
         (conf->block_region.size > 0) &&
-        (IS_ALIGN(conf->block_region.size, 4096))) {
+        (IS_ALIGNED(conf->block_region.size, 4096))) {
         valid = true;
     } else {
         valid = false;

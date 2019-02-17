@@ -11,8 +11,8 @@
 
 /* defines */
 
-#define BIT(n)          (1 << (n))
-#define BITS(m, l)      ((BIT(m) | (BIT(m) - 1)) ^ (BIT(l) - 1))
+#define BIT(n)              (1 << (n))
+#define BITS(m, l)          ((BIT(m) | (BIT(m) - 1)) ^ (BIT(l) - 1))
 
 #else /* ASSEMBLY */
 
@@ -26,9 +26,9 @@ extern "C" {
 
 /* defines */
 
-#define BIT(n)          (1ULL << (n))
-#define BITS(m, l)      ((BIT(m) | (BIT(m) - 1)) ^ (BIT(l) - 1))
-#define IS_ALIGN(n, a)  (((uintptr_t)(n) & ((uintptr_t)(a) - 1)) == 0)
+#define BIT(n)              (1ULL << (n))
+#define BITS(m, l)          ((BIT(m) | (BIT(m) - 1)) ^ (BIT(l) - 1))
+#define IS_ALIGNED(n, a)    (((uintptr_t)(n) & ((uintptr_t)(a) - 1)) == 0)
 
 /* types */
 

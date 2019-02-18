@@ -23,18 +23,42 @@ extern "C" {
 /* includes */
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /* defines */
 
 #define BIT(n)              (1ULL << (n))
 #define BITS(m, l)          ((BIT(m) | (BIT(m) - 1)) ^ (BIT(l) - 1))
-#define IS_ALIGNED(n, a)    (((uintptr_t)(n) & ((uintptr_t)(a) - 1)) == 0)
+#define IS_ALIGNED(n, a)    lib_is_aligned((n), (a))
+#define BF_EXTRACT(d, m, l) lib_bf_extract((d), (m), (l))
 
 /* types */
 
 /* variables */
 
 /* functions */
+
+static inline bool lib_is_aligned(uintptr_t d, uintptr_t a)
+{
+    bool ret;
+
+    if ((d & (a - 1)) == 0) {
+        ret = true;
+    } else {
+        ret = false;
+    }
+
+    return ret;
+}
+
+static inline uintptr_t lib_bf_extract(uintptr_t d, uintptr_t msb, uintptr_t lsb)
+{
+    uintptr_t bf;
+
+    bf = (d >> lsb) & BITS((msb - lsb), 0);
+
+    return bf;
+}
 
 #ifdef __cplusplus
 }

@@ -6,11 +6,12 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
+#include <string.h>
 #include "lib/atomic.h"
 #include "lib/list.h"
 #include "lib/errno.h"
 #include "driver/aarch64/mmu.h"
+#include "mmu_local.h"
 
 /* defines */
 
@@ -22,22 +23,22 @@
 
 /* functions */
 
-static bool is_valid_parameters(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configure const *conf)
+static errno_t validate_parameters(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configure const *conf)
 {
-    bool valid;
+    errno_t ret;
 
     if ((pool != NULL) && (conf != NULL) &&
         (conf->block_region.addr != NULL) &&
-        (IS_ALIGNED(conf->block_region.addr, 4096)) &&
+        (IS_ALIGNED((uintptr_t)(conf->block_region.addr), 4096)) &&
         (conf->block_sz == 4096) &&
         (conf->block_region.size > 0) &&
-        (IS_ALIGNED(conf->block_region.size, 4096))) {
-        valid = true;
+        (IS_ALIGNED((uintptr_t)(conf->block_region.size), 4096))) {
+        ret = SUCCESS;
     } else {
-        valid = false;
+        ret = -EINVAL;
     }
 
-    return valid;
+    return ret;
 }
 
 static errno_t mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configure const *conf)
@@ -47,11 +48,11 @@ static errno_t mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct a
     char *p;
     struct list_element *e;
 
+    memset(pool, 0, sizeof(*pool));
+
     pool->block_sz = conf->block_sz;
     pool->block_region.addr = conf->block_region.addr;
     pool->block_region.size = conf->block_region.size;
-    pool->counter.alloc = 0;
-    pool->counter.free = 0;
 
     ret = SUCCESS;
     list_init(&(pool->block_list));
@@ -74,7 +75,8 @@ errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct 
 {
     errno_t ret;
 
-    if (is_valid_parameters(pool, conf)) {
+    ret = validate_parameters(pool, conf);
+    if (ret == SUCCESS) {
         ret = mmu_block_pool_init(pool, conf);
     } else {
         ret = -EINVAL;
@@ -83,14 +85,20 @@ errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct 
     return ret;
 }
 
-void *aarch64_mmu_block_alloc(struct aarch64_mmu_block_pool *pool, size_t block_sz)
+void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz)
 {
     void *p;
 
     if ((pool != NULL) && (pool->block_sz == block_sz)) {
-        atomic_inc_u64(&(pool->counter.alloc));
         p = list_get_front(&(pool->block_list));
+        if (p != NULL) {
+            aarch64_mmu_memclr(p, block_sz);
+            atomic_inc_u64(&(pool->counter.calloc.success));
+        } else {
+            atomic_inc_u64(&(pool->counter.calloc.failure));
+        }
     } else {
+        atomic_inc_u64(&(pool->counter.calloc.failure));
         p = NULL;
     }
 
@@ -102,9 +110,14 @@ errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block,
     errno_t ret;
 
     if ((pool != NULL) && (block != NULL) && (pool->block_sz == block_sz)) {
-        atomic_inc_u64(&(pool->counter.free));
         ret = list_append(&(pool->block_list), block);
+        if (ret == SUCCESS) {
+            atomic_inc_u64(&(pool->counter.free.success));
+        } else {
+            atomic_inc_u64(&(pool->counter.free.failure));
+        }
     } else {
+        atomic_inc_u64(&(pool->counter.free.failure));
         ret = -EINVAL;
     }
 

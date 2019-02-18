@@ -119,21 +119,27 @@ struct aarch64_mmu_attr {
     /* lower attributes */
     uint8_t         ng:1;
     uint8_t         sh:2;
-    uint8_t         ap:2;
+    uint8_t         ap21:2;
     uint8_t         ns:1;
     uint8_t         attrindx:3;
 };
 
 struct aarch64_mmu_block_pool {
-    size_t          block_sz;
-    struct list     block_list;
+    size_t              block_sz;
+    struct list         block_list;
     struct {
-        void        *addr;
-        size_t      size;
+        void            *addr;
+        size_t          size;
     } block_region;
     struct {
-        uint64_t    alloc;
-        uint64_t    free;
+        struct {
+            uint64_t    success;
+            uint64_t    failure;
+        } calloc;
+        struct {
+            uint64_t    success;
+            uint64_t    failure;
+        } free;
     } counter;
 };
 
@@ -175,7 +181,7 @@ errno_t aarch64_mmu_map(struct aarch64_mmu_trans_table *tt, void *va, void *pa, 
 errno_t aarch64_mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr);
 
 errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configure const *conf);
-void *aarch64_mmu_block_alloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);
+void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);
 errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block, size_t block_sz);
 
 #ifdef __cplusplus

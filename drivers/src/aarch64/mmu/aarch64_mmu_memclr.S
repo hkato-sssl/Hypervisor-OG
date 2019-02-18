@@ -1,5 +1,5 @@
 /*
- * aarch64/mmu/aarch64_mmu_clear_block.S
+ * aarch64/mmu/aarch64_mmu_memclr.S
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -8,17 +8,17 @@
 #include "lib/system/errno.h"
 #include "mmu_local.h"
 
-        .global         aarch64_mmu_clear_block
+        .global         aarch64_mmu_memclr
         .extern         memset
 
-        .section        ".text.aarch64_mmu_clear_block", "ax", %progbits
-        .type           aarch64_mmu_clear_block, %function
+        .section        ".text.aarch64_mmu_memclr", "ax", %progbits
+        .type           aarch64_mmu_memclr, %function
         .balign         4
         /*
          * x0 : address
          * x1 : region size
          */
-aarch64_mmu_clear_block:
+aarch64_mmu_memclr:
         cbz             x0,  error
         tst             x0,  #(MMU_BLOCK_SZ - 1)
         b.ne            error

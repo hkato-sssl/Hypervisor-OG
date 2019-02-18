@@ -17,6 +17,7 @@
 
 /* includes */
 
+#include <stddef.h>
 #include <stdint.h>
 
 /* defines */
@@ -31,7 +32,9 @@
 extern "C" {
 #endif
 
-void aarch64_mmu_clear_block(void *addr, size_t size);
+void aarch64_mmu_write_tt(uint64_t *addr, uint64_t desc);
+void aarch64_mmu_tlbi_va(void *va);
+void aarch64_mmu_memclr(void *addr, size_t size);
 
 #ifdef __cplusplus
 }

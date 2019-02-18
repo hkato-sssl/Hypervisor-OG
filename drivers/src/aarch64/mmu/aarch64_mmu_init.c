@@ -38,7 +38,7 @@ static bool is_valid_parameters(struct aarch64_mmu_trans_table *tt, struct aarch
 static errno_t init_trans_table(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *conf)
 {
     tt->asid = conf->asid;
-    aarch64_mmu_clear_block(tt->addr, MMU_BLOCK_SZ);
+    aarch64_mmu_memclr(tt->addr, MMU_BLOCK_SZ);
 
     /*
      * 現状ではTCR関連のパラメータは固定値とする
@@ -59,7 +59,7 @@ static errno_t mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_t
 
     ret = aarch64_mmu_block_pool_init(&(tt->pool), &(conf->pool));
     if (ret == SUCCESS) {
-        tt->addr = aarch64_mmu_block_alloc(&(tt->pool), MMU_BLOCK_SZ);
+        tt->addr = aarch64_mmu_block_calloc(&(tt->pool), MMU_BLOCK_SZ);
         if (tt->addr != NULL) {
             ret = init_trans_table(tt, conf);
         } else {

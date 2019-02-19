@@ -16,6 +16,7 @@
 /* includes */
 
 #include <stdint.h>
+#include "lib/aarch64/atomic.h"
 
 /* defines */
 
@@ -29,8 +30,15 @@
 extern "C" {
 #endif
 
-void atomic_add_u64(uint64_t *p, uint64_t d);
-void atomic_sub_u64(uint64_t *p, uint64_t d);
+static inline void atomic_add_u64(uint64_t *p, uint64_t d)
+{
+    aarch64_atomic_add_u64(p, d);
+}
+
+static inline void atomic_sub_u64(uint64_t *p, uint64_t d)
+{
+    aarch64_atomic_sub_u64(p, d);
+}
 
 static void atomic_inc_u64(uint64_t *p)
 {

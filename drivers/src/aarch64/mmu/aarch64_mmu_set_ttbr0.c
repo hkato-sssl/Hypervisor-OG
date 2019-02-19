@@ -5,7 +5,6 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 #include "lib/system/errno.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
@@ -23,18 +22,18 @@
 
 /* functions */
 
-static bool is_valid_tt(struct aarch64_mmu_trans_table const *tt)
+static errno_t validate_parameters(struct aarch64_mmu_trans_table const *tt)
 {
-    bool valid;
+    errno_t ret;
 
     if ((tt != NULL) &&
         (tt->addr != NULL) && (((uintptr_t)(tt->addr) & 63) == 0)) {
-        valid = true;
+        ret = SUCCESS;
     } else {
-        valid = false;
+        ret = -EINVAL;
     }
 
-    return valid;
+    return ret;
 }
 
 
@@ -104,7 +103,8 @@ errno_t aarch64_mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt)
     errno_t ret;
     uint64_t el;
 
-    if (is_valid_tt(tt)) {
+    ret = validate_parameters(tt);
+    if (ret == SUCCESS) {
         el = aarch64_read_currentel();
         switch (el) {
         case CURRENT_EL1:
@@ -122,9 +122,8 @@ errno_t aarch64_mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt)
             break;
         default:
             ret = -ENOSYS;
+            break;
         }
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

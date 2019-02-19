@@ -6,7 +6,6 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 #include <string.h>
 #include "lib/system/errno.h"
 #include "driver/aarch64/mmu.h"
@@ -22,17 +21,17 @@
 
 /* functions */
 
-static bool is_valid_parameters(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *conf)
+static errno_t validate_parameters(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *conf)
 {
-    bool valid;
+    errno_t ret;
 
     if ((tt != NULL) && (conf != NULL) && (conf->pool.block_sz == MMU_BLOCK_SZ)) {
-        valid = true;
+        ret = SUCCESS;
     } else {
-        valid = false;
+        ret = -EINVAL;
     }
 
-    return valid;
+    return ret;
 }
 
 static errno_t init_trans_table(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *conf)
@@ -74,10 +73,9 @@ errno_t aarch64_mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_
 {
     errno_t ret;
 
-    if (is_valid_parameters(tt, conf)) {
+    ret = validate_parameters(tt, conf);
+    if (ret == SUCCESS) {
         ret = mmu_init(tt, conf);
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

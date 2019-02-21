@@ -4,6 +4,7 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "config/system.h"
 #include "driver/aarch64/exception.h"
 
         .global         excvec_el2
@@ -64,8 +65,10 @@ excvec_el2:
         dsb             sy
         mrs             x16, MPIDR_EL1
         and             x16, x16, #0xff
-        adr             x17, exception_stack_pointers
-        ldr             x16, [x17, x16, lsl #3]
+        mov             x17, #STACK_SIZE
+        madd            x16, x16, x17, x17
+        adr             x17, exc_stack_region
+        ldr             x16, [x17, x16]
 
         sub             x16, x16, #(NR_EXC_REGS * 8)
         stp             x1,  x2,  [x16, #(EXC_X1 * 8)]
@@ -176,7 +179,7 @@ save_rest_registers:
         stp             x2,  x3,  [sp,  #(EXC_SPSR * 8)]
 
         mov             x0,  sp
-        bl              exception_entry_el2
+        bl              exception_handler_el2
         b               .
 
         .end

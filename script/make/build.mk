@@ -45,9 +45,9 @@ ifeq ($(suffix $(TARGET)),.elf)
 $(OUTDIR)/$(TARGET): $(LD_SCRIPT_FILE)
 	echo -o $@ > $(LDOPS_FILE)
 	echo -T config/memory.lds >>$(LDOPS_FILE)
-	echo $(LDFLAGS) >> $(LDOPS_FILE)
 	find $(OUTDIR) -name .srcs | xargs cat | sed -e s/\\.[csS]$$/\\.o/ -e s/^/$(OUTDIR)\\// >> $(LDOPS_FILE)
-	$(CC) -nostdlib -Wl,@$(LDOPS_FILE)
+	echo $(LDFLAGS) >> $(LDOPS_FILE)
+	$(CC) -nostartfiles -Wl,@$(LDOPS_FILE) -static
 else
 $(error Unknown suffix of $$(TARGET).)
 endif

@@ -13,7 +13,9 @@
 
 #ifndef ASSEMBLY
 
+#include <stddef.h>
 #include <stdint.h>
+#include "lib/system/errno.h"
 
 #ifdef __cplusplus
 extern "C" {

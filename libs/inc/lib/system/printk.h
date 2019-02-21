@@ -27,6 +27,8 @@ extern "C" {
 
 /* functions */
 
+void printk(const char *fmt, ...);
+
 #ifdef __cplusplus
 }
 #endif

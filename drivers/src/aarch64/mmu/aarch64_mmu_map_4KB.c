@@ -142,6 +142,7 @@ static errno_t mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *p
     if (desc != NULL) {
         d = descriptor_4KB_region(pa, attr);
         aarch64_mmu_write_tt(desc, d);
+        aarch64_mmu_tlbi_va(va);
         ret = SUCCESS;
     } else {
         ret = -EINVAL;

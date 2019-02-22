@@ -48,6 +48,7 @@ $(OUTDIR)/$(TARGET): $(LD_SCRIPT_FILE)
 	find $(OUTDIR) -name .srcs | xargs cat | sed -e s/\\.[csS]$$/\\.o/ -e s/^/$(OUTDIR)\\// >> $(LDOPS_FILE)
 	echo $(LDFLAGS) >> $(LDOPS_FILE)
 	$(CC) -nostartfiles -Wl,@$(LDOPS_FILE) -static
+	$(OBJCOPY) -O binary $(OUTDIR)/$(TARGET) $(addsuffix .bin,$(basename $(OUTDIR)/$(TARGET)))
 else
 $(error Unknown suffix of $$(TARGET).)
 endif

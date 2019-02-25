@@ -9,7 +9,7 @@
 #include <string.h>
 #include "lib/atomic.h"
 #include "lib/list.h"
-#include "lib/errno.h"
+#include "lib/system/errno.h"
 #include "driver/aarch64/mmu.h"
 #include "mmu_local.h"
 

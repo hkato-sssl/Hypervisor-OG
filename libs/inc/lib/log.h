@@ -22,7 +22,7 @@ extern "C" {
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdarg.h>
-#include "lib/errno.h"
+#include "lib/system/errno.h"
 
 /* defines */
 

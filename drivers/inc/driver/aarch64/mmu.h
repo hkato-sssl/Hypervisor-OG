@@ -18,7 +18,7 @@
 #include <stdint.h>
 #include "lib/bit.h"
 #include "lib/list.h"
-#include "lib/errno.h"
+#include "lib/system/errno.h"
 
 /* defines */
 

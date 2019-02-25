@@ -91,7 +91,6 @@ uint64_t *table_addr(struct aarch64_mmu_trans_table *tt, void *va, uint32_t leve
 
 uint64_t *desc_addr(struct aarch64_mmu_trans_table *tt, void *va, uint32_t level)
 {
-    uint32_t i;
     uint64_t *table;
     uint64_t *desc;
 
@@ -179,7 +178,6 @@ errno_t aarch64_mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *
 static errno_t mmu_unmap_4KB(struct aarch64_mmu_trans_table *tt, void *va)
 {
     errno_t ret;
-    uint64_t d;
     uint64_t *desc;
 
     desc = desc_addr(tt, va, 3);

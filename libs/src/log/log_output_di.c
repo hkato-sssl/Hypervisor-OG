@@ -57,7 +57,7 @@ static int output_lldi(struct log_context *ctx, long long v)
 
 	ret = log_output_string(ctx);
 
-	return SUCCESS;
+	return ret;
 }
 
 int log_output_di(struct log_context *ctx)

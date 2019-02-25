@@ -17,42 +17,15 @@
 
 /* functions */
 
-static int output_left_alignment(struct log_context *ctx, char v)
-{
-	int ret;
-
-	ret = put_char(ctx, v);
-	if (ret == SUCCESS) {
-		ret = log_output_pads(ctx);
-	}
-
-	return ret;
-}
-
-static int output_right_alignment(struct log_context *ctx, char v)
-{
-	int ret;
-
-	ret = log_output_pads(ctx);
-	if (ret == SUCCESS) {
-		ret = put_char(ctx, v);
-	}
-
-	return ret;
-}
-
 static int output_c(struct log_context *ctx, char v)
 {
 	int ret;
 
 	ctx->output.pad = ' ';
 	ctx->output.sign = EOS;
-
-	if (ctx->syntax.flag.minus) {
-		ret = output_left_alignment(ctx, v);
-	} else {
-		ret = output_right_alignment(ctx, v);
-	}
+    ctx->output.string.length = 1;
+    ctx->output.string.buffer[0] = v;
+    ret = log_output_string(ctx);
 
 	return ret;
 }

@@ -20,7 +20,6 @@
 static int output_string(struct log_context *ctx)
 {
 	int ret;
-	int i;
 	size_t idx;
 
 	idx = ctx->output.string.length;

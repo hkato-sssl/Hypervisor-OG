@@ -65,7 +65,6 @@ int log_output_s(struct log_context *ctx)
 
 	int ret;
 	char *v;
-	size_t len;
 
 	ctx->output.pad = ' ';
 
@@ -73,7 +72,7 @@ int log_output_s(struct log_context *ctx)
 	if (v == NULL) {
 		v = null_str;
 	}
-	len = strlen(v);
+	ctx->output.string.length = strlen(v);
 
 	if (ctx->syntax.flag.minus) {
 		ret = output_left_alignment(ctx, v);

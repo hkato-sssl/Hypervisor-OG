@@ -4,6 +4,7 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "lib/asm.h"
 #include "lib/system/errno.h"
 
         .global         aarch64_spin_lock_init

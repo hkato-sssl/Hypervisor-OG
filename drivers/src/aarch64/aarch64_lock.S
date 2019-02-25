@@ -11,6 +11,7 @@
  * Secure modeで動作させる場合は、実装そのものを変更する必要がある。
  */
 
+#include "lib/asm.h"
 #include "driver/aarch64/system_register.h"
 
         .global         aarch64_lock

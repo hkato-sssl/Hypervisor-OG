@@ -4,6 +4,7 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "lib/asm.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "mmu_local.h"

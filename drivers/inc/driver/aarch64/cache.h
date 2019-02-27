@@ -14,7 +14,6 @@
 #ifndef ASSEMBLY
 
 #include <stddef.h>
-#include <stdint.h>
 #include "lib/system/errno.h"
 
 #ifdef __cplusplus
@@ -35,19 +34,18 @@ size_t aarch64_poc_line_sz(void);
 
 void aarch64_icache_invd_all(void);
 void aarch64_icache_invd(void *addr);
-errno_t aarch64_icache_invd_range(void *st, void *ed);
 
 void aarch64_dcache_invd_all(void);
 void aarch64_dcache_invd(void *addr);
-errno_t aarch64_dcache_invd_range(void *st, void *ed);
+errno_t aarch64_dcache_invd_range(void *addr, size_t size);
 
 void aarch64_dcache_clean_all(void);
 void aarch64_dcache_clean(void *addr);
-errno_t aarch64_dcache_clean_range(void *st, void *ed);
+errno_t aarch64_dcache_clean_range(void *addr, size_t size);
 
 void aarch64_dcache_clean_invd_all(void);
 void aarch64_dcache_clean_invd(void *addr);
-errno_t aarch64_dcache_clean_invd_range(void *st, void *ed);
+errno_t aarch64_dcache_clean_invd_range(void *addr, size_t size);
 
 #ifdef __cplusplus
 }

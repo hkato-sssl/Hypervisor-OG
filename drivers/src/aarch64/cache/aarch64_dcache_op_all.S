@@ -64,9 +64,6 @@ aarch64_dcache_op_all:
         and             x10, x10, #BITS(3, 1)
         cbz             x10, exit
 
-        mov             x1,  #(0 << 1)
-
-        // x1  : (index of cache level) << 1
         // x9  : CLIDR_EL1
         // x10 : LoC << 1
 loop_level:
@@ -78,10 +75,8 @@ loop_level:
         // 変更される為、利用するプロセッサ仕様に注意が必要。
         and             x12, x11, #BITS(2, 0)
         add             x12, x12, #4
-        and             x13, x11, #BITS(12, 3)
-        lsr             x13, x13, #3
-        and             x14, x11, #BITS(27, 13)
-        lsr             x14, x11, #32
+        ubfx            x13, x11, #3,  #10
+        ubfx            x14, x11, #13, #15
 
         // x11 : CSSIDR_EL1
         // x12 : log2(number of bytes in cache line)
@@ -92,29 +87,30 @@ loop_level:
 
         // x15 : (32 - A) = 32 - log2(ASSOSIATIVITY)
 
-        mov             x2,  xzr
+        sub             x1,  x10, #(1 << 1)
+        mov             x2,  x14
+        mov             x5,  #1
+        lsl             x5,  x5,  x15
 loop_set:
         lsl             x4,  x2,  x12
         orr             x4,  x4,  x1
-        mov             x3,  xzr
+        mov             x3,  x13
+        // x1  : (index of cache level) << 1
         // x2  : index of set
         // x3  : index of associativity
         // x4  : part of SetWay
-loop_way:
         lsl             x0,  x3,  x15
         orr             x0,  x0,  x4
+loop_way:
         blr             ip0
-        add             x3,  x3,  #1
-        cmp             x13, x3
-        b.cs            loop_way
+        subs            x0,  x0,  x5
+        b.cc            loop_way
 
-        add             x2,  x2,  #1
-        cmp             x14, x2
-        b.cs            loop_set
+        subs            x2,  x2,  #1
+        b.cc            loop_set
 
-        add             x1,  x1,  #(1 << 1)
-        cmp             x10, x1
-        b.cs            loop_level
+        subs            x1,  x1,  #(1 << 1)
+        b.cc            loop_level
 exit:
         dsb             osh
         br              ip1

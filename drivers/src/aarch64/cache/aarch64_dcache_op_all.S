@@ -7,7 +7,42 @@
 #include "lib/asm.h"
 #include "lib/bit.h"
 
-        .global         aarch64_dcache_op_all
+        .global         aarch64_dcache_invd_all
+        .global         aarch64_dcache_clean_all
+        .global         aarch64_dcache_clean_invd_all
+
+        .section        ".text.aarch64_dcache_invd_all", "ax", %progbits
+        .type           aarch64_dcache_invd_all, %function
+        .balign         4
+aarch64_dcache_invd_all:
+        adr             x0,  op_invd
+        b               aarch64_dcache_op_all
+
+op_invd:
+        dc              isw, x0
+        ret
+
+        .section        ".text.aarch64_dcache_clean_all", "ax", %progbits
+        .type           aarch64_dcache_clean_all, %function
+        .balign         4
+aarch64_dcache_clean_all:
+        adr             x0, op_clean
+        b               aarch64_dcache_op_all
+
+op_clean:
+        dc              csw, x0
+        ret
+
+        .section        ".text.aarch64_dcache_clean_invd_all", "ax", %progbits
+        .type           aarch64_dcache_clean_invd_all, %function
+        .balign         4
+aarch64_dcache_clean_invd_all:
+        adr             x0, op_clean_invd
+        b               aarch64_dcache_op_all
+
+op_clean_invd:
+        dc              cisw, x0
+        ret
 
         .section        ".text.aarch64_dcache_op_all", "ax", %progbits
         .type           aarch64_dcache_op_all, %function

@@ -43,10 +43,10 @@ aarch64_dcache_op_range:
         // x2 : an address of the maintenance function
         // x3 - cache line size at PoC
 
-	add		x1,  x0,  x1
-	sub		x1,  x1,  #1
+        add             x1,  x0,  x1
+        sub             x1,  x1,  #1
 
-        sub             x4,  x4,  #1
+        sub             x4,  x3,  #1
         bic             x0,  x0,  x4
         bic             x1,  x1,  x4
 

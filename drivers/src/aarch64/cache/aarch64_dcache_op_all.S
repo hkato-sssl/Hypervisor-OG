@@ -7,42 +7,7 @@
 #include "lib/asm.h"
 #include "lib/bit.h"
 
-        .global         aarch64_dcache_invd_all
-        .global         aarch64_dcache_clean_all
-        .global         aarch64_dcache_clean_invd_all
-
-        .section        ".text.aarch64_dcache_invd_all", "ax", %progbits
-        .type           aarch64_dcache_invd_all, %function
-        .balign         4
-aarch64_dcache_invd_all:
-        adr             x0,  op_invd
-        b               aarch64_dcache_op_all
-
-op_invd:
-        dc              isw, x0
-        ret
-
-        .section        ".text.aarch64_dcache_clean_all", "ax", %progbits
-        .type           aarch64_dcache_clean_all, %function
-        .balign         4
-aarch64_dcache_clean_all:
-        adr             x0, op_clean
-        b               aarch64_dcache_op_all
-
-op_clean:
-        dc              csw, x0
-        ret
-
-        .section        ".text.aarch64_dcache_clean_invd_all", "ax", %progbits
-        .type           aarch64_dcache_clean_invd_all, %function
-        .balign         4
-aarch64_dcache_clean_invd_all:
-        adr             x0, op_clean_invd
-        b               aarch64_dcache_op_all
-
-op_clean_invd:
-        dc              cisw, x0
-        ret
+        .global         aarch64_dcache_op_all
 
         .section        ".text.aarch64_dcache_op_all", "ax", %progbits
         .type           aarch64_dcache_op_all, %function
@@ -51,8 +16,6 @@ op_clean_invd:
          * x0 - the maintenance function
          */
 aarch64_dcache_op_all:
-        dsb             osh
-
         mov             ip0, x0
         mov             ip1, lr
 
@@ -67,6 +30,7 @@ aarch64_dcache_op_all:
         // x9  : CLIDR_EL1
         // x10 : LoC << 1
 
+        dsb             osh
         mov             x1,  xzr
 loop_level:
         msr             CSSELR_EL1, x1

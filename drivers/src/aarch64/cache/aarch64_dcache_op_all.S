@@ -66,6 +66,7 @@ aarch64_dcache_op_all:
 
         // x9  : CLIDR_EL1
         // x10 : LoC << 1
+        mov             x1,  xzr
 loop_level:
         msr             CSSELR_EL1, x1
         isb
@@ -87,7 +88,6 @@ loop_level:
 
         // x15 : (32 - A) = 32 - log2(ASSOSIATIVITY)
 
-        sub             x1,  x10, #(1 << 1)
         mov             x2,  x14
         mov             x5,  #1
         lsl             x5,  x5,  x15
@@ -109,8 +109,9 @@ loop_way:
         subs            x2,  x2,  #1
         b.cc            loop_set
 
-        subs            x1,  x1,  #(1 << 1)
-        b.cc            loop_level
+        add             x1,  x1,  #(1 << 1)
+        cmp             x1,  x10
+        b.lt            loop_level
 exit:
         dsb             osh
         br              ip1

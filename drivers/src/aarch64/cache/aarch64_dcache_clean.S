@@ -6,7 +6,7 @@
         .global         aarch64_dcache_clean
         .global         aarch64_dcache_clean_range
 
-        .extern         aarch64_poc_cache_line_sz
+        .extern         aarch64_dcache_op_range
 
         .section        ".text.aarch64_dcache_clean", "ax", %progbits
         .type           aarch64_dcache_clean, %function
@@ -21,34 +21,10 @@ aarch64_dcache_clean:
         .type           aarch64_dcache_clean_range, %function
         .balign         4
 aarch64_dcache_clean_range:
-        dsb             osh
-
-        str             lr,  [sp,  #-16]!
-        stp             x0,  x1,  [sp,  #-16]!
-        bl              aarch64_poc_line_sz
-        ldp             x1,  x2,  [sp],  #16
-        ldr             lr,  [sp],  #16
-        cbz             x0,  exit
-
-        // x0 - cache line size at PoC
-        // x1 - start address
-        // x2 - size
-
-		add				x2,  x2,  x1
-		sub				x2,  x2,  #1
-
-        sub             x3,  x0,  #1
-        bic             x1,  x1,  x3
-        bic             x2,  x2,  x3
-
-clean_loop:
-        dc              cvac, x1
-        cmp             x1,  x2
-        add             x1,  x1,  x0
-        bne             clean_loop
-
-        dsb             osh
-exit:
+        adr             x2,  op
+        b               aarch64_dcache_op_range
+op:
+        dc              cvac, x0
         ret
 
         .end

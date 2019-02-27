@@ -3,6 +3,10 @@
  *
  * (C) 2019 Hidekazu Kato
  */
+
+#include "lib/asm.h"
+#include "lib/system/errno.h"
+
         .global         aarch64_dcache_op_range
 
         .extern         aarch64_poc_cache_line_sz
@@ -14,8 +18,9 @@
         // x1 : size
         // x2 : an address of the maintenance function
 aarch64_dcache_op_range:
+        cbz             x1,  error
+
         mov             ip1, lr         // save original LR
-        cbz             x1,  exit
 
         // read D-$ line size at PoC
 
@@ -54,7 +59,12 @@ loop:
 
         dsb             osh
 exit:
+        mov             x0,  xzr
         br              ip1
+
+error:
+        mov             x0,  #-EINVAL
+        ret
 
         .end
 

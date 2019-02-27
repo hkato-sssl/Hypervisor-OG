@@ -32,11 +32,14 @@ aarch64_dcache_invd_range:
 
         // x0 - cache line size at PoC
         // x1 - start address
-        // x2 - end address
+        // x2 - size
+
+		add				x2,  x2,  x1
+		sub				x2,  x2,  #1
 
         sub             x3,  x0,  #1
-        and             x1,  x1,  x3
-        and             x2,  x2,  x3
+        bic             x1,  x1,  x3
+        bic             x2,  x2,  x3
 
 invd_loop:
         dc              ivac, x1

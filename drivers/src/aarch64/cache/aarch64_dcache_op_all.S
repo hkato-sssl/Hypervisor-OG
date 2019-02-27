@@ -66,6 +66,7 @@ aarch64_dcache_op_all:
 
         // x9  : CLIDR_EL1
         // x10 : LoC << 1
+
         mov             x1,  xzr
 loop_level:
         msr             CSSELR_EL1, x1
@@ -74,40 +75,34 @@ loop_level:
         // CAUTION:
         // CCSIDR_EL1はARMv8.3-CCIDXの実装有無でフォーマットが
         // 変更される為、利用するプロセッサ仕様に注意が必要。
-        and             x12, x11, #BITS(2, 0)
-        add             x12, x12, #4
-        ubfx            x13, x11, #3,  #10
-        ubfx            x14, x11, #13, #15
+        and             x4,  x11, #BITS(2, 0)
+        add             x4,  x4,  #4
+        ubfx            x3,  x11, #3,  #10
+        ubfx            x2,  x11, #13, #15
+        clz             w5,  w3
 
+        // x2  : (numner of sets) - 1
+        // x3  : (aasociativity of cache) - 1
+        // x4  : log2(number of bytes in cache line)
+        // x5  : (32 - A) = 32 - log2(ASSOSIATIVITY)
         // x11 : CSSIDR_EL1
-        // x12 : log2(number of bytes in cache line)
-        // x13 : (aasociativity of cache) - 1
-        // x14 : (numner of sets) - 1
 
-        clz             w15, w13
+        mov             x6,  #1
+        lsl             x6,  x6,  x5
+        lsl             x3,  x3,  x5
 
-        // x15 : (32 - A) = 32 - log2(ASSOSIATIVITY)
-
-        mov             x2,  x14
-        mov             x5,  #1
-        lsl             x5,  x5,  x15
+        // x3  : ((aasociativity of cache) - 1) << (32 -A)
 loop_set:
-        lsl             x4,  x2,  x12
-        orr             x4,  x4,  x1
-        mov             x3,  x13
-        // x1  : (index of cache level) << 1
-        // x2  : index of set
-        // x3  : index of associativity
-        // x4  : part of SetWay
-        lsl             x0,  x3,  x15
-        orr             x0,  x0,  x4
+        lsl             x0,  x2,  x4
+        orr             x0,  x0,  x1
+        orr				x0,  x0,  x3
 loop_way:
         blr             ip0
-        subs            x0,  x0,  x5
-        b.cc            loop_way
+        subs            x0,  x0,  x6
+        b.cs            loop_way
 
         subs            x2,  x2,  #1
-        b.cc            loop_set
+        b.cs            loop_set
 
         add             x1,  x1,  #(1 << 1)
         cmp             x1,  x10

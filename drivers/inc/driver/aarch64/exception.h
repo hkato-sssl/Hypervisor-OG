@@ -17,8 +17,7 @@
 #define EXC_ESR         1
 #define EXC_SPSR        2
 #define EXC_ELR         3
-#define EXC_SP          4
-#define EXC_X0          5
+#define EXC_X0          4
 #define EXC_X1          (EXC_X0 + 1)
 #define EXC_X2          (EXC_X0 + 2)            
 #define EXC_X3          (EXC_X0 + 3)            
@@ -48,9 +47,11 @@
 #define EXC_X27         (EXC_X0 + 27)           
 #define EXC_X28         (EXC_X0 + 28)           
 #define EXC_X29         (EXC_X0 + 29)           
-#define EXC_X30         (EXC_X0 + 30)           
+#define EXC_X30         (EXC_X0 + 30)
+#define EXC_X31         (EXC_X0 + 31)
+#define EXC_SP          EXC_X31
 
-#define	NR_EXC_REGS     (EXC_X30 + 1)
+#define	NR_EXC_REGS     (EXC_X31 + 1)
 
 #ifndef ASSEMBLY
 

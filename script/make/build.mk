@@ -38,7 +38,7 @@ $(eval $(foreach DIR,$(SRCDIRS),$(call create_builds,$(call srcs,$(DIR)))))
 ifeq ($(suffix $(TARGET)),.a)
 $(OUTDIR)/$(TARGET):
 	echo $(ARFLAGS) $@ >$(AROPS_FILE)
-	find $(OUTDIR) -name .srcs | xargs cat | sed -e s/\\.[csS]$$/\\.o/ -e s/^/$(OUTDIR)\\// >> $(AROPS_FILE)
+	find $(OUTDIR) -name .srcs | xargs cat | sed -e s/\\.[csS]$$/\\.o/ -e s/^/$(subst /,\\/,$(OUTDIR))\\// >> $(AROPS_FILE)
 	$(AR) @$(AROPS_FILE)
 else
 ifeq ($(suffix $(TARGET)),.elf)

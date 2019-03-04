@@ -27,7 +27,7 @@
 /* Device memory type */
 #define MEM_ATTR_DEVICE_nGnRnE      0x00
 #define MEM_ATTR_DEVICE_nGnRE       0x04
-#define MEM_ATTR_DEVICE_nGRE       .0x08
+#define MEM_ATTR_DEVICE_nGRE        0x08
 #define MEM_ATTR_DEVICE_GRE         0x0c
 
 /* Inner cacheability for Normal memory */
@@ -173,8 +173,8 @@ struct aarch64_mmu_trans_table_configure {
 /* functions */
 
 errno_t aarch64_mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *conf);
-void aarch64_mmu_disable(void);
-void aarch64_mmu_enable(const struct aarch64_mmu_trans_table *tt);
+errno_t aarch64_mmu_disable(void);
+errno_t aarch64_mmu_enable(struct aarch64_mmu_trans_table const *tt);
 
 errno_t aarch64_mmu_set_mair(uint8_t const *attributes);
 errno_t aarch64_mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt);

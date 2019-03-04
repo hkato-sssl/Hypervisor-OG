@@ -5,6 +5,7 @@
  */
 
 #include "lib/asm.h"
+#include "lib/system/errno.h"
 #include "driver/aarch64/system_register.h"
 
         .global         aarch64_mmu_disable
@@ -21,6 +22,7 @@ aarch64_mmu_disable:
         str             lr,  [sp,  #-16]!
 
         bl              aarch64_read_sctlr
+        tbz             x0,  #0,  error     // test SCTLR.M
 
         mov             x1,  #(SCTLR_I | SCTLR_C | SCTLR_M)
         bic             x0,  x0,  x1
@@ -36,9 +38,15 @@ aarch64_mmu_disable:
          * する事が可能。
          */
         bl              aarch64_dcache_clean_invd_all
+        bl              aarch64_icache_invd_all
 
+        mov             x0,  #SUCCESS
+exit:
         ldr             lr,  [sp],  #16
-        b               aarch64_icache_invd_all
+        ret
+error:
+        mov             x0,  #-EPERM
+        b               exit
 
         .end
 

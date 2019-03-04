@@ -41,6 +41,35 @@
 #define DAIF_F              BIT(0)
 #define DAIF_ALL            BITS(3, 0)
 
+/* SCTLR */
+#define SCTLR_EnIA          BIT(31)
+#define SCTLR_EnIB          BIT(30)
+#define SCTLR_LSMAOE        BIT(29)
+#define SCTLR_nTLSMD        BIT(28)
+#define SCTLR_EnDA          BIT(27)
+#define SCTLR_UCI           BIT(26)
+#define SCTLR_EE            BIT(25)
+#define SCTLR_E0E           BIT(24)
+#define SCTLR_SPAN          BIT(23)
+#define SCTLR_IESB          BIT(21)
+#define SCTLR_WXN           BIT(19)
+#define SCTLR_nTWE          BIT(18)
+#define SCTLR_nTWI          BIT(16)
+#define SCTLR_UCT           BIT(15)
+#define SCTLR_DZE           BIT(14)
+#define SCTLR_EnDB          BIT(13)
+#define SCTLR_I             BIT(12)
+#define SCTLR_UMA           BIT(9)
+#define SCTLR_SED           BIT(8)
+#define SCTLR_ITD           BIT(7)
+#define SCTLR_nAA           BIT(6)
+#define SCTLR_CP15BEN       BIT(5)
+#define SCTLR_SA0           BIT(4)
+#define SCTLR_SA            BIT(3)
+#define SCTLR_C             BIT(2)
+#define SCTLR_A             BIT(1)
+#define SCTLR_M             BIT(0)
+
 #ifndef ASSEMBLY
 
 #ifdef __cplusplus

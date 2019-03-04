@@ -11,6 +11,8 @@
 
         .extern         aarch64_read_sctlr
         .extern         aarch64_write_sctlr
+        .extern			aarch64_icache_invd_all
+        .extern			aarch64_dcache_clean_invd_all
 
         .section        ".text.aarch64_mmu_disable", "ax", %progbits
         .type           aarch64_mmu_disable, %function
@@ -29,9 +31,9 @@ aarch64_mmu_disable:
          * MMUを無効化した後は必ずD-$のcleanを実行する必要がある。これを
          * 行わないとMMUを無効化した後でD-$の内容が参照されず、スタック領
          * 域の読み込み処理で不整合が発生する。
-         * aarch64_dcache_XXX_all()関数は全てスタック領域を利用しない実装
-         * となっているので、メモリとキャッシュのコヒーレンシ状況を気にせ
-         * ず実行する事が可能。
+         * Cacheドライバが用意する保守APIは全てスタック領域を利用しない実
+         * 装となっているので、メモリとキャッシュのコヒーレンシ状況を気にせず実行
+         * する事が可能。
          */
         bl              aarch64_dcache_clean_invd_all
 

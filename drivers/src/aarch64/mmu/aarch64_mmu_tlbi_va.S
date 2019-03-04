@@ -21,12 +21,15 @@ el0:
         ret
 el1:
         tlbi            vae1is, x0
+        dsb				ish
         ret
 el2:
         tlbi            vae2is, x0
+        dsb				ish
         ret
 el3:
         tlbi            vae3is, x0
+        dsb				ish
         ret
 
 branch_table:

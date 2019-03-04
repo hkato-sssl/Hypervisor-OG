@@ -3,12 +3,12 @@
  *
  * (C) 2019 Hidekazu Kato
  */
-        .global         aarch64_write_tt
+        .global         aarch64_mmu_write_tt
 
-        .section        ".text.aarch64_write_tt", "ax", %progbits
-        .type           aarch64_write_tt, %function
+        .section        ".text.aarch64_mmu_write_tt", "ax", %progbits
+        .type           aarch64_mmu_write_tt, %function
         .balign         4
-aarch64_write_tt:
+aarch64_mmu_write_tt:
         str             x1,  [x0]
         dsb             ish
         dc              cvau, x0

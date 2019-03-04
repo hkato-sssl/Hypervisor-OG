@@ -1,5 +1,5 @@
 /*
- * driver/aarch64/mmu/aarch64_mmu_enable.S
+ * driver/aarch64/mmu/aarch64_mmu_enable_asm.S
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -16,14 +16,14 @@
         .extern         aarch64_write_sctlr
         .extern         aarch64_write_ttbr0
 
-        .section        ".text.aarch64_mmu_enable", "ax", %progbits
-        .type           aarch64_mmu_enable, %function
+        .section        ".text.aarch64_mmu_enable_asm", "ax", %progbits
+        .type           aarch64_mmu_enable_asm, %function
         .balign         4
         /*
          * x0 - TTBR0
          * x1 - ASID
          */
-aarch64_mmu_enable:
+aarch64_mmu_enable_asm:
         str             lr,  [sp,  #-16]!
         stp             x19, x20, [sp,  #-16]!
 

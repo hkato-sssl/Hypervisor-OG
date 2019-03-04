@@ -19,6 +19,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "lib/system/errno.h"
 
 /* defines */
 
@@ -32,6 +33,7 @@
 extern "C" {
 #endif
 
+errno_t aarch64_mmu_enable_asm(void *ttbr, uint16_t asid);
 void aarch64_mmu_write_tt(uint64_t *addr, uint64_t desc);
 void aarch64_mmu_tlbi_va(void *va);
 void aarch64_mmu_memclr(void *addr, size_t size);

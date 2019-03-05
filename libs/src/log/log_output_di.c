@@ -21,7 +21,7 @@ static int output_lldi(struct log_context *ctx, long long v)
 {
 	int ret;
 	char *str;
-	char ch;
+	signed char ch;
 	size_t idx;
 
 	if (ctx->syntax.flag.zero) {

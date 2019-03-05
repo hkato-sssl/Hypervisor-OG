@@ -51,6 +51,8 @@
 #define MEM_ATTR_NORMAL_WT          (MEM_ATTR_NORMAL_OWTRAWA | MEM_ATTR_NORMAL_IWTRAWA)
 #define MEM_ATTR_NORMAL_WB          (MEM_ATTR_NORMAL_OWBRAWA | MEM_ATTR_NORMAL_IWBRAWA)
 
+#define MMU_MAIR_ATTR(n, v)         ((uint64_t)(v) << ((n) * 8))
+
 /* Next-level descriptor attriutes */
 
 #define MMU_DESC_NSTABLE        BIT(63)
@@ -151,20 +153,25 @@ struct aarch64_mmu_block_pool_configure {
     } block_region;
 };
 
+struct aarch64_mmu_tcr {
+    uint32_t        sz:6;
+    uint32_t        sh:2;
+    uint32_t        irgn:2;
+    uint32_t        orgn:2;
+};
+
 struct aarch64_mmu_trans_table {
     uint64_t        *addr;
     uint16_t        asid;
-    struct {
-        uint8_t     sz:6;
-        uint8_t     sh:2;
-        uint8_t     irgn:2;
-        uint8_t     orgn:2;
-    } tcr;
+    uint64_t        mair;
+    struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool pool;
 };
 
 struct aarch64_mmu_trans_table_configure {
     uint16_t        asid;
+    uint64_t        mair;
+    struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool_configure pool;
 };
 

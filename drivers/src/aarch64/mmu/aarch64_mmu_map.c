@@ -26,8 +26,8 @@ static errno_t mmu_map(struct aarch64_mmu_trans_table *tt, void **va, void **pa,
 	if (*sz >= MEM_4KB) {
 		ret = aarch64_mmu_map_4KB(tt, *va, *pa, attr);
 		if (ret == SUCCESS) {
-			*(uintptr_t **)va += MEM_4KB;
-			*(uintptr_t **)pa += MEM_4KB;
+			*(char **)va += MEM_4KB;
+			*(char **)pa += MEM_4KB;
 			*sz -= MEM_4KB;
 		}
 	} else {

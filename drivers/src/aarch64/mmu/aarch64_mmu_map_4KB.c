@@ -122,7 +122,8 @@ static uint64_t descriptor_4KB_region(void *pa, struct aarch64_mmu_attr const *a
     lower |= (uint64_t)(attr->sh) << 8;
     lower |= (uint64_t)(attr->ap21) << 6;
     lower |= (uint64_t)(attr->ns) << 5;
-    lower |= (uint64_t)(attr->attrindx);
+    lower |= (uint64_t)(attr->attrindx) << 2;
+    lower |= 3;
 
     /* page descriptor */
 

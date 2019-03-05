@@ -23,7 +23,7 @@ errno_t aarch64_mmu_enable(struct aarch64_mmu_trans_table const *tt)
 {
 	errno_t ret;
 
-	ret = aarch64_mmu_enable_asm(tt->addr, tt->asid);
+	ret = aarch64_mmu_enable_asm(tt);
 
 	return ret;
 }

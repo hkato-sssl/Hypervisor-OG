@@ -8,7 +8,7 @@
  #include "lib/system/errno.h"
  #include "driver/aarch64/system_register.h"
 
-        .global         aarch64_mmu_enable
+        .global         aarch64_mmu_enable_asm
 
         .extern         aarc64_icache_invd_all
         .extern         aarc64_dcache_invd_all
@@ -24,31 +24,30 @@
          * x1 - ASID
          */
 aarch64_mmu_enable_asm:
-        str             lr,  [sp,  #-16]!
-        stp             x19, x20, [sp,  #-16]!
-
-        bfi             x0,  x1,  #48,  #16
-        mov             x19, x0                     // TTBR0_ELx
+        stp             x20, lr,  [sp,  #-16]!
+        mov             x20, x0
 
         bl              aarch64_read_sctlr
         mov             x1,  #(SCTLR_I | SCTLR_C | SCTLR_M)
         tst             x0,  x1
         bne             error
 
-        orr             x20,  x0,  x1               // new SCTLR
+        orr             x1,  x0,  x1                // new SCTLR
+        mov             x0,  x20
+        mov             x20, x1
+        bl              aarch64_mmu_set_ttbr0
+        cbnz            x0,  exit
+
+        bl              aarch64_mmu_tlbi_all
         bl              aarch64_icache_invd_all
         bl              aarch64_dcache_invd_all
-
-        mov             x0,  x19                    // TTBR0_ELx
-        bl              aarch64_write_ttbr0
 
         mov             x0,  x20                    // new SCTLR
         bl              aarch64_write_sctlr
 
         mov             x0,  #SUCCESS
 exit:
-        ldp             x19, x20, [sp],  #16
-        ldr             lr,  [sp],  #16
+        ldp             x20, lr,  [sp],  #16
         ret
 error:
         mov             x0,  #-EBUSY

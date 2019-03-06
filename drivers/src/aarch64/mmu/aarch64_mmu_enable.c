@@ -23,7 +23,15 @@ errno_t aarch64_mmu_enable(struct aarch64_mmu_trans_table const *tt)
 {
 	errno_t ret;
 
-	ret = aarch64_mmu_enable_asm(tt);
+    if (tt != NULL) {
+        if (tt->active == false) {
+	        ret = aarch64_mmu_enable_asm(tt);
+        } else {
+            ret = -EBUSY;
+        }
+    } else {
+        ret = -EINVAL;
+    }
 
 	return ret;
 }

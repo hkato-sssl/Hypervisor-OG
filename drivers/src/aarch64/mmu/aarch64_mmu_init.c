@@ -38,7 +38,7 @@ static errno_t init_trans_table(struct aarch64_mmu_trans_table *tt, struct aarch
 {
 	tt->active = false;
     tt->asid = config->asid;
-    aarch64_mmu_memclr(tt->addr, MMU_BLOCK_SZ);
+    memset(tt->addr, 0, MMU_BLOCK_SZ);
 
     tt->mair = config->mair;
     tt->tcr = config->tcr;

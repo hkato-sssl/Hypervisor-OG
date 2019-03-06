@@ -92,7 +92,7 @@ void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block
     if ((pool != NULL) && (pool->block_sz == block_sz)) {
         p = list_get_front(&(pool->block_list));
         if (p != NULL) {
-            aarch64_mmu_memclr(p, block_sz);
+            memset(p, 0, block_sz);
             atomic_inc_u64(&(pool->counter.calloc.success));
         } else {
             atomic_inc_u64(&(pool->counter.calloc.failure));

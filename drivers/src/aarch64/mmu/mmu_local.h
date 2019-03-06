@@ -33,6 +33,7 @@
 extern "C" {
 #endif
 
+errno_t aarch64_mmu_set_tt(struct aarch64_mmu_trans_table const *tt);
 errno_t aarch64_mmu_enable_asm(struct aarch64_mmu_trans_table const *tt);
 void aarch64_mmu_write_tt(uint64_t *addr, uint64_t desc);
 void aarch64_mmu_tlbi_va(void *va);

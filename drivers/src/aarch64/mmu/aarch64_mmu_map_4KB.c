@@ -13,7 +13,9 @@
 
 /* defines */
 
-#define MAP_SZ      4096
+#define MEM_4KB     (4UL * 1024)
+#define	MEM_2MB		(2UL * 1024 * 1024)
+#define	MEM_1GB		(1UL * 1024 * 1024 * 1024)
 
 /* types */
 
@@ -62,12 +64,12 @@ uint64_t *table_addr(struct aarch64_mmu_trans_table *tt, void *va, uint32_t leve
     uint64_t *new_table;
 
     table = tt->addr;
-    for (i = 0; i < level; ++i) {
-        next = table + desc_index(va, i);
+    for (i = 1; i <= level; ++i) {
+        next = table + desc_index(va, (i - 1));
         d = *next;
         if ((d & BIT(0)) == 0) {
             /* invalid descriptor */
-            new_table = aarch64_mmu_block_calloc(&(tt->pool), MAP_SZ);
+            new_table = aarch64_mmu_block_calloc(&(tt->pool), MEM_4KB);
             if (new_table != NULL) {
                 d = table_desc(new_table);
                 aarch64_mmu_write_tt(next, d);
@@ -104,7 +106,7 @@ uint64_t *desc_addr(struct aarch64_mmu_trans_table *tt, void *va, uint32_t level
     return desc;
 }
 
-static uint64_t descriptor_4KB_region(void *pa, struct aarch64_mmu_attr const *attr)
+static uint64_t descriptor_attrs(struct aarch64_mmu_attr const *attr)
 {
     uint64_t d;
     uint64_t upper;
@@ -123,11 +125,37 @@ static uint64_t descriptor_4KB_region(void *pa, struct aarch64_mmu_attr const *a
     lower |= (uint64_t)(attr->ap21) << 6;
     lower |= (uint64_t)(attr->ns) << 5;
     lower |= (uint64_t)(attr->attrindx) << 2;
-    lower |= 3;
+    lower |= MMU_DESC_AF;
 
     /* page descriptor */
 
-    d = upper | (uint64_t)pa | lower;
+    d = upper | lower;
+
+    return d;
+}
+
+static uint64_t level3_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+{
+    uint64_t d;
+
+    d = descriptor_attrs(attr);
+
+    /* page descriptor */
+
+    d |= (uint64_t)pa | 3;
+
+    return d;
+}
+
+static uint64_t block_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+{
+    uint64_t d;
+
+    d = descriptor_attrs(attr);
+
+    /* page descriptor */
+
+    d |= (uint64_t)pa | 1;
 
     return d;
 }
@@ -140,9 +168,11 @@ static errno_t mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *p
 
     desc = desc_addr(tt, va, 3);
     if (desc != NULL) {
-        d = descriptor_4KB_region(pa, attr);
+        d = level3_descriptor(pa, attr);
         aarch64_mmu_write_tt(desc, d);
-        aarch64_mmu_tlbi_va(va);
+        if (tt->active) {
+        	aarch64_mmu_tlbi_va(va);
+        }
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -155,7 +185,7 @@ static errno_t map_4KB_validate_parameters(struct aarch64_mmu_trans_table *tt, v
 {
     errno_t ret;
 
-    if ((tt != NULL) && (attr != NULL) && IS_ALIGNED((uintptr_t)va, MAP_SZ) && IS_ALIGNED((uintptr_t)pa, MAP_SZ)) {
+    if ((tt != NULL) && (attr != NULL) && IS_ALIGNED((uintptr_t)va, MEM_4KB) && IS_ALIGNED((uintptr_t)pa, MEM_4KB)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -176,29 +206,19 @@ errno_t aarch64_mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *
     return ret;
 }
 
-static errno_t mmu_unmap_4KB(struct aarch64_mmu_trans_table *tt, void *va)
+static errno_t mmu_map_2MB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr)
 {
     errno_t ret;
+    uint64_t d;
     uint64_t *desc;
 
-    desc = desc_addr(tt, va, 3);
+    desc = desc_addr(tt, va, 2);
     if (desc != NULL) {
-        aarch64_mmu_write_tt(desc, 0);
-        aarch64_mmu_tlbi_va(va);
-        ret = SUCCESS;
-    } else {
-        /* This function always returns SUCCESS. */
-        ret = SUCCESS;
-    }
-
-    return ret;
-}
-
-static errno_t unmap_4KB_validate_parameters(struct aarch64_mmu_trans_table *tt, void *va)
-{
-    errno_t ret;
-
-    if ((tt != NULL) && IS_ALIGNED((uintptr_t)va, MAP_SZ)) {
+        d = block_descriptor(pa, attr);
+        aarch64_mmu_write_tt(desc, d);
+        if (tt->active) {
+        	aarch64_mmu_tlbi_va(va);
+        }
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -207,13 +227,72 @@ static errno_t unmap_4KB_validate_parameters(struct aarch64_mmu_trans_table *tt,
     return ret;
 }
 
-errno_t aarch64_mmu_unmap_4KB(struct aarch64_mmu_trans_table *tt, void *va)
+static errno_t map_2MB_validate_parameters(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr)
 {
     errno_t ret;
 
-    ret = unmap_4KB_validate_parameters(tt, va);
+    if ((tt != NULL) && (attr != NULL) && IS_ALIGNED((uintptr_t)va, MEM_2MB) && IS_ALIGNED((uintptr_t)pa, MEM_2MB)) {
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
+errno_t aarch64_mmu_map_2MB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr)
+{
+    errno_t ret;
+
+    ret = map_2MB_validate_parameters(tt, va, pa, attr);
     if (ret == SUCCESS) {
-        ret = mmu_unmap_4KB(tt, va);
+        ret = mmu_map_2MB(tt, va, pa, attr);
+    }
+
+    return ret;
+}
+
+static errno_t mmu_map_1GB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr)
+{
+    errno_t ret;
+    uint64_t d;
+    uint64_t *desc;
+
+    desc = desc_addr(tt, va, 1);
+    if (desc != NULL) {
+        d = block_descriptor(pa, attr);
+        aarch64_mmu_write_tt(desc, d);
+        if (tt->active) {
+        	aarch64_mmu_tlbi_va(va);
+        }
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
+static errno_t map_1GB_validate_parameters(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr)
+{
+    errno_t ret;
+
+    if ((tt != NULL) && (attr != NULL) && IS_ALIGNED((uintptr_t)va, MEM_1GB) && IS_ALIGNED((uintptr_t)pa, MEM_1GB)) {
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
+errno_t aarch64_mmu_map_1GB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr)
+{
+    errno_t ret;
+
+    ret = map_1GB_validate_parameters(tt, va, pa, attr);
+    if (ret == SUCCESS) {
+        ret = mmu_map_1GB(tt, va, pa, attr);
     }
 
     return ret;

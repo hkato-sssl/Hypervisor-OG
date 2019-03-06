@@ -10,11 +10,11 @@
 
         .global         aarch64_mmu_enable_asm
 
+        .extern         aarch64_mmu_set_tt
         .extern         aarc64_icache_invd_all
         .extern         aarc64_dcache_invd_all
         .extern         aarch64_read_sctlr
         .extern         aarch64_write_sctlr
-        .extern         aarch64_write_ttbr0
 
         .section        ".text.aarch64_mmu_enable_asm", "ax", %progbits
         .type           aarch64_mmu_enable_asm, %function
@@ -35,7 +35,7 @@ aarch64_mmu_enable_asm:
         orr             x1,  x0,  x1                // new SCTLR
         mov             x0,  x20
         mov             x20, x1
-        bl              aarch64_mmu_set_ttbr0
+        bl              aarch64_mmu_set_tt
         cbnz            x0,  exit
 
         bl              aarch64_mmu_tlbi_all

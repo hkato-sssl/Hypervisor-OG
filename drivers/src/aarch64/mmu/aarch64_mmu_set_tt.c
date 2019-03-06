@@ -1,4 +1,4 @@
-/* * aarch64/mmu/aarch64_mmu_set_ttbr0.c
+/* * aarch64/mmu/aarch64_mmu_set_tt.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -9,6 +9,7 @@
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/mmu.h"
+#include "mmu_local.h"
 
 /* defines */
 
@@ -45,7 +46,7 @@ static void mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt)
     aarch64_write_ttbr0(d);
 }
 
-static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt)
+static errno_t mmu_set_tt_el1(struct aarch64_mmu_trans_table const *tt)
 {
     bool lock;
     uint64_t d;
@@ -66,6 +67,7 @@ static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt)
     /* A1=0 */
     d |= d0 & (BITS(31, 23) | BITS(21, 16));
     aarch64_write_tcr_el1(d);
+    aarch64_write_mair_el1(tt->mair);
 
     mmu_set_ttbr0(tt);
 
@@ -74,7 +76,7 @@ static errno_t mmu_set_ttbr0_el1(struct aarch64_mmu_trans_table const *tt)
     return SUCCESS;
 }
 
-static errno_t mmu_set_ttbr0_el23(struct aarch64_mmu_trans_table const *tt)
+static errno_t mmu_set_tt_el23(struct aarch64_mmu_trans_table const *tt)
 {
     bool lock;
     uint32_t d;
@@ -91,6 +93,7 @@ static errno_t mmu_set_ttbr0_el23(struct aarch64_mmu_trans_table const *tt)
     lock = aarch64_lock();
 
     aarch64_write_tcr(d);
+    aarch64_write_mair(tt->mair);
     mmu_set_ttbr0(tt);
 
     aarch64_unlock(lock);
@@ -98,7 +101,7 @@ static errno_t mmu_set_ttbr0_el23(struct aarch64_mmu_trans_table const *tt)
     return SUCCESS;
 }
 
-errno_t aarch64_mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt)
+errno_t aarch64_mmu_set_tt(struct aarch64_mmu_trans_table const *tt)
 {
     errno_t ret;
     uint64_t el;
@@ -108,20 +111,20 @@ errno_t aarch64_mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt)
         el = aarch64_read_currentel();
         switch (el) {
         case CURRENT_EL1:
-            ret = mmu_set_ttbr0_el1(tt);
+            ret = mmu_set_tt_el1(tt);
             break;
         case CURRENT_EL2:
-            ret = mmu_set_ttbr0_el23(tt);
+            ret = mmu_set_tt_el23(tt);
             break;
         case CURRENT_EL3:
             if (tt->asid == 0) {
-                ret = mmu_set_ttbr0_el23(tt);
+                ret = mmu_set_tt_el23(tt);
             } else {
                 ret = -EINVAL;
             }
             break;
         default:
-            ret = -ENOSYS;
+            ret = -EPERM;
             break;
         }
     }

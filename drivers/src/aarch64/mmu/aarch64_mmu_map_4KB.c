@@ -116,7 +116,6 @@ static uint64_t descriptor_attrs(struct aarch64_mmu_attr const *attr)
 
     upper = (uint64_t)(attr->xn) << 54;
     upper |= (uint64_t)(attr->pxn) << 53;
-    upper |= (uint64_t)(attr->contiguous) << 52;
 
     /* lower attributes */
 

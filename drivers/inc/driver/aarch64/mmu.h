@@ -118,7 +118,6 @@ struct aarch64_mmu_attr {
     /* upper attributes */
     uint8_t         xn:1;       /* also used as UXN */
     uint8_t         pxn:1;
-    uint8_t         contiguous:1;
     /* lower attributes */
     uint8_t         ng:1;
     uint8_t         sh:2;

@@ -5,6 +5,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "lib/system/errno.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
@@ -46,7 +47,7 @@ static void mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt)
     aarch64_write_ttbr0(d);
 }
 
-static errno_t mmu_set_tt_el1(struct aarch64_mmu_trans_table const *tt)
+static errno_t mmu_set_tt_el1(struct aarch64_mmu_trans_table *tt)
 {
     bool lock;
     uint64_t d;
@@ -71,12 +72,14 @@ static errno_t mmu_set_tt_el1(struct aarch64_mmu_trans_table const *tt)
 
     mmu_set_ttbr0(tt);
 
+    tt->active = true;
+
     aarch64_unlock(lock);
 
     return SUCCESS;
 }
 
-static errno_t mmu_set_tt_el23(struct aarch64_mmu_trans_table const *tt)
+static errno_t mmu_set_tt_el23(struct aarch64_mmu_trans_table *tt)
 {
     bool lock;
     uint32_t d;
@@ -101,7 +104,7 @@ static errno_t mmu_set_tt_el23(struct aarch64_mmu_trans_table const *tt)
     return SUCCESS;
 }
 
-errno_t aarch64_mmu_set_tt(struct aarch64_mmu_trans_table const *tt)
+errno_t aarch64_mmu_set_tt(struct aarch64_mmu_trans_table *tt)
 {
     errno_t ret;
     uint64_t el;

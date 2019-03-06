@@ -18,7 +18,7 @@
         add         ip0, ip0, ip1, lsl #1
         ldr         ip1, [ip0]
         br          ip1
-        balign      8
+        .balign      8
         .endm
 #else /* ASSEMBLY */
 

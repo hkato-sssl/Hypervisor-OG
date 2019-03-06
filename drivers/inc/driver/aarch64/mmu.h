@@ -16,6 +16,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "lib/bit.h"
 #include "lib/list.h"
 #include "lib/system/errno.h"
@@ -161,8 +162,9 @@ struct aarch64_mmu_tcr {
 };
 
 struct aarch64_mmu_trans_table {
-    uint64_t        *addr;
+    bool            active;
     uint16_t        asid;
+    uint64_t        *addr;
     uint64_t		mair;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool pool;

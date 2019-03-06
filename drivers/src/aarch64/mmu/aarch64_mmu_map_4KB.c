@@ -167,12 +167,9 @@ static errno_t mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *p
     uint64_t *desc;
 
     desc = desc_addr(tt, va, 3);
-    if (desc != NULL) {
+    if ((desc != NULL) && ((*desc & BITS(1,0)) == 0)) {
         d = level3_descriptor(pa, attr);
         aarch64_mmu_write_tt(desc, d);
-        if (tt->active) {
-        	aarch64_mmu_tlbi_va(va);
-        }
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -213,12 +210,9 @@ static errno_t mmu_map_2MB(struct aarch64_mmu_trans_table *tt, void *va, void *p
     uint64_t *desc;
 
     desc = desc_addr(tt, va, 2);
-    if (desc != NULL) {
+    if ((desc != NULL) && ((*desc & BITS(1,0)) == 0)) {
         d = block_descriptor(pa, attr);
         aarch64_mmu_write_tt(desc, d);
-        if (tt->active) {
-        	aarch64_mmu_tlbi_va(va);
-        }
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -259,12 +253,9 @@ static errno_t mmu_map_1GB(struct aarch64_mmu_trans_table *tt, void *va, void *p
     uint64_t *desc;
 
     desc = desc_addr(tt, va, 1);
-    if (desc != NULL) {
+    if ((desc != NULL) && ((*desc & BITS(1,0)) == 0)) {
         d = block_descriptor(pa, attr);
         aarch64_mmu_write_tt(desc, d);
-        if (tt->active) {
-        	aarch64_mmu_tlbi_va(va);
-        }
         ret = SUCCESS;
     } else {
         ret = -EINVAL;

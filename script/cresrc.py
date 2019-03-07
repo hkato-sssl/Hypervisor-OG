@@ -90,7 +90,7 @@ S_FILE = COPYRIGHT + """\
 """
 
 def inc_guard(file_name):
-    return file_name.replace(os.sep, "_").replace(".", "_").upper()
+    return file_name.replace(os.sep, "_").replace(".", "_").replace("-", "_").upper()
 
 def parameters(file_name):
     return {

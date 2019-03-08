@@ -23,16 +23,16 @@
 
 /* functions */
 
-static errno_t validate_parameters(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configure const *conf)
+static errno_t validate_parameters(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config)
 {
     errno_t ret;
 
-    if ((pool != NULL) && (conf != NULL) &&
-        (conf->block_region.addr != NULL) &&
-        (IS_ALIGNED((uintptr_t)(conf->block_region.addr), 4096)) &&
-        (conf->block_sz == 4096) &&
-        (conf->block_region.size > 0) &&
-        (IS_ALIGNED((uintptr_t)(conf->block_region.size), 4096))) {
+    if ((pool != NULL) && (config != NULL) &&
+        (config->block_region.addr != NULL) &&
+        (IS_ALIGNED((uintptr_t)(config->block_region.addr), 4096)) &&
+        (config->block_sz == 4096) &&
+        (config->block_region.size > 0) &&
+        (IS_ALIGNED((uintptr_t)(config->block_region.size), 4096))) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -41,7 +41,7 @@ static errno_t validate_parameters(struct aarch64_mmu_block_pool *pool, struct a
     return ret;
 }
 
-static errno_t mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configure const *conf)
+static errno_t mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config)
 {
     errno_t ret;
     size_t n;
@@ -50,9 +50,9 @@ static errno_t mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct a
 
     memset(pool, 0, sizeof(*pool));
 
-    pool->block_sz = conf->block_sz;
-    pool->block_region.addr = conf->block_region.addr;
-    pool->block_region.size = conf->block_region.size;
+    pool->block_sz = config->block_sz;
+    pool->block_region.addr = config->block_region.addr;
+    pool->block_region.size = config->block_region.size;
 
     ret = SUCCESS;
     list_init(&(pool->block_list));
@@ -70,14 +70,13 @@ static errno_t mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct a
     return ret;
 }
 
-
-errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configure const *conf)
+errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config)
 {
     errno_t ret;
 
-    ret = validate_parameters(pool, conf);
+    ret = validate_parameters(pool, config);
     if (ret == SUCCESS) {
-        ret = mmu_block_pool_init(pool, conf);
+        ret = mmu_block_pool_init(pool, config);
     } else {
         ret = -EINVAL;
     }

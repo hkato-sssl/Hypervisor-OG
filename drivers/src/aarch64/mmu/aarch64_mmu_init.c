@@ -21,7 +21,7 @@
 
 /* functions */
 
-static errno_t validate_parameters(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *config)
+static errno_t validate_parameters(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
 {
     errno_t ret;
 
@@ -34,7 +34,7 @@ static errno_t validate_parameters(struct aarch64_mmu_trans_table *tt, struct aa
     return ret;
 }
 
-static errno_t init_trans_table(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *config)
+static errno_t init_trans_table(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
 {
 	tt->active = false;
     tt->asid = config->asid;
@@ -46,7 +46,7 @@ static errno_t init_trans_table(struct aarch64_mmu_trans_table *tt, struct aarch
     return SUCCESS;
 }
 
-static errno_t mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *config)
+static errno_t mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
 {
     errno_t ret;
 
@@ -65,7 +65,7 @@ static errno_t mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_t
     return ret;
 }
 
-errno_t aarch64_mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *config)
+errno_t aarch64_mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
 {
     errno_t ret;
 

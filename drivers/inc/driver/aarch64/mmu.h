@@ -145,7 +145,7 @@ struct aarch64_mmu_block_pool {
     } counter;
 };
 
-struct aarch64_mmu_block_pool_configure {
+struct aarch64_mmu_block_pool_configuration {
     size_t          block_sz;
     struct {
         void        *addr;
@@ -173,18 +173,18 @@ struct aarch64_mmu_trans_table {
     struct aarch64_mmu_block_pool pool;
 };
 
-struct aarch64_mmu_trans_table_configure {
+struct aarch64_mmu_trans_table_configuration {
     uint16_t        asid;
     uint64_t 		mair;
     struct aarch64_mmu_tcr tcr;
-    struct aarch64_mmu_block_pool_configure pool;
+    struct aarch64_mmu_block_pool_configuration pool;
 };
 
 /* variables */
 
 /* functions */
 
-errno_t aarch64_mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configure const *conf);
+errno_t aarch64_mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config);
 errno_t aarch64_mmu_disable(void);
 errno_t aarch64_mmu_enable(struct aarch64_mmu_trans_table const *tt);
 
@@ -193,7 +193,7 @@ errno_t aarch64_mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *
 errno_t aarch64_mmu_map_2MB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr);
 errno_t aarch64_mmu_map_1GB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr);
 
-errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configure const *conf);
+errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config);
 void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);
 errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block, size_t block_sz);
 

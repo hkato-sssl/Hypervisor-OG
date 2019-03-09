@@ -13,6 +13,10 @@
 
 #ifndef ASSEMBLY
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* includes */
 
 #include <stdint.h>
@@ -25,19 +29,15 @@
 
 /* functions */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define REG_WRITE64(b, r, d)   (*(volatile uint64_t *)((uintptr_t)(b) + (uintptr_t)(r)) = (uint64_t)(d))
+#define REG_WRITE32(b, r, d)   (*(volatile uint32_t *)((uintptr_t)(b) + (uintptr_t)(r)) = (uint32_t)(d))
+#define REG_WRITE16(b, r, d)   (*(volatile uint16_t *)((uintptr_t)(b) + (uintptr_t)(r)) = (uint16_t)(d))
+#define REG_WRITE8(b, r, d)    (*(volatile uint8_t *)((uintptr_t)(b) + (uintptr_t)(r)) = (uint8_t)(d))
 
-#define REG_WRITE64(b, r, d)   (*(volatile uint64_t *)((b) + (r)) = (uint64_t)(d))
-#define REG_WRITE32(b, r, d)   (*(volatile uint32_t *)((b) + (r)) = (uint32_t)(d))
-#define REG_WRITE16(b, r, d)   (*(volatile uint16_t *)((b) + (r)) = (uint16_t)(d))
-#define REG_WRITE8(b, r, d)    (*(volatile uint8_t *)((b) + (r)) = (uint8_t)(d))
-
-#define REG_READ64(b, r)       (*(volatile uint64_t *)((b) + (r)))
-#define REG_READ32(b, r)       (*(volatile uint32_t *)((b) + (r)))
-#define REG_READ16(b, r)       (*(volatile uint16_t *)((b) + (r)))
-#define REG_READ8(b, r)        (*(volatile uint8_t *)((b) + (r)))
+#define REG_READ64(b, r)       (*(volatile uint64_t *)((uintptr_t)(b) + (uintptr_t)(r)))
+#define REG_READ32(b, r)       (*(volatile uint32_t *)((uintptr_t)(b) + (uintptr_t)(r)))
+#define REG_READ16(b, r)       (*(volatile uint16_t *)((uintptr_t)(b) + (uintptr_t)(r)))
+#define REG_READ8(b, r)        (*(volatile uint8_t *)((uintptr_t)(b) + (uintptr_t)(r)))
 
 #define MEMORY_BARRIER()        __asm volatile ("dsb osh")
 

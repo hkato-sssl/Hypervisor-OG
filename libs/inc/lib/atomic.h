@@ -13,6 +13,10 @@
 
 #ifndef ASSEMBLY
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* includes */
 
 #include <stdint.h>
@@ -25,10 +29,6 @@
 /* variables */
 
 /* functions */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 static inline void atomic_add_u64(uint64_t *p, uint64_t d)
 {

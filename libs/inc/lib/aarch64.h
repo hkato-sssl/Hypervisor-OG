@@ -22,6 +22,10 @@
         .endm
 #else /* ASSEMBLY */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* includes */
 
 /* defines */
@@ -31,10 +35,6 @@
 /* variables */
 
 /* functions */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifdef __cplusplus
 }

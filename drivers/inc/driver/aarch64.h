@@ -15,7 +15,7 @@
 
 /* includes */
 
-#include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,8 +29,12 @@ extern "C" {
 
 /* functions */
 
-bool aarch64_lock(void);
-void aarch64_unlock(bool lock);
+uint32_t aarch64_lock_irq(void);
+void aarch64_unlock_irq(uint32_t lock);
+uint32_t aarch64_lock_fiq(void);
+void aarch64_unlock_fiq(uint32_t lock);
+uint32_t aarch64_lock_interrupts(void);
+void aarch64_unlock_interrupts(uint32_t lock);
 
 #ifdef __cplusplus
 }

@@ -49,7 +49,7 @@ static void mmu_set_ttbr0(struct aarch64_mmu_trans_table const *tt)
 
 static errno_t mmu_set_tt_el1(struct aarch64_mmu_trans_table *tt)
 {
-    bool lock;
+    uint32_t lock;
     uint64_t d;
     uint64_t d0;
 
@@ -62,7 +62,7 @@ static errno_t mmu_set_tt_el1(struct aarch64_mmu_trans_table *tt)
     d |= (uint64_t)(tt->tcr.irgn) << 8;
     d |= (uint64_t)(tt->tcr.sz);
 
-    lock = aarch64_lock();
+    lock = aarch64_lock_interrupts();
 
     d0 = aarch64_read_tcr_el1();
     /* A1=0 */
@@ -74,14 +74,14 @@ static errno_t mmu_set_tt_el1(struct aarch64_mmu_trans_table *tt)
 
     tt->active = true;
 
-    aarch64_unlock(lock);
+    aarch64_unlock_interrupts(lock);
 
     return SUCCESS;
 }
 
 static errno_t mmu_set_tt_el23(struct aarch64_mmu_trans_table *tt)
 {
-    bool lock;
+    uint32_t lock;
     uint32_t d;
 
     /* TBI=0, PS=0b001(36 bits,64GB), TG0=0b00(4KB) */ 
@@ -93,13 +93,13 @@ static errno_t mmu_set_tt_el23(struct aarch64_mmu_trans_table *tt)
     d |= (uint32_t)(tt->tcr.irgn) << 8;
     d |= (uint32_t)(tt->tcr.sz);
 
-    lock = aarch64_lock();
+    lock = aarch64_lock_interrupts();
 
     aarch64_write_tcr(d);
     aarch64_write_mair(tt->mair);
     mmu_set_ttbr0(tt);
 
-    aarch64_unlock(lock);
+    aarch64_unlock_interrupts(lock);
 
     return SUCCESS;
 }

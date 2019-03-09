@@ -1,11 +1,11 @@
 /*
- * lib/spin_lock.h
+ * lib/system/spin_lock.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef LIB_SPIN_LOCK_H
-#define LIB_SPIN_LOCK_H
+#ifndef LIB_SYSTEM_SPIN_LOCK_H
+#define LIB_SYSTEM_SPIN_LOCK_H
 
 /* includes */
 
@@ -43,5 +43,5 @@ void spin_unlock(spin_lock_t *lock);
 
 #endif /* ASSEMBLY */
 
-#endif /* LIB_SPIN_LOCK_H */
+#endif /* LIB_SYSTEM_SPIN_LOCK_H */
 

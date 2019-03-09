@@ -40,6 +40,10 @@ H_FILE = COPYRIGHT + """\
 
 #ifndef {asm_guard}
 
+#ifdef __cplusplus
+extern \"C\" {{
+#endif
+
 /* includes */
 
 /* defines */
@@ -49,10 +53,6 @@ H_FILE = COPYRIGHT + """\
 /* variables */
 
 /* functions */
-
-#ifdef __cplusplus
-extern \"C\" {{
-#endif
 
 #ifdef __cplusplus
 }}

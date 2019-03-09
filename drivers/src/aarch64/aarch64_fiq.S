@@ -8,7 +8,7 @@
 #include "driver/aarch64/system_register.h"
 
         .global         aarch64_lock_fiq
-        .global         aarch64_lock_fiq
+        .global         aarch64_unlock_fiq
 
         .section        ".text.aarch64_lock_fiq", "ax", %progbits
         .type           aarch64_lock_fiq, %function

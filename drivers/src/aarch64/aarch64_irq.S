@@ -8,7 +8,7 @@
 #include "driver/aarch64/system_register.h"
 
         .global         aarch64_lock_irq
-        .global         aarch64_lock_irq
+        .global         aarch64_unlock_irq
 
         .section        ".text.aarch64_lock_irq", "ax", %progbits
         .type           aarch64_lock_irq, %function

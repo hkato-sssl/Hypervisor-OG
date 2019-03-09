@@ -14,6 +14,13 @@
 
 /* includes */
 
+
+/* defines */
+
+#ifndef ASSEMBLY
+
+/* includes */
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -21,17 +28,9 @@
 #include "lib/list.h"
 #include "lib/system/errno.h"
 
-/* defines */
-
-#ifndef ASSEMBLY
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/* includes */
-
-#include <stdint.h>
 
 /* defines */
 

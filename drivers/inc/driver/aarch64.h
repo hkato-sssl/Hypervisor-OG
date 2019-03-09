@@ -13,13 +13,13 @@
 
 #ifndef ASSEMBLY
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* includes */
 
 #include <stdbool.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* defines */
 

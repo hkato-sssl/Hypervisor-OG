@@ -72,11 +72,11 @@
 
 #ifndef ASSEMBLY
 
+/* includes */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/* includes */
 
 /* defines */
 

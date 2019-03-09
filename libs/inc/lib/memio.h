@@ -39,6 +39,8 @@ extern "C" {
 #define REG_READ16(b, r)       (*(volatile uint16_t *)((b) + (r)))
 #define REG_READ8(b, r)        (*(volatile uint8_t *)((b) + (r)))
 
+#define MEMORY_BARRIER()        __asm volatile ("dsb osh")
+
 #ifdef __cplusplus
 }
 #endif

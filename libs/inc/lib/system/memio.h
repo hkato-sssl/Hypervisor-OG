@@ -1,11 +1,11 @@
 /*
- * lib/memio.h
+ * lib/system/memio.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef LIB_MEMIO_H
-#define LIB_MEMIO_H
+#ifndef LIB_SYSTEM_MEMIO_H
+#define LIB_SYSTEM_MEMIO_H
 
 /* includes */
 
@@ -47,5 +47,5 @@ extern "C" {
 
 #endif /* ASSEMBLY */
 
-#endif /* LIB_MEMIO_H */
+#endif /* LIB_SYSTEM_MEMIO_H */
 

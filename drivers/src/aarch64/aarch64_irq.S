@@ -1,5 +1,5 @@
 /*
- * aarch64/aarch64.S
+ * aarch64/aarch64_irq.S
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -19,7 +19,7 @@ aarch64_lock_irq:
 
         /* mask interrupts */
         msr             DAIFSet, #DAIF_I
-        mov             x0,  #DAIF_I
+        mov             x0,  #1
         ret
 
         /* IRQ is already locked */

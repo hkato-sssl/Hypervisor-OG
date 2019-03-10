@@ -15,16 +15,9 @@
         .balign         4
 aarch64_lock_irq:
         mrs             x0,  DAIF
-        tbnz            x0,  #7, 0f             /* test DAIF.I */
-
-        /* mask interrupts */
+        tst             x0,  #PSTATE_I
+        cset            x0,  eq
         msr             DAIFSet, #DAIF_I
-        mov             x0,  #1
-        ret
-
-        /* IRQ is already locked */
-0:
-        mov             x0,  #0
         ret
 
         .section        ".text.aarch64_unlock_irq", "ax", %progbits

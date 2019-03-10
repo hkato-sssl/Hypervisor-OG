@@ -15,16 +15,9 @@
         .balign         4
 aarch64_lock_fiq:
         mrs             x0,  DAIF
-        tbnz            x0,  #6, 0f             /* test DAIF.F */
-
-        /* mask interrupts */
+        tst             x0,  #PSTATE_F
+        cset            x0,  eq
         msr             DAIFSet, #DAIF_F
-        mov             x0,  #1
-        ret
-
-        /* FIQ is already locked */
-0:
-        mov             x0,  #0
         ret
 
         .section        ".text.aarch64_unlock_fiq", "ax", %progbits

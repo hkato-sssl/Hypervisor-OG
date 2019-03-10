@@ -19,8 +19,8 @@ aarch64_lock_interrupts:
         mrs             x1,  DAIF
         mvn             x0,  x1
         and             x0,  x0,  #MASK_BITS
-        orr             x1,  x1,  #MASK_BITS
-        msr             DAIF, x1
+        orr             x2,  x1,  #MASK_BITS
+        msr             DAIF, x2
         ret
 
         .section        ".text.aarch64_unlock_interrupts", "ax", %progbits

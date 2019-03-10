@@ -20,7 +20,7 @@ extern "C" {
 /* includes */
 
 #include <stdint.h>
-#include <stdbool.h>
+#include "driver/aarch64.h"
 
 /* defines */
 
@@ -31,10 +31,20 @@ extern "C" {
 /* functions */
 
 const uint8_t nr_cpus(void);
-const uint8_t cpu_no(void);
+static inline uint8_t cpu_no(void)
+{
+    return aarch64_cpu_no();
+}
 
-bool lock_interrupts(void);
-void unlock_interrupts(bool lock);
+uint32_t lock_interrupts(void)
+{
+    return aarch64_lock_interrupts();
+}
+
+void unlock_interrupts(bool lock)
+{
+    aarch64_unlock_interrupts(lock);
+}
 
 #ifdef __cplusplus
 }

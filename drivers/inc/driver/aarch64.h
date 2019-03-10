@@ -29,6 +29,8 @@ extern "C" {
 
 /* functions */
 
+uint8_t aarch64_cpu_no(void);
+
 uint32_t aarch64_lock_irq(void);
 void aarch64_unlock_irq(uint32_t lock);
 uint32_t aarch64_lock_fiq(void);

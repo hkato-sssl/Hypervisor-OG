@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 #include "lib/system/init.h"
-#include "lib/printk.h"
+#include "lib/system/printk.h"
 
 /* defines */
 

@@ -49,8 +49,11 @@ struct gic400 {
             uint8_t         max;
             uint8_t         shift_ct;
         } priority;
-        uint8_t             nr_interrupts;
-        gic400_handler_t    handlers[NR_GIC400_INTERRUPTS];
+        uint16_t            nr_interrupts;
+        struct {
+            gic400_handler_t    entry;
+            void                *arg;
+        } handlers[NR_GIC400_INTERRUPTS];
 };
 
 struct gic400_interrupt_configuration {
@@ -70,15 +73,14 @@ struct gic400_interrupt_configuration {
 /* functions */
 
 errno_t gic400_init(struct gic400 *gic, struct gic400_configuration const *config);
+uint32_t gic400_ack(struct gic400 *gic);
+void gic400_eoi(struct gic400 *gic, uint32_t iar);
 errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_disable_interrupt(struct gic400 *gic, uint16_t intr_no);
-errno_t gic400_ack(struct gic400 *gic);
-errno_t gic400_eoi(struct gic400 *gic);
-errno_t gic400_register_handler(struct gic400 *gic, uint16_t intr_no, gic400_handler_t handler, void *arg);
-errno_t gic400_configure_interrupt(struct gic400 *gic);
 errno_t gic400_assert_sgi(struct gic400 *gic, uint8_t targets, uint16_t intr_no);
-errno_t gic400_assert_interrupt(struct gic400 *gic, uint16_t intr_no);
-uint8_t gic400_set_priority(struct gic400 *gic, uint8_t priority);
+errno_t gic400_assert_spi(struct gic400 *gic, uint16_t intr_no);
+errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct gic400_interrupt_configuration const *config);
+errno_t gic400_register_handler(struct gic400 *gic, uint16_t intr_no, gic400_handler_t handler, void *arg);
 
 #ifdef __cplusplus
 }

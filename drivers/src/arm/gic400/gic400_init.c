@@ -65,7 +65,7 @@ static void init_distributor(struct gic400 *gic)
 
     d = gic400_read_dist(gic, GICD_TYPER);
     d = ((d & BITS(4, 0)) + 1) * 4;
-    gic->nr_interrupts = (uint8_t)d;
+    gic->nr_interrupts = (uint16_t)d;
 
     for (i = 0; i < (gic->nr_interrupts / 32); ++i) {
         gic400_write_dist(gic, GICD_ICENABLER(i), ~(uint32_t)0);
@@ -92,7 +92,7 @@ static errno_t init(struct gic400 *gic, struct gic400_configuration const *confi
 {
     bool lock;
 
-    lock = lock_interrupts();
+    lock = cpu_lock_interrupts();
 
     /* initialize software parameters */
 
@@ -111,7 +111,7 @@ static errno_t init(struct gic400 *gic, struct gic400_configuration const *confi
         init_banked_distributor(gic);
     }
 
-    unlock_interrupts(lock);
+    cpu_unlock_interrupts(lock);
 
     return SUCCESS;
 }

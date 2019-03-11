@@ -4,8 +4,8 @@
  * (C) 2018 Hidekazu Kato
  */
 
-#ifndef LIBS_SYSTEM_PRINTK_H
-#define LIBS_SYSTEM_PRINTK_H
+#ifndef LIB_SYSTEM_PRINTK_H
+#define LIB_SYSTEM_PRINTK_H
 
 /* includes */
 
@@ -35,5 +35,5 @@ void printk(const char *fmt, ...);
 
 #endif /* ASSEMBLY */
 
-#endif /* LIBS_SYSTEM_PRINTK_H */
+#endif /* LIB_SYSTEM_PRINTK_H */
 

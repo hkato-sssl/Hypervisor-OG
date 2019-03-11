@@ -1,11 +1,11 @@
 /*
- * libs/atomic.h
+ * lib/system/atomic.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef LIBS_ATOMIC_H
-#define LIBS_ATOMIC_H
+#ifndef LIB_SYSTEM_ATOMIC_H
+#define LIB_SYSTEM_ATOMIC_H
 
 /* includes */
 
@@ -56,5 +56,5 @@ static void atomic_dec_u64(uint64_t *p)
 
 #endif /* ASSEMBLY */
 
-#endif /* LIBS_ATOMIC_H */
+#endif /* LIB_SYSTEM_ATOMIC_H */
 

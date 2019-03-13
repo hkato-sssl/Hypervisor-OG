@@ -40,7 +40,7 @@ struct gic400_configuration {
         struct gic400_base_register base;
 };
 
-typedef void (*gic400_handler_t)(uint32_t iar, void *arg);
+typedef intptr_t (*gic400_handler_t)(void *arg, uint32_t iar);
 
 struct gic400 {
         spin_lock_t         lock;

@@ -47,7 +47,7 @@ static errno_t write_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg
     uint32_t bit;
 
     bit = 1UL << (bit_no & 31);
-    reg = reg0 + (bit_no / 32);
+    reg = reg0 + (bit_no / 32)  * sizeof(uint32_t);
     gic400_write_dist(gic, reg, bit);
 
     return SUCCESS;
@@ -74,7 +74,7 @@ static bool test_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg0)
     uint32_t bit;
 
     bit = 1UL << (bit_no & 31);
-    reg = reg0 + (bit_no / 32);
+    reg = reg0 + (bit_no / 32) * sizeof(uint32_t);
 
     d = gic400_read_dist(gic, reg);
     if ((d & bit) != 0) {
@@ -95,7 +95,7 @@ static void write_dist_byte(struct gic400 *gic, uint16_t byte_no, uintptr_t reg0
 
     shift_ct = (byte_no & 3) * 8;
     mask = ~((uint32_t)0xff << shift_ct);
-    reg = reg0 + (byte_no / 4);
+    reg = reg0 + (byte_no / 4) * sizeof(uint32_t);
 
     d = gic400_read_dist(gic, reg);
     d = (d & mask) | ((uint32_t)byte_data << shift_ct);

@@ -35,12 +35,12 @@ static inline uint8_t cpu_no(void)
     return aarch64_cpu_no();
 }
 
-uint32_t cpu_lock_interrupts(void)
+static inline uint32_t cpu_lock_interrupts(void)
 {
     return aarch64_lock_interrupts();
 }
 
-void cpu_unlock_interrupts(bool lock)
+static inline void cpu_unlock_interrupts(bool lock)
 {
     aarch64_unlock_interrupts(lock);
 }

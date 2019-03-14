@@ -81,6 +81,7 @@ errno_t gic400_assert_sgi(struct gic400 *gic, uint8_t targets, uint16_t intr_no)
 errno_t gic400_assert_spi(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct gic400_interrupt_configuration const *config);
 errno_t gic400_register_handler(struct gic400 *gic, uint16_t intr_no, gic400_handler_t handler, void *arg);
+intptr_t gic400_call_handler(struct gic400 *gic);
 
 #ifdef __cplusplus
 }

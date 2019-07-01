@@ -5,6 +5,7 @@
  */
 
 #include "config/system.h"
+#include "lib/asm.h"
 #include "driver/aarch64/system_register.h"
 
 	.extern		init_exception_vector

@@ -7,7 +7,7 @@ OBJCOPY = $(CROSS_COMPILE)objcopy
 
 CFLAGS := -Wall -O0 -g3
 
-ASFLAGS := -DASSEMBLY
+ASFLAGS :=
 
 ARFLAGS := Drs
 AROPS_FILE := $(OUTDIR)/.arops

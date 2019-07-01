@@ -5,6 +5,7 @@
  */
 
 #include "config/system.h"
+#include "lib/asm.h"
 #include "driver/aarch64/exception.h"
 
         .global         excvec_el2

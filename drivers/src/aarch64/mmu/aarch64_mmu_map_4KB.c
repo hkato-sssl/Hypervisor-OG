@@ -14,8 +14,8 @@
 /* defines */
 
 #define MEM_4KB     (4UL * 1024)
-#define	MEM_2MB		(2UL * 1024 * 1024)
-#define	MEM_1GB		(1UL * 1024 * 1024 * 1024)
+#define	MEM_2MB	    (2UL * 1024 * 1024)
+#define	MEM_1GB	    (1UL * 1024 * 1024 * 1024)
 
 /* types */
 

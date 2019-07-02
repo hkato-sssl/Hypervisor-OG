@@ -7,11 +7,9 @@
 #include <stdint.h>
 #include "lib/system/errno.h"
 #include "driver/aarch64/mmu.h"
-/* defines */
+#include "mmu_local.h"
 
-#define	MEM_4KB		(4UL * 1024)
-#define	MEM_2MB		(2UL * 1024 * 1024)
-#define	MEM_1GB		(1UL * 1024 * 1024 * 1024)
+/* defines */
 
 /* types */
 

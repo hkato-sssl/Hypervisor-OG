@@ -10,6 +10,7 @@
 #include "lib/list.h"
 #include "lib/system/atomic.h"
 #include "lib/system/errno.h"
+#include "driver/aarch64/cache.h"
 #include "driver/aarch64/mmu.h"
 #include "mmu_local.h"
 
@@ -92,6 +93,7 @@ void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block
         p = list_get_front(&(pool->block_list));
         if (p != NULL) {
             memset(p, 0, block_sz);
+            aarch64_dcache_clean_range(p, block_sz);
             atomic_inc_u64(&(pool->counter.calloc.success));
         } else {
             atomic_inc_u64(&(pool->counter.calloc.failure));

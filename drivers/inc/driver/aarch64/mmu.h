@@ -35,7 +35,7 @@ extern "C" {
 /* defines */
 
 #define NR_MAIR_ATTRS               8           /* number of attribute in MAIR_ELx */
-#define	MMU_MAIR_ATTR(n, v)			((uint64_t)(v) << ((n) * 8))
+#define MMU_MAIR_ATTR(n, v)         ((uint64_t)(v) << ((n) * 8))
 
 /* Device memory type */
 #define MEM_ATTR_DEVICE_nGnRnE      0x00
@@ -153,28 +153,28 @@ struct aarch64_mmu_block_pool_configuration {
 };
 
 struct aarch64_mmu_tcr {
-    uint8_t 	    sz:6;
-    uint8_t 	    sh:2;
-    uint8_t 	    irgn:2;
-    uint8_t 	    orgn:2;
+    uint8_t         sz:6;
+    uint8_t         sh:2;
+    uint8_t         irgn:2;
+    uint8_t         orgn:2;
 };
 
 struct aarch64_mmu_mair {
-	uint8_t			attrs[NR_MAIR_ATTRS];
+    uint8_t         attrs[NR_MAIR_ATTRS];
 };
 
 struct aarch64_mmu_trans_table {
     bool            active;
     uint16_t        asid;
     uint64_t        *addr;
-    uint64_t 		mair;
+    uint64_t        mair;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool pool;
 };
 
 struct aarch64_mmu_trans_table_configuration {
     uint16_t        asid;
-    uint64_t 		mair;
+    uint64_t        mair;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool_configuration pool;
 };

@@ -113,6 +113,11 @@ extern "C" {
 
 /* types */
 
+struct aarch64_mmu_el {
+    uint8_t         level;
+    uint8_t         ns:1;
+};
+
 struct aarch64_mmu_attr {
     /* upper attributes */
     uint8_t         xn:1;       /* also used as UXN */
@@ -168,6 +173,7 @@ struct aarch64_mmu_trans_table {
     uint16_t        asid;
     uint64_t        *addr;
     uint64_t        mair;
+	struct aarch64_mmu_el el;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool pool;
 };
@@ -175,6 +181,7 @@ struct aarch64_mmu_trans_table {
 struct aarch64_mmu_trans_table_configuration {
     uint16_t        asid;
     uint64_t        mair;
+    struct aarch64_mmu_el el;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool_configuration pool;
 };

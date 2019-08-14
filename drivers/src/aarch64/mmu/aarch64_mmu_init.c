@@ -21,43 +21,17 @@
 
 /* functions */
 
-static errno_t validate_mmu_el(struct aarch64_mmu_trans_table_configuration const *config)
-{
-	errno_t ret;
-
-	switch (config->el.level) {
-	case 0:
-	case 1:
-		ret = SUCCESS;
-		break;
-	case 2:
-		if (config->el.ns != 0) {
-			ret = SUCCESS;
-		} else {
-			ret = -EINVAL;
-		}
-		break;
-	case 3:
-		if (config->el.ns == 0) {
-			ret = SUCCESS;
-		} else {
-			ret = -EINVAL;
-		}
-		break;
-	default:
-		ret = -EINVAL;
-		break;
-	}
-
-	return ret;
-}
-
 static errno_t validate_parameters(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
 {
     errno_t ret;
 
     if ((tt != NULL) && (config != NULL) && (config->pool.block_sz == MMU_BLOCK_SZ)) {
-        ret = validate_mmu_el(config);
+        if ((config->stage == MMU_STAGE1) || (config->stage == MMU_STAGE2)) {
+            ret = SUCCESS;
+        } else {
+            ret = -EINVAL;
+        }
+
     } else {
         ret = -EINVAL;
     }
@@ -67,12 +41,11 @@ static errno_t validate_parameters(struct aarch64_mmu_trans_table *tt, struct aa
 
 static errno_t init_trans_table(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
 {
-	tt->active = false;
+    tt->active = false;
+    tt->stage = config->stage;
     tt->asid = config->asid;
     memset(tt->addr, 0, MMU_BLOCK_SZ);
 
-    tt->mair = config->mair;
-	tt->el = config->el;
     tt->tcr = config->tcr;
 
     return SUCCESS;

@@ -34,6 +34,9 @@ extern "C" {
 
 /* defines */
 
+#define MMU_STAGE1                  1
+#define MMU_STAGE2                  2
+
 #define NR_MAIR_ATTRS               8           /* number of attribute in MAIR_ELx */
 #define MMU_MAIR_ATTR(n, v)         ((uint64_t)(v) << ((n) * 8))
 
@@ -113,11 +116,6 @@ extern "C" {
 
 /* types */
 
-struct aarch64_mmu_el {
-    uint8_t         level;
-    uint8_t         ns:1;
-};
-
 struct aarch64_mmu_attr {
     /* upper attributes */
     uint8_t         xn:1;       /* also used as UXN */
@@ -170,18 +168,18 @@ struct aarch64_mmu_mair {
 
 struct aarch64_mmu_trans_table {
     bool            active;
+    uint8_t         stage;
     uint16_t        asid;
     uint64_t        *addr;
     uint64_t        mair;
-	struct aarch64_mmu_el el;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool pool;
 };
 
 struct aarch64_mmu_trans_table_configuration {
+    uint8_t         stage;
     uint16_t        asid;
     uint64_t        mair;
-    struct aarch64_mmu_el el;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool_configuration pool;
 };

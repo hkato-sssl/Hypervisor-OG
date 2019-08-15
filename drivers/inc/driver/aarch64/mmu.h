@@ -117,15 +117,28 @@ extern "C" {
 /* types */
 
 struct aarch64_mmu_attr {
-    /* upper attributes */
-    uint8_t         xn:1;       /* also used as UXN */
-    uint8_t         pxn:1;
-    /* lower attributes */
-    uint8_t         ng:1;
-    uint8_t         sh:2;
-    uint8_t         ap21:2;
-    uint8_t         ns:1;
-    uint8_t         attrindx:3;
+    uint8_t             stage;
+
+    struct {
+        /* upper attributes */
+        uint8_t         xn:1;       /* also used as UXN */
+        uint8_t         pxn:1;
+        /* lower attributes */
+        uint8_t         ng:1;
+        uint8_t         sh:2;
+        uint8_t         ap21:2;
+        uint8_t         ns:1;
+        uint8_t         attrindx:3;
+    } stage1;
+
+    struct {
+        /* upper attributes */
+        uint8_t         xn:1;
+        /* lower attributes */
+        uint8_t         sh:2;
+        uint8_t         s2ap:2;
+        uint8_t         memattr:4;
+    } stage2;
 };
 
 struct aarch64_mmu_block_pool {

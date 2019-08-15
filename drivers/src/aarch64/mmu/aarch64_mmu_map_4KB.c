@@ -102,29 +102,66 @@ uint64_t *desc_addr(struct aarch64_mmu_trans_table *tt, void *va, uint32_t level
     return desc;
 }
 
-static uint64_t descriptor_attrs(struct aarch64_mmu_attr const *attr)
+static uint64_t stage1_descriptor_attrs(struct aarch64_mmu_attr const *attr)
 {
     uint64_t d;
     uint64_t upper;
     uint64_t lower;
 
-    /* upper attributes */
-
-    upper = (uint64_t)(attr->xn) << 54;
-    upper |= (uint64_t)(attr->pxn) << 53;
+   /* upper attributes */
+    
+    upper = (uint64_t)(attr->stage1.xn) << 54;
+    upper |= (uint64_t)(attr->stage1.pxn) << 53;
 
     /* lower attributes */
 
-    lower = (uint64_t)(attr->ng) << 11;
-    lower |= (uint64_t)(attr->sh) << 8;
-    lower |= (uint64_t)(attr->ap21) << 6;
-    lower |= (uint64_t)(attr->ns) << 5;
-    lower |= (uint64_t)(attr->attrindx) << 2;
+    lower = (uint64_t)(attr->stage1.ng) << 11;
+    lower |= (uint64_t)(attr->stage1.sh) << 8;
+    lower |= (uint64_t)(attr->stage1.ap21) << 6;
+    lower |= (uint64_t)(attr->stage1.ns) << 5;
+    lower |= (uint64_t)(attr->stage1.attrindx) << 2;
     lower |= MMU_DESC_AF;
 
     /* page descriptor */
 
     d = upper | lower;
+
+    return d;
+}
+
+static uint64_t stage2_descriptor_attrs(struct aarch64_mmu_attr const *attr)
+{
+    uint64_t d;
+    uint64_t upper;
+    uint64_t lower;
+
+   /* upper attributes */
+    
+    upper = (uint64_t)(attr->stage2.xn) << 54;
+
+    /* lower attributes */
+
+    lower = (uint64_t)(attr->stage2.sh) << 8;
+    lower |= (uint64_t)(attr->stage2.s2ap) << 6;
+    lower |= (uint64_t)(attr->stage2.memattr) << 2;
+    lower |= MMU_DESC_AF;
+
+    /* page descriptor */
+
+    d = upper | lower;
+
+    return d;
+}
+
+static uint64_t descriptor_attrs(struct aarch64_mmu_attr const *attr)
+{
+    uint64_t d;
+
+    if (attr->stage == MMU_STAGE1) {
+        d = stage1_descriptor_attrs(attr);
+    } else {
+        d = stage2_descriptor_attrs(attr);
+    }
 
     return d;
 }
@@ -177,7 +214,7 @@ static errno_t map_4KB_validate_parameters(struct aarch64_mmu_trans_table *tt, v
 {
     errno_t ret;
 
-    if ((tt != NULL) && (attr != NULL) && IS_ALIGNED((uintptr_t)va, MEM_4KB) && IS_ALIGNED((uintptr_t)pa, MEM_4KB)) {
+    if ((tt != NULL) && (attr != NULL) && (tt->stage == attr->stage) && IS_ALIGNED((uintptr_t)va, MEM_4KB) && IS_ALIGNED((uintptr_t)pa, MEM_4KB)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -220,7 +257,7 @@ static errno_t map_2MB_validate_parameters(struct aarch64_mmu_trans_table *tt, v
 {
     errno_t ret;
 
-    if ((tt != NULL) && (attr != NULL) && IS_ALIGNED((uintptr_t)va, MEM_2MB) && IS_ALIGNED((uintptr_t)pa, MEM_2MB)) {
+    if ((tt != NULL) && (attr != NULL) && (tt->stage == attr->stage) && IS_ALIGNED((uintptr_t)va, MEM_2MB) && IS_ALIGNED((uintptr_t)pa, MEM_2MB)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -263,7 +300,7 @@ static errno_t map_1GB_validate_parameters(struct aarch64_mmu_trans_table *tt, v
 {
     errno_t ret;
 
-    if ((tt != NULL) && (attr != NULL) && IS_ALIGNED((uintptr_t)va, MEM_1GB) && IS_ALIGNED((uintptr_t)pa, MEM_1GB)) {
+    if ((tt != NULL) && (attr != NULL) && (tt->stage == attr->stage) && IS_ALIGNED((uintptr_t)va, MEM_1GB) && IS_ALIGNED((uintptr_t)pa, MEM_1GB)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;

@@ -182,17 +182,27 @@ struct aarch64_mmu_mair {
 struct aarch64_mmu_trans_table {
     bool            active;
     uint8_t         stage;
-    uint16_t        asid;
+    struct {
+        uint16_t    asid;
+        uint64_t    mair;
+    } stage1;
+    struct {
+        uint8_t     vmid;
+    } stage2;
     uint64_t        *addr;
-    uint64_t        mair;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool pool;
 };
 
 struct aarch64_mmu_trans_table_configuration {
     uint8_t         stage;
-    uint16_t        asid;
-    uint64_t        mair;
+    struct {
+        uint16_t    asid;
+        uint64_t    mair;
+    } stage1;
+    struct {
+        uint8_t     vmid;
+    } stage2;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool_configuration pool;
 };

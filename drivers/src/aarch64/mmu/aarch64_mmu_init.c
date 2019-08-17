@@ -43,7 +43,12 @@ static errno_t init_trans_table(struct aarch64_mmu_trans_table *tt, struct aarch
 {
     tt->active = false;
     tt->stage = config->stage;
-    tt->asid = config->asid;
+    if (tt->stage == MMU_STAGE1) {
+        tt->stage1.asid = config->stage1.asid;
+        tt->stage1.mair = config->stage1.mair;
+    } else {
+        tt->stage2.vmid = config->stage2.vmid;
+    }
     memset(tt->addr, 0, MMU_BLOCK_SZ);
 
     tt->tcr = config->tcr;

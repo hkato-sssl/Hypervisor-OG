@@ -14,10 +14,9 @@
         .type           aarch64_lock_fiq, %function
         .balign         4
 aarch64_lock_fiq:
-        mrs             x0,  DAIF
-        tst             x0,  #PSTATE_F
-        cset            x0,  eq
-        msr             DAIFSet, #DAIF_F
+        mrs             x1,  DAIF
+        eor             x0,  x1,  #PSTATE_F
+        msr             DAIFSet,  #DAIF_F
         ret
 
         .section        ".text.aarch64_unlock_fiq", "ax", %progbits
@@ -25,7 +24,7 @@ aarch64_lock_fiq:
         .balign         4
 aarch64_unlock_fiq:
         cbz             x0, 0f
-        msr             DAIFClr, #DAIF_F
+        msr             DAIFClr,  #DAIF_F
 0:
         ret
 

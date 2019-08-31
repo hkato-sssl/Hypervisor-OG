@@ -157,6 +157,7 @@ excvec_el2:
         dsb             sy
         svc             #0
 
+        .balign         64
 save_rest_registers:
         stp             x3,  x4,  [sp,  #(EXC_X3 * 8)]
         stp             x5,  x6,  [sp,  #(EXC_X5 * 8)]

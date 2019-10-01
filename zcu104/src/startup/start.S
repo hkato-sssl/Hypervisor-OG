@@ -50,6 +50,7 @@ _start:
 	stp		xzr, xzr, [x0], #16
 	subs		x1, x1, #64
 	bne		0b
+
 	// call main()
 
 	mov		x0, xzr			// argc = 0

@@ -21,6 +21,11 @@ aarch64_spin_lock_init:
         mov             x0,  xzr
         ret
 
+        /*
+         * ldxr命令前にdsb命令を実行する必要性は無いが、lock/unlock間で
+         * メモリアクセスを明示的にシリアライズさせる事でシステム全体の
+         * メモリアクセス手順を明確にする意図によりdsb命令を実行させる。
+         */
         .section        ".text.aarch64_spin_trylock", "ax", %progbits
         .type           aarch64_spin_trylock, %function
         .balign         4

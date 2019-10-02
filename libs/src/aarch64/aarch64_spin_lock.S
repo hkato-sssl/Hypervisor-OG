@@ -31,7 +31,6 @@ aarch64_spin_trylock:
         ldxr            w0,  [x2]
         cbnz            w0,  already_locked
         stxr            w0,  w1,  [x2]
-        dsb             ish
         cbz             x0,  trylock_exit
         mov             x0,  #-EAGAIN
 trylock_exit:

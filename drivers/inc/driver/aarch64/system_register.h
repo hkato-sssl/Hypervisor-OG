@@ -70,6 +70,13 @@
 #define SCTLR_A             BIT(1)
 #define SCTLR_M             BIT(0)
 
+/* ACTLR */
+#define	ACTLR_L2ACTLR		BIT(6)
+#define	ACTLR_L2ECTLR		BIT(5)
+#define	ACTLR_L2CTLR		BIT(4)
+#define	ACTLR_CPUECTLR		BIT(1)
+#define	ACTLR_CPUACTLR		BIT(0)
+
 #ifndef ASSEMBLY
 
 /* includes */

@@ -1,13 +1,13 @@
 /*
- * startup/init_exception_vector.S
+ * startup/initial_exception_vector.S
  *
  * (C) 2019 Hidekazu Kato
  */
-        .global         init_exception_vector
+        .global         initial_exception_vector
         .section        ".text.excvec", "ax", %progbits
-        .type           init_exception_vector, %function
+        .type           initial_exception_vector, %function
         .balign         2048
-init_exception_vector:
+initial_exception_vector:
         // current EL with SP0
 
         /*

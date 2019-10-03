@@ -8,7 +8,7 @@
 #include "lib/asm.h"
 #include "driver/aarch64/system_register.h"
 
-	.extern		init_exception_vector
+	.extern		initial_exception_vector
 	.extern		main_stack_region
 	.extern		__bss_start
 	.extern		__bss_end
@@ -23,7 +23,7 @@ _start:
 
 	msr		DAIFset, #DAIF_ALL
 	msr		SPsel, #1
-	adr		x0, init_exception_vector
+	adr		x0, initial_exception_vector
 	msr		VBAR_EL2, x0
 
 	// initialize SP

@@ -15,7 +15,16 @@
 
 /* functions */
 
+void init_system(void);
+void init_hw(void);
+void launch_system(void);
+
 int main(void)
 {
-	return -1;
+	init_system();
+	init_hw();
+	launch_system();
+
+	return (0);
 }
+

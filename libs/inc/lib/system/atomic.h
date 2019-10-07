@@ -40,12 +40,12 @@ static inline void atomic_sub_u64(uint64_t *p, uint64_t d)
     aarch64_atomic_sub_u64(p, d);
 }
 
-static void atomic_inc_u64(uint64_t *p)
+static inline void atomic_inc_u64(uint64_t *p)
 {
     atomic_add_u64(p, 1);
 }
 
-static void atomic_dec_u64(uint64_t *p)
+static inline void atomic_dec_u64(uint64_t *p)
 {
     atomic_sub_u64(p, 1);
 }

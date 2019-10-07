@@ -30,7 +30,7 @@ static struct log_radix upper_case_hex = { 16, upper_case_hex_chars, { 2, upper_
 
 static int parse_type(struct log_context *ctx, char ch)
 {
-	int ret;
+	errno_t ret;
 
 	ctx->syntax.type = ch;
 
@@ -83,7 +83,7 @@ static int parse_type(struct log_context *ctx, char ch)
 
 static int parse_length_h_hh(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	char ch;
 
 	ch = get_char(ctx);
@@ -101,7 +101,7 @@ static int parse_length_h_hh(struct log_context *ctx)
 
 static int parse_length_l_ll(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	char ch;
 
 	ch = get_char(ctx);
@@ -119,7 +119,7 @@ static int parse_length_l_ll(struct log_context *ctx)
 	
 static int parse_length_others(struct log_context *ctx, char ch)
 {
-	int ret;
+	errno_t ret;
 
 	switch (ch) {
 	case 'z':
@@ -142,7 +142,7 @@ static int parse_length_others(struct log_context *ctx, char ch)
 
 static int parse_length(struct log_context *ctx, char ch)
 {
-	int ret;
+	errno_t ret;
 
 	switch (ch) {
 	case 'h':
@@ -161,7 +161,7 @@ static int parse_length(struct log_context *ctx, char ch)
 
 static int parse_width(struct log_context *ctx, char ch)
 {
-	int ret;
+	errno_t ret;
 
 	while ((ch >= '0') && (ch <= '9')) {
 		ctx->syntax.width = ctx->syntax.width * 10 + (ch - '0');
@@ -175,7 +175,7 @@ static int parse_width(struct log_context *ctx, char ch)
 
 static int parse_flag(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	char ch;
 
 	ch = get_char(ctx);
@@ -214,7 +214,7 @@ static int parse_flag(struct log_context *ctx)
 
 static int parse_format(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 
 	memset(&(ctx->syntax), 0, sizeof(ctx->syntax));
 	ret = parse_flag(ctx);
@@ -224,7 +224,7 @@ static int parse_format(struct log_context *ctx)
 
 static int output_formatted_string(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 
 	ret = parse_format(ctx);
 
@@ -233,7 +233,7 @@ static int output_formatted_string(struct log_context *ctx)
 
 static int cformat(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	char ch;
 
 	ret = SUCCESS;
@@ -254,7 +254,7 @@ static int cformat(struct log_context *ctx)
 
 int log_cformat(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 
 	if ((ctx != NULL) && (ctx->putc != NULL) && (ctx->input.format != NULL)) {
 		ret = cformat(ctx);

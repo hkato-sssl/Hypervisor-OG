@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdarg.h>
+#include "lib/system/errno.h"
 #include "lib/log.h"
 #include "log_local.h"
 
@@ -19,7 +20,7 @@
 
 static int output_c(struct log_context *ctx, char v)
 {
-	int ret;
+	errno_t ret;
 
 	ctx->output.pad = ' ';
 	ctx->output.sign = EOS;
@@ -32,7 +33,7 @@ static int output_c(struct log_context *ctx, char v)
 
 int log_output_c(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	char v;
 
 	switch (ctx->syntax.length) {

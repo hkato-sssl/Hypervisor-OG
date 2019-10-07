@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdarg.h>
+#include "lib/system/errno.h"
 #include "lib/log.h"
 #include "log_local.h"
 
@@ -19,7 +20,7 @@
 
 static int output_string(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	size_t idx;
 
 	idx = ctx->output.string.length;
@@ -36,7 +37,7 @@ static int output_string(struct log_context *ctx)
 
 static int output_left_alignment(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 
 	ret = log_output_prefix(ctx);
 	if (ret == SUCCESS) {
@@ -51,7 +52,7 @@ static int output_left_alignment(struct log_context *ctx)
 
 static int output_right_alignment(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 
 	if (ctx->syntax.flag.zero) {
 		ret = log_output_prefix(ctx);
@@ -76,7 +77,7 @@ static int output_right_alignment(struct log_context *ctx)
 
 int log_output_string(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 
 	if (ctx->syntax.flag.minus) {
 		ret = output_left_alignment(ctx);

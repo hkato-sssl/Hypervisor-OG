@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include "lib/system/errno.h"
 #include "lib/log.h"
 
 /* defines */
@@ -18,7 +19,7 @@
 
 int log_init_context(struct log_context *ctx, const struct log_context_configuration *conf)
 {
-	int ret;
+	errno_t ret;
 
 	if ((ctx != NULL) && (conf != NULL)) {
 		memset(ctx, 0, sizeof(*ctx));

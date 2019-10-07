@@ -5,6 +5,7 @@
  */
 
 #include <stddef.h>
+#include "lib/system/errno.h"
 #include "lib/log.h"
 #include "log_local.h"
 
@@ -35,7 +36,7 @@ static int string_length(struct log_context *ctx)
 
 int log_output_pads(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	size_t len;
 
 	len = string_length(ctx);

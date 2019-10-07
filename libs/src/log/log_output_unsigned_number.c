@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdarg.h>
+#include "lib/system/errno.h"
 #include "lib/log.h"
 #include "log_local.h"
 
@@ -19,7 +20,7 @@
 
 static int output_llu(struct log_context *ctx, unsigned long long v)
 {
-	int ret;
+	errno_t ret;
 	int i;
 	int ch;
 	int radix;
@@ -53,7 +54,7 @@ static int output_llu(struct log_context *ctx, unsigned long long v)
 
 int log_output_unsigned_number(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	unsigned long long v;
 
 	switch (ctx->syntax.length) {

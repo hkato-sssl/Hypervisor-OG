@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdarg.h>
+#include "lib/system/errno.h"
 #include "lib/log.h"
 #include "log_local.h"
 
@@ -19,7 +20,7 @@
 
 static int output_radix(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	const char *str;
 	size_t idx;
 	size_t len;
@@ -43,7 +44,7 @@ static int output_radix(struct log_context *ctx)
 
 static int output_sign(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 
 	if (ctx->output.sign != EOS) {
 		ret = put_char(ctx, ctx->output.sign);
@@ -59,7 +60,7 @@ static int output_sign(struct log_context *ctx)
 
 int log_output_prefix(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 
 	ret = output_sign(ctx);
 

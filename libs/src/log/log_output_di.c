@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdarg.h>
+#include "lib/system/errno.h"
 #include "lib/log.h"
 #include "log_local.h"
 
@@ -19,7 +20,7 @@
 
 static int output_lldi(struct log_context *ctx, long long v)
 {
-	int ret;
+	errno_t ret;
 	char *str;
 	signed char ch;
 	size_t idx;
@@ -62,7 +63,7 @@ static int output_lldi(struct log_context *ctx, long long v)
 
 int log_output_di(struct log_context *ctx)
 {
-	int ret;
+	errno_t ret;
 	long long v;
 
 	switch (ctx->syntax.length) {

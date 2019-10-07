@@ -23,6 +23,7 @@ extern "C" {
 
 /* includes */
 
+#include "lib/system/errno.h"
 #include "lib/log.h"
 
 /* defines */
@@ -33,9 +34,9 @@ extern "C" {
 
 /* functions */
 
-static inline int put_char(struct log_context *ctx, char ch)
+static inline errno_t put_char(struct log_context *ctx, char ch)
 {
-	int ret;
+	errno_t ret;
 
 	ret = (*(ctx->putc))(ctx, ch);
 

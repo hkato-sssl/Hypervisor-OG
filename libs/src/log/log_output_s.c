@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 #include <string.h>
+#include "lib/system/errno.h"
 #include "lib/log.h"
 #include "log_local.h"
 
@@ -20,7 +21,7 @@
 
 static int output_string(struct log_context *ctx, char *v)
 {
-	int ret;
+	errno_t ret;
 	char ch;
 
 	ret = SUCCESS;
@@ -37,7 +38,7 @@ static int output_string(struct log_context *ctx, char *v)
 
 static int output_left_alignment(struct log_context *ctx, char *v)
 {
-	int ret;
+	errno_t ret;
 
 	ret = output_string(ctx, v);
 	if (ret == SUCCESS) {
@@ -49,7 +50,7 @@ static int output_left_alignment(struct log_context *ctx, char *v)
 
 static int output_right_alignment(struct log_context *ctx, char *v)
 {
-	int ret;
+	errno_t ret;
 
 	ret = log_output_pads(ctx);
 	if (ret == SUCCESS) {
@@ -63,7 +64,7 @@ int log_output_s(struct log_context *ctx)
 {
 	static char null_str[] = "<NULL>";
 
-	int ret;
+	errno_t ret;
 	char *v;
 
 	ctx->output.pad = ' ';

@@ -30,3 +30,4 @@ int main(void)
 }
 
 void init_hw(void) { return ; }
+void launch_system(void) { return ; }

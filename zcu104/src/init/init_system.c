@@ -6,8 +6,10 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include <string.h>
 #include "lib/system/errno.h"
+#include "lib/system/printk.h"
 #include "lib/log.h"
 #include "driver/xilinx/axi/uart_lite.h"
 
@@ -25,6 +27,22 @@ static struct log_context log_ctx;
 static struct uart_lite uart;
 
 /* functions */
+
+errno_t printk(const char *fmt, ...)
+{
+	errno_t ret;
+	va_list vargs;
+
+	va_start(vargs, fmt);
+
+	log_ctx.input.format = fmt;
+	log_ctx.input.vargs = vargs;
+	ret = log_cformat(&log_ctx);
+
+	va_end(vargs);
+
+	return ret;
+}
 
 static errno_t put_char(struct log_context *ctx, char ch)
 {

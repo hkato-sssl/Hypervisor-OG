@@ -19,6 +19,8 @@ extern "C" {
 
 /* includes */
 
+#include "lib/system/errno.h"
+
 /* defines */
 
 /* types */
@@ -27,7 +29,7 @@ extern "C" {
 
 /* functions */
 
-int printk(const char *fmt, ...);
+errno_t printk(const char *fmt, ...);
 
 #ifdef __cplusplus
 }

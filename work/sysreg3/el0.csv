@@ -1,0 +1,4 @@
+CTR_EL0,RO,32,Cache Type Register
+DCZID_EL0,RO,32,Data Cache Zero ID Register
+TPIDR_EL0,RW,64,Thread Pointer/ID Register
+TPIDRRO_EL0,RW/RO,64,Thread Pointer/ID Register

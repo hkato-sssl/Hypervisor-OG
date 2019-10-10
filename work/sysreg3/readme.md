@@ -9,4 +9,6 @@
 
 # 制約事項
 
+現時点ではPerfomance Counterに関する処理は未対応とする。
+
 

@@ -39,6 +39,7 @@ init_processor_el2:
         mrs             x2, SCTLR_EL2
         bic             x3, x2, x0
         orr             x3, x3, x1
+	isb
         msr             SCTLR_EL2, x3
         isb
 
@@ -49,6 +50,8 @@ init_processor_el2:
 
         // initialize ACTLR
 
+	dsb		sy
+	isb
         msr             ACTLR_EL2, xzr
         isb
 

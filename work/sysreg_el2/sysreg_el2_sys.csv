@@ -1,17 +1,17 @@
-IFSR32_EL2,RW,32,Instruction Fault Status Register,SYS
-AFSR0_EL2,RW,32,Auxiliary Fault Status Register 0,SYS
-AFSR1_EL2,RW,32,Auxiliary Fault Status Register 1,SYS
-ESR_EL2,RW,32,Exception Syndrome Register,SYS
-FAR_EL2,RW,64,Fault Address Register,SYS
-HPFAR_EL2,RW,64,Hypervisor IPA Fault Address Register,SYS
-VBAR_EL2,RW,64,Vector Base Address Register,SYS
-SCTLR_EL2,RW,32,System Control Register,SYS
-TTBR0_EL2,RW,64,Translation Table Base Address Register 0,SYS
-TCR_EL2,RW,32,Translation Control Register,SYS
-MAIR_EL2,RW,64,Memory Attribute Indirection Register,SYS
-AMAIR_EL2,RW,64,Auxiliary Memory Attribute Indirection Register,SYS
-ACTLR_EL2,RW,32,Auxiliary Control Register,SYS
-TPIDR_EL2,RW,64,Thread Pointer/ID Register,SYS
-MDCR_EL2,RW,32,Hyp Debug Control Register,SYS
-CPTR_EL2,RW,32,Architectural Feature Trap Register,SYS
-DACR32_EL2,RW,32,Domain Access Control Register,SYS
+IFSR32_EL2,RW,32,Instruction Fault Status Register,SYS,Å~,ó·äOèÓïÒÇÃà◊ÅAèâä˙âªÇÃïKóvÇ»Çµ
+AFSR0_EL2,RW,32,Auxiliary Fault Status Register 0,SYS,Å~,ìØè„
+AFSR1_EL2,RW,32,Auxiliary Fault Status Register 1,SYS,Å~,ìØè„
+ESR_EL2,RW,32,Exception Syndrome Register,SYS,Å~,ìØè„
+FAR_EL2,RW,64,Fault Address Register,SYS,Å~,ìØè„
+HPFAR_EL2,RW,64,Hypervisor IPA Fault Address Register,SYS,Å~,ìØè„
+VBAR_EL2,RW,64,Vector Base Address Register,SYS,ÅZ,
+SCTLR_EL2,RW,32,System Control Register,SYS,,
+TTBR0_EL2,RW,64,Translation Table Base Address Register 0,SYS,ÅZ,
+TCR_EL2,RW,32,Translation Control Register,SYS,,
+MAIR_EL2,RW,64,Memory Attribute Indirection Register,SYS,ÅZ,
+AMAIR_EL2,RW,64,Auxiliary Memory Attribute Indirection Register,SYS,ÅZ,
+ACTLR_EL2,RW,32,Auxiliary Control Register,SYS,ÅZ,
+TPIDR_EL2,RW,64,Thread Pointer/ID Register,SYS,ÅZ,
+MDCR_EL2,RW,32,Hyp Debug Control Register,SYS,ÅZ,
+CPTR_EL2,RW,32,Architectural Feature Trap Register,SYS,ÅZ,
+DACR32_EL2,RW,32,Domain Access Control Register,SYS,ÅZ,DACÇÕEL2Ç≈ÇÕégópÇµÇ»Ç¢

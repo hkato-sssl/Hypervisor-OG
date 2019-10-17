@@ -17,7 +17,6 @@
         .balign         4
 
 init_processor_el2:
-        dsb             sy              // ensure all memory accesses of previous instructions
         mov             x28, lr         // save LR
 
         msr             DAIFset, #DAIF_ALL
@@ -32,26 +31,37 @@ init_processor_el2:
         // initialize SCTLR_EL2
 
         mov             x0, #(SCTLR_EE | SCTLR_WXN)
-        orr             x0, x0, #SCTLR_C
-        orr             x0, x0, #SCTLR_M
-        mov             x1, #(SCTLR_I | SCTLR_SA | SCTLR_A)
+        mov             x1, #(SCTLR_I | SCTLR_C | SCTLR_M)
+        orr             x0, x0, x1
+        mov             x1, #(SCTLR_SA | SCTLR_A)
 
         mrs             x2, SCTLR_EL2
         bic             x3, x2, x0
         orr             x3, x3, x1
-	isb
+        dsb             sy
+        isb
         msr             SCTLR_EL2, x3
         isb
 
-        // invalidate I-$ and D-$
+        // initialize and enable I-$
 
         bl              aarch64_icache_invd_all
+
+        mrs             x0, SCTLR_EL2
+        orr             x1, x0, #SCTLR_I
+        dsb             sy
+        isb
+        msr             SCTLR_EL2, x1
+        isb
+
+        // initialize  D-$
+
         bl              aarch64_dcache_invd_all
 
         // initialize ACTLR
 
-	dsb		sy
-	isb
+        dsb             sy
+        isb
         msr             ACTLR_EL2, xzr
         isb
 

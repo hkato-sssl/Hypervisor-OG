@@ -48,7 +48,14 @@ static errno_t put_char(struct log_context *ctx, char ch)
 {
     errno_t ret;
 
-    ret = uart_lite_poll_putc(ctx->arg, ch);
+    if (ch == '\n') {
+        ret = uart_lite_poll_putc(ctx->arg, '\r');
+        if (ret == SUCCESS) {
+            ret = uart_lite_poll_putc(ctx->arg, ch);
+        }
+    } else {
+        ret = uart_lite_poll_putc(ctx->arg, ch);
+    }
 
     return ret;
 }

@@ -17,16 +17,16 @@ SECTIONS
   . = SEGMENT_START("text-segment", 0x10000);
   __text_start = .;
 
-  /* Read-only sections, merged into text segment: */
-  .interp         : { *(.interp) }
-  .note.gnu.build-id : { *(.note.gnu.build-id) }
-  .hash           : { *(.hash) }
-  .gnu.hash       : { *(.gnu.hash) }
-  .dynsym         : { *(.dynsym) }
-  .dynstr         : { *(.dynstr) }
-  .gnu.version    : { *(.gnu.version) }
-  .gnu.version_d  : { *(.gnu.version_d) }
-  .gnu.version_r  : { *(.gnu.version_r) }
+  /* Discard read-only sections */
+  /DISCARD/ : { *(.interp) }
+  /DISCARD/ : { *(.note.gnu.build-id) }
+  /DISCARD/ : { *(.hash) }
+  /DISCARD/ : { *(.gnu.hash) }
+  /DISCARD/ : { *(.dynsym) }
+  /DISCARD/ : { *(.dynstr) }
+  /DISCARD/ : { *(.gnu.version) }
+  /DISCARD/ : { *(.gnu.version_d) }
+  /DISCARD/ : { *(.gnu.version_r) }
 
   .text :
   {

@@ -15,7 +15,7 @@
 
 /* defines */
 
-#define	UART_LITE_BASE		0xa0001000
+#define UART_LITE_BASE      0xa0001000
 
 /* types */
 
@@ -30,23 +30,23 @@ static struct uart_lite uart;
 
 errno_t printk(const char *fmt, ...)
 {
-	errno_t ret;
-	va_list vargs;
+    errno_t ret;
+    va_list vargs;
 
-	va_start(vargs, fmt);
+    va_start(vargs, fmt);
 
-	log_ctx.input.format = fmt;
-	log_ctx.input.vargs = vargs;
-	ret = log_cformat(&log_ctx);
+    log_ctx.input.format = fmt;
+    log_ctx.input.vargs = vargs;
+    ret = log_cformat(&log_ctx);
 
-	va_end(vargs);
+    va_end(vargs);
 
-	return ret;
+    return ret;
 }
 
 static errno_t put_char(struct log_context *ctx, char ch)
 {
-	errno_t ret;
+    errno_t ret;
 
     ret = uart_lite_poll_putc(ctx->arg, ch);
 
@@ -55,39 +55,39 @@ static errno_t put_char(struct log_context *ctx, char ch)
 
 static errno_t init_uart(void)
 {
-	errno_t ret;
-	struct uart_lite_configuration config;
+    errno_t ret;
+    struct uart_lite_configuration config;
 
-	memset(&config, 0, sizeof(config));
+    memset(&config, 0, sizeof(config));
     config.base = UART_LITE_BASE;
-	config.flag.init = true;
-	ret = uart_lite_init(&uart, &config);
+    config.flag.init = true;
+    ret = uart_lite_init(&uart, &config);
 
-	return ret;
+    return ret;
 }
 
 static errno_t init_printk(void)
 {
     errno_t ret;
-	struct log_context_configuration config;
+    struct log_context_configuration config;
 
-	ret = init_uart();
-	if (ret == SUCCESS) {
-		memset(&config, 0, sizeof(config));
-		config.arg = &uart;
-    	config.putc = put_char;
-		ret = log_init_context(&log_ctx, &config);
-	}
+    ret = init_uart();
+    if (ret == SUCCESS) {
+        memset(&config, 0, sizeof(config));
+        config.arg = &uart;
+        config.putc = put_char;
+        ret = log_init_context(&log_ctx, &config);
+    }
 
-	return ret;
+    return ret;
 }
 
 errno_t init_system(void)
 {
-	errno_t ret;
+    errno_t ret;
 
- 	ret = init_printk();
+    ret = init_printk();
 
-	return ret;
+    return ret;
 }
 

@@ -71,11 +71,17 @@
 #define SCTLR_M             BIT(0)
 
 /* ACTLR */
-#define	ACTLR_L2ACTLR		BIT(6)
-#define	ACTLR_L2ECTLR		BIT(5)
-#define	ACTLR_L2CTLR		BIT(4)
-#define	ACTLR_CPUECTLR		BIT(1)
-#define	ACTLR_CPUACTLR		BIT(0)
+#define ACTLR_L2ACTLR       BIT(6)
+#define ACTLR_L2ECTLR       BIT(5)
+#define ACTLR_L2CTLR        BIT(4)
+#define ACTLR_CPUECTLR      BIT(1)
+#define ACTLR_CPUACTLR      BIT(0)
+
+/* CPTR */
+#define CPTR_TCPAC          BIT(31)
+#define CPTR_TTA            BIT(20)
+#define CPTR_TFP            BIT(10)
+#define CPTR_RES1_EL2       BITS(13, 12)
 
 #ifndef ASSEMBLY
 

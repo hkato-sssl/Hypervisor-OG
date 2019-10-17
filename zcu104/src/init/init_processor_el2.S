@@ -65,6 +65,14 @@ init_processor_el2:
         msr             ACTLR_EL2, xzr
         isb
 
+	// Traps Non-secure accesses to SIMD and floating-point
+ 	// functionality to EL2, from both Execution states.
+
+	mrs		x0, CPTR_EL2
+	orr		x1, x0, #CPTR_TFP
+	msr		CPTR_EL2, x1
+	isb
+
         br              x28
 
         .end

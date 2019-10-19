@@ -15,7 +15,6 @@ GROUP(-lgcc -lc -lm)
 SECTIONS
 {
   . = SEGMENT_START("text-segment", 0x10000);
-  __text_start = .;
 
   /* Discard read-only sections */
   /DISCARD/ : { *(.interp) }
@@ -39,10 +38,15 @@ SECTIONS
     /* .gnu.warning sections are handled specially by elf32.em.  */
     *(.gnu.warning)
   } =0x1f2003d5
-  __text_end = .;
 
-  .rodata ALIGN(64) : { __rodata_start = .; *(.rodata .rodata.* .gnu.linkonce.r.*) }
+  __text_start = ADDR(.text);
+  __text_end = __text_start + SIZEOF(.text);
+
+  .rodata : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
   .rodata1 : { *(.rodata1) }
+
+  __rodata_start = ADDR(.rodata);
+  __rodata_end = ADDR(.rodata1) + SIZEOF(.rodata1);
 
   .eh_frame_hdr : { *(.eh_frame_hdr) *(.eh_frame_entry .eh_frame_entry.*) }
   .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) *(.eh_frame.*) }
@@ -90,23 +94,26 @@ SECTIONS
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
   }
-  . = ALIGN(4096);
-  __rodata_end = .;
 
-  __data_start = .;
-  .data :
+  .data ALIGN(4096) :
   {
     *(.data .data.* .gnu.linkonce.d.*)
     SORT(CONSTRUCTORS)
+    . = ALIGN(64);
   }
 
-  .data1 : { *(.data1) }
-  . = ALIGN(64);
-  __data_end = .;
-
-  .bss ALIGN(64) (NOLOAD) :
+  .data1 :
   {
-   __bss_start = .;
+    __data1_start = .;
+    *(.data1)
+    . = ALIGN(64);
+  }
+
+  __data_start = ADDR(.data);
+  __data_end = ADDR(.data1) + SIZEOF(.data1);
+
+  .bss __data_end (NOLOAD) :
+  {
    *(.dynbss)
    *(.bss .bss.* .gnu.linkonce.b.*)
    *(COMMON)
@@ -116,19 +123,22 @@ SECTIONS
       FIXME: Why do we need it? When there is no .bss section, we don't
       pad the .data section.  */
    . = ALIGN(64);
-   __bss_end = .;
   }
 
-  .stack ALIGN(64) (NOLOAD) :
+  __bss_start = ADDR(.bss);
+  __bss_end = ADDR(.bss) + SIZEOF(.bss);
+
+  .stack __bss_end (NOLOAD) :
   {
-    __stack_start = .;
     *(.stack)
     *(.stack.*)
     . = ALIGN(64);
-    __stack_end = .;
   }
 
-  __ram_end = .;
+  __stack_start = ADDR(.stack);
+  __stack_end = ADDR(.stack) + SIZEOF(.stack);
+
+  __ram_end = __stack_end;
 
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }

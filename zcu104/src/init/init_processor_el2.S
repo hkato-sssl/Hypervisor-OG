@@ -24,13 +24,13 @@ init_processor_el2:
         msr             VBAR_EL2, x0
         isb
 
-        msr             SPsel, #1
+        msr             SPSel, #1
         mov             x0, xzr
         mov             sp, x0
 
         // initialize SCTLR_EL2
 
-	mov32		x0, (SCTLR_EE | SCTLR_WXN | SCTLR_I | SCTLR_C | SCTLR_M)
+        mov32           x0, (SCTLR_EE | SCTLR_WXN | SCTLR_I | SCTLR_C | SCTLR_M)
         mov             x1, #(SCTLR_SA | SCTLR_A)
 
         mrs             x2, SCTLR_EL2
@@ -63,13 +63,13 @@ init_processor_el2:
         msr             ACTLR_EL2, xzr
         isb
 
-	// Traps Non-secure accesses to SIMD and floating-point
- 	// functionality to EL2, from both Execution states.
+        // Traps Non-secure accesses to SIMD and floating-point
+        // functionality to EL2, from both Execution states.
 
-	mrs		x0, CPTR_EL2
-	orr		x1, x0, #CPTR_TFP
-	msr		CPTR_EL2, x1
-	isb
+        mrs             x0, CPTR_EL2
+        orr             x1, x0, #CPTR_TFP
+        msr             CPTR_EL2, x1
+        isb
 
         br              x28
 

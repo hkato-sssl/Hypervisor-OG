@@ -30,9 +30,7 @@ init_processor_el2:
 
         // initialize SCTLR_EL2
 
-        mov             x0, #(SCTLR_EE | SCTLR_WXN)
-        mov             x1, #(SCTLR_I | SCTLR_C | SCTLR_M)
-        orr             x0, x0, x1
+	mov32		x0, (SCTLR_EE | SCTLR_WXN | SCTLR_I | SCTLR_C | SCTLR_M)
         mov             x1, #(SCTLR_SA | SCTLR_A)
 
         mrs             x2, SCTLR_EL2

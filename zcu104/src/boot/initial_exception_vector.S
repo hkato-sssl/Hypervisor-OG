@@ -1,5 +1,5 @@
 /*
- * startup/initial_exception_vector.S
+ * boot/initial_exception_vector.S
  *
  * (C) 2019 Hidekazu Kato
  */

@@ -1,5 +1,5 @@
 /*
- * startup/start.S - the startup routine for the primary processor
+ * boot/start.S - the startup routine for the primary processor
  *
  * (C) 2019 Hidekazu Kato
  */

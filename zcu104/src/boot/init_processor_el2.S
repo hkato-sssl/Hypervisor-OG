@@ -1,5 +1,5 @@
 /*
- * init/init_processor_el2.S
+ * boot/init_processor_el2.S
  *
  * (C) 2019 Hidekazu Kato
  */

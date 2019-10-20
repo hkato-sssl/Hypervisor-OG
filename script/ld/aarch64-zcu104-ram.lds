@@ -27,7 +27,7 @@ SECTIONS
 
   .text :
   {
-    *(.text.entry)
+    *(.text.entry .text.entry.*)
     *(.text.startup .text.startup.*)
     *(.text.unlikely .text.*_unlikely .text.unlikely.*)
     *(.text.exit .text.exit.*)

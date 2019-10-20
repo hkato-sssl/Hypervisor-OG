@@ -16,7 +16,7 @@
         .extern         main
 
         .global         _start
-        .section        ".text.startup", "ax", %progbits
+        .section        ".text.entry", "ax", %progbits
         .type           _start, %function
 _start:
         // initialize a processor and cache memory

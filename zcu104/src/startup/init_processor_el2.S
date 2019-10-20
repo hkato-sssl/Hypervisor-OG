@@ -12,7 +12,7 @@
 
         .extern         initial_exception_vector
 
-        .section        ".text.init_processor_el2", "ax", %progbits
+        .section        ".text.startup.init_processor_el2", "ax", %progbits
         .type           init_processor_el2, %function
         .balign         4
 

@@ -49,9 +49,10 @@
 #define EXC_X29         (EXC_X0 + 29)           
 #define EXC_X30         (EXC_X0 + 30)
 #define EXC_X31         (EXC_X0 + 31)
-#define EXC_SP          EXC_X31
+#define EXC_LR          EXC_X30         /* alias */
+#define EXC_SP          EXC_X31         /* alias */
 
-#define	NR_EXC_REGS     (EXC_X31 + 1)
+#define NR_EXC_REGS     (EXC_X31 + 1)
 
 #ifndef ASSEMBLY
 

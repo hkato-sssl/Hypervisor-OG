@@ -38,6 +38,11 @@ void aarch64_unlock_fiq(uint32_t lock);
 uint32_t aarch64_lock_interrupts(void);
 void aarch64_unlock_interrupts(uint32_t lock);
 
+static inline void aarch64_isb(void)
+{
+    __asm volatile ("isb" ::: "memory");
+}
+
 #ifdef __cplusplus
 }
 #endif

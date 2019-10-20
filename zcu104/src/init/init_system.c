@@ -11,6 +11,8 @@
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "lib/log.h"
+#include "driver/aarch64.h"
+#include "driver/aarch64/system_register.h"
 #include "driver/xilinx/axi/uart_lite.h"
 
 /* defines */
@@ -89,11 +91,24 @@ static errno_t init_printk(void)
     return ret;
 }
 
+static errno_t init_exception(void)
+{
+    extern char excvec_el2[];
+
+    aarch64_write_vbar_el2((uint64_t)excvec_el2);
+    aarch64_isb();
+
+    return SUCCESS;
+}
+
 errno_t init_system(void)
 {
     errno_t ret;
 
     ret = init_printk();
+    if (ret == SUCCESS) {
+	ret = init_exception();
+    }
 
     return ret;
 }

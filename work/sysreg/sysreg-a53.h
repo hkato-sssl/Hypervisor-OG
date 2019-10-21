@@ -1535,6 +1535,673 @@ static inline uint32_t aarch64_read_dacr32_el2(void)
 }
 
 /*
+ * AArch64 GIC system registers
+ */
+
+/* Active Priorities 0 Register 0 */
+
+static inline void aarch64_write_icc_ap0r0_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_AP0R0_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_ap0r0_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_AP0R0_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Active Priorities 1 Register 0 */
+
+static inline void aarch64_write_icc_ap1r0_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_AP1R0_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_ap1r0_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_AP1R0_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Alternate SGI Generation Register 1 */
+
+static inline void aarch64_write_icc_asgi1r_el1(uint64_t d)
+{
+    __asm volatile ("msr ICC_ASGI1R_EL1, %0" :: "r"(d) : "memory");
+}
+
+/* Binary Point Register 0 */
+
+static inline void aarch64_write_icc_bpr0_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_BPR0_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_bpr0_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_BPR0_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Binary Point Register 1 */
+
+static inline void aarch64_write_icc_bpr1_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_BPR1_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_bpr1_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_BPR1_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Control Register for EL1 */
+
+static inline void aarch64_write_icc_ctlr_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_CTLR_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_ctlr_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_CTLR_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Control Register for EL3 */
+
+static inline void aarch64_write_icc_ctlr_el3(uint32_t d)
+{
+    __asm volatile ("msr ICC_CTLR_EL3, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_ctlr_el3(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_CTLR_EL3" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Deactivate Interrupt Register */
+
+static inline void aarch64_write_icc_dir_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_DIR_EL1, %0" :: "r"(d) : "memory");
+}
+
+/* End Of Interrupt Register 0 */
+
+static inline void aarch64_write_icc_eoir0_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_EOIR0_EL1, %0" :: "r"(d) : "memory");
+}
+
+/* End Of Interrupt Register 1 */
+
+static inline void aarch64_write_icc_eoir1_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_EOIR1_EL1, %0" :: "r"(d) : "memory");
+}
+
+/* Highest Priority Pending Interrupt Register 0 */
+
+static inline uint32_t aarch64_read_icc_hppir0_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_HPPIR0_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Highest Priority Pending Interrupt Register 1 */
+
+static inline uint32_t aarch64_read_icc_hppir1_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_HPPIR1_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Acknowledge Register 0 */
+
+static inline uint32_t aarch64_read_icc_iar0_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_IAR0_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Acknowledge Register 1 */
+
+static inline uint32_t aarch64_read_icc_iar1_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_IAR1_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Group Enable Register 0 */
+
+static inline void aarch64_write_icc_igrpen0_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_IGRPEN0_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_igrpen0_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_IGRPEN0_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Group Enable Register 1 */
+
+static inline void aarch64_write_icc_igrpen1_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_IGRPEN1_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_igrpen1_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_IGRPEN1_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Group Enable Register 1 for EL3 */
+
+static inline void aarch64_write_icc_igrpen1_el3(uint32_t d)
+{
+    __asm volatile ("msr ICC_IGRPEN1_EL3, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_igrpen1_el3(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_IGRPEN1_EL3" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Priority Mask Register */
+
+static inline void aarch64_write_icc_pmr_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_PMR_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_pmr_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_PMR_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Running Priority Register */
+
+static inline uint32_t aarch64_read_icc_rpr_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_RPR_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* SGI Generation Register 0 */
+
+static inline void aarch64_write_icc_sgi0r_el1(uint64_t d)
+{
+    __asm volatile ("msr ICC_SGI0R_EL1, %0" :: "r"(d) : "memory");
+}
+
+/* SGI Generation Register 1 */
+
+static inline void aarch64_write_icc_sgi1r_el1(uint64_t d)
+{
+    __asm volatile ("msr ICC_SGI1R_EL1, %0" :: "r"(d) : "memory");
+}
+
+/* System Register Enable Register for EL1 */
+
+static inline void aarch64_write_icc_sre_el1(uint32_t d)
+{
+    __asm volatile ("msr ICC_SRE_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_sre_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_SRE_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* System Register Enable Register for EL2 */
+
+static inline void aarch64_write_icc_sre_el2(uint32_t d)
+{
+    __asm volatile ("msr ICC_SRE_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_sre_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_SRE_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* System Register Enable Register for EL3 */
+
+static inline void aarch64_write_icc_sre_el3(uint32_t d)
+{
+    __asm volatile ("msr ICC_SRE_EL3, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_icc_sre_el3(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICC_SRE_EL3" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller Hyp Active Priorities Register (0 0) */
+
+static inline void aarch64_write_ich_ap0r0_el2(uint32_t d)
+{
+    __asm volatile ("msr ICH_AP0R0_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_ich_ap0r0_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICH_AP0R0_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller Hyp Active Priorities Register (1 0) */
+
+static inline void aarch64_write_ich_ap1r0_el2(uint32_t d)
+{
+    __asm volatile ("msr ICH_AP1R0_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_ich_ap1r0_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICH_AP1R0_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller End of Interrupt Status Register */
+
+static inline uint32_t aarch64_read_ich_eisr_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICH_EISR_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller Empty List Register Status Register */
+
+static inline uint32_t aarch64_read_ich_elrsr_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICH_ELRSR_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller Hyp Control Register */
+
+static inline void aarch64_write_ich_hcr_el2(uint32_t d)
+{
+    __asm volatile ("msr ICH_HCR_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_ich_hcr_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICH_HCR_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller List Register 0 */
+
+static inline void aarch64_write_ich_lr0_el2(uint64_t d)
+{
+    __asm volatile ("msr ICH_LR0_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_ich_lr0_el2(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, ICH_LR0_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller List Register 1 */
+
+static inline void aarch64_write_ich_lr1_el2(uint64_t d)
+{
+    __asm volatile ("msr ICH_LR1_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_ich_lr1_el2(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, ICH_LR1_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller List Register 2 */
+
+static inline void aarch64_write_ich_lr2_el2(uint64_t d)
+{
+    __asm volatile ("msr ICH_LR2_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_ich_lr2_el2(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, ICH_LR2_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller List Register 3 */
+
+static inline void aarch64_write_ich_lr3_el2(uint64_t d)
+{
+    __asm volatile ("msr ICH_LR3_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_ich_lr3_el2(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, ICH_LR3_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller Maintenance Interrupt State Register */
+
+static inline uint32_t aarch64_read_ich_misr_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICH_MISR_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller Virtual Machine Control Register */
+
+static inline void aarch64_write_ich_vmcr_el2(uint32_t d)
+{
+    __asm volatile ("msr ICH_VMCR_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_ich_vmcr_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICH_VMCR_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Interrupt Controller VGIC Type Register */
+
+static inline uint32_t aarch64_read_ich_vtr_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, ICH_VTR_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/*
+ * AArch64 Generic Timer registers
+ */
+
+/* Counter-timer Kernel Control register */
+
+static inline void aarch64_write_cntkctl_el1(uint32_t d)
+{
+    __asm volatile ("msr CNTKCTL_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cntkctl_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTKCTL_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Frequency register */
+
+static inline void aarch64_write_cntfrq_el0(uint32_t d)
+{
+    __asm volatile ("msr CNTFRQ_EL0, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cntfrq_el0(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTFRQ_EL0" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Physical Count register */
+
+static inline uint64_t aarch64_read_cntpct_el0(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, CNTPCT_EL0" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Virtual Count register */
+
+static inline uint64_t aarch64_read_cntvct_el0(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, CNTVCT_EL0" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Physical Timer TimerValue register */
+
+static inline void aarch64_write_cntp_tval_el0(uint32_t d)
+{
+    __asm volatile ("msr CNTP_TVAL_EL0, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cntp_tval_el0(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTP_TVAL_EL0" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Physical Timer Control register */
+
+static inline void aarch64_write_cntp_ctl_el0(uint32_t d)
+{
+    __asm volatile ("msr CNTP_CTL_EL0, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cntp_ctl_el0(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTP_CTL_EL0" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Physical Timer CompareValue register */
+
+static inline void aarch64_write_cntp_cval_el0(uint64_t d)
+{
+    __asm volatile ("msr CNTP_CVAL_EL0, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_cntp_cval_el0(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, CNTP_CVAL_EL0" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Virtual Timer TimerValue register */
+
+static inline void aarch64_write_cntv_tval_el0(uint32_t d)
+{
+    __asm volatile ("msr CNTV_TVAL_EL0, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cntv_tval_el0(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTV_TVAL_EL0" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Virtual Timer Control register */
+
+static inline void aarch64_write_cntv_ctl_el0(uint32_t d)
+{
+    __asm volatile ("msr CNTV_CTL_EL0, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cntv_ctl_el0(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTV_CTL_EL0" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Virtual Timer CompareValue register */
+
+static inline void aarch64_write_cntv_cval_el0(uint64_t d)
+{
+    __asm volatile ("msr CNTV_CVAL_EL0, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_cntv_cval_el0(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, CNTV_CVAL_EL0" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Virtual Offset register */
+
+static inline void aarch64_write_cntvoff_el2(uint64_t d)
+{
+    __asm volatile ("msr CNTVOFF_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_cntvoff_el2(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, CNTVOFF_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Hypervisor Control register */
+
+static inline void aarch64_write_cnthctl_el2(uint32_t d)
+{
+    __asm volatile ("msr CNTHCTL_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cnthctl_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTHCTL_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Hypervisor Physical Timer TimerValue register */
+
+static inline void aarch64_write_cnthp_tval_el2(uint32_t d)
+{
+    __asm volatile ("msr CNTHP_TVAL_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cnthp_tval_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTHP_TVAL_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Hypervisor Physical Timer Control register */
+
+static inline void aarch64_write_cnthp_ctl_el2(uint32_t d)
+{
+    __asm volatile ("msr CNTHP_CTL_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cnthp_ctl_el2(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTHP_CTL_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Hypervisor Physical Timer CompareValue register */
+
+static inline void aarch64_write_cnthp_cval_el2(uint64_t d)
+{
+    __asm volatile ("msr CNTHP_CVAL_EL2, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_cnthp_cval_el2(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, CNTHP_CVAL_EL2" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Physical Secure Timer TimerValue register */
+
+static inline void aarch64_write_cntps_tval_el1(uint32_t d)
+{
+    __asm volatile ("msr CNTPS_TVAL_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cntps_tval_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTPS_TVAL_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Physical Secure Timer Control register */
+
+static inline void aarch64_write_cntps_ctl_el1(uint32_t d)
+{
+    __asm volatile ("msr CNTPS_CTL_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_cntps_ctl_el1(void)
+{
+    uint32_t d;
+    __asm volatile ("mrs %0, CNTPS_CTL_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/* Counter-timer Physical Secure Timer CompareValue register */
+
+static inline void aarch64_write_cntps_cval_el1(uint64_t d)
+{
+    __asm volatile ("msr CNTPS_CVAL_EL1, %0" :: "r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_cntps_cval_el1(void)
+{
+    uint64_t d;
+    __asm volatile ("mrs %0, CNTPS_CVAL_EL1" : "=r"(d) :: "memory");
+    return d;
+}
+
+/*
  * AArch64 implementation defined registers
  */
 

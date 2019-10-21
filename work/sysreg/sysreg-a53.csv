@@ -157,7 +157,7 @@ ICC_AP0R0_EL1,RW,32,Active Priorities 0 Register 0
 ICC_AP1R0_EL1,RW,32,Active Priorities 1 Register 0
 ICC_ASGI1R_EL1,WO,64,Alternate SGI Generation Register 1
 ICC_BPR0_EL1,RW,32,Binary Point Register 0
-ICC_BPR1_EL1,RW,32.Binary Point Register 1
+ICC_BPR1_EL1,RW,32,Binary Point Register 1
 ICC_CTLR_EL1,RW,32,Interrupt Control Register for EL1
 ICC_CTLR_EL3,RW,32,Interrupt Control Register for EL3
 ICC_DIR_EL1,WO,32,Deactivate Interrupt Register
@@ -177,8 +177,8 @@ ICC_SGI1R_EL1,WO,64,SGI Generation Register 1
 ICC_SRE_EL1,RW,32,System Register Enable Register for EL1
 ICC_SRE_EL2,RW,32,System Register Enable Register for EL2
 ICC_SRE_EL3,RW,32,System Register Enable Register for EL3
-ICH_AP0R0_EL2,RW,32,Interrupt Controller Hyp Active Priorities Register (0,0)
-ICH_AP1R0_EL2,RW,32,Interrupt Controller Hyp Active Priorities Register (1,0)
+ICH_AP0R0_EL2,RW,32,Interrupt Controller Hyp Active Priorities Register (0 0)
+ICH_AP1R0_EL2,RW,32,Interrupt Controller Hyp Active Priorities Register (1 0)
 ICH_EISR_EL2,RO,32,Interrupt Controller End of Interrupt Status Register
 ICH_ELRSR_EL2,RO,32,Interrupt Controller Empty List Register Status Register
 ICH_HCR_EL2,RW,32,Interrupt Controller Hyp Control Register

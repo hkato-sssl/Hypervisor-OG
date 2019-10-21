@@ -29,6 +29,8 @@ CCSIDR_EL1,RO,32,Cache Size ID Register
 CLIDR_EL1,RO,64,Cache Level ID Register
 AIDR_EL1,RO,32,Auxiliary ID Register
 CSSELR_EL1,RW,32,Cache Size Selection Register
+CTR_EL0,RO,32,Cache Type Register
+DCZID_EL0,RO,32,Data Cache Zero ID Register
 AFSR0_EL1,RW,32,Auxiliary Fault Status Register 0
 AFSR1_EL1,RW,32,Auxiliary Fault Status Register 1
 ESR_EL1,RW,32,Exception Syndrome Register
@@ -45,7 +47,9 @@ CONTEXTIDR_EL1,RW,32,Context ID Register
 ACTLR_EL1,RW,32,Auxiliary Control Register
 CPACR_EL1,RW,32,Architectural Feature Access Control Register
 PAR_EL1,RW,64,Physical Address Register
+TPIDR_EL0,RW,64,Thread Pointer/ID Register
 TPIDR_EL1,RW,64,Thread Pointer/ID Register
+TPIDRRO_EL0,RW/RO,64,Thread Pointer/ID Register
 ICC_AP0R0_EL1,RW,32,Active Priorities 0 Register 0
 ICC_AP1R0_EL1,RW,32,Active Priorities 1 Register 0
 ICC_ASGI1R_EL1,WO,64,Alternate SGI Generation Register 1
@@ -67,6 +71,15 @@ ICC_SGI0R_EL1,WO,64,SGI Generation Register 0
 ICC_SGI1R_EL1,WO,64,SGI Generation Register 1
 ICC_SRE_EL1,RW,32,System Register Enable Register for EL1
 CNTKCTL_EL1,RW,32,Counter-timer Kernel Control register
+CNTFRQ_EL0,RW/RO,32,Counter-timer Frequency register
+CNTPCT_EL0,RO,64,Counter-timer Physical Count register
+CNTVCT_EL0,RO,64,Counter-timer Virtual Count register
+CNTP_TVAL_EL0,RW,32,Counter-timer Physical Timer TimerValue register
+CNTP_CTL_EL0,RW,32,Counter-timer Physical Timer Control register
+CNTP_CVAL_EL0,RW,64,Counter-timer Physical Timer CompareValue register
+CNTV_TVAL_EL0,RW,32,Counter-timer Virtual Timer TimerValue register
+CNTV_CTL_EL0,RW,32,Counter-timer Virtual Timer Control register
+CNTV_CVAL_EL0,RW,64,Counter-timer Virtual Timer CompareValue register
 CNTPS_TVAL_EL1,RW,32,Counter-timer Physical Secure Timer TimerValue register
 CNTPS_CTL_EL1,RW,32,Counter-timer Physical Secure Timer Control register
 CNTPS_CVAL_EL1,RW,64,Counter-timer Physical Secure Timer CompareValue register

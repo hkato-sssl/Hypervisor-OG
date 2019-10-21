@@ -99,37 +99,6 @@ TPIDRRO_EL0,RW/RO,64,Thread Pointer/ID Register
 TPIDR_EL2,RW,64,Thread Pointer/ID Register
 TPIDR_EL3,RW,64,Thread Pointer/ID Register
 
-# AArch64 performance monitor registers
-
-PMCR_EL0,RW,32,Performance Monitors Control Register
-PMCNTENSET_EL0,RW,32,Performance Monitors Count Enable Set Register
-PMCNTENCLR_EL0,RW,32,Performance Monitors Count Enable Clear Register
-PMOVSCLR_EL0,RW,32,Performance Monitors Overflow Flag Status Clear Register
-PMSWINC_EL0,WO,32,Performance Monitors Software Increment Register
-PMSELR_EL0,RW,32,Performance Monitors Event Counter Selection Register
-PMCEID0_EL0,RO,32,Performance Monitors Common Event Identification Register 0
-PMCEID1_EL0,RO,32,Performance Monitors Common Event Identification Register 1
-PMCCNTR_EL0,RW,64,Performance Monitors Cycle Countera
-PMXEVTYPER_EL0,RW,32,Performance Monitors Selected Event Type and Filter Register
-PMXEVCNTR_EL0,RW,32,Performance Monitors Selected Event Counter Register
-PMUSERENR_EL0,RW,32,Performance Monitors User Enable Register
-PMINTENSET_EL1,RW,32,Performance Monitors Interrupt Enable Set Register
-PMINTENCLR_EL1,RW,32,Performance Monitors Interrupt Enable Clear Register
-PMOVSSET_EL0,RW,32,Performance Monitors Overflow Flag Status Set Register
-PMEVCNTR0_EL0,RW,32,Performance Monitor Event Count Registers
-PMEVCNTR1_EL0,RW,32
-PMEVCNTR2_EL0,RW,32
-PMEVCNTR3_EL0,RW,32
-PMEVCNTR4_EL0,RW,32
-PMEVCNTR5_EL0,RW,32
-PMEVTYPER0_EL0,RW,32,Performance Monitor Event Type Registers
-PMEVTYPER1_EL0,RW,32
-PMEVTYPER2_EL0,RW,32
-PMEVTYPER3_EL0,RW,32
-PMEVTYPER4_EL0,RW,32
-PMEVTYPER5_EL0,RW,32
-PMCCFILTR_EL0,RW,32,Performance Monitors Cycle Count Filter Register
-
 # AArch64 reset registers
 
 RVBAR_EL3,RO,64,Reset Vector Base Address Register

@@ -4,9 +4,9 @@ EL0/EL1で利用可能なレジスタの抽出
 
 # 作業手順
 
-1. sysreg/sysreg.csvをコピー
-2. EL1/EL0に関連するレジスタをsysreg.csvから抽出してel1.csv/el0.csvに保存
-3. el1.csv/el0.csvからPerfomance Counterに関するレジスタ定義を削除
+1. sysreg/sysreg-a53.csvをコピー
+2. sysreg-a53.csvからPMC関連の定義を削除してsysreg-a53-no-pmc.csvを作成
+3. EL1/EL0に関連するレジスタをsysreg-a53-no-pmc.csvから抽出してel1.csv/el0.csvに保存
 
 # 制約事項
 

@@ -1,0 +1,7 @@
+﻿Name,Type,Width,Function,A53,Reset,Description
+FPCR,RW,32,Floating-point Control Register ,〇,0x00000000,
+FPSR,RW,32,Floating-point Status Register ,〇,0x00000000,
+MVFR0_EL1,RO,32,Media and Floating-point Feature Register 0,,,
+MVFR1_EL1,RO,32,Media and Floating-point Feature Register 1,,,
+MVFR2_EL1,RW,32,Media and Floating-point Feature Register 2,,,EL1ではRO
+FPEXC32_EL2,RW,32,Floating-point Exception Control Register,〇,0x00000700,

@@ -20,6 +20,7 @@ import sys
 import string
 
 base_name = 'VCPU_SYS_BASE';
+next_base_name = 'VCPU_SYS_EL2_BASE';
 
 def readlines(file_name):
     try:
@@ -38,7 +39,7 @@ def translate(lines):
     for ln in lines:
         fields = ln.split(',')
         if fields[4] == '〇':
-            def_name = '#define VCPU_' + fields[0] + ' ' * (24 - len(fields[0]))
+            def_name = '#define VCPU_' + fields[0] + ' ' * (24 - 5 - len(fields[0]))
             if offset == 0:
                 def_val = base_name
             else:
@@ -46,6 +47,10 @@ def translate(lines):
             comment = (' ' * (24 - len(def_val))) + '// ' + fields[3]
             print(def_name, def_val, comment)
             offset += 1
+
+    def_name = '#define ' + next_base_name + ' ' * (24 - len(next_base_name))
+    def_val = '(' + base_name + " + " + str(offset) + ')'
+    print(def_name, def_val)
 
 def main():
     args = docopt(__doc__)

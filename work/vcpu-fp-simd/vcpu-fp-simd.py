@@ -38,7 +38,7 @@ def translate(lines):
     for ln in lines:
         fields = ln.split(',')
         if fields[4] == '〇':
-            def_name = '#define VCPU_' + fields[0] + ' ' * (24 - len(fields[0]))
+            def_name = '#define VCPU_' + fields[0] + ' ' * (24 - 5 - len(fields[0]))
             if offset == 0:
                 def_val = base_name
             else:
@@ -47,10 +47,9 @@ def translate(lines):
             print(def_name, def_val, comment)
             offset += 1
 
-    offset = ((offset + 1) | 1) ^ 1
     for no in range(32):
         reg = 'Q' + str(no)
-        def_name = '#define VCPU_' + reg + ' ' * (24 - len(reg))
+        def_name = '#define VCPU_' + reg + ' ' * (24 - 5 - len(reg))
         def_val = '(' + base_name + " + " + str(offset) + ')'
         print(def_name, def_val)
         offset += 2

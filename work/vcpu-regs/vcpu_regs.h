@@ -60,53 +60,50 @@
 #define VCPU_CNTV_TVAL_EL0      59      // Counter-timer Virtual Timer TimerValue register
 #define VCPU_CNTV_CTL_EL0       60      // Counter-timer Virtual Timer Control register
 #define VCPU_CNTV_CVAL_EL0      61      // Counter-timer Virtual Timer CompareValue register
-#define VCPU_CNTPS_TVAL_EL1     62      // Counter-timer Physical Secure Timer TimerValue register
-#define VCPU_CNTPS_CTL_EL1      63      // Counter-timer Physical Secure Timer Control register
-#define VCPU_CNTPS_CVAL_EL1     64      // Counter-timer Physical Secure Timer CompareValue register
-#define VCPU_VPIDR_EL2          65      // Virtualization Processor ID Register
-#define VCPU_VMPIDR_EL2         66      // Virtualization Multiprocessor ID Register
-#define VCPU_IFSR32_EL2         67      // Instruction Fault Status Register
-#define VCPU_HPFAR_EL2          68      // Hypervisor IPA Fault Address Register
-#define VCPU_VTTBR_EL2          69      // Virtualization Translation Table Base Address Register
-#define VCPU_VTCR_EL2           70      // Virtualization Translation Control Register
-#define VCPU_HCR_EL2            71      // Hypervisor Configuration Register
-#define VCPU_HSTR_EL2           72      // Hyp System Trap Register
-#define VCPU_HACR_EL2           73      // Hyp Auxiliary Configuration Register
-#define VCPU_DACR32_EL2         74      // Domain Access Control Register
-#define VCPU_CNTVOFF_EL2        75      // Counter-timer Virtual Offset register
-#define VCPU_FPCR               76      // Floating-point Control Register 
-#define VCPU_FPSR               77      // Floating-point Status Register 
-#define VCPU_FPEXC32_EL2        78      // Floating-point Exception Control Register
-#define VCPU_Q0                 79
-#define VCPU_Q1                 81
-#define VCPU_Q2                 83
-#define VCPU_Q3                 85
-#define VCPU_Q4                 87
-#define VCPU_Q5                 89
-#define VCPU_Q6                 91
-#define VCPU_Q7                 93
-#define VCPU_Q8                 95
-#define VCPU_Q9                 97
-#define VCPU_Q10                99
-#define VCPU_Q11                101
-#define VCPU_Q12                103
-#define VCPU_Q13                105
-#define VCPU_Q14                107
-#define VCPU_Q15                109
-#define VCPU_Q16                111
-#define VCPU_Q17                113
-#define VCPU_Q18                115
-#define VCPU_Q19                117
-#define VCPU_Q20                119
-#define VCPU_Q21                121
-#define VCPU_Q22                123
-#define VCPU_Q23                125
-#define VCPU_Q24                127
-#define VCPU_Q25                129
-#define VCPU_Q26                131
-#define VCPU_Q27                133
-#define VCPU_Q28                135
-#define VCPU_Q29                137
-#define VCPU_Q30                139
-#define VCPU_Q31                141
-#define NR_VCPU_REGS            143
+#define VCPU_VPIDR_EL2          62      // Virtualization Processor ID Register
+#define VCPU_VMPIDR_EL2         63      // Virtualization Multiprocessor ID Register
+#define VCPU_IFSR32_EL2         64      // Instruction Fault Status Register
+#define VCPU_HPFAR_EL2          65      // Hypervisor IPA Fault Address Register
+#define VCPU_VTTBR_EL2          66      // Virtualization Translation Table Base Address Register
+#define VCPU_VTCR_EL2           67      // Virtualization Translation Control Register
+#define VCPU_HCR_EL2            68      // Hypervisor Configuration Register
+#define VCPU_HSTR_EL2           69      // Hyp System Trap Register
+#define VCPU_HACR_EL2           70      // Hyp Auxiliary Configuration Register
+#define VCPU_DACR32_EL2         71      // Domain Access Control Register
+#define VCPU_CNTVOFF_EL2        72      // Counter-timer Virtual Offset register
+#define VCPU_FPCR               73      // Floating-point Control Register 
+#define VCPU_FPSR               74      // Floating-point Status Register 
+#define VCPU_FPEXC32_EL2        75      // Floating-point Exception Control Register
+#define VCPU_Q0                 76
+#define VCPU_Q1                 78
+#define VCPU_Q2                 80
+#define VCPU_Q3                 82
+#define VCPU_Q4                 84
+#define VCPU_Q5                 86
+#define VCPU_Q6                 88
+#define VCPU_Q7                 90
+#define VCPU_Q8                 92
+#define VCPU_Q9                 94
+#define VCPU_Q10                96
+#define VCPU_Q11                98
+#define VCPU_Q12                100
+#define VCPU_Q13                102
+#define VCPU_Q14                104
+#define VCPU_Q15                106
+#define VCPU_Q16                108
+#define VCPU_Q17                110
+#define VCPU_Q18                112
+#define VCPU_Q19                114
+#define VCPU_Q20                116
+#define VCPU_Q21                118
+#define VCPU_Q22                120
+#define VCPU_Q23                122
+#define VCPU_Q24                124
+#define VCPU_Q25                126
+#define VCPU_Q26                128
+#define VCPU_Q27                130
+#define VCPU_Q28                132
+#define VCPU_Q29                134
+#define VCPU_Q30                136
+#define VCPU_Q31                138
+#define NR_VCPU_REGS            140

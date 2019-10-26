@@ -5,6 +5,7 @@
  */
 
 #include <stdint.h>
+#include "lib/bit.h"
 #include "lib/system/printk.h"
 #include "driver/aarch64/exception.h"
 
@@ -47,7 +48,19 @@ static void dump_register(uint64_t *ei)
 
 void exception_handler_el2(uint64_t *ei)
 {
+    uint32_t ec;
+    uint32_t il;
+    uint32_t iss;
+    const char *ec_msg;
+
+    ec = (uint32_t)BF_EXTRACT(ei[EXC_ESR], 31, 26);
+    il = (uint32_t)BF_EXTRACT(ei[EXC_ESR], 25, 25);
+    iss = ei[EXC_ESR] & BITS(24, 0);
+    ec_msg = aarch64_esr_ec_message((uint32_t)ec);
+
     printk("<%s>\n", __func__);
+    printk("ESR: EC=0x%08x, IL=%d, ISS=0x%04x\n", ec, il, iss);
+    printk("     %s\n", ec_msg);
     dump_register(ei);
 }
 

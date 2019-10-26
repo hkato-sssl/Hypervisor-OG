@@ -19,7 +19,7 @@ import re
 import sys
 import string
 
-PREFIX = 'VCPU_'
+PREFIX = 'VPC_'
 DEF_NAME_WIDTH = 24
 DEF_VALUE_WIDTH = 8
 FILES = [ 'SPR', 'EL0-EL1', 'EL2', 'FP-SIMD']

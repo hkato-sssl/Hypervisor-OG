@@ -29,6 +29,8 @@ extern "C" {
 
 /* functions */
 
+void udelay(uint32_t usec);
+
 #ifdef __cplusplus
 }
 #endif

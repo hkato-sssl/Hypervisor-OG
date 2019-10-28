@@ -61,47 +61,48 @@
 #define VPC_VPIDR_EL2           60      // Virtualization Processor ID Register
 #define VPC_VMPIDR_EL2          61      // Virtualization Multiprocessor ID Register
 #define VPC_IFSR32_EL2          62      // Instruction Fault Status Register
-#define VPC_HPFAR_EL2           63      // Hypervisor IPA Fault Address Register
-#define VPC_VTTBR_EL2           64      // Virtualization Translation Table Base Address Register
-#define VPC_VTCR_EL2            65      // Virtualization Translation Control Register
-#define VPC_HCR_EL2             66      // Hypervisor Configuration Register
-#define VPC_HSTR_EL2            67      // Hyp System Trap Register
-#define VPC_HACR_EL2            68      // Hyp Auxiliary Configuration Register
-#define VPC_DACR32_EL2          69      // Domain Access Control Register
-#define VPC_CNTVOFF_EL2         70      // Counter-timer Virtual Offset register
-#define VPC_FPCR                71      // Floating-point Control Register 
-#define VPC_FPSR                72      // Floating-point Status Register 
-#define VPC_FPEXC32_EL2         73      // Floating-point Exception Control Register
-#define VPC_Q0                  74
-#define VPC_Q1                  76
-#define VPC_Q2                  78
-#define VPC_Q3                  80
-#define VPC_Q4                  82
-#define VPC_Q5                  84
-#define VPC_Q6                  86
-#define VPC_Q7                  88
-#define VPC_Q8                  90
-#define VPC_Q9                  92
-#define VPC_Q10                 94
-#define VPC_Q11                 96
-#define VPC_Q12                 98
-#define VPC_Q13                 100
-#define VPC_Q14                 102
-#define VPC_Q15                 104
-#define VPC_Q16                 106
-#define VPC_Q17                 108
-#define VPC_Q18                 110
-#define VPC_Q19                 112
-#define VPC_Q20                 114
-#define VPC_Q21                 116
-#define VPC_Q22                 118
-#define VPC_Q23                 120
-#define VPC_Q24                 122
-#define VPC_Q25                 124
-#define VPC_Q26                 126
-#define VPC_Q27                 128
-#define VPC_Q28                 130
-#define VPC_Q29                 132
-#define VPC_Q30                 134
-#define VPC_Q31                 136
-#define NR_VCPU_REGS            138
+#define VPC_ESR_EL2             63      // Exception Syndrome Register
+#define VPC_HPFAR_EL2           64      // Hypervisor IPA Fault Address Register
+#define VPC_VTTBR_EL2           65      // Virtualization Translation Table Base Address Register
+#define VPC_VTCR_EL2            66      // Virtualization Translation Control Register
+#define VPC_HCR_EL2             67      // Hypervisor Configuration Register
+#define VPC_HSTR_EL2            68      // Hyp System Trap Register
+#define VPC_HACR_EL2            69      // Hyp Auxiliary Configuration Register
+#define VPC_DACR32_EL2          70      // Domain Access Control Register
+#define VPC_CNTVOFF_EL2         71      // Counter-timer Virtual Offset register
+#define VPC_FPCR                72      // Floating-point Control Register 
+#define VPC_FPSR                73      // Floating-point Status Register 
+#define VPC_FPEXC32_EL2         74      // Floating-point Exception Control Register
+#define VPC_Q0                  75
+#define VPC_Q1                  77
+#define VPC_Q2                  79
+#define VPC_Q3                  81
+#define VPC_Q4                  83
+#define VPC_Q5                  85
+#define VPC_Q6                  87
+#define VPC_Q7                  89
+#define VPC_Q8                  91
+#define VPC_Q9                  93
+#define VPC_Q10                 95
+#define VPC_Q11                 97
+#define VPC_Q12                 99
+#define VPC_Q13                 101
+#define VPC_Q14                 103
+#define VPC_Q15                 105
+#define VPC_Q16                 107
+#define VPC_Q17                 109
+#define VPC_Q18                 111
+#define VPC_Q19                 113
+#define VPC_Q20                 115
+#define VPC_Q21                 117
+#define VPC_Q22                 119
+#define VPC_Q23                 121
+#define VPC_Q24                 123
+#define VPC_Q25                 125
+#define VPC_Q26                 127
+#define VPC_Q27                 129
+#define VPC_Q28                 131
+#define VPC_Q29                 133
+#define VPC_Q30                 135
+#define VPC_Q31                 137
+#define NR_VCPU_REGS            139

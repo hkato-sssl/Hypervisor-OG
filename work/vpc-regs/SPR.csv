@@ -1,7 +1,8 @@
 ﻿Name,Type,Width,Function,A53,Reset,Description
 SP_EL0,RW,64,,〇,ALL 0,
 SP_EL1,RW,64,,〇,ALL 0,
-PC,RW,64,,〇,,
+PC,RW,64,,〇,VM parameter,ELR_EL2
+SPSR_EL2,RW,64,,〇,VM parameter,
 ELR_EL1,RW,64,,〇,ALL 0,
 SPSR_EL1,RW,64,,〇,ALL 0,
 SPSR_ABT,RW,64,,〇,ALL 0,

@@ -76,7 +76,7 @@ def main():
         lines = readlines(fn + '.csv')
         create_desc(lines)
     create_fpu()
-    out_desc('NR_VCPU_REGS', '')
+    out_desc('NR_' + PREFIX + 'REGS', '')
 
     return 0
 

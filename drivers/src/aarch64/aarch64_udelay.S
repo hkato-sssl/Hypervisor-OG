@@ -23,14 +23,15 @@ aarch64_udelay:
 
 	mov32		w3, 1000000
 	udiv		w2, w2, w3
-	mov		x3, #1
-	umaddl		x2, w2, w0, x3
+	umull		x2, w2, w0
+	mov		x3, #0xff00000000000000	// X3[63:54] = 0xff
 loop:
 	isb
-	mrs		x3, CNTPCT_EL0
-	sub		x0, x3, x1
-	cmp		x0, x2
-	b.cs		exit
+	mrs		x0, CNTPCT_EL0
+	sub		x0, x0, x1
+	bic		x0, x0, x3		// x0[63:54] = 0x00
+	cmp		x2, x0
+	b.cc		exit
 	yield
 	b		loop
 exit:

@@ -10,12 +10,12 @@
 #include "lib/asm.h"
 #include "hypervisor/vpc_register.h"
 
-        .global         vpc_ctx_load_system_registers
-        .section        ".text.vpc_ctx_load_system_registers", "ax", %progbits
-        .type           vpc_ctx_load_system_registers, %function
+        .global         vpc_load_ctx_system_register
+        .section        ".text.vpc_load_ctx_system_register", "ax", %progbits
+        .type           vpc_load_ctx_system_register, %function
         .balign         4
         // x0 - the address of Register Array
-vpc_ctx_load_system_registers:
+vpc_load_ctx_system_register:
         add             x1, x0, #(VPC_CSSELR_EL1 * 8)
 
         ldp             x2, x3, [x1], #16
@@ -69,12 +69,12 @@ vpc_ctx_load_system_registers:
 
         ret
 
-        .global         vpc_ctx_store_system_registers
-        .section        ".text.vpc_ctx_store_system_registers", "ax", %progbits
-        .type           vpc_ctx_store_system_registers, %function
+        .global         vpc_store_ctx_store_system_register
+        .section        ".text.vpc_store_ctx_store_system_register", "ax", %progbits
+        .type           vpc_store_ctx_store_system_register, %function
         .balign         4
         // x0 - the address of Register Array
-vpc_ctx_store_system_registers:
+vpc_store_ctx_store_system_register:
         add             x1, x0, #(VPC_CSSELR_EL1 * 8)
 
         mrs             x2, CSSELR_EL1

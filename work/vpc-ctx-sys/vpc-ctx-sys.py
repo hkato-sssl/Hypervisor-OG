@@ -26,8 +26,8 @@ FILES = [ 'EL0-EL1', 'EL2' ]
 OUT_FILE_NAME = "vpc_ctx_sys.S"
 PREFIX = "VPC_"
 
-LOAD_FUNC = 'vpc_ctx_load_system_registers'
-STORE_FUNC = 'vpc_ctx_store_system_registers'
+LOAD_FUNC = 'vpc_load_ctx_system_register'
+STORE_FUNC = 'vpc_store_ctx_store_system_register'
 
 ASM_HEADER = """\
 /*

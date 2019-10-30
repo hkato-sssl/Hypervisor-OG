@@ -106,4 +106,4 @@
 #define VPC_Q29                 134
 #define VPC_Q30                 136
 #define VPC_Q31                 138
-#define NR_VCPU_REGS            140
+#define NR_VPC_REGS             140

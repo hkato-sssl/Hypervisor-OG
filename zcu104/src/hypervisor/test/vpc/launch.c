@@ -1,5 +1,5 @@
 /*
- * test/vpc/launch.c
+ * test/vpc/launch.c - VPC 起動テスト
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -41,7 +41,9 @@ void test_vpc_launch(void)
     config.gpr.sp = 0;
 
     ret = vpc_configure(&vpc, &config);
+    vpc.regs[VPC_SCTLR_EL1] = 0x30d00800;
     printk("vpc_configure() -> %d\n", ret);
+    printk("SCTLR_EL1: %08x\n", vpc.regs[VPC_SCTLR_EL1]);
 
     if (ret == SUCCESS) {
         vpc_launch(&vpc);

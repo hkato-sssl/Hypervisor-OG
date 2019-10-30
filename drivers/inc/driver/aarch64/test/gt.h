@@ -28,6 +28,7 @@ extern "C" {
 /* functions */
 
 void test_gt_0(void);
+void test_gt_cntp_0(void);
 
 #ifdef __cplusplus
 }

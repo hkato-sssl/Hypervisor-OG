@@ -25,10 +25,10 @@
 static void setup_aarch64(struct vpc *vpc)
 {
     /* SPSR:
-     *    I, F = 1 - IRQ and FIQ are masked
+     *    D, A, I, F = 1
      *    M[4:0] = 0x05 - AArch64 EL1h
      */
-    vpc->regs[VPC_SPSR_EL2] = PSTATE_I | PSTATE_F | 0x05;
+    vpc->regs[VPC_SPSR_EL2] = PSTATE_D | PSTATE_A | PSTATE_I | PSTATE_F | 0x05;
 }
 
 static void setup_aarch32(struct vpc *vpc)
@@ -42,6 +42,8 @@ static void setup_aarch32(struct vpc *vpc)
 
 static errno_t configure(struct vpc *vpc, const struct vpc_config *config)
 {
+    uint64_t d;
+
     memset(vpc, 0, sizeof(struct vpc));
     memset(vpc->regs, 0, (sizeof(uint64_t) * NR_VPC_REGS));
 
@@ -56,6 +58,10 @@ static errno_t configure(struct vpc *vpc, const struct vpc_config *config)
     } else {
         setup_aarch32(vpc);
     }
+
+    d = aarch64_read_midr_el1();
+    vpc->regs[VPC_VPIDR_EL2] = d;
+    vpc->regs[VPC_VMPIDR_EL2] = BIT(31) | config->proc_no;
 
     return SUCCESS;
 }

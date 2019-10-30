@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/vpc.h"
@@ -29,6 +30,7 @@ static void setup_aarch64(struct vpc *vpc)
      *    M[4:0] = 0x05 - AArch64 EL1h
      */
     vpc->regs[VPC_SPSR_EL2] = PSTATE_D | PSTATE_A | PSTATE_I | PSTATE_F | 0x05;
+    vpc->regs[VPC_HCR_EL2] = BIT(31);	// HCR_EL2.RW = 1
 }
 
 static void setup_aarch32(struct vpc *vpc)

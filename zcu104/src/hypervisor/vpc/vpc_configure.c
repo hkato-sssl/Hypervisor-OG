@@ -48,7 +48,7 @@ static errno_t setup_aarch64(struct vpc *vpc, const struct vpc_config *config)
      *    M[4:0] = 0x05 - AArch64 EL1h
      */
     vpc->regs[VPC_SPSR_EL2] = PSTATE_D | PSTATE_A | PSTATE_I | PSTATE_F | 0x05;
-    vpc->regs[VPC_HCR_EL2] = BIT(31);	// HCR_EL2.RW = 1
+    vpc->regs[VPC_HCR_EL2] = HCR_RW;
 
     ret = init_system_register(vpc, config);
 

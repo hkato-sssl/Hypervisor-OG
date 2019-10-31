@@ -69,6 +69,7 @@
 #define SCTLR_C             BIT(2)
 #define SCTLR_A             BIT(1)
 #define SCTLR_M             BIT(0)
+#define SCTLR_EL1_RES1      (BITS(29, 28) | BITS(23, 22) | BIT(20) | BIT(11))
 
 /* ACTLR */
 #define ACTLR_L2ACTLR       BIT(6)

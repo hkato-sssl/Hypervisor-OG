@@ -93,9 +93,9 @@ static errno_t init_printk(void)
 
 static errno_t init_exception(void)
 {
-    extern char excvec_el2[];
+    extern char excvec_hyp[];
 
-    aarch64_write_vbar_el2((uint64_t)excvec_el2);
+    aarch64_write_vbar_el2((uint64_t)excvec_hyp);
     aarch64_isb();
 
     return SUCCESS;

@@ -30,7 +30,7 @@ static errno_t init_system_register(struct vpc *vpc, const struct vpc_config *co
 {
     uint64_t d;
 
-    vpc->regs[VPC_SCTLR_EL1] = DEFAULT_SCTLR_EL1;
+    vpc->regs[VPC_SCTLR_EL1] = SCTLR_EL1_RES1 | DEFAULT_SCTLR_EL1;
 
     d = aarch64_read_midr_el1();
     vpc->regs[VPC_VPIDR_EL2] = d;
@@ -83,7 +83,7 @@ static errno_t configure(struct vpc *vpc, const struct vpc_config *config)
     vpc->regs[VPC_PC] = config->gpr.pc;
     vpc->regs[VPC_SP_EL1] = config->gpr.sp;
 
-    if (config->aarch == 64) {
+    if (config->arch == VPC_AARCH64) {
         ret = setup_aarch64(vpc, config);
     } else {
         ret = setup_aarch32(vpc, config);
@@ -97,7 +97,7 @@ static bool is_valid_parameter(struct vpc *vpc, const struct vpc_config *config)
     bool ret;
 
     if ((vpc != NULL) && (config != NULL) && (config->owner != NULL) && (config->regs != NULL)) {
-        if ((config->aarch == 32) || (config->aarch == 64)) {
+        if ((config->arch == VPC_AARCH32) || (config->arch == VPC_AARCH64)) {
             ret = true;
         } else {
             ret = false;

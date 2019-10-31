@@ -31,12 +31,14 @@ extern "C" {
 
 struct vm;
 
-struct vpc_config {
-    struct vm   *owner;
-    uint64_t    *regs;
+enum vpc_arch { VPC_AARCH32, VPC_AARCH64 };
 
-    uint8_t     proc_no;	// processor No.
-    uint8_t	aarch;		// 32(AArch32) or 64(AArch64)
+struct vpc_config {
+    struct vm       *owner;
+    uint64_t        *regs;
+
+    uint8_t         proc_no;    // processor No.
+    enum vpc_arch   arch;
 
     /* inital value of register */
 
@@ -50,7 +52,7 @@ struct vpc {
     struct vm   *owner;
     uint64_t    *regs;
     struct {
-	bool	launched;
+    bool        launched;
     } flag;
 };
 

@@ -36,7 +36,7 @@ void test_vpc_launch(void)
 
     config.owner = (void*)0xff; // dummy
     config.regs = register_array;
-    config.aarch = 64;
+    config.arch = VPC_AARCH64;
     config.gpr.pc = (uint64_t)test_vpc_launch_entry;
     config.gpr.sp = 0;
 

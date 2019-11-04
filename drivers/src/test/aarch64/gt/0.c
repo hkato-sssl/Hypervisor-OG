@@ -8,7 +8,7 @@
 #include "lib/system/printk.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
-#include "driver/aarch64/test/gt.h"
+#include "driver/test/aarch64/gt.h"
 
 /* defines */
 

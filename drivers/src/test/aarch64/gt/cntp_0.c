@@ -1,5 +1,5 @@
 /*
- * aarch64/gt/cntp_0.c - test of EL1 physical timer
+ * test/aarch64/gt/cntp_0.c - test of EL1 physical timer
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -8,7 +8,7 @@
 #include "lib/system/printk.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
-#include "driver/aarch64/test/gt.h"
+#include "driver/test/aarch64/gt.h"
 
 /* defines */
 

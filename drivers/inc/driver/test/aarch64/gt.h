@@ -1,11 +1,11 @@
 /*
- * driver/aarch64/test/gt.h - test for Generic Timer
+ * driver/test/aarch64/gt.h - test for Generic Timer
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef DRIVER_AARCH64_TEST_GT_H
-#define DRIVER_AARCH64_TEST_GT_H
+#ifndef DRIVER_TEST_AARCH64_GT_H
+#define DRIVER_TEST_AARCH64_GT_H
 
 /* includes */
 
@@ -36,5 +36,5 @@ void test_gt_cntp_0(void);
 
 #endif /* ASSEMBLY */
 
-#endif /* DRIVER_AARCH64_TEST_GT_H */
+#endif /* DRIVER_TEST_AARCH64_GT_H
 

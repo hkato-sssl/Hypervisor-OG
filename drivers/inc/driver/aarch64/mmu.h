@@ -7,7 +7,7 @@
 /*
  * 制約事項：
  * ・ARMv8仕様対応
- * ・マッピング可能な単位は4KBのみ
+ * ・4KB granuleのみ対応
  */
 
 #ifndef DRIVER_AARCH64_MMU_H
@@ -116,11 +116,12 @@ struct aarch64_mmu_stage2_attr {
     /* attrinbutes in Block or Page descriptor */
 
     /* upper attributes */
-    uint8_t         xn:1;
+    uint8_t     xn:1;
     /* lower attributes */
-    uint8_t         sh:2;
-    uint8_t         s2ap:2;
-    uint8_t         memattr:4;
+    uint8_t     af:1;
+    uint8_t     sh:2;
+    uint8_t     s2ap:2;
+    uint8_t     memattr:4;
 };
 
 struct aarch64_mmu_block_pool {

@@ -22,7 +22,7 @@
 
 /* functions */
 
-uint64_t aarch64_table_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+uint64_t aarch64_mmu_table_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
 {
     uint64_t desc;
 
@@ -51,7 +51,7 @@ static uint64_t block_page_descriptor(void *pa, struct aarch64_mmu_attr const *a
     return desc;
 }
 
-uint64_t aarch64_block_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+uint64_t aarch64_mmu_block_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
 {
     uint64_t desc;
 
@@ -60,7 +60,7 @@ uint64_t aarch64_block_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
     return desc;
 }
 
-uint64_t aarch64_page_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+uint64_t aarch64_mmu_page_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
 {
     uint64_t desc;
 

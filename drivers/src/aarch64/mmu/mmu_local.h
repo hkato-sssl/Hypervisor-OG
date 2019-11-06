@@ -37,11 +37,15 @@
 extern "C" {
 #endif
 
+errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu_trans_table *tt, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
 errno_t aarch64_mmu_set_tt(struct aarch64_mmu_trans_table *tt);
 errno_t aarch64_mmu_enable_asm(struct aarch64_mmu_trans_table const *tt);
 void aarch64_mmu_write_tt(uint64_t *addr, uint64_t desc);
 void aarch64_mmu_tlbi_va(void *va);
 void aarch64_mmu_tlbi_all(void);
+uint64_t aarch64_table_descriptor(void *pa, struct aarch64_mmu_attr const *attr);
+uint64_t aarch64_block_descriptor(void *pa, struct aarch64_mmu_attr const *attr);
+uint64_t aarch64_page_descriptor(void *pa, struct aarch64_mmu_attr const *attr);
 
 #ifdef __cplusplus
 }

@@ -15,7 +15,6 @@
 
 /* includes */
 
-
 /* defines */
 
 #ifndef ASSEMBLY
@@ -28,46 +27,13 @@
 #include "lib/bit.h"
 #include "lib/list.h"
 #include "lib/system/errno.h"
+#include "driver/aarch64/system_register/mair.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* defines */
-
-#define MMU_STAGE1                  1
-#define MMU_STAGE2                  2
-
-#define NR_MAIR_ATTRS               8           /* number of attribute in MAIR_ELx */
-#define MMU_MAIR_ATTR(n, v)         ((uint64_t)(v) << ((n) * 8))
-
-/* Device memory type */
-#define MEM_ATTR_DEVICE_nGnRnE      0x00
-#define MEM_ATTR_DEVICE_nGnRE       0x04
-#define MEM_ATTR_DEVICE_nGRE        0x08
-#define MEM_ATTR_DEVICE_GRE         0x0c
-
-/* Inner cacheability for Normal memory */
-#define MEM_ATTR_NORMAL_INC         0x04        /* Non-cacheable */
-#define MEM_ATTR_NORMAL_IWTWA       0x09        /* Write-Through, Write-Allocate */
-#define MEM_ATTR_NORMAL_IWTRA       0x0a        /* Write-Through, Read-Allocate */
-#define MEM_ATTR_NORMAL_IWTRAWA     0x0b        /* Write-Through, Read-Allocate, Write-Allocate */
-#define MEM_ATTR_NORMAL_IWBWA       0x0d        /* Write-Back, Wite-Allocate */
-#define MEM_ATTR_NORMAL_IWBRA       0x0e        /* Write-Back, Read-Allocate */
-#define MEM_ATTR_NORMAL_IWBRAWA     0x0f        /* Write-Back, Read-Allocate, Wite-Allocate */
-
-/* Outer cacheability for Normal memory */
-#define MEM_ATTR_NORMAL_ONC         0x40        /* Non-cacheable */
-#define MEM_ATTR_NORMAL_OWTWA       0x90        /* Write-Through, Write-Allocate */
-#define MEM_ATTR_NORMAL_OWTRA       0xa0        /* Write-Through, Read-Allocate */
-#define MEM_ATTR_NORMAL_OWTRAWA     0xb0        /* Write-Through, Read-Allocate, Write-Allocate */
-#define MEM_ATTR_NORMAL_OWBWA       0xd0        /* Write-Back, Wite-Allocate */
-#define MEM_ATTR_NORMAL_OWBRA       0xe0        /* Write-Back, Read-Allocate */
-#define MEM_ATTR_NORMAL_OWBRAWA     0xf0        /* Write-Back, Read-Allocate, Wite-Allocate */
-
-#define MEM_ATTR_NORMAL_NC          (MEM_ATTR_NORMAL_ONC | MEM_ATTR_NORMAL_INC)
-#define MEM_ATTR_NORMAL_WB          (MEM_ATTR_NORMAL_OWBRA | MEM_ATTR_NORMAL_IWBRA)
-#define MEM_ATTR_NORMAL_WBWA        (MEM_ATTR_NORMAL_OWBRAWA | MEM_ATTR_NORMAL_IWBRAWA)
 
 /* Next-level descriptor attriutes */
 
@@ -117,29 +83,44 @@ extern "C" {
 
 /* types */
 
+enum aarch64_mmu_stage { AARCH64_MMU_STAGE1, AARCH64_MMU_STAGE2 };
+enum aarch64_mmu_granule { AARCH64_MMU_4KB_GRANULE, AARCH64_MMU_16KB_GRANULE, AARCH64_MMU_64KB_GRANULE }; 
+
+/* Attributes in descriptor for stage 1 translation */
+
 struct aarch64_mmu_attr {
-    uint8_t             stage;
+    /* attributes in Table descriptor */
 
-    struct {
-        /* upper attributes */
-        uint8_t         xn:1;       /* also used as UXN */
-        uint8_t         pxn:1;
-        /* lower attributes */
-        uint8_t         ng:1;
-        uint8_t         sh:2;
-        uint8_t         ap21:2;
-        uint8_t         ns:1;
-        uint8_t         attrindx:3;
-    } stage1;
+    uint8_t     nstable:1;
+    uint8_t     aptable:2;
+    uint8_t     xntable:1;  /* also used as UXNTable */
+    uint8_t     pxntable:1;
 
-    struct {
-        /* upper attributes */
-        uint8_t         xn:1;
-        /* lower attributes */
-        uint8_t         sh:2;
-        uint8_t         s2ap:2;
-        uint8_t         memattr:4;
-    } stage2;
+    /* attrinbutes in Block or Page descriptor */
+
+    /* upper attributes */
+    uint8_t     xn:1;       /* also used as UXN */
+    uint8_t     pxn:1;
+    /* lower attributes */
+    uint8_t     ng:1;
+    uint8_t     af:1;
+    uint8_t     sh:2;
+    uint8_t     ap21:2;
+    uint8_t     ns:1;
+    uint8_t     attrindx:3;
+};
+
+/* Attributes in descriptor for stage 2 translation */
+
+struct aarch64_mmu_stage2_attr {
+    /* attrinbutes in Block or Page descriptor */
+
+    /* upper attributes */
+    uint8_t         xn:1;
+    /* lower attributes */
+    uint8_t         sh:2;
+    uint8_t         s2ap:2;
+    uint8_t         memattr:4;
 };
 
 struct aarch64_mmu_block_pool {
@@ -181,22 +162,28 @@ struct aarch64_mmu_mair {
 };
 
 struct aarch64_mmu_trans_table {
-    bool            active;
-    uint8_t         stage;
+    bool active;
+    enum aarch64_mmu_stage stage;
+    enum aarch64_mmu_granule granule;
+
     struct {
         uint16_t    asid;
         uint64_t    mair;
     } stage1;
+
     struct {
         uint8_t     vmid;
     } stage2;
+
     uint64_t        *addr;
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool pool;
 };
 
 struct aarch64_mmu_trans_table_configuration {
-    uint8_t         stage;
+        enum aarch64_mmu_stage stage;
+        enum aarch64_mmu_granule granule;
+
     struct {
         uint16_t    asid;
         uint64_t    mair;
@@ -204,6 +191,7 @@ struct aarch64_mmu_trans_table_configuration {
     struct {
         uint8_t     vmid;
     } stage2;
+
     struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool_configuration pool;
 };
@@ -217,9 +205,8 @@ errno_t aarch64_mmu_disable(void);
 errno_t aarch64_mmu_enable(struct aarch64_mmu_trans_table const *tt);
 
 errno_t aarch64_mmu_map(struct aarch64_mmu_trans_table *tt, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
-errno_t aarch64_mmu_map_4KB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr);
-errno_t aarch64_mmu_map_2MB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr);
-errno_t aarch64_mmu_map_1GB(struct aarch64_mmu_trans_table *tt, void *va, void *pa, struct aarch64_mmu_attr const *attr);
+
+errno_t aarch64_mmu_stage2_map(struct aarch64_mmu_trans_table *tt, void *va, void *pa, size_t sz, struct aarch64_mmu_stage2_attr const *attr);
 
 errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config);
 void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);

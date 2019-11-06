@@ -12,8 +12,8 @@
 
         .extern         aarch64_read_sctlr
         .extern         aarch64_write_sctlr
-        .extern			aarch64_icache_invd_all
-        .extern			aarch64_dcache_clean_invd_all
+        .extern         aarch64_icache_invd_all
+        .extern         aarch64_dcache_clean_invd_all
 
         .section        ".text.aarch64_mmu_disable", "ax", %progbits
         .type           aarch64_mmu_disable, %function

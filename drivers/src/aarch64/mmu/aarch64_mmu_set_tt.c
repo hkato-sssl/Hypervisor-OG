@@ -144,7 +144,7 @@ errno_t aarch64_mmu_set_tt(struct aarch64_mmu_trans_table *tt)
     ret = validate_parameters(tt);
     if (ret == SUCCESS) {
         el = aarch64_read_currentel();
-	if ((el == CURRENT_EL1) && (tt->stage == AARCH64_MMU_STAGE1)) {
+    if ((el == CURRENT_EL1) && (tt->stage == AARCH64_MMU_STAGE1)) {
             ret = mmu_set_tt_el1(tt);
         } else if (el == CURRENT_EL2) {
             if (tt->stage == AARCH64_MMU_STAGE1) {

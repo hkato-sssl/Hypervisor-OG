@@ -182,7 +182,7 @@ store_vpc_registers:
 	// reset SP_EL0
 
 	msr		SPSel, #0
-	adr		x0, main_stack_region
+	adrl		x0, main_stack_region
 	mrs		x1, MPIDR_EL1
 	and		x1, x1, #0xff
 	mov		x2, #STACK_SIZE

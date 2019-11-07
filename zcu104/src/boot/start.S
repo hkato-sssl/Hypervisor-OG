@@ -26,19 +26,19 @@ _start:
         // initialize SP
 
         msr             SPsel, #1
-        adr             x1, (exc_stack_region + STACK_SIZE)
+        adrl            x1, (exc_stack_region + STACK_SIZE)
         mov             sp, x1
 
 	msr		SPsel, #0
-	adr		x0, (main_stack_region + STACK_SIZE)
+	adrl		x0, (main_stack_region + STACK_SIZE)
 	mov		sp, x0
 
         // check parameters of .bss region
 
-        adr             x0, __bss_start
+        adrl            x0, __bss_start
         tst             x0, #63
         bne             .                       // error loop
-        adr             x1, __bss_end
+        adrl            x1, __bss_end
         tst             x1, #63
         bne             .                       // error loop
         subs            x1, x1, x0

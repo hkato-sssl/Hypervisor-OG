@@ -19,13 +19,13 @@
 
 /* functions */
 
-errno_t aarch64_mmu_enable(struct aarch64_mmu_trans_table const *tt)
+errno_t aarch64_mmu_enable(struct aarch64_mmu const *mmu)
 {
     errno_t ret;
 
-    if (tt != NULL) {
-        if (tt->active == false) {
-            ret = aarch64_mmu_enable_asm(tt);
+    if (mmu != NULL) {
+        if (mmu->active == false) {
+            ret = aarch64_mmu_enable_asm(mmu);
         } else {
             ret = -EBUSY;
         }

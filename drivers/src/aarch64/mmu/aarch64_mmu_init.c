@@ -22,7 +22,7 @@
 
 /* functions */
 
-static bool is_valid_stage(struct aarch64_mmu_trans_table_configuration const *config)
+static bool is_valid_stage(struct aarch64_mmu_configuration const *config)
 {
     bool valid;
 
@@ -35,11 +35,11 @@ static bool is_valid_stage(struct aarch64_mmu_trans_table_configuration const *c
     return valid;
 }
 
-static errno_t validate_parameters(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
+static errno_t validate_parameters(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config)
 {
     errno_t ret;
 
-    if ((tt != NULL) && (config != NULL) && (config->pool.block_sz == MMU_BLOCK_SZ)) {
+    if ((mmu != NULL) && (config != NULL) && (config->pool.block_sz == MMU_BLOCK_SZ)) {
         if (is_valid_stage(config) && (config->granule == AARCH64_MMU_4KB_GRANULE)) {
             ret = SUCCESS;
         } else {
@@ -53,35 +53,35 @@ static errno_t validate_parameters(struct aarch64_mmu_trans_table *tt, struct aa
     return ret;
 }
 
-static errno_t init_trans_table(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
+static errno_t init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config)
 {
-    tt->active = false;
-    tt->stage = config->stage;
-    tt->granule = config->granule;
-    if (tt->stage == AARCH64_MMU_STAGE1) {
-        tt->stage1.asid = config->stage1.asid;
-        tt->stage1.mair = config->stage1.mair;
+    mmu->active = false;
+    mmu->stage = config->stage;
+    mmu->granule = config->granule;
+    if (mmu->stage == AARCH64_MMU_STAGE1) {
+        mmu->stage1.asid = config->stage1.asid;
+        mmu->stage1.mair = config->stage1.mair;
     } else {
-        tt->stage2.vmid = config->stage2.vmid;
+        mmu->stage2.vmid = config->stage2.vmid;
     }
-    memset(tt->addr, 0, MMU_BLOCK_SZ);
+    memset(mmu->addr, 0, MMU_BLOCK_SZ);
 
-    tt->tcr = config->tcr;
+    mmu->tcr = config->tcr;
 
     return SUCCESS;
 }
 
-static errno_t mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
+static errno_t mmu_init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config)
 {
     errno_t ret;
 
-    memset(tt, 0, sizeof(*tt));
+    memset(mmu, 0, sizeof(*mmu));
 
-    ret = aarch64_mmu_block_pool_init(&(tt->pool), &(config->pool));
+    ret = aarch64_mmu_block_pool_init(&(mmu->pool), &(config->pool));
     if (ret == SUCCESS) {
-        tt->addr = aarch64_mmu_block_calloc(&(tt->pool), MMU_BLOCK_SZ);
-        if (tt->addr != NULL) {
-            ret = init_trans_table(tt, config);
+        mmu->addr = aarch64_mmu_block_calloc(&(mmu->pool), MMU_BLOCK_SZ);
+        if (mmu->addr != NULL) {
+            ret = init(mmu, config);
         } else {
             ret = -ENOMEM;
         }
@@ -90,13 +90,13 @@ static errno_t mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_t
     return ret;
 }
 
-errno_t aarch64_mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config)
+errno_t aarch64_mmu_init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config)
 {
     errno_t ret;
 
-    ret = validate_parameters(tt, config);
+    ret = validate_parameters(mmu, config);
     if (ret == SUCCESS) {
-        ret = mmu_init(tt, config);
+        ret = mmu_init(mmu, config);
     }
 
     return ret;

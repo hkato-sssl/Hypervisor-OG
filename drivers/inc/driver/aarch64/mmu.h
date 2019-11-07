@@ -162,7 +162,7 @@ struct aarch64_mmu_mair {
     uint8_t         attrs[NR_MAIR_ATTRS];
 };
 
-struct aarch64_mmu_trans_table {
+struct aarch64_mmu {
     bool active;
     enum aarch64_mmu_stage stage;
     enum aarch64_mmu_granule granule;
@@ -181,7 +181,7 @@ struct aarch64_mmu_trans_table {
     struct aarch64_mmu_block_pool pool;
 };
 
-struct aarch64_mmu_trans_table_configuration {
+struct aarch64_mmu_configuration {
     enum aarch64_mmu_stage stage;
     enum aarch64_mmu_granule granule;
 
@@ -201,17 +201,21 @@ struct aarch64_mmu_trans_table_configuration {
 
 /* functions */
 
-errno_t aarch64_mmu_init(struct aarch64_mmu_trans_table *tt, struct aarch64_mmu_trans_table_configuration const *config);
+errno_t aarch64_mmu_init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config);
 errno_t aarch64_mmu_disable(void);
-errno_t aarch64_mmu_enable(struct aarch64_mmu_trans_table const *tt);
+errno_t aarch64_mmu_enable(struct aarch64_mmu const *mmu);
 
-errno_t aarch64_mmu_map(struct aarch64_mmu_trans_table *tt, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
+errno_t aarch64_mmu_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
 
-errno_t aarch64_mmu_stage2_map(struct aarch64_mmu_trans_table *tt, void *va, void *pa, size_t sz, struct aarch64_mmu_stage2_attr const *attr);
+errno_t aarch64_mmu_stage2_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, struct aarch64_mmu_stage2_attr const *attr);
 
 errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config);
 void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);
 errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block, size_t block_sz);
+
+/* for debugging */
+
+void aarch64_mmu_dump_descriptor(struct aarch64_mmu const *mmu);
 
 #ifdef __cplusplus
 }

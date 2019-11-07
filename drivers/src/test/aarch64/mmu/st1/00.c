@@ -19,14 +19,14 @@
 /* variables */
 
 static char block_pool_region[256][4096] __attribute__ ((aligned(4096)));
-static struct aarch64_mmu_trans_table tt;
+static struct aarch64_mmu mmu;
 
 /* functions */
 
 static errno_t init(void)
 {
     errno_t ret;
-    struct aarch64_mmu_trans_table_configuration config;
+    struct aarch64_mmu_configuration config;
 
     memset(&config, 0, sizeof(config));
     config.stage = AARCH64_MMU_STAGE1;
@@ -37,7 +37,7 @@ static errno_t init(void)
     config.pool.block_region.addr = block_pool_region;
     config.pool.block_region.size = sizeof(block_pool_region);
 
-    ret = aarch64_mmu_init(&tt, &config);
+    ret = aarch64_mmu_init(&mmu, &config);
     printk("aarch64_mmu_init() -> %d\n", ret);
 
     return ret;
@@ -57,7 +57,7 @@ errno_t test_aarch64_mmu_st1_00(void)
 
     memset(&attr, 0, sizeof(attr));
 
-    ret = aarch64_mmu_map(&tt, block_pool_region, block_pool_region, 4096, &attr);
+    ret = aarch64_mmu_map(&mmu, block_pool_region, block_pool_region, 4096, &attr);
     printk("aarch64_mmu_map() -> %d\n", ret);
 
     return ret;

@@ -182,8 +182,8 @@ struct aarch64_mmu_trans_table {
 };
 
 struct aarch64_mmu_trans_table_configuration {
-        enum aarch64_mmu_stage stage;
-        enum aarch64_mmu_granule granule;
+    enum aarch64_mmu_stage stage;
+    enum aarch64_mmu_granule granule;
 
     struct {
         uint16_t    asid;

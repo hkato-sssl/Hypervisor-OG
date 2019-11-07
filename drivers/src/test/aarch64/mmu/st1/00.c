@@ -60,6 +60,8 @@ errno_t test_aarch64_mmu_st1_00(void)
     ret = aarch64_mmu_map(&mmu, block_pool_region, block_pool_region, 4096, &attr);
     printk("aarch64_mmu_map() -> %d\n", ret);
 
+    aarch64_mmu_dump_descriptor(&mmu);
+
     return ret;
 }
 

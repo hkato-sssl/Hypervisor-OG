@@ -5,7 +5,6 @@
  */
 
  #include "lib/asm.h"
- #include "lib/aarch64.h"
  #include "lib/system/errno.h"
 
         .global         aarch64_mmu_tlbi_all

@@ -6,7 +6,6 @@
 
 #include "lib/asm.h"
 #include "lib/bit.h"
-#include "lib/aarch64.h"
 
         .global         aarch64_mmu_tlbi_va
 

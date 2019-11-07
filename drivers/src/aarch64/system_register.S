@@ -5,7 +5,6 @@
  */
 
  #include "lib/asm.h"
- #include "lib/aarch64.h"
 
         .global         aarch64_write_mair
         .global         aarch64_read_mair

@@ -5,7 +5,7 @@ AR = $(CROSS_COMPILE)ar
 OBJDUMP = $(CROSS_COMPILE)objdump
 OBJCOPY = $(CROSS_COMPILE)objcopy
 
-CFLAGS := -Wall -O0 -g3 -march=armv8-a+nofp
+CFLAGS := -Wall -O0 -g3 -march=armv8-a+nofp -mstrict-align
 
 ASFLAGS :=
 

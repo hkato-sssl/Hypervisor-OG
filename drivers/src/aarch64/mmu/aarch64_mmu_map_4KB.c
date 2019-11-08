@@ -108,7 +108,7 @@ uint64_t *table_addr(struct aarch64_mmu *mmu, void *va, uint32_t level, union mm
             table = NULL; /* no support */
             break;
         } else {
-            /* d[1;0] == 0b11, table descriptor */
+            /* d[1:0] == 0b11, table descriptor */
             table = next_table_addr(d);
         }
     }

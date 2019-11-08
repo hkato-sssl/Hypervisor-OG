@@ -149,11 +149,11 @@ static errno_t map_4KB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_at
     return ret;
 }
 
-static errno_t map_4KB_validate_parameters(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+static errno_t map_4KB_validate_parameters(void *va, void *pa)
 {
     errno_t ret;
 
-    if ((mmu != NULL) && (attr != NULL) && (mmu->stage == AARCH64_MMU_STAGE1) && IS_ALIGNED((uintptr_t)va, MEM_4KB) && IS_ALIGNED((uintptr_t)pa, MEM_4KB)) {
+    if (IS_ALIGNED((uintptr_t)va, MEM_4KB) && IS_ALIGNED((uintptr_t)pa, MEM_4KB)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -166,7 +166,7 @@ static errno_t mmu_map_4KB(struct aarch64_mmu *mmu, void *va, void *pa, union mm
 {
     errno_t ret;
 
-    ret = map_4KB_validate_parameters(mmu, va, pa, attr);
+    ret = map_4KB_validate_parameters(va, pa);
     if (ret == SUCCESS) {
         ret = map_4KB(mmu, va, pa, attr);
     }
@@ -192,11 +192,11 @@ static errno_t map_2MB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_at
     return ret;
 }
 
-static errno_t map_2MB_validate_parameters(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+static errno_t map_2MB_validate_parameters(void *va, void *pa)
 {
     errno_t ret;
 
-    if ((mmu != NULL) && (attr != NULL) && (mmu->stage == AARCH64_MMU_STAGE1) && IS_ALIGNED((uintptr_t)va, MEM_2MB) && IS_ALIGNED((uintptr_t)pa, MEM_2MB)) {
+    if (IS_ALIGNED((uintptr_t)va, MEM_2MB) && IS_ALIGNED((uintptr_t)pa, MEM_2MB)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -209,7 +209,7 @@ static errno_t mmu_map_2MB(struct aarch64_mmu *mmu, void *va, void *pa, union mm
 {
     errno_t ret;
 
-    ret = map_2MB_validate_parameters(mmu, va, pa, attr);
+    ret = map_2MB_validate_parameters(va, pa);
     if (ret == SUCCESS) {
         ret = map_2MB(mmu, va, pa, attr);
     }
@@ -235,11 +235,11 @@ static errno_t map_1GB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_at
     return ret;
 }
 
-static errno_t map_1GB_validate_parameters(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+static errno_t map_1GB_validate_parameters(void *va, void *pa)
 {
     errno_t ret;
 
-    if ((mmu != NULL) && (attr != NULL) && (mmu->stage == AARCH64_MMU_STAGE1) && IS_ALIGNED((uintptr_t)va, MEM_1GB) && IS_ALIGNED((uintptr_t)pa, MEM_1GB)) {
+    if (IS_ALIGNED((uintptr_t)va, MEM_1GB) && IS_ALIGNED((uintptr_t)pa, MEM_1GB)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -252,7 +252,7 @@ static errno_t mmu_map_1GB(struct aarch64_mmu *mmu, void *va, void *pa, union mm
 {
     errno_t ret;
 
-    ret = map_1GB_validate_parameters(mmu, va, pa, attr);
+    ret = map_1GB_validate_parameters(va, pa);
     if (ret == SUCCESS) {
         ret = map_1GB(mmu, va, pa, attr);
     }
@@ -283,13 +283,29 @@ static errno_t mmu_map(struct aarch64_mmu *mmu, void **va, void **pa, size_t *sz
     return ret;
 }
 
+static errno_t map_validate_parameters(struct aarch64_mmu *mmu, union mmu_attr const *attr)
+{
+    errno_t ret;
+
+    if ((mmu != NULL) && (attr != NULL) && (mmu->stage == AARCH64_MMU_STAGE1)) {
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
 errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, union mmu_attr const *attr)
 {
     errno_t ret;
 
-    do {
-        ret = mmu_map(mmu, &va, &pa, &sz, attr);
-    } while ((ret == SUCCESS) && (sz != 0));
+    ret = map_validate_parameters(mmu, attr);
+    if (ret == SUCCESS) {
+        do {
+            ret = mmu_map(mmu, &va, &pa, &sz, attr);
+        } while ((ret == SUCCESS) && (sz != 0));
+    } 
 
     return ret;
 }

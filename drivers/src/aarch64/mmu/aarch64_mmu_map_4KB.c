@@ -174,6 +174,69 @@ static errno_t mmu_map_4KB(struct aarch64_mmu *mmu, void *va, void *pa, union mm
     return ret;
 }
 
+static bool is_unmapped_64KB_region(uint64_t const *desc)
+{
+    bool ret;
+    int i;
+
+    ret = true;
+    for (i = 0; i < 16; ++i) {
+        if ((desc[i] & BIT(0)) != 0) {
+            ret = false;
+            break;
+        }
+    }
+
+    return ret;
+}
+
+static errno_t map_64KB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+{
+    errno_t ret;
+    int i;
+    uint64_t d;
+    uint64_t *desc;
+
+    desc = desc_addr(mmu, va, 3, attr);
+    if ((desc != NULL) && is_unmapped_64KB_region(desc)) {
+        d = page_descriptor(mmu, pa, attr);
+        d |= MMU_DESC_CONTIGUOUS;
+        for (i = 0; i < 16; ++i) {
+            aarch64_mmu_write_tt(desc + i, d);
+        }
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
+static errno_t map_64KB_validate_parameters(void *va, void *pa)
+{
+    errno_t ret;
+
+    if (IS_ALIGNED((uintptr_t)va, MEM_64KB) && IS_ALIGNED((uintptr_t)pa, MEM_64KB)) {
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
+static errno_t mmu_map_64KB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+{
+    errno_t ret;
+
+    ret = map_64KB_validate_parameters(va, pa);
+    if (ret == SUCCESS) {
+        ret = map_64KB(mmu, va, pa, attr);
+    }
+
+    return ret;
+}
+
 static errno_t map_2MB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
 {
     errno_t ret;
@@ -272,6 +335,10 @@ static errno_t mmu_map(struct aarch64_mmu *mmu, void **va, void **pa, size_t *sz
         *(char **)va += MEM_2MB;
         *(char **)pa += MEM_2MB;
         *sz -= MEM_2MB;
+    } else if ((*sz >= MEM_64KB) && ((ret = mmu_map_64KB(mmu, *va, *pa, attr)) == SUCCESS)) {
+        *(char **)va += MEM_64KB;
+        *(char **)pa += MEM_64KB;
+        *sz -= MEM_64KB;
     } else if ((*sz >= MEM_4KB) && ((ret = mmu_map_4KB(mmu, *va, *pa, attr)) == SUCCESS)) {
         *(char **)va += MEM_4KB;
         *(char **)pa += MEM_4KB;

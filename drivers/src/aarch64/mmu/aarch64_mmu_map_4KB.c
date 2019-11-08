@@ -174,7 +174,7 @@ static errno_t mmu_map_4KB(struct aarch64_mmu *mmu, void *va, void *pa, union mm
     return ret;
 }
 
-static bool is_unmapped_64KB_region(uint64_t const *desc)
+static bool is_unmapped_contiguous_region(uint64_t const *desc)
 {
     bool ret;
     int i;
@@ -198,7 +198,7 @@ static errno_t map_64KB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_a
     uint64_t *desc;
 
     desc = desc_addr(mmu, va, 3, attr);
-    if ((desc != NULL) && is_unmapped_64KB_region(desc)) {
+    if ((desc != NULL) && is_unmapped_contiguous_region(desc)) {
         d = page_descriptor(mmu, pa, attr);
         d |= MMU_DESC_CONTIGUOUS;
         for (i = 0; i < 16; ++i) {
@@ -280,6 +280,53 @@ static errno_t mmu_map_2MB(struct aarch64_mmu *mmu, void *va, void *pa, union mm
     return ret;
 }
 
+static errno_t map_32MB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+{
+    errno_t ret;
+    int i;
+    uint64_t d;
+    uint64_t *desc;
+
+    desc = desc_addr(mmu, va, 2, attr);
+    if ((desc != NULL) && is_unmapped_contiguous_region(desc)) {
+        d = block_descriptor(mmu, pa, attr);
+        d |= MMU_DESC_CONTIGUOUS;
+        for (i = 0; i < 16; ++i) {
+            aarch64_mmu_write_tt(desc + i, d);
+        }
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
+static errno_t map_32MB_validate_parameters(void *va, void *pa)
+{
+    errno_t ret;
+
+    if (IS_ALIGNED((uintptr_t)va, MEM_32MB) && IS_ALIGNED((uintptr_t)pa, MEM_32MB)) {
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
+static errno_t mmu_map_32MB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+{
+    errno_t ret;
+
+    ret = map_32MB_validate_parameters(va, pa);
+    if (ret == SUCCESS) {
+        ret = map_32MB(mmu, va, pa, attr);
+    }
+
+    return ret;
+}
+
 static errno_t map_1GB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
 {
     errno_t ret;
@@ -331,6 +378,10 @@ static errno_t mmu_map(struct aarch64_mmu *mmu, void **va, void **pa, size_t *sz
         *(char **)va += MEM_1GB;
         *(char **)pa += MEM_1GB;
         *sz -= MEM_1GB;
+    } else if ((*sz >= MEM_32MB) && ((ret = mmu_map_32MB(mmu, *va, *pa, attr)) == SUCCESS)) {
+        *(char **)va += MEM_32MB;
+        *(char **)pa += MEM_32MB;
+        *sz -= MEM_32MB;
     } else if ((*sz >= MEM_2MB) && ((ret = mmu_map_2MB(mmu, *va, *pa, attr)) == SUCCESS)) {
         *(char **)va += MEM_2MB;
         *(char **)pa += MEM_2MB;

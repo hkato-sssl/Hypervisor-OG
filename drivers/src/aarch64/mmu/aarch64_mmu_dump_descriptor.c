@@ -25,7 +25,7 @@ static void indent(int level)
     int i;
 
     for (i = 0; i < level; ++i) {
-        printk("  ");
+        printk("   ");
     }
 }
 
@@ -40,10 +40,15 @@ static void dump_2bits(uint64_t desc)
     printk(buff);
 }
 
-static void dump_invalid_desc(uint64_t desc, int level)
+static void dump_invalid_desc(uint64_t desc, int level, int index, int invalid_ct)
 {
-    indent(level);
-    printk("%016llx*\n", desc);
+    if (invalid_ct == 0) {
+        indent(level);
+        printk("%03x:%016llx\n", index, desc);
+    } else if (invalid_ct == 1) {
+        indent(level);
+        printk("    ........\n");
+    }
 }
 
 static void dump_block_page_attr(uint64_t desc)
@@ -70,27 +75,27 @@ static void dump_block_page_attr(uint64_t desc)
     if (desc & MMU_DESC_NS) {
         printk(", NS");
     }
-    printk(", AttrIndx=%u\n", BF_EXTRACT(desc, 4, 2));
+    printk(", AttrIndx=%x\n", BF_EXTRACT(desc, 4, 2));
 }
 
-static void dump_block_desc(uint64_t desc, int level)
+static void dump_block_desc(uint64_t desc, int level, int index)
 {
     uint64_t out;
 
     out = desc & BITS(47, 12);
 
     indent(level);
-    printk("%016llx -> %016llx", desc, out);
+    printk("%03x:%016llx: OutAddr=%016llx", index, desc, out);
     dump_block_page_attr(desc);
 }
 
-static void dump_table_desc(struct aarch64_mmu const *mmu, uint64_t desc, int level)
+static void dump_table_desc(struct aarch64_mmu const *mmu, uint64_t desc, int level, int index)
 {
     uint64_t next;
 
     next = desc & BITS(47, 12);
     indent(level);
-    printk("%016llx: Next-level=%016llx", desc, next);
+    printk("%03x:%016llx Next-level=%016llx", index, desc, next);
     if (desc & MMU_DESC_NSTABLE) {
         printk(", NSTable");
     }
@@ -106,37 +111,52 @@ static void dump_table_desc(struct aarch64_mmu const *mmu, uint64_t desc, int le
     dump_table(mmu, (uint64_t*)next, (level + 1));
 }
 
-static void dump_page_desc(uint64_t desc, int level)
+static void dump_page_desc(uint64_t desc, int level, int index)
 {
     uint64_t out;
 
     out = desc & BITS(47, 12);
     indent(level);
-    printk("%016x -> %016x", desc, out);
+    printk("%03x:%016x: OutAddr=%016x", index, desc, out);
     dump_block_page_attr(desc);
+}
+
+static void dump_reserved_desc(uint64_t desc, int level, int index)
+{
+    indent(level);
+    printk("%03x:%016x: reserved\n", index, desc);
 }
 
 static void dump_table(struct aarch64_mmu const *mmu, uint64_t *p, int level)
 {
     int i;
+    int invalid;
     uint64_t desc;
 
+    invalid = 0;
     for (i = 0; i < 512; ++i) {
         desc = p[i];
         switch (desc & 3) {
             case 0:
-                //dump_invalid_desc(desc, level);
+            case 2:
+                dump_invalid_desc(desc, level, i, invalid);
+                ++invalid;
                 break;
             case 1:
-                dump_block_desc(desc, level);
+                if (level < 3) {
+                    dump_block_desc(desc, level, i);
+                } else {
+                    dump_reserved_desc(desc, level, i);
+                }
+                invalid = 0;
                 break;
-            case 2:
             case 3:
                 if (level < 3) {
-                    dump_table_desc(mmu, desc, level);
+                    dump_table_desc(mmu, desc, level, i);
                 } else {
-                    dump_page_desc(desc, level);
+                    dump_page_desc(desc, level, i);
                 }
+                invalid = 0;
                 break;
         }
     }
@@ -147,7 +167,7 @@ void aarch64_mmu_dump_descriptor(struct aarch64_mmu const *mmu)
     uint64_t *p;
 
     p = mmu->addr;
-    printk("<%p>\n", p);
+    printk("<TTBR:%016llx>\n", p);
     if (mmu->granule == AARCH64_MMU_4KB_GRANULE) {
         dump_table(mmu, p, 0);
     }

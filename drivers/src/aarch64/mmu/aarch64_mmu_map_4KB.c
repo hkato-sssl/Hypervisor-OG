@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include "lib/bit.h"
 #include "lib/system/errno.h"
+#include "driver/aarch64/cache.h"
 #include "driver/aarch64/mmu.h"
 #include "mmu_local.h"
 
@@ -73,6 +74,12 @@ static uint64_t block_page_descriptor(struct aarch64_mmu *mmu, void *pa, union m
     return d;
 }
 
+static void write_descriptor(uint64_t *desc, uint64_t d)
+{
+    *desc = d;
+    aarch64_dcache_clean(desc);
+}
+
 static uint64_t *next_table_addr(uint64_t desc)
 {
     uint64_t *addr;
@@ -110,7 +117,7 @@ uint64_t *table_addr(struct aarch64_mmu *mmu, void *va, uint32_t level, union mm
             new_table = aarch64_mmu_block_calloc(&(mmu->pool), MEM_4KB);
             if (new_table != NULL) {
                 d = table_descriptor(mmu, new_table, attr);
-                aarch64_mmu_write_tt(next, d);
+                write_descriptor(next, d);
                 table = new_table;
             } else {
                 table = NULL;
@@ -160,7 +167,7 @@ static bool is_unmapped_contiguous_region(uint64_t const *desc)
     return ret;
 }
 
-static bool is_valid_region_parameters(void *va, void *pa, size_t size)
+static bool is_valid_region_parameter(void *va, void *pa, size_t size)
 {
     bool valid;
 
@@ -180,15 +187,15 @@ static errno_t mmu_map_contiguous_region(struct aarch64_mmu *mmu, void *va, void
     uint64_t *desc;
     int i;
 
-    if (is_valid_region_parameters(va, pa, size)) {
+    if (is_valid_region_parameter(va, pa, size)) {
         desc = desc_addr(mmu, va, attr, level);
         if (is_unmapped_contiguous_region(desc)) {
             d = block_page_descriptor(mmu, pa, attr, level);
             d |= MMU_DESC_CONTIGUOUS;
             for (i = 0; i < 16; ++i) {
-                aarch64_mmu_write_tt(desc + i, d);
+                desc[i] = d;
             }
-            ret = SUCCESS;
+            ret = aarch64_dcache_clean_range(desc, (sizeof(*desc) * 16));
         } else {
             ret = -EINVAL;
         }
@@ -205,11 +212,11 @@ static errno_t mmu_map_single_region(struct aarch64_mmu *mmu, void *va, void *pa
     uint64_t d;
     uint64_t *desc;
 
-    if (is_valid_region_parameters(va, pa, size)) {
+    if (is_valid_region_parameter(va, pa, size)) {
         desc = desc_addr(mmu, va, attr, level);
         if ((desc != NULL) && ((*desc & BITS(1,0)) == 0)) {
             d = block_page_descriptor(mmu, pa, attr, level);
-            aarch64_mmu_write_tt(desc, d);
+            write_descriptor(desc, d);
             ret = SUCCESS;
         } else {
             ret = -EINVAL;
@@ -260,7 +267,7 @@ static errno_t validate_mmu_structures(struct aarch64_mmu *mmu, union mmu_attr c
 {
     errno_t ret;
 
-    if ((mmu != NULL) && (attr != NULL) && (mmu->stage == AARCH64_MMU_STAGE1)) {
+    if ((mmu != NULL) && (attr != NULL)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;

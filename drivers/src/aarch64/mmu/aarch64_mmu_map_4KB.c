@@ -116,7 +116,7 @@ uint64_t *table_addr(struct aarch64_mmu *mmu, void *va, uint32_t level, union mm
     return table;
 }
 
-uint64_t *desc_addr(struct aarch64_mmu *mmu, void *va, uint32_t level, union mmu_attr const *attr)
+uint64_t *desc_addr(struct aarch64_mmu *mmu, void *va, union mmu_attr const *attr, uint32_t level)
 {
     uint64_t *table;
     uint64_t *desc;
@@ -129,49 +129,6 @@ uint64_t *desc_addr(struct aarch64_mmu *mmu, void *va, uint32_t level, union mmu
     }
 
     return desc;
-}
-
-static errno_t map_4KB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
-{
-    errno_t ret;
-    uint64_t d;
-    uint64_t *desc;
-
-    desc = desc_addr(mmu, va, 3, attr);
-    if ((desc != NULL) && ((*desc & BITS(1,0)) == 0)) {
-        d = page_descriptor(mmu, pa, attr);
-        aarch64_mmu_write_tt(desc, d);
-        ret = SUCCESS;
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t map_4KB_validate_parameters(void *va, void *pa)
-{
-    errno_t ret;
-
-    if (IS_ALIGNED((uintptr_t)va, MEM_4KB) && IS_ALIGNED((uintptr_t)pa, MEM_4KB)) {
-        ret = SUCCESS;
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t mmu_map_4KB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
-{
-    errno_t ret;
-
-    ret = map_4KB_validate_parameters(va, pa);
-    if (ret == SUCCESS) {
-        ret = map_4KB(mmu, va, pa, attr);
-    }
-
-    return ret;
 }
 
 static bool is_unmapped_contiguous_region(uint64_t const *desc)
@@ -190,111 +147,51 @@ static bool is_unmapped_contiguous_region(uint64_t const *desc)
     return ret;
 }
 
-static errno_t map_64KB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+static uint64_t page_block_descriptor(struct aarch64_mmu *mmu, void *pa, union mmu_attr const *attr, uint32_t level)
 {
-    errno_t ret;
-    int i;
     uint64_t d;
-    uint64_t *desc;
 
-    desc = desc_addr(mmu, va, 3, attr);
-    if ((desc != NULL) && is_unmapped_contiguous_region(desc)) {
+    if (level == 3) {
         d = page_descriptor(mmu, pa, attr);
-        d |= MMU_DESC_CONTIGUOUS;
-        for (i = 0; i < 16; ++i) {
-            aarch64_mmu_write_tt(desc + i, d);
-        }
-        ret = SUCCESS;
     } else {
-        ret = -EINVAL;
+        d = block_descriptor(mmu, pa, attr);
     }
 
-    return ret;
+    return d;
 }
 
-static errno_t map_64KB_validate_parameters(void *va, void *pa)
+static bool is_valid_region_parameters(void *va, void *pa, size_t size)
 {
-    errno_t ret;
+    bool valid;
 
-    if (IS_ALIGNED((uintptr_t)va, MEM_64KB) && IS_ALIGNED((uintptr_t)pa, MEM_64KB)) {
-        ret = SUCCESS;
+    if (IS_ALIGNED((uintptr_t)va, size) && IS_ALIGNED((uintptr_t)pa, size)) {
+        valid = true;
     } else {
-        ret = -EINVAL;
+        valid = false;
     }
 
-    return ret;
+    return valid;
 }
 
-static errno_t mmu_map_64KB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
-{
-    errno_t ret;
-
-    ret = map_64KB_validate_parameters(va, pa);
-    if (ret == SUCCESS) {
-        ret = map_64KB(mmu, va, pa, attr);
-    }
-
-    return ret;
-}
-
-static errno_t map_2MB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+static errno_t mmu_map_contiguous_region(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr, uint32_t level, size_t size)
 {
     errno_t ret;
     uint64_t d;
     uint64_t *desc;
-
-    desc = desc_addr(mmu, va, 2, attr);
-    if ((desc != NULL) && ((*desc & BITS(1,0)) == 0)) {
-        d = block_descriptor(mmu, pa, attr);
-        aarch64_mmu_write_tt(desc, d);
-        ret = SUCCESS;
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t map_2MB_validate_parameters(void *va, void *pa)
-{
-    errno_t ret;
-
-    if (IS_ALIGNED((uintptr_t)va, MEM_2MB) && IS_ALIGNED((uintptr_t)pa, MEM_2MB)) {
-        ret = SUCCESS;
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t mmu_map_2MB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
-{
-    errno_t ret;
-
-    ret = map_2MB_validate_parameters(va, pa);
-    if (ret == SUCCESS) {
-        ret = map_2MB(mmu, va, pa, attr);
-    }
-
-    return ret;
-}
-
-static errno_t map_32MB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
-{
-    errno_t ret;
     int i;
-    uint64_t d;
-    uint64_t *desc;
 
-    desc = desc_addr(mmu, va, 2, attr);
-    if ((desc != NULL) && is_unmapped_contiguous_region(desc)) {
-        d = block_descriptor(mmu, pa, attr);
-        d |= MMU_DESC_CONTIGUOUS;
-        for (i = 0; i < 16; ++i) {
-            aarch64_mmu_write_tt(desc + i, d);
+    if (is_valid_region_parameters(va, pa, size)) {
+        desc = desc_addr(mmu, va, attr, level);
+        if (is_unmapped_contiguous_region(desc)) {
+            d = page_block_descriptor(mmu, pa, attr, level);
+            d |= MMU_DESC_CONTIGUOUS;
+            for (i = 0; i < 16; ++i) {
+                aarch64_mmu_write_tt(desc + i, d);
+            }
+            ret = SUCCESS;
+        } else {
+            ret = -EINVAL;
         }
-        ret = SUCCESS;
     } else {
         ret = -EINVAL;
     }
@@ -302,69 +199,23 @@ static errno_t map_32MB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_a
     return ret;
 }
 
-static errno_t map_32MB_validate_parameters(void *va, void *pa)
-{
-    errno_t ret;
-
-    if (IS_ALIGNED((uintptr_t)va, MEM_32MB) && IS_ALIGNED((uintptr_t)pa, MEM_32MB)) {
-        ret = SUCCESS;
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t mmu_map_32MB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
-{
-    errno_t ret;
-
-    ret = map_32MB_validate_parameters(va, pa);
-    if (ret == SUCCESS) {
-        ret = map_32MB(mmu, va, pa, attr);
-    }
-
-    return ret;
-}
-
-static errno_t map_1GB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
+static errno_t mmu_map_single_region(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr, uint32_t level, size_t size)
 {
     errno_t ret;
     uint64_t d;
     uint64_t *desc;
 
-    desc = desc_addr(mmu, va, 1, attr);
-    if ((desc != NULL) && ((*desc & BITS(1,0)) == 0)) {
-        d = block_descriptor(mmu, pa, attr);
-        aarch64_mmu_write_tt(desc, d);
-        ret = SUCCESS;
+    if (is_valid_region_parameters(va, pa, size)) {
+        desc = desc_addr(mmu, va, attr, level);
+        if ((desc != NULL) && ((*desc & BITS(1,0)) == 0)) {
+            d = page_block_descriptor(mmu, pa, attr, level);
+            aarch64_mmu_write_tt(desc, d);
+            ret = SUCCESS;
+        } else {
+            ret = -EINVAL;
+        }
     } else {
         ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t map_1GB_validate_parameters(void *va, void *pa)
-{
-    errno_t ret;
-
-    if (IS_ALIGNED((uintptr_t)va, MEM_1GB) && IS_ALIGNED((uintptr_t)pa, MEM_1GB)) {
-        ret = SUCCESS;
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t mmu_map_1GB(struct aarch64_mmu *mmu, void *va, void *pa, union mmu_attr const *attr)
-{
-    errno_t ret;
-
-    ret = map_1GB_validate_parameters(va, pa);
-    if (ret == SUCCESS) {
-        ret = map_1GB(mmu, va, pa, attr);
     }
 
     return ret;
@@ -374,23 +225,27 @@ static errno_t mmu_map(struct aarch64_mmu *mmu, void **va, void **pa, size_t *sz
 {
     errno_t ret;
 
-    if ((*sz >= MEM_1GB) && ((ret = mmu_map_1GB(mmu, *va, *pa, attr)) == SUCCESS)) {
+    if ((*sz >= MEM_16GB) && ((ret = mmu_map_contiguous_region(mmu, *va, *pa, attr, 1, MEM_16GB)) == SUCCESS)) {
+        *(char **)va += MEM_16GB;
+        *(char **)pa += MEM_16GB;
+        *sz -= MEM_16GB;
+    } else if ((*sz >= MEM_1GB) && ((ret = mmu_map_single_region(mmu, *va, *pa, attr, 1, MEM_1GB)) == SUCCESS)) {
         *(char **)va += MEM_1GB;
         *(char **)pa += MEM_1GB;
         *sz -= MEM_1GB;
-    } else if ((*sz >= MEM_32MB) && ((ret = mmu_map_32MB(mmu, *va, *pa, attr)) == SUCCESS)) {
+    } else if ((*sz >= MEM_32MB) && ((ret = mmu_map_contiguous_region(mmu, *va, *pa, attr, 2, MEM_32MB)) == SUCCESS)) {
         *(char **)va += MEM_32MB;
         *(char **)pa += MEM_32MB;
         *sz -= MEM_32MB;
-    } else if ((*sz >= MEM_2MB) && ((ret = mmu_map_2MB(mmu, *va, *pa, attr)) == SUCCESS)) {
+    } else if ((*sz >= MEM_2MB) && ((ret = mmu_map_single_region(mmu, *va, *pa, attr, 2, MEM_2MB)) == SUCCESS)) {
         *(char **)va += MEM_2MB;
         *(char **)pa += MEM_2MB;
         *sz -= MEM_2MB;
-    } else if ((*sz >= MEM_64KB) && ((ret = mmu_map_64KB(mmu, *va, *pa, attr)) == SUCCESS)) {
+    } else if ((*sz >= MEM_64KB) && ((ret = mmu_map_contiguous_region(mmu, *va, *pa, attr, 1, MEM_64KB)) == SUCCESS)) {
         *(char **)va += MEM_64KB;
         *(char **)pa += MEM_64KB;
         *sz -= MEM_64KB;
-    } else if ((*sz >= MEM_4KB) && ((ret = mmu_map_4KB(mmu, *va, *pa, attr)) == SUCCESS)) {
+    } else if ((*sz >= MEM_4KB) && ((ret = mmu_map_single_region(mmu, *va, *pa, attr, 3, MEM_4KB)) == SUCCESS)) {
         *(char **)va += MEM_4KB;
         *(char **)pa += MEM_4KB;
         *sz -= MEM_4KB;
@@ -401,7 +256,7 @@ static errno_t mmu_map(struct aarch64_mmu *mmu, void **va, void **pa, size_t *sz
     return ret;
 }
 
-static errno_t map_validate_parameters(struct aarch64_mmu *mmu, union mmu_attr const *attr)
+static errno_t validate_mmu_structures(struct aarch64_mmu *mmu, union mmu_attr const *attr)
 {
     errno_t ret;
 
@@ -418,7 +273,7 @@ errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu *mmu, void *va, void *pa,
 {
     errno_t ret;
 
-    ret = map_validate_parameters(mmu, attr);
+    ret = validate_mmu_structures(mmu, attr);
     if (ret == SUCCESS) {
         do {
             ret = mmu_map(mmu, &va, &pa, &sz, attr);
@@ -427,3 +282,4 @@ errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu *mmu, void *va, void *pa,
 
     return ret;
 }
+

@@ -60,6 +60,19 @@ static uint64_t page_descriptor(struct aarch64_mmu *mmu, void *pa, union mmu_att
     return d;
 }
 
+static uint64_t block_page_descriptor(struct aarch64_mmu *mmu, void *pa, union mmu_attr const *attr, uint32_t level)
+{
+    uint64_t d;
+
+    if (level == 3) {
+        d = page_descriptor(mmu, pa, attr);
+    } else {
+        d = block_descriptor(mmu, pa, attr);
+    }
+
+    return d;
+}
+
 static uint64_t *next_table_addr(uint64_t desc)
 {
     uint64_t *addr;
@@ -147,19 +160,6 @@ static bool is_unmapped_contiguous_region(uint64_t const *desc)
     return ret;
 }
 
-static uint64_t page_block_descriptor(struct aarch64_mmu *mmu, void *pa, union mmu_attr const *attr, uint32_t level)
-{
-    uint64_t d;
-
-    if (level == 3) {
-        d = page_descriptor(mmu, pa, attr);
-    } else {
-        d = block_descriptor(mmu, pa, attr);
-    }
-
-    return d;
-}
-
 static bool is_valid_region_parameters(void *va, void *pa, size_t size)
 {
     bool valid;
@@ -183,7 +183,7 @@ static errno_t mmu_map_contiguous_region(struct aarch64_mmu *mmu, void *va, void
     if (is_valid_region_parameters(va, pa, size)) {
         desc = desc_addr(mmu, va, attr, level);
         if (is_unmapped_contiguous_region(desc)) {
-            d = page_block_descriptor(mmu, pa, attr, level);
+            d = block_page_descriptor(mmu, pa, attr, level);
             d |= MMU_DESC_CONTIGUOUS;
             for (i = 0; i < 16; ++i) {
                 aarch64_mmu_write_tt(desc + i, d);
@@ -208,7 +208,7 @@ static errno_t mmu_map_single_region(struct aarch64_mmu *mmu, void *va, void *pa
     if (is_valid_region_parameters(va, pa, size)) {
         desc = desc_addr(mmu, va, attr, level);
         if ((desc != NULL) && ((*desc & BITS(1,0)) == 0)) {
-            d = page_block_descriptor(mmu, pa, attr, level);
+            d = block_page_descriptor(mmu, pa, attr, level);
             aarch64_mmu_write_tt(desc, d);
             ret = SUCCESS;
         } else {

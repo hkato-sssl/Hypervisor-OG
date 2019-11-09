@@ -241,7 +241,7 @@ static errno_t mmu_map(struct aarch64_mmu *mmu, void **va, void **pa, size_t *sz
         *(char **)va += MEM_2MB;
         *(char **)pa += MEM_2MB;
         *sz -= MEM_2MB;
-    } else if ((*sz >= MEM_64KB) && ((ret = mmu_map_contiguous_region(mmu, *va, *pa, attr, 1, MEM_64KB)) == SUCCESS)) {
+    } else if ((*sz >= MEM_64KB) && ((ret = mmu_map_contiguous_region(mmu, *va, *pa, attr, 3, MEM_64KB)) == SUCCESS)) {
         *(char **)va += MEM_64KB;
         *(char **)pa += MEM_64KB;
         *sz -= MEM_64KB;

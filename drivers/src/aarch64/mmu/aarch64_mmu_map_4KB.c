@@ -1,5 +1,5 @@
 /*
- * aarch64/mmu/aarch64_mmu_map_4KB.c
+ * aarch64/mmu/aarch64_mmu_map_4KB.c - mapping function with 4KB granule
  *
  * (C) 2019 Hidekazu Kato
  */

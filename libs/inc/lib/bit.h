@@ -30,8 +30,8 @@ extern "C" {
 
 #define BIT(n)              (1ULL << (n))
 #define BITS(m, l)          ((BIT(m) | (BIT(m) - 1)) ^ (BIT(l) - 1))
-#define IS_ALIGNED(n, a)    lib_is_aligned((n), (a))
-#define BF_EXTRACT(d, m, l) lib_bf_extract((d), (m), (l))
+#define IS_ALIGNED(n, a)    lib_is_aligned((uintptr_t)(n), (uintptr_t)(a))
+#define BF_EXTRACT(d, m, l) lib_bf_extract((uintptr_t)(d), (uintptr_t)(m), (uintptr_t)(l))
 #define BF_VALUE(d, m, l)   (BITS((m), (l)) & ((d) << (l)))
 
 /* types */

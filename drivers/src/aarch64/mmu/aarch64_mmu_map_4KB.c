@@ -26,7 +26,7 @@ static uint64_t table_descriptor(struct aarch64_mmu *mmu, void *pa, union mmu_at
 {
     uint64_t d;
 
-    if (mmu->stage == AARCH64_MMU_STAGE1) {
+    if (mmu->type != AARCH64_MMU_STAGE2) {
         d = aarch64_mmu_table_descriptor(pa, attr->stage1);
     } else {
         d = aarch64_mmu_stage2_table_descriptor(pa, attr->stage2);
@@ -39,7 +39,7 @@ static uint64_t block_descriptor(struct aarch64_mmu *mmu, void *pa, union mmu_at
 {
     uint64_t d;
 
-    if (mmu->stage == AARCH64_MMU_STAGE1) {
+    if (mmu->type != AARCH64_MMU_STAGE2) {
         d = aarch64_mmu_block_descriptor(pa, attr->stage1);
     } else {
         d = aarch64_mmu_stage2_block_descriptor(pa, attr->stage2);
@@ -52,7 +52,7 @@ static uint64_t page_descriptor(struct aarch64_mmu *mmu, void *pa, union mmu_att
 {
     uint64_t d;
 
-    if (mmu->stage == AARCH64_MMU_STAGE1) {
+    if (mmu->type != AARCH64_MMU_STAGE2) {
         d = aarch64_mmu_page_descriptor(pa, attr->stage1);
     } else {
         d = aarch64_mmu_stage2_page_descriptor(pa, attr->stage2);

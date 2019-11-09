@@ -8,7 +8,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include "lib/bit.h"
 #include "lib/system/errno.h"
+#include "driver/aarch64/system_register/tcr.h"
+#include "driver/aarch64/cache.h"
 #include "driver/aarch64/mmu.h"
 #include "mmu_local.h"
 
@@ -22,11 +25,60 @@
 
 /* functions */
 
-static bool is_valid_stage(struct aarch64_mmu_configuration const *config)
+static uint64_t create_tcr_el0(struct aarch64_mmu_configuration const *config)
+{
+    uint64_t d;
+
+    /* TG0=0 (Granule size: 4KB) */
+    d = TCR_EL1_AS;
+    d |= TCR_EL1_T0SZ(config->tcr.sz);
+    d |= TCR_EL1_SH0(config->tcr.sh);
+    d |= TCR_EL1_ORGN0(config->tcr.orgn); 
+    d |= TCR_EL1_IRGN0(config->tcr.irgn); 
+
+    return d;
+}
+
+static uint64_t create_tcr_el1(struct aarch64_mmu_configuration const *config)
+{
+    uint64_t d;
+
+    d = TCR_EL1_AS;
+    if (config->tcr.a1 != 0) {
+        d |= TCR_EL1_A1;
+    }
+    d |= TCR_EL1_TG1(2);    /* Granule size: 4KB */
+    d |= TCR_EL1_T1SZ(config->tcr.sz);
+    d |= TCR_EL1_SH1(config->tcr.sh);
+    d |= TCR_EL1_ORGN1(config->tcr.orgn); 
+    d |= TCR_EL1_IRGN1(config->tcr.irgn); 
+
+    return d;
+}
+
+static uint64_t create_tcr_el23(struct aarch64_mmu_configuration const *config)
+{
+    uint64_t d;
+
+    /* TG0=0 (Granule size: 4KB) */
+    d = TCR_EL2_RES1;
+    d |= TCR_EL2_T0SZ(config->tcr.sz);
+    d |= TCR_EL2_SH0(config->tcr.sh);
+    d |= TCR_EL2_ORGN0(config->tcr.orgn); 
+    d |= TCR_EL2_IRGN0(config->tcr.irgn); 
+
+    return d;
+}
+
+static bool is_valid_type(struct aarch64_mmu_configuration const *config)
 {
     bool valid;
 
-    if ((config->stage == AARCH64_MMU_STAGE1) || (config->stage == AARCH64_MMU_STAGE2)) {
+    if ((config->type == AARCH64_MMU_STAGE2) ||
+        (config->type == AARCH64_MMU_EL0) ||
+        (config->type == AARCH64_MMU_EL1) ||
+        (config->type == AARCH64_MMU_EL2) ||
+        (config->type == AARCH64_MMU_EL3)) {
         valid = true;
     } else {
         valid = false;
@@ -40,7 +92,7 @@ static errno_t validate_parameters(struct aarch64_mmu *mmu, struct aarch64_mmu_c
     errno_t ret;
 
     if ((mmu != NULL) && (config != NULL) && (config->pool.block_sz == MMU_BLOCK_SZ)) {
-        if (is_valid_stage(config) && (config->granule == AARCH64_MMU_4KB_GRANULE)) {
+        if (is_valid_type(config) && (config->granule == AARCH64_MMU_4KB_GRANULE)) {
             ret = SUCCESS;
         } else {
             ret = -EINVAL;
@@ -56,17 +108,23 @@ static errno_t validate_parameters(struct aarch64_mmu *mmu, struct aarch64_mmu_c
 static errno_t init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config)
 {
     mmu->active = false;
-    mmu->stage = config->stage;
+    mmu->type = config->type;
     mmu->granule = config->granule;
-    if (mmu->stage == AARCH64_MMU_STAGE1) {
+    if (mmu->type == AARCH64_MMU_STAGE2) {
+        mmu->stage2.vmid = config->stage2.vmid;
+    } else {
         mmu->stage1.asid = config->stage1.asid;
         mmu->stage1.mair = config->stage1.mair;
-    } else {
-        mmu->stage2.vmid = config->stage2.vmid;
+        if (mmu->type == AARCH64_MMU_EL0) {
+            mmu->stage1.tcr = create_tcr_el0(config);
+        } else if (mmu->type == AARCH64_MMU_EL1) {
+            mmu->stage1.tcr = create_tcr_el1(config);
+        } else {
+            mmu->stage1.tcr = create_tcr_el23(config);
+        }
     }
     memset(mmu->addr, 0, MMU_BLOCK_SZ);
-
-    mmu->tcr = config->tcr;
+    aarch64_dcache_clean_range(mmu->addr, MMU_BLOCK_SZ);
 
     return SUCCESS;
 }

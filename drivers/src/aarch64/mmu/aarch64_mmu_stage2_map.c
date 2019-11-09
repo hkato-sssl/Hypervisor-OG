@@ -25,7 +25,7 @@ errno_t aarch64_mmu_stage2_map(struct aarch64_mmu *mmu, void *va, void *pa, size
     union mmu_attr attribute;
 
     /* Support 4KB granule only */
-    if ((mmu->stage == AARCH64_MMU_STAGE2) && (mmu->granule == AARCH64_MMU_4KB_GRANULE)) {
+    if ((mmu->type == AARCH64_MMU_STAGE2) && (mmu->granule == AARCH64_MMU_4KB_GRANULE)) {
         attribute.stage2 = attr;
         ret = aarch64_mmu_map_4KB_granule(mmu, va, pa, sz, &attribute);
     } else {

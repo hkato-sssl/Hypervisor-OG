@@ -20,6 +20,7 @@
 
 static char block_pool_region[256][4096] __attribute__ ((aligned(4096)));
 static struct aarch64_mmu mmu;
+static char tmp[65536] __attribute__ ((aligned(65536)));
 
 /* functions */
 
@@ -29,7 +30,7 @@ static errno_t init(void)
     struct aarch64_mmu_configuration config;
 
     memset(&config, 0, sizeof(config));
-    config.stage = AARCH64_MMU_STAGE1;
+    config.type = AARCH64_MMU_EL1;
     config.granule = AARCH64_MMU_4KB_GRANULE;
     config.stage1.asid = 1;
     config.stage1.mair = 0;
@@ -58,6 +59,9 @@ errno_t test_aarch64_mmu_st1_00(void)
     memset(&attr, 0, sizeof(attr));
 
     ret = aarch64_mmu_map(&mmu, block_pool_region, block_pool_region, 4096, &attr);
+    printk("aarch64_mmu_map() -> %d\n", ret);
+
+    ret = aarch64_mmu_map(&mmu, tmp, tmp, sizeof(tmp), &attr);
     printk("aarch64_mmu_map() -> %d\n", ret);
 
     aarch64_mmu_dump_descriptor(&mmu);

@@ -80,7 +80,7 @@ extern "C" {
 
 /* types */
 
-enum aarch64_mmu_stage { AARCH64_MMU_STAGE1, AARCH64_MMU_STAGE2 };
+enum aarch64_mmu_type { AARCH64_MMU_STAGE2, AARCH64_MMU_EL0, AARCH64_MMU_EL1, AARCH64_MMU_EL2, AARCH64_MMU_EL3 };
 enum aarch64_mmu_granule { AARCH64_MMU_4KB_GRANULE, AARCH64_MMU_16KB_GRANULE, AARCH64_MMU_64KB_GRANULE }; 
 
 /* Attributes in descriptor for stage 1 translation */
@@ -149,6 +149,7 @@ struct aarch64_mmu_block_pool_configuration {
 };
 
 struct aarch64_mmu_tcr {
+    uint8_t         a1:1;       /* for EL1 only */
     uint8_t         sz:6;
     uint8_t         sh:2;
     uint8_t         irgn:2;
@@ -157,25 +158,26 @@ struct aarch64_mmu_tcr {
 
 struct aarch64_mmu {
     bool active;
-    enum aarch64_mmu_stage stage;
+    enum aarch64_mmu_type type;
     enum aarch64_mmu_granule granule;
 
     struct {
         uint16_t    asid;
         uint64_t    mair;
+        uint64_t    tcr;
     } stage1;
 
     struct {
         uint8_t     vmid;
+        uint64_t    vtcr;
     } stage2;
 
     uint64_t        *addr;
-    struct aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool pool;
 };
 
 struct aarch64_mmu_configuration {
-    enum aarch64_mmu_stage stage;
+    enum aarch64_mmu_type type;
     enum aarch64_mmu_granule granule;
 
     struct {

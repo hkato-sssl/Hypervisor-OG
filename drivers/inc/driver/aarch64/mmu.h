@@ -27,7 +27,6 @@
 #include "lib/bit.h"
 #include "lib/list.h"
 #include "lib/system/errno.h"
-#include "driver/aarch64/system_register/mair.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -154,10 +153,6 @@ struct aarch64_mmu_tcr {
     uint8_t         sh:2;
     uint8_t         irgn:2;
     uint8_t         orgn:2;
-};
-
-struct aarch64_mmu_mair {
-    uint8_t         attrs[NR_MAIR_ATTRS];
 };
 
 struct aarch64_mmu {

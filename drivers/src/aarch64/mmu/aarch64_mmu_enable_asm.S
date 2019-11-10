@@ -10,7 +10,7 @@
 
         .global         aarch64_mmu_enable_asm
 
-        .extern         aarch64_mmu_set_tt
+        .extern         aarch64_mmu_set_translation_table
         .extern         aarc64_icache_invd_all
         .extern         aarc64_dcache_invd_all
         .extern         aarch64_read_sctlr
@@ -19,39 +19,91 @@
         .section        ".text.aarch64_mmu_enable_asm", "ax", %progbits
         .type           aarch64_mmu_enable_asm, %function
         .balign         4
-        /*
-         * x0 - TTBR0
-         * x1 - ASID
-         */
 aarch64_mmu_enable_asm:
-        stp             x20, lr,  [sp,  #-16]!
-        mov             x20, x0
-
-        bl              aarch64_read_sctlr
-        mov             x1,  #(SCTLR_I | SCTLR_C | SCTLR_M)
-        tst             x0,  x1
-        bne             error
-
-        orr             x1,  x0,  x1                // new SCTLR
-        mov             x0,  x20
-        mov             x20, x1
-        bl              aarch64_mmu_set_tt
-        cbnz            x0,  exit
-
-        bl              aarch64_mmu_tlbi_all
-        bl              aarch64_icache_invd_all
+        str             lr,  [sp, #-16]!
         bl              aarch64_dcache_invd_all
+        ldr             lr,  [sp], #16
 
-        mov             x0,  x20                    // new SCTLR
-        bl              aarch64_write_sctlr
+        BR_EL           0f
+0:
+        .quad           error
+        .quad           el1
+        .quad           el2
+        .quad           el3
+el1:
+        /* disable and invalidate I-$ */
+        mrs             x0, SCTLR_EL1
+        bic             x1,  x0,  #SCTLR_I
+        dsb             sy
+        isb
+        msr             SCTLR_EL1, x1
+        isb
+        ic              IALLU
+        dsb             ish
 
-        mov             x0,  #SUCCESS
-exit:
-        ldp             x20, lr,  [sp],  #16
+        /* invalidate all TLB */
+        tlbi            vmalle1
+        dsb             ish
+
+        /* enable I-$, D-$ and MMU */
+        mov             x1,  #(SCTLR_I | SCTLR_C | SCTLR_M)
+        orr             x0,  x0,  x1
+
+        isb
+        msr             SCTLR_EL1, x0
+        isb
+        b               success
+el2:
+        /* disable and invalidate I-$ */
+        mrs             x0, SCTLR_EL2
+        bic             x1,  x0,  #SCTLR_I
+        dsb             sy
+        isb
+        msr             SCTLR_EL2, x1
+        isb
+        ic              IALLU
+        dsb             ish
+
+        /* invalidate all TLB */
+        tlbi            alle2
+        dsb             ish
+
+        /* enable I-$, D-$ and MMU */
+        mov             x1,  #(SCTLR_I | SCTLR_C | SCTLR_M)
+        orr             x0,  x0,  x1
+
+        isb
+        msr             SCTLR_EL2, x0
+        isb
+        b               success
+el3:
+        /* disable and invalidate I-$ */
+        mrs             x0, SCTLR_EL3
+        bic             x1,  x0,  #SCTLR_I
+        dsb             sy
+        isb
+        msr             SCTLR_EL3, x1
+        isb
+        ic              IALLU
+        dsb             ish
+
+        /* invalidate all TLB */
+        tlbi            alle3
+        dsb             ish
+
+        /* enable I-$, D-$ and MMU */
+        mov             x1,  #(SCTLR_I | SCTLR_C | SCTLR_M)
+        orr             x0,  x0,  x1
+
+        isb
+        msr             SCTLR_EL3, x0
+        isb
+success:
+        mov             x0,  xzr
         ret
 error:
         mov             x0,  #-EBUSY
-        b               exit
+        ret
 
         .end
 

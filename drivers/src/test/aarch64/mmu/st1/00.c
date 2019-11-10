@@ -9,8 +9,20 @@
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "driver/aarch64/mmu.h"
+#include "driver/aarch64/system_register.h"
+#include "driver/aarch64/system_register/mair.h"
+#include "driver/aarch64/system_register/tcr.h"
 
 /* defines */
+
+#define ATTRS       (MAIR_ATTR(0, MAIR_ATTR_NORMAL_NC) |\
+                     MAIR_ATTR(1, MAIR_ATTR_NORMAL_WB) |\
+                     MAIR_ATTR(2, MAIR_ATTR_NORMAL_WBWA) |\
+                     MAIR_ATTR(3, MAIR_ATTR_NORMAL_NC) |\
+                     MAIR_ATTR(4, MAIR_ATTR_DEVICE_nGnRnE) | \
+                     MAIR_ATTR(5, MAIR_ATTR_DEVICE_nGnRE) | \
+                     MAIR_ATTR(6, MAIR_ATTR_DEVICE_nGRE) | \
+                     MAIR_ATTR(7, MAIR_ATTR_DEVICE_GRE))
 
 /* types */
 
@@ -27,13 +39,23 @@ static char tmp[65536] __attribute__ ((aligned(65536)));
 static errno_t init(void)
 {
     errno_t ret;
+    uint64_t pa_range;
     struct aarch64_mmu_configuration config;
+
+    pa_range = aarch64_read_id_aa64mmfr0_el1() & BITS(3, 0);
 
     memset(&config, 0, sizeof(config));
     config.type = AARCH64_MMU_EL1;
     config.granule = AARCH64_MMU_4KB_GRANULE;
     config.stage1.asid = 1;
-    config.stage1.mair = 0;
+    config.stage1.mair = ATTRS;
+    config.tcr.el1.as = 1;
+    config.tcr.el1.ips = pa_range;
+    config.tcr.el1.sh1 = TCR_SH_ISH;
+    config.tcr.el1.orgn1 = TCR_RGN_WB;
+    config.tcr.el1.irgn1 = TCR_RGN_WB;
+    config.tcr.el1.t1sz = 16;
+
     config.pool.block_sz = 4096;
     config.pool.block_region.addr = block_pool_region;
     config.pool.block_region.size = sizeof(block_pool_region);

@@ -78,6 +78,13 @@ extern "C" {
 #define MMU_TCR_RGN_WT              2   /* Normal memory, Write-Through Cacheable */
 #define MMU_TCR_RGN_WB              3   /* Normal memory, Write-Back no Write-Allocate Cacheable */
 
+#define MMU_TCR_PS_4GB              0   /* 32 bits, 4GB */
+#define MMU_TCR_PS_64GB             1   /* 36 bits, 64GB */
+#define MMU_TCR_PS_1TB              2   /* 40 bits, 1TB */
+#define MMU_TCR_PS_4TB              3   /* 42 bits, 4TB */
+#define MMU_TCR_PS_16TB             4   /* 44 bits, 16TB */
+#define MMU_TCR_PS_256TB            5   /* 48 bits, 256TB */
+
 /* types */
 
 enum aarch64_mmu_type { AARCH64_MMU_STAGE2, AARCH64_MMU_EL0, AARCH64_MMU_EL1, AARCH64_MMU_EL2, AARCH64_MMU_EL3 };
@@ -148,12 +155,38 @@ struct aarch64_mmu_block_pool_configuration {
     } block_region;
 };
 
-struct aarch64_mmu_tcr {
-    uint8_t         a1:1;       /* for EL1 only */
-    uint8_t         sz:6;
-    uint8_t         sh:2;
-    uint8_t         irgn:2;
-    uint8_t         orgn:2;
+struct aarch64_mmu_tcr_el0 {
+    uint32_t        tg0:2;
+    uint32_t        sh0:2;
+    uint32_t        orgn0:2;
+    uint32_t        irgn0:2;
+    uint32_t        t0sz:6;
+};
+
+struct aarch64_mmu_tcr_el1 {
+    uint32_t        as:1;
+    uint32_t        ips:3;
+    uint32_t        tg1:2;
+    uint32_t        sh1:2;
+    uint32_t        orgn1:2;
+    uint32_t        irgn1:2;
+    uint32_t        a1:1;
+    uint32_t        t1sz:6;
+};
+
+struct aarch64_mmu_tcr_el23 {
+    uint32_t        ps:3;
+    uint32_t        tg0:2;
+    uint32_t        sh0:2;
+    uint32_t        orgn0:2;
+    uint32_t        irgn0:2;
+    uint32_t        t0sz:6;
+};
+
+union aarch64_mmu_tcr {
+    struct aarch64_mmu_tcr_el0 el0;
+    struct aarch64_mmu_tcr_el1 el1;
+    struct aarch64_mmu_tcr_el23 el23;
 };
 
 struct aarch64_mmu {
@@ -188,7 +221,7 @@ struct aarch64_mmu_configuration {
         uint8_t     vmid;
     } stage2;
 
-    struct aarch64_mmu_tcr tcr;
+    union aarch64_mmu_tcr tcr;
     struct aarch64_mmu_block_pool_configuration pool;
 };
 

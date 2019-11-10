@@ -30,11 +30,16 @@ static uint64_t create_tcr_el0(struct aarch64_mmu_configuration const *config)
     uint64_t d;
 
     d = TCR_EL1_AS;
-    d |= TCR_EL1_TG0(config->tcr.el0.tg0);
     d |= TCR_EL1_SH0(config->tcr.el0.sh0);
     d |= TCR_EL1_ORGN0(config->tcr.el0.orgn0); 
     d |= TCR_EL1_IRGN0(config->tcr.el0.irgn0); 
     d |= TCR_EL1_T0SZ(config->tcr.el0.t0sz);
+
+    if (config->granule == AARCH64_MMU_4KB_GRANULE) {
+        d |= TCR_EL1_TG1(1);
+    } else if (config->granule == AARCH64_MMU_16KB_GRANULE) {
+        d |= TCR_EL1_TG1(2);
+    }
 
     return d;
 }
@@ -48,7 +53,6 @@ static uint64_t create_tcr_el1(struct aarch64_mmu_configuration const *config)
         d |= TCR_EL1_AS;
     }
     d |= TCR_EL1_IPS((uint64_t)config->tcr.el1.ips);
-    d |= TCR_EL1_TG1(config->tcr.el1.tg1);
     d |= TCR_EL1_SH1(config->tcr.el1.sh1);
     d |= TCR_EL1_ORGN1(config->tcr.el1.orgn1); 
     d |= TCR_EL1_IRGN1(config->tcr.el1.irgn1); 
@@ -56,6 +60,14 @@ static uint64_t create_tcr_el1(struct aarch64_mmu_configuration const *config)
         d |= TCR_EL1_A1;
     }
     d |= TCR_EL1_T1SZ(config->tcr.el1.t1sz);
+
+    if (config->granule == AARCH64_MMU_16KB_GRANULE) {
+        d |= TCR_EL1_TG1(1);
+    } else if (config->granule == AARCH64_MMU_4KB_GRANULE) {
+        d |= TCR_EL1_TG1(2);
+    } else {
+        d |= TCR_EL1_TG1(3);  /* 64KB granule */
+    }
 
     return d;
 }
@@ -66,11 +78,17 @@ static uint64_t create_tcr_el23(struct aarch64_mmu_configuration const *config)
 
     d = TCR_EL2_RES1;
     d |= TCR_EL2_PS(config->tcr.el23.ps);
-    d |= TCR_EL2_TG0(config->tcr.el23.tg0);
     d |= TCR_EL2_SH0(config->tcr.el23.sh0);
     d |= TCR_EL2_ORGN0(config->tcr.el23.orgn0); 
     d |= TCR_EL2_IRGN0(config->tcr.el23.irgn0); 
     d |= TCR_EL2_T0SZ(config->tcr.el23.t0sz);
+
+    /* TG0=0: 4KB granule */
+    if (config->granule == AARCH64_MMU_64KB_GRANULE) {
+        d |= TCR_EL2_TG0(1);
+    } else if (config->granule == AARCH64_MMU_16KB_GRANULE) {
+        d |= TCR_EL2_TG0(2);
+    }
 
     return d;
 }

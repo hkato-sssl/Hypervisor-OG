@@ -118,5 +118,14 @@
 #define TCR_EL3_T0SZ(n)     (((n) << TCR_EL3_T0SZ_LSB) & TCR_EL3_T0SZ_MASK)
 #define TCR_EL3_RES1        (BIT(31) | BIT(23))
 
+#define TCR_SH_NSH          0   /* Non-shareable */
+#define TCR_SH_OSH          2   /* Outer Shareable */
+#define TCR_SH_ISH          3   /* Inner Shareable */
+
+#define TCR_RGN_NC          0   /* Normal memory, Non-cacheable */
+#define TCR_RGN_WBWA        1   /* Normal memory, Write-Back Write-Allocate Cacheable */
+#define TCR_RGN_WT          2   /* Normal memory, Write-Through Cacheable */
+#define TCR_RGN_WB          3   /* Normal memory, Write-Back no Write-Allocate Cacheable */
+
 #endif /* DRIVER_AARCH64_SYSTEM_REGISTER_TCR_H */
 

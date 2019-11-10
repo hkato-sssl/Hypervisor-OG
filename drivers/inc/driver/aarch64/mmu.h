@@ -156,7 +156,6 @@ struct aarch64_mmu_block_pool_configuration {
 };
 
 struct aarch64_mmu_tcr_el0 {
-    uint32_t        tg0:2;
     uint32_t        sh0:2;
     uint32_t        orgn0:2;
     uint32_t        irgn0:2;
@@ -166,7 +165,6 @@ struct aarch64_mmu_tcr_el0 {
 struct aarch64_mmu_tcr_el1 {
     uint32_t        as:1;
     uint32_t        ips:3;
-    uint32_t        tg1:2;
     uint32_t        sh1:2;
     uint32_t        orgn1:2;
     uint32_t        irgn1:2;
@@ -176,7 +174,6 @@ struct aarch64_mmu_tcr_el1 {
 
 struct aarch64_mmu_tcr_el23 {
     uint32_t        ps:3;
-    uint32_t        tg0:2;
     uint32_t        sh0:2;
     uint32_t        orgn0:2;
     uint32_t        irgn0:2;

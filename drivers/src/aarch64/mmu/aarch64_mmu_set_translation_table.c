@@ -1,4 +1,4 @@
-/* * aarch64/mmu/aarch64_mmu_set_tt.c
+/* * aarch64/mmu/aarch64_mmu_set_translation_table.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -46,7 +46,7 @@ static void mmu_set_ttbr0(struct aarch64_mmu  *mmu)
     uint64_t d;
 
     d = ((uint64_t)(mmu->stage1.asid) << 48) | ((uintptr_t)(mmu->addr) & BITS(47, 0));
-    aarch64_write_ttbr0_el1(d);
+    aarch64_write_ttbr0(d);
 }
 
 static void mmu_set_vttbr(struct aarch64_mmu  *mmu)
@@ -57,7 +57,7 @@ static void mmu_set_vttbr(struct aarch64_mmu  *mmu)
     aarch64_write_vttbr_el2(d);
 }
 
-static errno_t mmu_set_tt_el01(struct aarch64_mmu  *mmu)
+static errno_t mmu_set_translation_table_el01(struct aarch64_mmu  *mmu)
 {
     uint32_t lock;
     uint64_t d;
@@ -83,7 +83,7 @@ static errno_t mmu_set_tt_el01(struct aarch64_mmu  *mmu)
     return SUCCESS;
 }
 
-static errno_t mmu_set_tt_el23(struct aarch64_mmu  *mmu)
+static errno_t mmu_set_translation_table_el23(struct aarch64_mmu  *mmu)
 {
     uint32_t lock;
 
@@ -98,12 +98,14 @@ static errno_t mmu_set_tt_el23(struct aarch64_mmu  *mmu)
     }
     mmu_set_ttbr0(mmu);
 
+    mmu->active = true;
+
     aarch64_unlock_interrupts(lock);
 
     return SUCCESS;
 }
 
-static errno_t mmu_set_stage2_tt(struct aarch64_mmu  *mmu)
+static errno_t mmu_set_stage2_translation_table(struct aarch64_mmu  *mmu)
 {
     uint32_t lock;
 
@@ -111,13 +113,14 @@ static errno_t mmu_set_stage2_tt(struct aarch64_mmu  *mmu)
 
     aarch64_write_vtcr_el2(mmu->stage2.vtcr);
     mmu_set_vttbr(mmu);
+    mmu->active = true;
 
     aarch64_unlock_interrupts(lock);
 
     return SUCCESS;
 }
 
-static errno_t mmu_set_tt(struct aarch64_mmu  *mmu)
+static errno_t mmu_set_translation_table(struct aarch64_mmu  *mmu)
 {
     errno_t ret;
     uint64_t el;
@@ -126,16 +129,16 @@ static errno_t mmu_set_tt(struct aarch64_mmu  *mmu)
     switch (el) {
     case CURRENT_EL1:
         if ((mmu->type == AARCH64_MMU_EL0) || (mmu->type == AARCH64_MMU_EL1)) {
-            ret = mmu_set_tt_el01(mmu);
+            ret = mmu_set_translation_table_el01(mmu);
         } else {
             ret = -EINVAL;
         }
         break;
     case CURRENT_EL2:
         if (mmu->type == AARCH64_MMU_EL2) {
-            ret = mmu_set_tt_el23(mmu);
+            ret = mmu_set_translation_table_el23(mmu);
         } else if (mmu->type == AARCH64_MMU_STAGE2) {
-            ret = mmu_set_stage2_tt(mmu);
+            ret = mmu_set_stage2_translation_table(mmu);
         } else {
             ret = -EINVAL;
         }
@@ -143,7 +146,7 @@ static errno_t mmu_set_tt(struct aarch64_mmu  *mmu)
     case CURRENT_EL3:
         if (mmu->type == AARCH64_MMU_EL3) {
             if (mmu->stage1.asid == 0) {
-                ret = mmu_set_tt_el23(mmu);
+                ret = mmu_set_translation_table_el23(mmu);
             } else {
                 ret = -EINVAL;
             }
@@ -172,13 +175,13 @@ static errno_t validate_parameters(struct aarch64_mmu  *mmu)
     return ret;
 }
 
-errno_t aarch64_mmu_set_tt(struct aarch64_mmu  *mmu)
+errno_t aarch64_mmu_set_translation_table(struct aarch64_mmu  *mmu)
 {
     errno_t ret;
 
     ret = validate_parameters(mmu);
     if (ret == SUCCESS) {
-        ret = mmu_set_tt(mmu);
+        ret = mmu_set_translation_table(mmu);
     }
     
     return ret;

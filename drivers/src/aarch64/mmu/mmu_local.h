@@ -46,7 +46,7 @@ extern "C" {
 #endif
 
 errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, union mmu_attr const *attr);
-errno_t aarch64_mmu_set_tt(struct aarch64_mmu *mmu);
+errno_t aarch64_mmu_set_translate_table(struct aarch64_mmu *mmu);
 errno_t aarch64_mmu_enable_asm(struct aarch64_mmu const *mmu);
 void aarch64_mmu_tlbi_va(void *va);
 void aarch64_mmu_tlbi_all(void);

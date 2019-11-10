@@ -137,27 +137,27 @@ static void dump_table(struct aarch64_mmu const *mmu, uint64_t *p, int level)
     for (i = 0; i < 512; ++i) {
         desc = p[i];
         switch (desc & 3) {
-            case 0:
-            case 2:
-                dump_invalid_desc(desc, level, i, invalid);
-                ++invalid;
-                break;
-            case 1:
-                if (level < 3) {
-                    dump_block_desc(desc, level, i);
-                } else {
-                    dump_reserved_desc(desc, level, i);
-                }
-                invalid = 0;
-                break;
-            case 3:
-                if (level < 3) {
-                    dump_table_desc(mmu, desc, level, i);
-                } else {
-                    dump_page_desc(desc, level, i);
-                }
-                invalid = 0;
-                break;
+        case 0:
+        case 2:
+            dump_invalid_desc(desc, level, i, invalid);
+            ++invalid;
+            break;
+        case 1:
+            if (level < 3) {
+                dump_block_desc(desc, level, i);
+            } else {
+                dump_reserved_desc(desc, level, i);
+            }
+            invalid = 0;
+            break;
+        case 3:
+            if (level < 3) {
+                dump_table_desc(mmu, desc, level, i);
+            } else {
+                dump_page_desc(desc, level, i);
+            }
+            invalid = 0;
+            break;
         }
     }
 }

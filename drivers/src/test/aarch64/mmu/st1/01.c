@@ -1,5 +1,5 @@
 /*
- * test/aarch64/mmu/st1/00.c
+ * test/aarch64/mmu/st1/01.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -13,10 +13,18 @@
 #include "driver/aarch64/system_register/mair.h"
 #include "driver/aarch64/system_register/tcr.h"
 
-/* テスト項目：4KB, 64KB Mapping結果確認
+/* テスト項目：MMU 有効化
  *
- * 4KB, 64KB単位でのマッピング結果を確認。
+ * プログラムが動作可能な必要最低限のMappingを行い
+ * MMU を有効化した状態で動作可能である事を確認。
  */
+
+/* test parameters */
+
+#define RAM_START   0x00000000
+#define RAM_SIZE    0x80000000
+#define DEV_START   0xa0001000
+#define DEV_SIZE    4096
 
 /* defines */
 
@@ -29,6 +37,14 @@
                      MAIR_ATTR(6, MAIR_ATTR_DEVICE_nGRE) | \
                      MAIR_ATTR(7, MAIR_ATTR_DEVICE_GRE))
 
+#define MMU_ATTR_NC                     0
+#define MMU_ATTR_WB                     1
+#define MMU_ATTR_WBWA                   2
+#define MMU_ATTR_DEVICE_nGnRnE          4
+#define MMU_ATTR_DEVICE_nGnRE           5
+#define MMU_ATTR_DEVICE_nGRE            6
+#define MMU_ATTR_DEVICE_GRE             7
+
 /* types */
 
 /* prototypes */
@@ -37,7 +53,6 @@
 
 static char block_pool_region[256][4096] __attribute__ ((aligned(4096)));
 static struct aarch64_mmu mmu;
-static char tmp[65536] __attribute__ ((aligned(65536)));
 
 /* functions */
 
@@ -50,16 +65,15 @@ static errno_t init(void)
     pa_range = aarch64_read_id_aa64mmfr0_el1() & BITS(3, 0);
 
     memset(&config, 0, sizeof(config));
-    config.type = AARCH64_MMU_EL1;
+    config.type = AARCH64_MMU_EL2;
     config.granule = AARCH64_MMU_4KB_GRANULE;
-    config.stage1.asid = 1;
+    config.stage1.asid = 0;
     config.stage1.mair = ATTRS;
-    config.tcr.el1.as = 1;
-    config.tcr.el1.ips = pa_range;
-    config.tcr.el1.sh1 = TCR_SH_ISH;
-    config.tcr.el1.orgn1 = TCR_RGN_WB;
-    config.tcr.el1.irgn1 = TCR_RGN_WB;
-    config.tcr.el1.t1sz = 16;
+    config.tcr.el23.ps = pa_range;
+    config.tcr.el23.sh0 = TCR_SH_ISH;
+    config.tcr.el23.orgn0 = TCR_RGN_WBWA;
+    config.tcr.el23.irgn0 = TCR_RGN_WBWA;
+    config.tcr.el23.t0sz = 16;
 
     config.pool.block_sz = 4096;
     config.pool.block_region.addr = block_pool_region;
@@ -71,7 +85,7 @@ static errno_t init(void)
     return ret;
 }
 
-errno_t test_aarch64_mmu_st1_00(void)
+errno_t test_aarch64_mmu_st1_01(void)
 {
     errno_t ret;
     struct aarch64_mmu_attr attr;
@@ -84,14 +98,21 @@ errno_t test_aarch64_mmu_st1_00(void)
     }
 
     memset(&attr, 0, sizeof(attr));
+    attr.af = 1;
+    attr.sh = MMU_ATTR_SH_ISH;
+    attr.attrindx = MMU_ATTR_WBWA;
 
-    ret = aarch64_mmu_map(&mmu, block_pool_region, block_pool_region, 4096, &attr);
+    ret = aarch64_mmu_map(&mmu, (void*)RAM_START, (void*)RAM_START, RAM_SIZE, &attr);
     printk("aarch64_mmu_map() -> %d\n", ret);
 
-    ret = aarch64_mmu_map(&mmu, tmp, tmp, sizeof(tmp), &attr);
+    attr.attrindx = MMU_ATTR_DEVICE_nGnRnE;
+    ret = aarch64_mmu_map(&mmu, (void*)DEV_START, (void*)DEV_START, DEV_SIZE, &attr);
     printk("aarch64_mmu_map() -> %d\n", ret);
 
     aarch64_mmu_dump_descriptor(&mmu);
+
+    ret = aarch64_mmu_enable(&mmu);
+    printk("aarch64_mmu_enable() -> %d\n", ret);
 
     return ret;
 }

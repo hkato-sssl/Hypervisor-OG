@@ -11,9 +11,19 @@
 
 /* defines */
 
+#ifndef ASSEMBLY
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* includes */
+
+/* defines */
+
 #define NR_MAIR_ATTRS       8
 
-#define MAIR_ATTR(n, v)     (((v) & 0xff) << (n))
+#define MAIR_ATTR(n, v)     (((v) & 0xffULL) << ((n) * 8))
 
 /* Device memory */
 #define MAIR_ATTR_DEVICE_nGnRnE     0x00
@@ -72,17 +82,6 @@
 #define MAIR_ATTR_NORMAL_WTWA       (MAIR_ATTR_NORMAL_OWTRAWA | MAIR_ATTR_NORMAL_IWTRAWA)
 #define MAIR_ATTR_NORMAL_WB         (MAIR_ATTR_NORMAL_OWBRA | MAIR_ATTR_NORMAL_IWBRA)
 #define MAIR_ATTR_NORMAL_WBWA       (MAIR_ATTR_NORMAL_OWBRAWA | MAIR_ATTR_NORMAL_IWBRAWA)
-
-#ifndef ASSEMBLY
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* includes */
-
-/* defines */
-
 /* types */
 
 /* variables */

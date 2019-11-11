@@ -34,8 +34,8 @@ aarch64_udelay:
         cbz             w0, exit
 
         mov32           w3, 1000000
-        udiv            w2, w2, w3
         umull           x2, w2, w0
+        udiv            x2, x2, x3
         mov             x3, #PCT_MASK
 loop:
         isb

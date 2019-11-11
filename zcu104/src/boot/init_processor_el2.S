@@ -41,6 +41,15 @@ init_processor_el2:
         msr             SCTLR_EL2, x3
         isb
 
+        // initialize CPUECTLR_EL1
+
+        mrs             x0, S3_1_C15_C2_1
+        orr             x0, x0, #BIT(6)         // CPUECTLR_EL1.SMPEN
+        dsb             sy
+        isb
+        msr             S3_1_C15_C2_1, x0
+        isb
+
         // initialize and enable I-$
 
         bl              aarch64_icache_invd_all

@@ -69,22 +69,6 @@ extern "C" {
 #define MMU_ATTR_SH_OSH             2   /* Outer Shareable */
 #define MMU_ATTR_SH_ISH             3   /* Inner Shareable */
 
-#define MMU_TCR_SH_NSH              0   /* Non-shareable */
-#define MMU_TCR_SH_OSH              2   /* Outer Shareable */
-#define MMU_TCR_SH_ISH              3   /* Inner Shareable */
-
-#define MMU_TCR_RGN_NC              0   /* Normal memory, Non-cacheable */
-#define MMU_TCR_RGN_WBWA            1   /* Normal memory, Write-Back Write-Allocate Cacheable */
-#define MMU_TCR_RGN_WT              2   /* Normal memory, Write-Through Cacheable */
-#define MMU_TCR_RGN_WB              3   /* Normal memory, Write-Back no Write-Allocate Cacheable */
-
-#define MMU_TCR_PS_4GB              0   /* 32 bits, 4GB */
-#define MMU_TCR_PS_64GB             1   /* 36 bits, 64GB */
-#define MMU_TCR_PS_1TB              2   /* 40 bits, 1TB */
-#define MMU_TCR_PS_4TB              3   /* 42 bits, 4TB */
-#define MMU_TCR_PS_16TB             4   /* 44 bits, 16TB */
-#define MMU_TCR_PS_256TB            5   /* 48 bits, 256TB */
-
 /* types */
 
 enum aarch64_mmu_type { AARCH64_MMU_STAGE2, AARCH64_MMU_EL0, AARCH64_MMU_EL1, AARCH64_MMU_EL2, AARCH64_MMU_EL3 };

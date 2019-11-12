@@ -7,6 +7,8 @@
 #ifndef LIB_BIT_H
 #define LIB_BIT_H
 
+#define ALIGNED(v, a)       (((v) + ((a) - 1)) & ((a) - 1))
+
 #ifdef ASSEMBLY
 
 /* defines */

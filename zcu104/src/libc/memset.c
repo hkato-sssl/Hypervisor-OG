@@ -3,7 +3,7 @@
 
 void *memset(void *s, int c, size_t n)
 {
-    char *p;
+    volatile char *p;
 
     p = s;
     for (; n > 0; --n) {

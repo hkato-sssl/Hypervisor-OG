@@ -7,6 +7,7 @@
 #include "config/system.h"
 #include <stdint.h>
 #include "lib/system/errno.h"
+#include "lib/system/printk.h"
 
 /* defines */
 
@@ -17,12 +18,14 @@
 /* functions */
 
 errno_t init_system(void);
+errno_t init_memory_map(void);
 void init_hw(void);
 void launch_system(void);
 
 int main(void)
 {
 	init_system();
+	init_memory_map();
 	init_hw();
 	launch_system();
 
@@ -30,4 +33,7 @@ int main(void)
 }
 
 void init_hw(void) { return ; }
-void launch_system(void) { return ; }
+void launch_system(void)
+{
+    printk("Done\n");
+}

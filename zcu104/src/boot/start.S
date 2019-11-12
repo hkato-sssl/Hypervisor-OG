@@ -26,11 +26,11 @@ _start:
         // initialize SP
 
         msr             SPsel, #1
-        adrl            x1, (exc_stack_region + STACK_SIZE)
+        adrl            x1, (exc_stack_region + CONFIG_STACK_SIZE)
         mov             sp, x1
 
 	msr		SPsel, #0
-	adrl		x0, (main_stack_region + STACK_SIZE)
+	adrl		x0, (main_stack_region + CONFIG_STACK_SIZE)
 	mov		sp, x0
 
         // check parameters of .bss region

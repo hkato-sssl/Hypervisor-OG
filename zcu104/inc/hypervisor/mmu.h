@@ -23,14 +23,14 @@ extern "C" {
 
 /* defines */
 
-#define HYP_MMU_ATTRS   (MAIR_ATTR(0, MAIR_ATTR_NC) |\
-                         MAIR_ATTR(1, MAIR_ATTR_WB) |\
-                         MAIR_ATTR(2, MAIR_ATTR_WBWA) |\
-                         MAIR_ATTR(3, MAIR_ATTR_NC) |\
-                         MAIR_ATTR(4, MAIRT_ATTR_DEVICE_nGnRnE) |\
-                         MAIR_ATTR(5, MAIRT_ATTR_DEVICE_nGnRE) |\
-                         MAIR_ATTR(6, MAIRT_ATTR_DEVICE_nGRE) |\
-                         MAIR_ATTR(7, MAIRT_ATTR_DEVICE_GRE))
+#define HYP_MMU_ATTRS   (MAIR_ATTR(0, MAIR_ATTR_NORMAL_NC) |\
+                         MAIR_ATTR(1, MAIR_ATTR_NORMAL_WB) |\
+                         MAIR_ATTR(2, MAIR_ATTR_NORMAL_WBWA) |\
+                         MAIR_ATTR(3, MAIR_ATTR_NORMAL_NC) |\
+                         MAIR_ATTR(4, MAIR_ATTR_DEVICE_nGnRnE) |\
+                         MAIR_ATTR(5, MAIR_ATTR_DEVICE_nGnRE) |\
+                         MAIR_ATTR(6, MAIR_ATTR_DEVICE_nGRE) |\
+                         MAIR_ATTR(7, MAIR_ATTR_DEVICE_GRE))
 
 #define HYP_MMU_NC              0
 #define HYP_MMU_WB              1

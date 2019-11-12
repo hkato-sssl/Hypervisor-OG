@@ -185,7 +185,7 @@ store_vpc_registers:
 	adrl		x0, main_stack_region
 	mrs		x1, MPIDR_EL1
 	and		x1, x1, #0xff
-	mov		x2, #STACK_SIZE
+	mov		x2, #CONFIG_STACK_SIZE
 	umaddl		x3, w2, w1, x0
         add		sp, x3, x2
 

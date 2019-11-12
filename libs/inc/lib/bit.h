@@ -7,7 +7,7 @@
 #ifndef LIB_BIT_H
 #define LIB_BIT_H
 
-#define ALIGN(v, a)       (((v) + ((a) - 1)) & ((a) - 1))
+#define ALIGN(v, a)       ((((v) + ((a) - 1)) | ((a) - 1)) ^ ((a) - 1))
 
 #ifdef ASSEMBLY
 

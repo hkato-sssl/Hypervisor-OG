@@ -42,34 +42,38 @@ static uint32_t desc_index(void *va, uint32_t level)
     return index;
 }
 
+uint64_t *new_table(struct aarch64_mmu *mmu, void const *attr, uint64_t *previous)
+{
+    void *table;
+    uint64_t d;
+
+    table = aarch64_mmu_block_calloc(&(mmu->pool), MEM_4KB);
+    if (table != NULL) {
+        d = (mmu->ops->table_descriptor)(table, attr);
+        d |= (uint64_t)table;
+        aarch64_mmu_write_descriptor(previous, d);
+    }
+
+    return table;
+}
+
 uint64_t *table_addr(struct aarch64_mmu *mmu, void *va, void const *attr, uint32_t level)
 {
     uint32_t i;
     uint64_t d;
     uint64_t *table;
     uint64_t *next;
-    uint64_t *new_table;
 
     table = mmu->addr;
-    for (i = 1; i <= level; ++i) {
+    for (i = 1; ((table != NULL) && (i <= level)); ++i) {
         next = table + desc_index(va, (i - 1));
         d = *next;
         if ((d & BIT(0)) == 0) {
             /* invalid descriptor */
-            new_table = aarch64_mmu_block_calloc(&(mmu->pool), MEM_4KB);
-            if (new_table != NULL) {
-                d = (mmu->ops->table_descriptor)(new_table, attr);
-                d |= (uint64_t)new_table;
-                aarch64_mmu_write_descriptor(next, d);
-                table = new_table;
-            } else {
-                table = NULL;
-                break;
-            }
+            table = new_table(mmu, attr, next);
         } else if ((d & BITS(1, 0)) == 0x01) {
             /* block descriptor */
             table = NULL; /* no support */
-            break;
         } else {
             /* d[1:0] == 0b11, table descriptor */
             table = next_table_addr(d);

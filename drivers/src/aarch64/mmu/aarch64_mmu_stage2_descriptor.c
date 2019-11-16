@@ -10,10 +10,6 @@
 
 /* defines */
 
-#define DESC_TABLE  3
-#define DESC_BLOCK  1
-#define DESC_PAGE   3
-
 /* types */
 
 /* prototypes */

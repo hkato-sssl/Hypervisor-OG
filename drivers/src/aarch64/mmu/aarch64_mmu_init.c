@@ -23,6 +23,12 @@
 
 /* variables */
 
+static struct aarch64_mmu_ops const mmu_ops = {
+    (aarch64_mmu_desc_func_t)aarch64_mmu_table_descriptor,
+    (aarch64_mmu_desc_func_t)aarch64_mmu_block_descriptor,
+    (aarch64_mmu_desc_func_t)aarch64_mmu_page_descriptor
+};
+
 /* functions */
 
 static uint64_t create_tcr_el0(struct aarch64_mmu_configuration const *config)
@@ -133,6 +139,7 @@ static errno_t init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration co
     mmu->active = false;
     mmu->type = config->type;
     mmu->granule = config->granule;
+    mmu->ops = &mmu_ops;
     if (mmu->type == AARCH64_MMU_STAGE2) {
         mmu->stage2.vmid = config->stage2.vmid;
     } else {

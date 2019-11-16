@@ -170,10 +170,19 @@ union aarch64_mmu_tcr {
     struct aarch64_mmu_tcr_el23 el23;
 };
 
+typedef uint64_t (*aarch64_mmu_desc_func_t)(void *pa, void const *attr);
+
+struct aarch64_mmu_ops {
+    aarch64_mmu_desc_func_t table_descriptor;
+    aarch64_mmu_desc_func_t block_descriptor;
+    aarch64_mmu_desc_func_t page_descriptor;
+};
+
 struct aarch64_mmu {
     bool active;
     enum aarch64_mmu_type type;
     enum aarch64_mmu_granule granule;
+    struct aarch64_mmu_ops const *ops;
 
     struct {
         uint16_t    asid;
@@ -216,6 +225,7 @@ errno_t aarch64_mmu_enable(struct aarch64_mmu *mmu);
 
 errno_t aarch64_mmu_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
 
+errno_t aarch64_mmu_stage2_enable(struct aarch64_mmu *mmu);
 errno_t aarch64_mmu_stage2_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, struct aarch64_mmu_stage2_attr const *attr);
 
 errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config);
@@ -225,6 +235,10 @@ errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block,
 /* for debugging */
 
 void aarch64_mmu_dump_descriptor(struct aarch64_mmu const *mmu);
+
+errno_t aarch64_mmu_map_single_region(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level);
+errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level);
+void aarch64_mmu_write_descriptor(uint64_t *addr, uint64_t desc);
 
 #ifdef __cplusplus
 }

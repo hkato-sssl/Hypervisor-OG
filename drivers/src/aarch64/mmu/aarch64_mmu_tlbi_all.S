@@ -24,7 +24,7 @@ op_el0:
         mov             x0,  #-EPERM
         ret
 op_el1:
-        tlbi            alle1
+        tlbi            vmalle1
         mov             x0,  #SUCCESS
         ret
 op_el2:

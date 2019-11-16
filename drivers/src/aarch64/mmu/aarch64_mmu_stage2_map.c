@@ -19,6 +19,7 @@
 
 /* functions */
 
+#if 0
 errno_t aarch64_mmu_stage2_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, struct aarch64_mmu_stage2_attr const *attr)
 {
     errno_t ret;
@@ -34,3 +35,4 @@ errno_t aarch64_mmu_stage2_map(struct aarch64_mmu *mmu, void *va, void *pa, size
 
     return ret;
 }
+#endif

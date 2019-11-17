@@ -1,0 +1,8 @@
+Bit [31]
+PS, bits [18:16]
+TG0, bits [15:14]
+SH0, bits [13:12]
+ORGN0, bits [11:10]
+IRGN0, bits [9:8]
+SL0, bits [7:6]
+T0SZ, bits [5:0]

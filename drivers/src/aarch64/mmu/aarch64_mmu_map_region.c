@@ -10,7 +10,6 @@
 #include "lib/system/errno.h"
 #include "driver/aarch64/cache.h"
 #include "driver/aarch64/mmu_base.h"
-#include "mmu_local.h"
 
 /* defines */
 
@@ -47,7 +46,7 @@ uint64_t *new_table(struct aarch64_mmu_base *mmu, void const *attr, uint64_t *pr
     void *table;
     uint64_t d;
 
-    table = aarch64_mmu_block_calloc(&(mmu->pool), MEM_4KB);
+    table = aarch64_mmu_block_calloc(mmu->pool, MEM_4KB);
     if (table != NULL) {
         d = (mmu->ops->table_descriptor)(table, attr);
         d |= (uint64_t)table;

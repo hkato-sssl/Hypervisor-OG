@@ -10,7 +10,6 @@
 #include "lib/system/errno.h"
 #include "driver/aarch64/cache.h"
 #include "driver/aarch64/mmu_base.h"
-#include "mmu_local.h"
 
 /* defines */
 

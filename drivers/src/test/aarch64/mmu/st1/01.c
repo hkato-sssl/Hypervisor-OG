@@ -52,9 +52,25 @@
 /* variables */
 
 static char block_pool_region[256][4096] __attribute__ ((aligned(4096)));
+static struct aarch64_mmu_block_pool pool;
 static struct aarch64_mmu mmu;
 
 /* functions */
+
+static errno_t init_pool(void)
+{
+    errno_t ret;
+    struct aarch64_mmu_block_pool_configuration config;
+
+    memset(&config, 0, sizeof(config));
+    config.block_sz = 4096;
+    config.block_region.addr = block_pool_region;
+    config.block_region.size = sizeof(block_pool_region);
+    ret = aarch64_mmu_block_pool_init(&pool, &config);
+    printk("aarch64_mmu_block_pool_init() -> %d\n", ret);
+
+    return ret;
+}
 
 static errno_t init(void)
 {
@@ -62,22 +78,24 @@ static errno_t init(void)
     uint64_t pa_range;
     struct aarch64_mmu_configuration config;
 
+    ret = init_pool();
+    if (ret != SUCCESS) {
+        return ret;
+    }
+
     pa_range = aarch64_read_id_aa64mmfr0_el1() & BITS(3, 0);
 
     memset(&config, 0, sizeof(config));
-    config.type = AARCH64_MMU_EL2;
-    config.granule = AARCH64_MMU_4KB_GRANULE;
-    config.stage1.asid = 0;
-    config.stage1.mair = ATTRS;
+    config.base.type = AARCH64_MMU_EL2;
+    config.base.granule = AARCH64_MMU_4KB_GRANULE;
+    config.base.pool = &pool;
+    config.asid = 0;
+    config.mair = ATTRS;
     config.tcr.el23.ps = pa_range;
     config.tcr.el23.sh0 = TCR_SH_ISH;
     config.tcr.el23.orgn0 = TCR_RGN_WBWA;
     config.tcr.el23.irgn0 = TCR_RGN_WBWA;
     config.tcr.el23.t0sz = 16;
-
-    config.pool.block_sz = 4096;
-    config.pool.block_region.addr = block_pool_region;
-    config.pool.block_region.size = sizeof(block_pool_region);
 
     ret = aarch64_mmu_init(&mmu, &config);
     printk("aarch64_mmu_init() -> %d\n", ret);

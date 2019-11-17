@@ -13,10 +13,18 @@
 #include "driver/aarch64/system_register/mair.h"
 #include "driver/aarch64/system_register/tcr.h"
 
-/* テスト項目：4KB, 64KB Mapping結果確認
+/* テスト項目：MMU 有効化
  *
- * 4KB, 64KB単位でのマッピング結果を確認。
+ * プログラムが動作可能な必要最低限のMappingを行い
+ * MMU を有効化した状態で動作可能である事を確認。
  */
+
+/* test parameters */
+
+#define RAM_START   0x00000000
+#define RAM_SIZE    0x80000000
+#define DEV_START   0xa0001000
+#define DEV_SIZE    4096
 
 /* defines */
 
@@ -29,6 +37,14 @@
                      MAIR_ATTR(6, MAIR_ATTR_DEVICE_nGRE) | \
                      MAIR_ATTR(7, MAIR_ATTR_DEVICE_GRE))
 
+#define MMU_ATTR_NC                     0
+#define MMU_ATTR_WB                     1
+#define MMU_ATTR_WBWA                   2
+#define MMU_ATTR_DEVICE_nGnRnE          4
+#define MMU_ATTR_DEVICE_nGnRE           5
+#define MMU_ATTR_DEVICE_nGRE            6
+#define MMU_ATTR_DEVICE_GRE             7
+
 /* types */
 
 /* prototypes */
@@ -36,10 +52,26 @@
 /* variables */
 
 static char block_pool_region[256][4096] __attribute__ ((aligned(4096)));
-static struct aarch64_mmu mmu;
 static char tmp[65536] __attribute__ ((aligned(65536)));
+static struct aarch64_mmu_block_pool pool;
+static struct aarch64_mmu mmu;
 
 /* functions */
+
+static errno_t init_pool(void)
+{
+    errno_t ret;
+    struct aarch64_mmu_block_pool_configuration config;
+
+    memset(&config, 0, sizeof(config));
+    config.block_sz = 4096;
+    config.block_region.addr = block_pool_region;
+    config.block_region.size = sizeof(block_pool_region);
+    ret = aarch64_mmu_block_pool_init(&pool, &config);
+    printk("aarch64_mmu_block_pool_init() -> %d\n", ret);
+
+    return ret;
+}
 
 static errno_t init(void)
 {
@@ -47,23 +79,24 @@ static errno_t init(void)
     uint64_t pa_range;
     struct aarch64_mmu_configuration config;
 
+    ret = init_pool();
+    if (ret != SUCCESS) {
+        return ret;
+    }
+
     pa_range = aarch64_read_id_aa64mmfr0_el1() & BITS(3, 0);
 
     memset(&config, 0, sizeof(config));
-    config.type = AARCH64_MMU_EL1;
-    config.granule = AARCH64_MMU_4KB_GRANULE;
-    config.stage1.asid = 1;
-    config.stage1.mair = ATTRS;
-    config.tcr.el1.as = 1;
-    config.tcr.el1.ips = pa_range;
-    config.tcr.el1.sh1 = TCR_SH_ISH;
-    config.tcr.el1.orgn1 = TCR_RGN_WB;
-    config.tcr.el1.irgn1 = TCR_RGN_WB;
-    config.tcr.el1.t1sz = 16;
-
-    config.pool.block_sz = 4096;
-    config.pool.block_region.addr = block_pool_region;
-    config.pool.block_region.size = sizeof(block_pool_region);
+    config.base.type = AARCH64_MMU_EL2;
+    config.base.granule = AARCH64_MMU_4KB_GRANULE;
+    config.base.pool = &pool;
+    config.asid = 0;
+    config.mair = ATTRS;
+    config.tcr.el23.ps = pa_range;
+    config.tcr.el23.sh0 = TCR_SH_ISH;
+    config.tcr.el23.orgn0 = TCR_RGN_WBWA;
+    config.tcr.el23.irgn0 = TCR_RGN_WBWA;
+    config.tcr.el23.t0sz = 16;
 
     ret = aarch64_mmu_init(&mmu, &config);
     printk("aarch64_mmu_init() -> %d\n", ret);

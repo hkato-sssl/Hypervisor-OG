@@ -9,7 +9,7 @@
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/aarch64/cache.h"
-#include "driver/aarch64/mmu.h"
+#include "driver/aarch64/mmu_base.h"
 #include "mmu_local.h"
 
 /* defines */
@@ -42,7 +42,7 @@ static uint32_t desc_index(void *va, uint32_t level)
     return index;
 }
 
-uint64_t *new_table(struct aarch64_mmu *mmu, void const *attr, uint64_t *previous)
+uint64_t *new_table(struct aarch64_mmu_base *mmu, void const *attr, uint64_t *previous)
 {
     void *table;
     uint64_t d;
@@ -57,7 +57,7 @@ uint64_t *new_table(struct aarch64_mmu *mmu, void const *attr, uint64_t *previou
     return table;
 }
 
-uint64_t *table_addr(struct aarch64_mmu *mmu, void *va, void const *attr, uint32_t level)
+uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, void const *attr, uint32_t level)
 {
     uint32_t i;
     uint64_t d;
@@ -83,7 +83,7 @@ uint64_t *table_addr(struct aarch64_mmu *mmu, void *va, void const *attr, uint32
     return table;
 }
 
-uint64_t *desc_addr(struct aarch64_mmu *mmu, void *va, void const *attr, uint32_t level)
+uint64_t *desc_addr(struct aarch64_mmu_base *mmu, void *va, void const *attr, uint32_t level)
 {
     uint64_t *table;
     uint64_t *desc;
@@ -127,7 +127,7 @@ static bool is_valid_parameter(void *va, void *pa, size_t sz)
     return valid;
 }
 
-errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level)
+errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level)
 {
     errno_t ret;
     uint64_t *p;
@@ -157,7 +157,7 @@ errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu *mmu, void *va, voi
     return ret;
 }
 
-errno_t aarch64_mmu_map_single_region(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level)
+errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level)
 {
     errno_t ret;
     uint64_t *p;

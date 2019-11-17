@@ -25,8 +25,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "lib/bit.h"
-#include "lib/list.h"
 #include "lib/system/errno.h"
+#include "driver/aarch64/mmu_base.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,9 +71,6 @@ extern "C" {
 
 /* types */
 
-enum aarch64_mmu_type { AARCH64_MMU_STAGE2, AARCH64_MMU_EL0, AARCH64_MMU_EL1, AARCH64_MMU_EL2, AARCH64_MMU_EL3 };
-enum aarch64_mmu_granule { AARCH64_MMU_4KB_GRANULE, AARCH64_MMU_16KB_GRANULE, AARCH64_MMU_64KB_GRANULE }; 
-
 /* Attributes in descriptor for stage 1 translation */
 
 struct aarch64_mmu_attr {
@@ -112,33 +109,6 @@ struct aarch64_mmu_stage2_attr {
     uint8_t     memattr:4;
 };
 
-struct aarch64_mmu_block_pool {
-    size_t              block_sz;
-    struct list         block_list;
-    struct {
-        void            *addr;
-        size_t          size;
-    } block_region;
-    struct {
-        struct {
-            uint64_t    success;
-            uint64_t    failure;
-        } calloc;
-        struct {
-            uint64_t    success;
-            uint64_t    failure;
-        } free;
-    } counter;
-};
-
-struct aarch64_mmu_block_pool_configuration {
-    size_t          block_sz;
-    struct {
-        void        *addr;
-        size_t      size;
-    } block_region;
-};
-
 struct aarch64_mmu_tcr_el0 {
     uint32_t        sh0:2;
     uint32_t        orgn0:2;
@@ -170,49 +140,21 @@ union aarch64_mmu_tcr {
     struct aarch64_mmu_tcr_el23 el23;
 };
 
-typedef uint64_t (*aarch64_mmu_desc_func_t)(void *pa, void const *attr);
-
-struct aarch64_mmu_ops {
-    aarch64_mmu_desc_func_t table_descriptor;
-    aarch64_mmu_desc_func_t block_descriptor;
-    aarch64_mmu_desc_func_t page_descriptor;
-};
-
 struct aarch64_mmu {
-    bool active;
-    enum aarch64_mmu_type type;
-    enum aarch64_mmu_granule granule;
-    struct aarch64_mmu_ops const *ops;
+    struct aarch64_mmu_base base;
 
-    struct {
-        uint16_t    asid;
-        uint64_t    mair;
-        uint64_t    tcr;
-    } stage1;
-
-    struct {
-        uint8_t     vmid;
-        uint64_t    vtcr;
-    } stage2;
-
-    uint64_t        *addr;
-    struct aarch64_mmu_block_pool pool;
+    uint16_t    asid;
+    uint64_t    mair;
+    uint64_t    tcr;
 };
 
 struct aarch64_mmu_configuration {
-    enum aarch64_mmu_type type;
-    enum aarch64_mmu_granule granule;
+    struct aarch64_mmu_base_configuration base;
 
-    struct {
-        uint16_t    asid;
-        uint64_t    mair;
-    } stage1;
-    struct {
-        uint8_t     vmid;
-    } stage2;
+    uint16_t    asid;
+    uint64_t    mair;
 
     union aarch64_mmu_tcr tcr;
-    struct aarch64_mmu_block_pool_configuration pool;
 };
 
 /* variables */
@@ -225,20 +167,9 @@ errno_t aarch64_mmu_enable(struct aarch64_mmu *mmu);
 
 errno_t aarch64_mmu_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
 
-errno_t aarch64_mmu_stage2_enable(struct aarch64_mmu *mmu);
-errno_t aarch64_mmu_stage2_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, struct aarch64_mmu_stage2_attr const *attr);
-
-errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config);
-void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);
-errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block, size_t block_sz);
-
 /* for debugging */
 
 void aarch64_mmu_dump_descriptor(struct aarch64_mmu const *mmu);
-
-errno_t aarch64_mmu_map_single_region(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level);
-errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level);
-void aarch64_mmu_write_descriptor(uint64_t *addr, uint64_t desc);
 
 #ifdef __cplusplus
 }

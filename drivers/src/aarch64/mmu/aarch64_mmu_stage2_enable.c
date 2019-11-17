@@ -4,6 +4,7 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#if 0
 #include <stdint.h>
 #include "lib/system/errno.h"
 #include "driver/aarch64/system_register.h"
@@ -53,3 +54,4 @@ errno_t aarch64_mmu_stage2_enable(struct aarch64_mmu *mmu)
 
     return ret;
 }
+#endif

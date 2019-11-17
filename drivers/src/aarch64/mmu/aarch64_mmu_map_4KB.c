@@ -9,7 +9,7 @@
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/aarch64/cache.h"
-#include "driver/aarch64/mmu.h"
+#include "driver/aarch64/mmu_base.h"
 #include "mmu_local.h"
 
 /* defines */
@@ -22,7 +22,7 @@
 
 /* functions */
 
-static errno_t mmu_map(struct aarch64_mmu *mmu, void **va, void **pa, size_t *sz, void const *attr)
+static errno_t mmu_map(struct aarch64_mmu_base *mmu, void **va, void **pa, size_t *sz, void const *attr)
 {
     errno_t ret;
 
@@ -57,7 +57,7 @@ static errno_t mmu_map(struct aarch64_mmu *mmu, void **va, void **pa, size_t *sz
     return ret;
 }
 
-errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, void const *attr)
+errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, void const *attr)
 {
     errno_t ret;
 

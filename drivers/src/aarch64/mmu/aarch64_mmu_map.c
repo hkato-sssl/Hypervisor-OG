@@ -24,8 +24,8 @@ errno_t aarch64_mmu_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, 
     errno_t ret;
 
     /* Support 4KB granule only */
-    if ((mmu->type != AARCH64_MMU_STAGE2) && (mmu->granule == AARCH64_MMU_4KB_GRANULE)) {
-        ret = aarch64_mmu_map_4KB_granule(mmu, va, pa, sz, attr);
+    if ((mmu->base.type != AARCH64_MMU_STAGE2) && (mmu->base.granule == AARCH64_MMU_4KB_GRANULE)) {
+        ret = aarch64_mmu_map_4KB_granule(&(mmu->base), va, pa, sz, attr);
     } else {
         ret = -EINVAL;
     }

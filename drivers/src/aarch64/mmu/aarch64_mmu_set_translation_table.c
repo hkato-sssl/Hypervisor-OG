@@ -45,16 +45,8 @@ static void mmu_set_ttbr0(struct aarch64_mmu  *mmu)
 {
     uint64_t d;
 
-    d = ((uint64_t)(mmu->stage1.asid) << 48) | ((uintptr_t)(mmu->addr) & BITS(47, 0));
+    d = ((uint64_t)(mmu->asid) << 48) | ((uintptr_t)(mmu->base.addr) & BITS(47, 0));
     aarch64_write_ttbr0(d);
-}
-
-static void mmu_set_vttbr(struct aarch64_mmu  *mmu)
-{
-    uint64_t d;
-
-    d = ((uint64_t)(mmu->stage2.vmid) << 48) | ((uintptr_t)(mmu->addr) & BITS(47, 0));
-    aarch64_write_vttbr_el2(d);
 }
 
 static errno_t mmu_set_translation_table_el01(struct aarch64_mmu  *mmu)
@@ -66,17 +58,17 @@ static errno_t mmu_set_translation_table_el01(struct aarch64_mmu  *mmu)
     lock = aarch64_lock_interrupts();
 
     d = aarch64_read_tcr_el1();
-    mask = (mmu->type == AARCH64_MMU_EL0) ? TCR_EL0_MASK : TCR_EL1_MASK;
-    d = (d & ~mask) | mmu->stage1.tcr;
-    aarch64_write_mair_el1(mmu->stage1.mair);
+    mask = (mmu->base.type == AARCH64_MMU_EL0) ? TCR_EL0_MASK : TCR_EL1_MASK;
+    d = (d & ~mask) | mmu->tcr;
+    aarch64_write_mair_el1(mmu->mair);
 
-    if (mmu->type == AARCH64_MMU_EL1) {
+    if (mmu->base.type == AARCH64_MMU_EL1) {
         aarch64_write_tcr_el1(d);
     }
 
     mmu_set_ttbr0(mmu);
 
-    mmu->active = true;
+    mmu->base.active = true;
 
     aarch64_unlock_interrupts(lock);
 
@@ -89,31 +81,16 @@ static errno_t mmu_set_translation_table_el23(struct aarch64_mmu  *mmu)
 
     lock = aarch64_lock_interrupts();
 
-    if (mmu->type == AARCH64_MMU_EL2) {
-        aarch64_write_tcr_el2(mmu->stage1.tcr);
-        aarch64_write_mair_el2(mmu->stage1.mair);
+    if (mmu->base.type == AARCH64_MMU_EL2) {
+        aarch64_write_tcr_el2(mmu->tcr);
+        aarch64_write_mair_el2(mmu->mair);
     } else {
-        aarch64_write_tcr_el3(mmu->stage1.tcr);
-        aarch64_write_mair_el3(mmu->stage1.mair);
+        aarch64_write_tcr_el3(mmu->tcr);
+        aarch64_write_mair_el3(mmu->mair);
     }
     mmu_set_ttbr0(mmu);
 
-    mmu->active = true;
-
-    aarch64_unlock_interrupts(lock);
-
-    return SUCCESS;
-}
-
-static errno_t mmu_set_stage2_translation_table(struct aarch64_mmu  *mmu)
-{
-    uint32_t lock;
-
-    lock = aarch64_lock_interrupts();
-
-    aarch64_write_vtcr_el2(mmu->stage2.vtcr);
-    mmu_set_vttbr(mmu);
-    mmu->active = true;
+    mmu->base.active = true;
 
     aarch64_unlock_interrupts(lock);
 
@@ -128,24 +105,22 @@ static errno_t mmu_set_translation_table(struct aarch64_mmu  *mmu)
     el = aarch64_read_currentel();
     switch (el) {
     case CURRENT_EL1:
-        if ((mmu->type == AARCH64_MMU_EL0) || (mmu->type == AARCH64_MMU_EL1)) {
+        if ((mmu->base.type == AARCH64_MMU_EL0) || (mmu->base.type == AARCH64_MMU_EL1)) {
             ret = mmu_set_translation_table_el01(mmu);
         } else {
             ret = -EINVAL;
         }
         break;
     case CURRENT_EL2:
-        if (mmu->type == AARCH64_MMU_EL2) {
+        if (mmu->base.type == AARCH64_MMU_EL2) {
             ret = mmu_set_translation_table_el23(mmu);
-        } else if (mmu->type == AARCH64_MMU_STAGE2) {
-            ret = mmu_set_stage2_translation_table(mmu);
         } else {
             ret = -EINVAL;
         }
         break;
     case CURRENT_EL3:
-        if (mmu->type == AARCH64_MMU_EL3) {
-            if (mmu->stage1.asid == 0) {
+        if (mmu->base.type == AARCH64_MMU_EL3) {
+            if (mmu->asid == 0) {
                 ret = mmu_set_translation_table_el23(mmu);
             } else {
                 ret = -EINVAL;
@@ -166,7 +141,7 @@ static errno_t validate_parameters(struct aarch64_mmu  *mmu)
 {
     errno_t ret;
 
-    if ((mmu != NULL) && (! mmu->active) && (mmu->addr != NULL)) {
+    if ((mmu != NULL) && (! mmu->base.active) && (mmu->base.addr != NULL)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;

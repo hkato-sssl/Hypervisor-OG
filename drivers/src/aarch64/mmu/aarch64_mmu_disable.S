@@ -33,7 +33,7 @@ aarch64_mmu_disable:
 
         bl              aarch64_read_sctlr
         tbz             x0,  #0,  error     // test SCTLR.M
-	mov             x19, x0
+        mov             x19, x0
 
         bl              aarch64_dcache_clean_invd_all
 

@@ -26,7 +26,7 @@ aarch64_write_mair:
         .quad           write_mair_el1
         .quad           write_mair_el2
         .quad           write_mair_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 write_mair_el1:
         msr             MAIR_EL1, x0
         ret
@@ -46,7 +46,7 @@ aarch64_read_mair:
         .quad           read_mair_el1
         .quad           read_mair_el2
         .quad           read_mair_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 read_mair_el1:
         mrs             x0, MAIR_EL1
         ret
@@ -66,7 +66,7 @@ aarch64_write_amair:
         .quad           write_amair_el1
         .quad           write_amair_el2
         .quad           write_amair_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 write_amair_el1:
         msr             AMAIR_EL1, x0
         ret
@@ -86,7 +86,7 @@ aarch64_read_amair:
         .quad           read_amair_el1
         .quad           read_amair_el2
         .quad           read_amair_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 read_amair_el1:
         mrs             x0, AMAIR_EL1
         ret
@@ -106,7 +106,7 @@ aarch64_write_tcr:
         .quad           write_tcr_el1
         .quad           write_tcr_el2
         .quad           write_tcr_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 write_tcr_el1:
         msr             TCR_EL1, x0
         ret
@@ -126,7 +126,7 @@ aarch64_read_tcr:
         .quad           read_tcr_el1
         .quad           read_tcr_el2
         .quad           read_tcr_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 read_tcr_el1:
         mrs             x0, TCR_EL1
         ret
@@ -146,7 +146,7 @@ aarch64_write_ttbr0:
         .quad           write_ttbr0_el1
         .quad           write_ttbr0_el2
         .quad           write_ttbr0_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 write_ttbr0_el1:
         msr             TTBR0_EL1, x0
         ret
@@ -166,7 +166,7 @@ aarch64_read_ttbr0:
         .quad           read_ttbr0_el1
         .quad           read_ttbr0_el2
         .quad           read_ttbr0_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 read_ttbr0_el1:
         mrs             x0, TTBR0_EL1
         ret
@@ -186,7 +186,7 @@ aarch64_write_sctlr:
         .quad           write_sctlr_el1
         .quad           write_sctlr_el2
         .quad           write_sctlr_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 write_sctlr_el1:
         dsb             sy
         isb
@@ -215,7 +215,7 @@ aarch64_read_sctlr:
         .quad           read_sctlr_el1
         .quad           read_sctlr_el2
         .quad           read_sctlr_el3
-999:    smc             #0xb000
+999:    smc             #0xB001
 read_sctlr_el1:
         mrs             x0, SCTLR_EL1
         ret

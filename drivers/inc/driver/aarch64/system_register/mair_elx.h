@@ -1,11 +1,11 @@
 /*
- * driver/aarch64/system_register/mair.h
+ * driver/aarch64/system_register/mair_elx.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef DRIVER_AARCH64_SYSTEM_REGISTER_MAIR_H
-#define DRIVER_AARCH64_SYSTEM_REGISTER_MAIR_H
+#ifndef DRIVER_AARCH64_SYSTEM_REGISTER_MAIR_ELX_H
+#define DRIVER_AARCH64_SYSTEM_REGISTER_MAIR_ELX_H
 
 /* includes */
 
@@ -94,5 +94,5 @@ extern "C" {
 
 #endif /* ASSEMBLY */
 
-#endif /* DRIVER_AARCH64_SYSTEM_REGISTER_MAIR_H */
+#endif /* DRIVER_AARCH64_SYSTEM_REGISTER_MAIR_ELX_H */
 

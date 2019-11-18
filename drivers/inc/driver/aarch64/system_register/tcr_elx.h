@@ -1,11 +1,11 @@
 /*
- * driver/aarch64/system_register/tcr.h
+ * driver/aarch64/system_register/tcr_elx.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef DRIVER_AARCH64_SYSTEM_REGISTER_TCR_H
-#define DRIVER_AARCH64_SYSTEM_REGISTER_TCR_H
+#ifndef DRIVER_AARCH64_SYSTEM_REGISTER_TCR_ELX_H
+#define DRIVER_AARCH64_SYSTEM_REGISTER_TCR_ELX_H
 
 /* includes */
 
@@ -127,5 +127,5 @@
 #define TCR_RGN_WT          2   /* Normal memory, Write-Through Cacheable */
 #define TCR_RGN_WB          3   /* Normal memory, Write-Back no Write-Allocate Cacheable */
 
-#endif /* DRIVER_AARCH64_SYSTEM_REGISTER_TCR_H */
+#endif /* DRIVER_AARCH64_SYSTEM_REGISTER_TCR_ELX_H */
 

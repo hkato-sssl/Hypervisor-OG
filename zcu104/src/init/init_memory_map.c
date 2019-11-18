@@ -10,7 +10,7 @@
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/aarch64/system_register.h"
-#include "driver/aarch64/system_register/tcr.h"
+#include "driver/aarch64/system_register/tcr_elx.h"
 #include "driver/aarch64/mmu.h"
 #include "hypervisor/mmu.h"
 

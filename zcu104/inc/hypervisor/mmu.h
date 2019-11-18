@@ -9,7 +9,7 @@
 
 /* includes */
 
-#include "driver/aarch64/system_register/mair.h"
+#include "driver/aarch64/system_register/mair_elx.h"
 
 /* defines */
 

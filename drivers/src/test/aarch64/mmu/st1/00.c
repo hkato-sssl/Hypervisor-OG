@@ -10,8 +10,8 @@
 #include "lib/system/printk.h"
 #include "driver/aarch64/mmu.h"
 #include "driver/aarch64/system_register.h"
-#include "driver/aarch64/system_register/mair.h"
-#include "driver/aarch64/system_register/tcr.h"
+#include "driver/aarch64/system_register/mair_elx.h"
+#include "driver/aarch64/system_register/tcr_elx.h"
 
 /* テスト項目：MMU 有効化
  *

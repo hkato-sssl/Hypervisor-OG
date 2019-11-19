@@ -57,7 +57,7 @@
 #define GICC_APR0           0x00d0
 #define GICC_NSAPR0         0x00e0
 #define GICC_IIDR           0x00fc
-#define GICC_DIR            0x00030000
+#define GICC_DIR            0x1000
 
 #define GICC_HCR            0x00040000
 #define GICC_VTR            0x00040004

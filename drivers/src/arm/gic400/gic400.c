@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "lib/system/errno.h"
+#include "lib/system/memio.h"
 #include "driver/system/cpu.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/device/gic400.h"
@@ -23,7 +24,7 @@
 
 /* functions */
 
-static bool is_valid_parameters(struct gic400 const *gic,  uint16_t intr_no)
+static bool is_valid_parameter(struct gic400 const *gic,  uint16_t intr_no)
 {
     bool ret;
 
@@ -38,6 +39,7 @@ static bool is_valid_parameters(struct gic400 const *gic,  uint16_t intr_no)
 
 static void sync_dist_io(struct gic400 *gic)
 {
+    memory_barrier();
     gic400_read_dist(gic, GICD_CTLR);
 }
 
@@ -57,7 +59,7 @@ errno_t gic400_write_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg
 {
     errno_t ret;
 
-    if (is_valid_parameters(gic, bit_no)) {
+    if (is_valid_parameter(gic, bit_no)) {
         ret = write_dist_bit(gic, bit_no, reg0);
     } else {
         ret = -EINVAL;
@@ -109,7 +111,7 @@ uint32_t gic400_ack(struct gic400 *gic)
     if (gic != NULL) {
         iar = gic400_read_cpuif(gic, GICC_IAR);
     } else {
-        iar = 0;
+        iar = ~(uint32_t)0;
     }
 
     return iar;
@@ -250,7 +252,7 @@ errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct 
 {
     errno_t ret;
 
-    if (is_valid_parameters(gic, intr_no) && is_valid_configuration(gic, config)) {
+    if (is_valid_parameter(gic, intr_no) && is_valid_configuration(gic, config)) {
         ret = configure_interrupt(gic, intr_no, config);
     } else {
         ret = -EINVAL;
@@ -287,7 +289,7 @@ errno_t gic400_register_handler(struct gic400 *gic, uint16_t intr_no, gic400_han
 {
     errno_t ret;
 
-    if (is_valid_parameters(gic, intr_no)) {
+    if (is_valid_parameter(gic, intr_no)) {
         ret = register_handler(gic, intr_no, handler, arg);
     } else {
         ret = -EINVAL;

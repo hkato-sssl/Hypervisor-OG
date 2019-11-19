@@ -42,6 +42,7 @@ static inline void gic400_write_cpuif(struct gic400 *gic, uintptr_t reg, uint32_
 static inline void gic400_write_sync_cpuif(struct gic400 *gic, uintptr_t reg, uint32_t d)
 {
     REG_WRITE32(gic->config.base.cpuif, reg, d);
+    memory_barrier();
     REG_READ32(gic->config.base.cpuif, reg);
 }
 
@@ -62,6 +63,7 @@ static inline void gic400_write_dist(struct gic400 *gic, uintptr_t reg, uint32_t
 static inline void gic400_write_sync_dist(struct gic400 *gic, uintptr_t reg, uint32_t d)
 {
     REG_WRITE32(gic->config.base.dist, reg, d);
+    memory_barrier();
     REG_READ32(gic->config.base.dist, reg);
 }
 

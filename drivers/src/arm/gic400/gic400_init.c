@@ -116,7 +116,7 @@ static errno_t init(struct gic400 *gic, struct gic400_configuration const *confi
     return SUCCESS;
 }
 
-errno_t validate_parameters(struct gic400 *gic, struct gic400_configuration const *config)
+static errno_t validate_parameters(struct gic400 *gic, struct gic400_configuration const *config)
 {
     errno_t ret;
 

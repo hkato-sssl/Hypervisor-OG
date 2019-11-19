@@ -32,28 +32,28 @@ extern "C" {
 /* types */
 
 struct gic400_base_register {
-        uintptr_t   *dist;      /* distributor */
-        uintptr_t   *cpuif;     /* CPU interface */
+    uintptr_t   *dist;      /* distributor */
+    uintptr_t   *cpuif;     /* CPU interface */
 };
 
 struct gic400_configuration {
-        struct gic400_base_register base;
+    struct gic400_base_register base;
 };
 
 typedef intptr_t (*gic400_handler_t)(void *arg, uint32_t iar);
 
 struct gic400 {
-        spin_lock_t         lock;
-        struct gic400_configuration config;
-        struct {
-            uint8_t         max;
-            uint8_t         shift_ct;
-        } priority;
-        uint16_t            nr_interrupts;
-        struct {
-            gic400_handler_t    entry;
-            void                *arg;
-        } handlers[NR_GIC400_INTERRUPTS];
+    spin_lock_t         lock;
+    struct gic400_configuration config;
+    struct {
+        uint8_t         max;
+        uint8_t         shift_ct;
+    } priority;
+    uint16_t            nr_interrupts;
+    struct {
+        gic400_handler_t    entry;
+        void                *arg;
+    } handlers[NR_GIC400_INTERRUPTS];
 };
 
 struct gic400_interrupt_configuration {

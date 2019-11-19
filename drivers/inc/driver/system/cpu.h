@@ -20,6 +20,7 @@ extern "C" {
 /* includes */
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "driver/aarch64.h"
 
 /* defines */

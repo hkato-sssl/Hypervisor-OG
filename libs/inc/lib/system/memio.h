@@ -29,6 +29,12 @@ extern "C" {
 
 /* functions */
 
+/*
+ * ARMを利用しているシステムではレジスタ領域がDevice Memoryとして適切
+ * にマッピングされる事を前提としている為、明示的にDMB/DSBの実行は行っ
+ * ていない。
+ */
+
 #define REG_WRITE64(b, r, d)   (*(volatile uint64_t *)((uintptr_t)(b) + (uintptr_t)(r)) = (uint64_t)(d))
 #define REG_WRITE32(b, r, d)   (*(volatile uint32_t *)((uintptr_t)(b) + (uintptr_t)(r)) = (uint32_t)(d))
 #define REG_WRITE16(b, r, d)   (*(volatile uint16_t *)((uintptr_t)(b) + (uintptr_t)(r)) = (uint16_t)(d))

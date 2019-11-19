@@ -11,10 +11,6 @@
 
 /* defines */
 
-#ifdef	__ARMASM__	/* DS-5 assembler */
-#define ASSEMBLY
-#endif
-
 #ifndef ASSEMBLY
 
 #ifdef __cplusplus

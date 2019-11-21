@@ -1,5 +1,5 @@
 /*
- * spin_lock.S
+ * system/spin_lock.S
  *
  * (C) 2019 Hidekazu Kato
  */

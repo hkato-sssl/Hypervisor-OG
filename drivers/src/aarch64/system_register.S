@@ -17,16 +17,17 @@
         .global         aarch64_write_sctlr
         .global         aarch64_read_sctlr
 
+        .extern         assert_exception
+
         .section        ".text.aarch64_write_mair"
         .type           aarch64_write_mair, %function
         .balign         4
 aarch64_write_mair:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           write_mair_el1
         .quad           write_mair_el2
         .quad           write_mair_el3
-999:    smc             #0xB001
 write_mair_el1:
         msr             MAIR_EL1, x0
         ret
@@ -42,11 +43,10 @@ write_mair_el3:
         .balign         4
 aarch64_read_mair:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           read_mair_el1
         .quad           read_mair_el2
         .quad           read_mair_el3
-999:    smc             #0xB001
 read_mair_el1:
         mrs             x0, MAIR_EL1
         ret
@@ -62,11 +62,10 @@ read_mair_el3:
         .balign         4
 aarch64_write_amair:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           write_amair_el1
         .quad           write_amair_el2
         .quad           write_amair_el3
-999:    smc             #0xB001
 write_amair_el1:
         msr             AMAIR_EL1, x0
         ret
@@ -82,11 +81,10 @@ write_amair_el3:
         .balign         4
 aarch64_read_amair:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           read_amair_el1
         .quad           read_amair_el2
         .quad           read_amair_el3
-999:    smc             #0xB001
 read_amair_el1:
         mrs             x0, AMAIR_EL1
         ret
@@ -102,11 +100,10 @@ read_amair_el3:
         .balign         4
 aarch64_write_tcr:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           write_tcr_el1
         .quad           write_tcr_el2
         .quad           write_tcr_el3
-999:    smc             #0xB001
 write_tcr_el1:
         msr             TCR_EL1, x0
         ret
@@ -122,11 +119,10 @@ write_tcr_el3:
         .balign         4
 aarch64_read_tcr:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           read_tcr_el1
         .quad           read_tcr_el2
         .quad           read_tcr_el3
-999:    smc             #0xB001
 read_tcr_el1:
         mrs             x0, TCR_EL1
         ret
@@ -142,11 +138,10 @@ read_tcr_el3:
         .balign         4
 aarch64_write_ttbr0:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           write_ttbr0_el1
         .quad           write_ttbr0_el2
         .quad           write_ttbr0_el3
-999:    smc             #0xB001
 write_ttbr0_el1:
         msr             TTBR0_EL1, x0
         ret
@@ -162,11 +157,10 @@ write_ttbr0_el3:
         .balign         4
 aarch64_read_ttbr0:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           read_ttbr0_el1
         .quad           read_ttbr0_el2
         .quad           read_ttbr0_el3
-999:    smc             #0xB001
 read_ttbr0_el1:
         mrs             x0, TTBR0_EL1
         ret
@@ -182,11 +176,10 @@ read_ttbr0_el3:
         .balign         4
 aarch64_write_sctlr:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           write_sctlr_el1
         .quad           write_sctlr_el2
         .quad           write_sctlr_el3
-999:    smc             #0xB001
 write_sctlr_el1:
         dsb             sy
         isb
@@ -211,11 +204,10 @@ write_sctlr_el3:
         .balign         4
 aarch64_read_sctlr:
         BR_EL           000f
-000:    .quad           999f
+000:    .quad           assert_exception
         .quad           read_sctlr_el1
         .quad           read_sctlr_el2
         .quad           read_sctlr_el3
-999:    smc             #0xB001
 read_sctlr_el1:
         mrs             x0, SCTLR_EL1
         ret

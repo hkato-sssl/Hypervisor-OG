@@ -24,12 +24,12 @@ void launch_system(void);
 
 int main(void)
 {
-	init_system();
-	init_memory_map();
-	init_hw();
-	launch_system();
+    init_system();
+    init_memory_map();
+    init_hw();
+    launch_system();
 
-	return (0);
+    return 0;
 }
 
 void init_hw(void) { return ; }

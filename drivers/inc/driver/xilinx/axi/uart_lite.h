@@ -32,7 +32,7 @@ struct uart_lite_configuration {
     uint8_t     intr_no;
     struct {
         bool    init;
-    } flag;
+    } boolean;
 };
 
 struct uart_lite {

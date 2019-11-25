@@ -23,58 +23,58 @@
 
 static errno_t init(struct uart_lite *uart, const struct uart_lite_configuration *config)
 {
-	uint32_t d;
+    uint32_t d;
 
-	uart->base = config->base;
-  	uart->intr_no = config->intr_no;
+    uart->base = config->base;
+    uart->intr_no = config->intr_no;
 
-	/* initialize H/W */
+    /* initialize H/W */
 
-	if (config->flag.init) {
-		d = CTRL_RST_TX_FIFO | CTRL_RST_RX_FIFO;
-	} else {
-		d = 0;
-	}
-	REG_WRITE32_SYNC(uart->base, UART_LITE_CTRL_REG, d);
+    if (config->boolean.init) {
+        d = CTRL_RST_TX_FIFO | CTRL_RST_RX_FIFO;
+    } else {
+        d = 0;
+    }
+    REG_WRITE32_SYNC(uart->base, UART_LITE_CTRL_REG, d);
 
     return SUCCESS;
 }
 
 errno_t uart_lite_init(struct uart_lite *uart, const struct uart_lite_configuration *config)
 {
-	errno_t ret;
+    errno_t ret;
 
     if ((uart != NULL) && (config != NULL) && (config->base != 0)) {
-		ret = init(uart, config);
-	} else {
-		ret = -EINVAL;
-	}
+        ret = init(uart, config);
+    } else {
+        ret = -EINVAL;
+    }
 
-	return ret;
+    return ret;
 }
 
 static errno_t poll_putc(struct uart_lite *uart, int ch)
 {
-	uint32_t d;
+    uint32_t d;
 
     do {
         d = REG_READ32(uart->base, UART_LITE_STAT_REG);
     } while ((d & STAT_TX_FIFO_FULL) != 0);
 
-	REG_WRITE32(uart->base, UART_LITE_TX_FIFO, ch);
+    REG_WRITE32(uart->base, UART_LITE_TX_FIFO, ch);
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 errno_t uart_lite_poll_putc(struct uart_lite *uart, int ch)
 {
-	errno_t ret;
+    errno_t ret;
 
-	if (uart != NULL) {
-		ret = poll_putc(uart, ch);
-	} else {
-		ret = -EINVAL;
-	}
+    if (uart != NULL) {
+        ret = poll_putc(uart, ch);
+    } else {
+        ret = -EINVAL;
+    }
 
     return ret;
 }

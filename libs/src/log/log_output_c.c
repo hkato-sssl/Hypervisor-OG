@@ -38,23 +38,23 @@ int log_output_c(struct log_context *ctx)
 
 	switch (ctx->syntax.length) {
 	case CFL_HH:
-		v = (char)va_arg(ctx->input.vargs, int);
+		v = (char)va_arg(ctx->request.vargs, int);
 		ret = output_c(ctx, v);
 		break;
 	case CFL_H:
-		v = (char)va_arg(ctx->input.vargs, int);
+		v = (char)va_arg(ctx->request.vargs, int);
 		ret = output_c(ctx, v);
 		break;
 	case CFL_NONE:
-		v = (char)va_arg(ctx->input.vargs, int);
+		v = (char)va_arg(ctx->request.vargs, int);
 		ret = output_c(ctx, v);
 		break;
 	case CFL_L:
-		v = (char)va_arg(ctx->input.vargs, long);
+		v = (char)va_arg(ctx->request.vargs, long);
 		ret = output_c(ctx, v);
 		break;
 	case CFL_LL:
-		v = (char)va_arg(ctx->input.vargs, long long);
+		v = (char)va_arg(ctx->request.vargs, long long);
 		ret = output_c(ctx, v);
 		break;
 	default:

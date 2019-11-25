@@ -69,7 +69,7 @@ int log_output_s(struct log_context *ctx)
 
 	ctx->output.pad = ' ';
 
-	v = va_arg(ctx->input.vargs, char *);
+	v = va_arg(ctx->request.vargs, char *);
 	if (v == NULL) {
 		v = null_str;
 	}

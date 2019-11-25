@@ -37,6 +37,10 @@ errno_t spin_trylock(spin_lock_t *lock);
 void spin_lock(spin_lock_t *lock);
 void spin_unlock(spin_lock_t *lock);
 
+errno_t system_spin_lock_init(spin_lock_t *lock);
+void system_spin_lock(void);
+void system_spin_unlock(void);
+
 #ifdef __cplusplus
 }
 #endif

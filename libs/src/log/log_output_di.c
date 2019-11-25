@@ -68,23 +68,23 @@ int log_output_di(struct log_context *ctx)
 
 	switch (ctx->syntax.length) {
 	case CFL_HH:
-		v = (char)va_arg(ctx->input.vargs, int);
+		v = (char)va_arg(ctx->request.vargs, int);
 		ret = output_lldi(ctx, v);
 		break;
 	case CFL_H:
-		v = (short)va_arg(ctx->input.vargs, int);
+		v = (short)va_arg(ctx->request.vargs, int);
 		ret = output_lldi(ctx, v);
 		break;
 	case CFL_NONE:
-		v = va_arg(ctx->input.vargs, int);
+		v = va_arg(ctx->request.vargs, int);
 		ret = output_lldi(ctx, v);
 		break;
 	case CFL_L:
-		v = va_arg(ctx->input.vargs, long);
+		v = va_arg(ctx->request.vargs, long);
 		ret = output_lldi(ctx, v);
 		break;
 	case CFL_LL:
-		v = va_arg(ctx->input.vargs, long long);
+		v = va_arg(ctx->request.vargs, long long);
 		ret = output_lldi(ctx, v);
 		break;
 	default:

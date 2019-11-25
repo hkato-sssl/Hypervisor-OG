@@ -10,6 +10,7 @@
 #include <string.h>
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
+#include "lib/system/spin_lock.h"
 #include "lib/log.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
@@ -21,12 +22,21 @@
 
 /* types */
 
+struct arg_printk {
+    struct uart_lite    *uart;
+    int                 ct;
+};
+
 /* prototypes */
+
+static errno_t put_char(struct log_context *ctx, char ch);
 
 /* variables */
 
 static struct log_context log_ctx;
 static struct uart_lite uart;
+static struct log_ops ops = { &uart, put_char };
+static spin_lock_t lock;
 
 /* functions */
 
@@ -34,14 +44,26 @@ errno_t printk(const char *fmt, ...)
 {
     errno_t ret;
     va_list vargs;
+    struct arg_printk arg;
 
+    arg.uart = &uart;
+    arg.ct = 0;
+
+    spin_lock(&lock);
     va_start(vargs, fmt);
 
-    log_ctx.input.format = fmt;
-    log_ctx.input.vargs = vargs;
+    ops.arg = &arg;
+    log_ctx.request.ops = &ops;
+    log_ctx.request.format = fmt;
+    log_ctx.request.vargs = vargs;
     ret = log_cformat(&log_ctx);
 
     va_end(vargs);
+    spin_unlock(&lock);
+
+    if (ret == SUCCESS) {
+        ret = arg.ct;
+    }
 
     return ret;
 }
@@ -49,14 +71,18 @@ errno_t printk(const char *fmt, ...)
 static errno_t put_char(struct log_context *ctx, char ch)
 {
     errno_t ret;
+    struct arg_printk *arg;
 
+    arg = ctx->request.ops->arg;
     if (ch == '\n') {
-        ret = uart_lite_poll_putc(ctx->arg, '\r');
+        ret = uart_lite_poll_putc(arg->uart, '\r');
         if (ret == SUCCESS) {
-            ret = uart_lite_poll_putc(ctx->arg, ch);
+            ret = uart_lite_poll_putc(arg->uart, ch);
         }
+        arg->ct += 2;
     } else {
-        ret = uart_lite_poll_putc(ctx->arg, ch);
+        ret = uart_lite_poll_putc(arg->uart, ch);
+        ++(arg->ct);
     }
 
     return ret;
@@ -69,7 +95,7 @@ static errno_t init_uart(void)
 
     memset(&config, 0, sizeof(config));
     config.base = UART_LITE_BASE;
-    config.flag.init = true;
+    config.boolean.init = true;
     ret = uart_lite_init(&uart, &config);
 
     return ret;
@@ -78,15 +104,9 @@ static errno_t init_uart(void)
 static errno_t init_printk(void)
 {
     errno_t ret;
-    struct log_context_configuration config;
 
+    spin_lock_init(&lock);
     ret = init_uart();
-    if (ret == SUCCESS) {
-        memset(&config, 0, sizeof(config));
-        config.arg = &uart;
-        config.putc = put_char;
-        ret = log_init_context(&log_ctx, &config);
-    }
 
     return ret;
 }
@@ -107,7 +127,7 @@ errno_t init_system(void)
 
     ret = init_printk();
     if (ret == SUCCESS) {
-	ret = init_exception();
+    	ret = init_exception();
     }
 
     return ret;

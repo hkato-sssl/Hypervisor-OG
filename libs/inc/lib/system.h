@@ -26,6 +26,7 @@ extern "C" {
 /* functions */
 
 void udelay(uint32_t usec);
+int sprintf(char *buff, char const *fmt, ...);
 
 #ifdef __cplusplus
 }

@@ -68,14 +68,19 @@ struct log_cformat_syntax {
     const struct log_radix  *radix;
 };
 
-struct log_context {
-    void                        *arg;
-    log_putc_func_t             putc;
+struct log_ops {
+    void                *arg;
+    log_putc_func_t     putc;
+};
 
-    struct {
-        const char              *format;
-        va_list                 vargs;
-    } input;
+struct log_request {
+    struct log_ops      *ops;
+    const char          *format;
+    va_list             vargs;
+};
+
+struct log_context {
+    struct log_request          request;
 
     struct log_cformat_syntax   syntax;
 
@@ -89,16 +94,10 @@ struct log_context {
     } output;
 };
 
-struct log_context_configuration {
-    void                *arg;
-    log_putc_func_t     putc;
-};
-
 /* variables */
 
 /* functions */
 
-int log_init_context(struct log_context *ctx, const struct log_context_configuration *conf);
 int log_cformat(struct log_context *ctx);
 
 #ifdef __cplusplus

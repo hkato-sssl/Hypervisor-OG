@@ -38,7 +38,7 @@ static inline errno_t put_char(struct log_context *ctx, char ch)
 {
 	errno_t ret;
 
-	ret = (*(ctx->putc))(ctx, ch);
+	ret = (*(ctx->request.ops->putc))(ctx, ch);
 
 	return ret;
 }
@@ -47,7 +47,7 @@ static inline char get_char(struct log_context *ctx)
 {
 	int ch;
 
-	ch = *((ctx->input.format)++);
+	ch = *((ctx->request.format)++);
 
 	return ch;
 }

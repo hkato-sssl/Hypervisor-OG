@@ -59,23 +59,23 @@ int log_output_unsigned_number(struct log_context *ctx)
 
 	switch (ctx->syntax.length) {
 	case CFL_HH:
-		v = (unsigned char)va_arg(ctx->input.vargs, unsigned int);
+		v = (unsigned char)va_arg(ctx->request.vargs, unsigned int);
 		ret = output_llu(ctx, v);
 		break;
 	case CFL_H:
-		v = (unsigned short)va_arg(ctx->input.vargs, unsigned int);
+		v = (unsigned short)va_arg(ctx->request.vargs, unsigned int);
 		ret = output_llu(ctx, v);
 		break;
 	case CFL_NONE:
-		v = va_arg(ctx->input.vargs, unsigned int);
+		v = va_arg(ctx->request.vargs, unsigned int);
 		ret = output_llu(ctx, v);
 		break;
 	case CFL_L:
-		v = va_arg(ctx->input.vargs, unsigned long);
+		v = va_arg(ctx->request.vargs, unsigned long);
 		ret = output_llu(ctx, v);
 		break;
 	case CFL_LL:
-		v = va_arg(ctx->input.vargs, unsigned long long);
+		v = va_arg(ctx->request.vargs, unsigned long long);
 		ret = output_llu(ctx, v);
 		break;
 	default:

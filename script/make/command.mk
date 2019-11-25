@@ -18,12 +18,12 @@ else
 LD_SCRIPT_FILE ?= $(WORKSPACE_LOC)/script/ld/$(TARGET_ARCH)-$(TARGET_BOARD)-$(LOAD_TYPE).lds
 endif
 
-ifdef LD_SCRIPT_FILE
-LDFLAGS += -T $(LD_SCRIPT_FILE)
-endif
-
 ifdef WORKSPACE_LIBRARY
 LDFLAGS += --start-group $(addprefix $(WORKSPACE_LIBRARY_PATH)/,$(addsuffix .a,$(WORKSPACE_LIBRARY))) --end-group
+endif
+
+ifdef LD_SCRIPT_FILE
+LDFLAGS += -T $(LD_SCRIPT_FILE)
 endif
 
 LDOPS_FILE := $(OUTDIR)/.ldops

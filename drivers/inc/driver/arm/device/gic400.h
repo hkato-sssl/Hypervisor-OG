@@ -15,7 +15,7 @@
 
 #define GICD_CTLR           0x0000
 #define GICD_TYPER          0x0004
-#define GICD_IDDR           0x0008
+#define GICD_IIDR           0x0008
 #define GICD_IGROUPR(n)     (0x0080 + (n) * 4)
 #define GICD_ISENABLER(n)   (0x0100 + (n) * 4)
 #define GICD_ICENABLER(n)   (0x0180 + (n) * 4)
@@ -39,7 +39,10 @@
 #define GICD_PIDR1          0x0fe4
 #define GICD_PIDR2          0x0fe8
 #define GICD_PIDR3          0x0fec
-#define GICD_CIDR(n)        (0x0ff0 + (n) * 4)
+#define GICD_CIDR0          0x0ff0
+#define GICD_CIDR1          0x0ff4
+#define GICD_CIDR2          0x0ff8
+#define GICD_CIDR3          0x0ffc
 
 /* GIC cpu interface */
 

@@ -83,6 +83,11 @@ errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct 
 errno_t gic400_register_handler(struct gic400 *gic, uint16_t intr_no, gic400_handler_t handler, void *arg);
 intptr_t gic400_call_handler(struct gic400 *gic);
 
+/* for debugging */
+
+void gic400_dump_ns_cpuif(struct gic400 const *gic);
+void gic400_dump_ns_distributor(struct gic400 const *gic);
+
 #ifdef __cplusplus
 }
 #endif

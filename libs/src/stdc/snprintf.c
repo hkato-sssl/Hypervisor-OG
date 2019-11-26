@@ -1,5 +1,5 @@
 /*
- * lib/stdc/sprintf.c
+ * lib/stdc/snprintf.c
  *
  * (C) 2018 Hidekazu Kato
  */
@@ -18,13 +18,13 @@
 
 /* functions */
 
-int sprintf(char *str, const char *fmt, ...)
+int snprintf(char *str, size_t size, const char *fmt, ...)
 {
     int ret;
     va_list vargs;
 
     va_start(vargs, fmt);
-    ret = vsprintf(str, fmt, vargs);
+    ret = vsnprintf(str, size, fmt, vargs);
     va_end(vargs);
 
     return ret;

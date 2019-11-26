@@ -1,11 +1,11 @@
 /*
- * lib/stdc/string.h
+ * lib/system/stdc/string.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef LIB_STDC_STRING_H
-#define LIB_STDC_STRING_H
+#ifndef LIB_SYSTEM_STDC_STRING_H
+#define LIB_SYSTEM_STDC_STRING_H
 
 /* includes */
 
@@ -37,5 +37,5 @@ void *memset(void *s, int c, size_t n);
 
 #endif /* ASSEMBLY */
 
-#endif /* LIB_STDC_STRING_H */
+#endif /* LIB_SYSTEM_STDC_STRING_H */
 

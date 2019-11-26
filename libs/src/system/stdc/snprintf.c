@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 #include <stdarg.h>
-#include "lib/stdc/stdio.h"
+#include "lib/system/stdc/stdio.h"
 
 /* defines */
 

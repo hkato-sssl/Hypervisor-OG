@@ -1,11 +1,11 @@
 /*
- * lib/stdc/stdio.h
+ * lib/system/stdc/stdio.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef LIB_STDC_STDIO_H
-#define LIB_STDC_STDIO_H
+#ifndef LIB_SYSTEM_STDC_STDIO_H
+#define LIB_SYSTEM_STDC_STDIO_H
 
 /* includes */
 
@@ -41,5 +41,5 @@ int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 
 #endif /* ASSEMBLY */
 
-#endif /* LIB_STDC_STDIO_H */
+#endif /* LIB_SYSTEM_STDC_STDIO_H */
 

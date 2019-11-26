@@ -1,13 +1,15 @@
 /*
- * lib/system.h
+ * lib/stdc/string.h
  *
- * (C) 2018 Hidekazu Kato
+ * (C) 2019 Hidekazu Kato
  */
 
-#ifndef LIB_SYSTEM_H
-#define LIB_SYSTEM_H
+#ifndef LIB_STDC_STRING_H
+#define LIB_STDC_STRING_H
 
 /* includes */
+
+#include <stddef.h>
 
 /* defines */
 
@@ -21,11 +23,13 @@ extern "C" {
 
 /* defines */
 
+/* types */
+
 /* variables */
 
 /* functions */
 
-void udelay(uint32_t usec);
+void *memset(void *s, int c, size_t n);
 
 #ifdef __cplusplus
 }
@@ -33,5 +37,5 @@ void udelay(uint32_t usec);
 
 #endif /* ASSEMBLY */
 
-#endif /* LIB_SYSTEM_H */
+#endif /* LIB_STDC_STRING_H */
 

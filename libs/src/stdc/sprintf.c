@@ -1,5 +1,5 @@
 /*
- * system/init_printk.c
+ * lib/stdc/sprintf.c
  *
  * (C) 2018 Hidekazu Kato
  */
@@ -8,8 +8,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "lib/system/spin_lock.h"
-#include "lib/system.h"
 #include "lib/log.h"
+#include "lib/stdc/stdio.h"
 
 /* defines */
 

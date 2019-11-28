@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include "lib/system.h"
 #include "lib/system/printk.h"
+#include "lib/system/stdc/stdio.h"
 #include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "gic400_local.h"
@@ -78,7 +79,7 @@ static void dump_array(struct gic400 const *gic, struct reg_type2 const list[])
         reg = list[i].reg;
         n = 0;
         for (d = 0; d < gic->nr_interrupts; d += list[i].diff) {
-            sprintf(buff, "%s%d", list[i].name, n);
+            snprintf(buff, sizeof(buff), "%s%d", list[i].name, n);
             printk(out_fmt, buff, gic400_read_dist(gic, reg));
             reg += 4;
             ++n;

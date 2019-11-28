@@ -75,6 +75,16 @@ static errno_t init_map(void)
 	ret = map((void*)0xa0001000, (void*)0xa0002000, &attr);
     }
 
+    if (ret == SUCCESS) {
+	attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+	ret = map((void*)0xf9010000, (void*)0xf9013fff, &attr);
+    }
+
+    if (ret == SUCCESS) {
+	attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+	ret = map((void*)0xf9020000, (void*)0xf9023fff, &attr);
+    }
+
     return ret;
 }
 

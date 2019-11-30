@@ -2472,11 +2472,6 @@ static inline uint64_t aarch64_read_spsel(void)
 
 /* CurrentEL */
 
-static inline void aarch64_write_currentel(uint64_t d)
-{
-    __asm volatile ("msr CurrentEL, %0" :: "r"(d) : "memory");
-}
-
 static inline uint64_t aarch64_read_currentel(void)
 {
     uint64_t d;

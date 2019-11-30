@@ -1,11 +1,11 @@
 /*
- * test/aarch64/mmu/st1/st1.h
+ * driver/test/aarch64/mmu/st1/st1.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef TEST_AARCH64_MMU_ST1_ST1_H
-#define TEST_AARCH64_MMU_ST1_ST1_H
+#ifndef DRIVER_TEST_AARCH64_MMU_ST1_ST1_H
+#define DRIVER_TEST_AARCH64_MMU_ST1_ST1_H
 
 /* includes */
 
@@ -53,5 +53,5 @@ errno_t test_aarch64_mmu_st1_init_memory_map(void);
 
 #endif /* ASSEMBLY */
 
-#endif /* TEST_AARCH64_MMU_ST1_ST1_H */
+#endif /* DRIVER_TEST_AARCH64_MMU_ST1_ST1_H */
 

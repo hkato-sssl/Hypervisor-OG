@@ -9,6 +9,8 @@
 
         .global         aarch64_lock_interrupts
         .global         aarch64_unlock_interrupts
+        .global         aarch64_disable_interrupts
+        .global         aarch64_enable_interrupts
 
         .section        ".text.aarch64_lock_interrupts", "ax", %progbits
         .type           aarch64_lock_interrupts, %function
@@ -26,6 +28,20 @@ aarch64_unlock_interrupts:
         mrs             x1,  DAIF
         bic             x2,  x1,  x0
         msr             DAIF, x2
+        ret
+
+        .section        ".text.aarch64_disable_interrupts", "ax", %progbits
+        .type           aarch64_disable_interrupts, %function
+        .balign         4
+aarch64_disable_interrupts:
+        msr             DAIFSet,  #(DAIF_I | DAIF_F)
+        ret
+
+        .section        ".text.aarch64_enable_interrupts", "ax", %progbits
+        .type           aarch64_enable_interrupts, %function
+        .balign         4
+aarch64_enable_interrupts:
+        msr             DAIFClr,  #(DAIF_I | DAIF_F)
         ret
 
         .end

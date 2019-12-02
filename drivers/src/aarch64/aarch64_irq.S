@@ -9,6 +9,8 @@
 
         .global         aarch64_lock_irq
         .global         aarch64_unlock_irq
+        .global         aarch64_disable_irq
+        .global         aarch64_enable_irq
 
         .section        ".text.aarch64_lock_irq", "ax", %progbits
         .type           aarch64_lock_irq, %function
@@ -27,6 +29,24 @@ aarch64_unlock_irq:
         msr             DAIFClr,  #DAIF_I
 0:
         ret
+
+        .section        ".text.aarch64_disable_irq", "ax", %progbits
+        .type           aarch64_disable_irq, %function
+        .balign         4
+aarch64_disable_irq:
+        msr             DAIFSet,  #DAIF_I
+        ret
+
+        .section        ".text.aarch64_enable_irq", "ax", %progbits
+        .type           aarch64_enable_irq, %function
+        .balign         4
+aarch64_enable_irq:
+        msr             DAIFClr,  #DAIF_I
+        ret
+
+
+
+
 
         .end
 

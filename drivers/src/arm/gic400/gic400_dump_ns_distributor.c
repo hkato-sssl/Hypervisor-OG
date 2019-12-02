@@ -59,13 +59,33 @@ static struct reg_type2 {
     ELEMENT_A(GICD_IPRIORITYR, 4),
     ELEMENT_A(GICD_ITARGETSR, 4),
     ELEMENT_A(GICD_ICFGR, 16),
-    ELEMENT_A(GICD_ICFGR, 16),
     { NULL, 0, 0 }      /* terminator */
 };
 
-static char const out_fmt[] = "%-16s: %08x\n";
+static char const out_fmt[] = "%-17s: %08x\n";
 
 /* functions */
+
+
+static void dump_sr(struct gic400 const *gic)
+{
+    int n;
+    uint32_t d;
+    uint32_t reg;
+    char buff[32];
+
+    d = gic400_read_dist(gic, GICD_PPISR);
+    printk(out_fmt, "GICD_PPISR", d);
+    n = 0;
+    reg = GICD_SPISR(0);
+    for (d = 32; d < gic->nr_interrupts; d += 32) {
+        snprintf(buff, sizeof(buff), "GICD_SPISR%d", n);
+        printk(out_fmt, buff, gic400_read_dist(gic, reg));
+        reg += 4;
+        ++n;
+    }
+ 
+}
 
 static void dump_array(struct gic400 const *gic, struct reg_type2 const list[])
 {
@@ -73,7 +93,7 @@ static void dump_array(struct gic400 const *gic, struct reg_type2 const list[])
     int n;
     uint32_t d;
     uint32_t reg;
-    static char buff[16];
+    static char buff[32];
 
     for (i = 0; list[i].name != NULL; ++i) {
         reg = list[i].reg;
@@ -102,6 +122,7 @@ static void dump_ns_distributor(struct gic400 const *gic)
     printk("# of interrupts: %u\n", gic->nr_interrupts);
     dump(gic, list1);
     dump_array(gic, list3);
+    dump_sr(gic);
     dump(gic, list2);
 }
 

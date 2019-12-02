@@ -11,6 +11,7 @@
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "lib/system/spin_lock.h"
+#include "lib/system.h"
 #include "lib/log.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
@@ -114,7 +115,12 @@ static errno_t init_printk(void)
 static errno_t init_exception(void)
 {
     extern char excvec_hyp[];
+    void *exc_stack_top(void);
+    void *p;
 
+    p = exc_stack_top();
+    aarch64_write_tpidr_el2((uintptr_t)p - 32);
+    aarch64_isb();
     aarch64_write_vbar_el2((uint64_t)excvec_hyp);
     aarch64_isb();
 
@@ -128,6 +134,9 @@ errno_t init_system(void)
     ret = init_printk();
     if (ret == SUCCESS) {
     	ret = init_exception();
+    }
+    if (ret == SUCCESS) {
+        ret = system_init_spin_lock(&lock);
     }
 
     return ret;

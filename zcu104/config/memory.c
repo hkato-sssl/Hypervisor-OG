@@ -6,6 +6,7 @@
 
 #include "config/system.h"
 #include <stdint.h>
+#include "lib/system.h"
 
 /* defines */
 
@@ -18,7 +19,7 @@ uint8_t exc_stack_region[CONFIG_NR_CPUS][CONFIG_EXC_STACK_SIZE] __attribute__ ((
 
 void *exc_stack_top(void)
 {
-    char *p;
+    uint8_t *p;
     uint32_t no;
 
     no = cpu_no();

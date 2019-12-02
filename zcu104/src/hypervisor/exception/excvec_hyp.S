@@ -25,12 +25,16 @@
 
         .macro          exc_entry_spx, vector
         dsb             sy
-        stp             x0, x1,  [sp, #-((NR_EXC_REGS - EXC_X0) * 8)]
+        msr             TPIDR_EL0, x2
+        mrs             x2, TPIDR_EL2
+        stp             x0, x1,  [x2, #-((NR_EXC_REGS - EXC_X0) * 8)]
         mov             x0, sp
-        stp             lr, x0,  [sp, #-((NR_EXC_REGS - EXC_LR) * 8)]
+        stp             lr, x0,  [x2, #-((NR_EXC_REGS - EXC_LR) * 8)]
         mov             x0, #\vector
         mrs             x1, ESR_EL2
-        stp             x0, x1,  [sp, #-((NR_EXC_REGS - EXC_VECTOR) * 8)]!
+        stp             x0, x1,  [x2, #-((NR_EXC_REGS - EXC_VECTOR) * 8)]!
+        mov             sp, x2
+        mrs             x2, TPIDR_EL0
         b               store_rest_registers
         .endm
 
@@ -39,6 +43,7 @@
         stp             x0, x1, [sp, #-16]!
         mov             x0, #\vector
         mrs             x1, TPIDR_EL2
+        ldr             x1, [x1]
         b               store_vpc_registers
         .endm
 
@@ -154,7 +159,6 @@ store_rest_registers:
 
         .balign         32
 store_vpc_registers:
-        mrs             x1, TPIDR_EL2
         stp             x2,  x3,  [x1, #(VPC_X2 * 8)]
         stp             x4,  x5,  [x1, #(VPC_X4 * 8)]
         stp             x6,  x7,  [x1, #(VPC_X6 * 8)]
@@ -179,23 +183,14 @@ store_vpc_registers:
         mrs             x3, SPSR_EL2
         stp             x2, x3, [x1, #(VPC_PC * 8)]
 
-	// reset SP_EL0
-
-	msr		SPSel, #0
-	adrl		x0, main_stack_region
-	mrs		x1, MPIDR_EL1
-	and		x1, x1, #0xff
-	mov		x2, #CONFIG_STACK_SIZE
-	umaddl		x3, w2, w1, x0
-        add		sp, x3, x2
-
         // disable FPU/Advanced SIMD
 
-        mrs             x1, CPTR_EL2
-        orr             x1, x1, BIT(10)         // set CPTR_EL2.TFP
-        msr             CPTR_EL2, x1
+        mrs             x2, CPTR_EL2
+        orr             x2, x2, BIT(10)         // set CPTR_EL2.TFP
+        msr             CPTR_EL2, x2
         isb
 
+        // x0 - vector offset
         bl              hyp_exception_handler
         svc             #0
 

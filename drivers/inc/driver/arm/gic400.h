@@ -32,8 +32,8 @@ extern "C" {
 /* types */
 
 struct gic400_base_register {
-    uintptr_t   *dist;      /* distributor */
-    uintptr_t   *cpuif;     /* CPU interface */
+    void    *dist;      /* distributor */
+    void    *cpuif;     /* CPU interface */
 };
 
 struct gic400_configuration {

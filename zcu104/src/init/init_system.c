@@ -38,6 +38,7 @@ static struct log_context log_ctx;
 static struct uart_lite uart;
 static struct log_ops ops = { &uart, put_char };
 static spin_lock_t lock;
+static spin_lock_t system_lock;
 
 /* functions */
 
@@ -136,7 +137,7 @@ errno_t init_system(void)
     	ret = init_exception();
     }
     if (ret == SUCCESS) {
-        ret = system_init_spin_lock(&lock);
+        ret = init_system_spin_lock(&system_lock);
     }
 
     return ret;

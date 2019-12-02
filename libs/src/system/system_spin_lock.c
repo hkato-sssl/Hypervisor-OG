@@ -22,7 +22,7 @@ static spin_lock_t *system_lock;
 
 /* functions */
 
-errno_t system_init_spin_lock(spin_lock_t *lock)
+errno_t init_system_spin_lock(spin_lock_t *lock)
 {
     errno_t ret;
 

@@ -7,6 +7,7 @@
 #include "config/system.h"
 #include "lib/asm.h"
 #include "driver/aarch64/system_register.h"
+#include "driver/aarch64/system_register/hcr_el2.h"
 
         .global         init_processor_el2
 
@@ -27,6 +28,15 @@ init_processor_el2:
         msr             SPSel, #1
         mov             x0, xzr
         mov             sp, x0
+
+        // initialize HCR_EL2
+
+        dsb		sy
+	isb
+        mrs		x0, HCR_EL2
+	orr		x1, x0, #(HCR_EL2_AMO | HCR_EL2_IMO | HCR_EL2_FMO)
+	msr		HCR_EL2, x1
+	isb
 
         // initialize SCTLR_EL2
 

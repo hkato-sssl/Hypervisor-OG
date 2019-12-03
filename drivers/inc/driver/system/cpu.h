@@ -31,7 +31,7 @@ extern "C" {
 
 /* functions */
 
-static inline uint8_t cpu_no(void)
+static inline uint32_t cpu_no(void)
 {
     return aarch64_cpu_no();
 }
@@ -45,6 +45,9 @@ static inline void cpu_unlock_interrupts(bool lock)
 {
     aarch64_unlock_interrupts(lock);
 }
+
+void cpu_disable_interrupts(void);
+void cpu_enable_interrupts(void);
 
 #ifdef __cplusplus
 }

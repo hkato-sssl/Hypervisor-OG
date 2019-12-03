@@ -79,6 +79,8 @@ errno_t test_arm_gic400_02(void)
     ret = gic400_set_level(&gic, 0xff);
     printk("gic400_set_level() -> %d\n", ret);
 
+    arm_enable_interrupts();
+
     gic400_dump_ns_cpuif(&gic);
     gic400_dump_ns_distributor(&gic);
 

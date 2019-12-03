@@ -41,7 +41,7 @@ void gic400_dump_ns_cpuif(struct gic400 const *gic)
 {
     int i;
 
-    printk("<GIC-400 cpuif#%d>\n", cpu_no);
+    printk("<GIC-400 cpuif#%d>\n", cpu_no());
 
     for (i = 0; list[i].name != NULL; ++i) {
         printk("%-12s: %08x\n", list[i].name, gic400_read_cpuif(gic, list[i].reg));

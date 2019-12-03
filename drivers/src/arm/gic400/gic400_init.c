@@ -28,22 +28,19 @@
 
 static void probe_max_priority(struct gic400 *gic)
 {
-    uint8_t level;
     uint8_t ct;
-    uint32_t d;
+    uint8_t d;
 
     gic400_write_cpuif(gic, GICC_PMR, 0xff);
-    d = gic400_read_cpuif(gic, GICC_PMR);
+    d = (uint8_t)gic400_read_cpuif(gic, GICC_PMR);
 
     ct = 0;
-    level = 0xff;
     while ((d & BIT(0)) == 0) {
         ++ct;
-        level >>= 1;
         d >>= 1;
     }
 
-    gic->priority.max = level;
+    gic->priority.max = d;
     gic->priority.shift_ct = ct;
 }
 
@@ -74,7 +71,7 @@ static void init_distributor(struct gic400 *gic)
     }
 
     for (i = 0; i < (gic->nr_interrupts / 4); ++i) {
-        gic400_write_dist(gic, GICD_IPRIORITYR(i), 0);
+        gic400_write_dist(gic, GICD_IPRIORITYR(i), ~(uint32_t)0);
     }
 
     gic400_write_dist(gic, GICD_CTLR, BITS(1, 0));
@@ -85,7 +82,7 @@ static void init_banked_distributor(struct gic400 *gic)
     gic400_write_dist(gic, GICD_ICENABLER(0), ~(uint32_t)0);
     gic400_write_dist(gic, GICD_ICPENDR(0), ~(uint32_t)0);
     gic400_write_dist(gic, GICD_ICACTIVER(0), ~(uint32_t)0);
-    gic400_write_dist(gic, GICD_IPRIORITYR(0), 0);
+    gic400_write_dist(gic, GICD_IPRIORITYR(0), ~(uint32_t)0);
 }
 
 static errno_t init(struct gic400 *gic, struct gic400_configuration const *config)

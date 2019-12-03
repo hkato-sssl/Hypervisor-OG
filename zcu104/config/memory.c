@@ -7,6 +7,7 @@
 #include "config/system.h"
 #include <stdint.h>
 #include "lib/system.h"
+#include "driver/system/cpu.h"
 
 /* defines */
 

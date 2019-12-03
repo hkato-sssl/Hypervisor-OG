@@ -68,6 +68,7 @@ static void init_distributor(struct gic400 *gic)
         gic400_write_dist(gic, GICD_ICENABLER(i), ~(uint32_t)0);
         gic400_write_dist(gic, GICD_ICPENDR(i), ~(uint32_t)0);
         gic400_write_dist(gic, GICD_ICACTIVER(i), ~(uint32_t)0);
+        gic400_write_dist(gic, GICD_IGROUPR(i), 0);
     }
 
     for (i = 0; i < (gic->nr_interrupts / 4); ++i) {
@@ -83,6 +84,7 @@ static void init_banked_distributor(struct gic400 *gic)
     gic400_write_dist(gic, GICD_ICPENDR(0), ~(uint32_t)0);
     gic400_write_dist(gic, GICD_ICACTIVER(0), ~(uint32_t)0);
     gic400_write_dist(gic, GICD_IPRIORITYR(0), ~(uint32_t)0);
+    gic400_write_dist(gic, GICD_IGROUPR(0), 0);
 }
 
 static errno_t init(struct gic400 *gic, struct gic400_configuration const *config)

@@ -34,9 +34,6 @@ void    system_spin_lock(void);
 void    system_spin_unlock(void);
 
 void udelay(uint32_t usec);
-uint32_t cpu_no(void);
-uint32_t cpu_lock_interrupts(void);
-void cpu_unlock_interrupts(uint32_t lock);
 
 #ifdef __cplusplus
 }

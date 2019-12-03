@@ -19,20 +19,20 @@
          * volatile void vpc_switch_to_el1(uint64_t *regs)
          */
 vpc_switch_to_el1:
-        // disable all interrupts, and select SP0
+        // disable all interrupts
 
         msr             DAIFSet, #(DAIF_I | DAIF_F)
-        msr             SPSel, #0
 
-        // save the address of current register array
+        // save current register array address
 
-        msr             TPIDR_EL2, x0
+        mrs             x1, TPIDR_EL2
+        str             x0, [x1]
 
         // restore special purpose registers
 
         ldp             x2, x3, [x0, #(VPC_SP_EL0 * 8)]
         ldp             x4, x5, [x0, #(VPC_PC * 8)]
-        mov             sp, x2
+        msr             SP_EL0, x2
         msr             SP_EL1, x3
         msr             ELR_EL2, x4
         msr             SPSR_EL2, x5

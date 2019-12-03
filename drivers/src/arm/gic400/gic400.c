@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
+#include "lib/system/spin_lock.h"
 #include "driver/system/cpu.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/device/gic400.h"
@@ -201,11 +202,13 @@ errno_t gic400_assert_spi(struct gic400 *gic, uint16_t intr_no)
 
 static errno_t configure(struct gic400 *gic, uint16_t intr_no, struct gic400_interrupt_configuration const *config)
 {
-    uint8_t mask;
+    uint32_t d;
 
+    write_dist_bit(gic, intr_no, GICD_ICENABLER(0));
+    sync_dist_io(gic);
     write_dist_byte(gic, intr_no, GICD_ITARGETSR(0), config->targets);
-    mask = config->priority << gic->priority.shift_ct;
-    write_dist_byte(gic, intr_no, GICD_IPRIORITYR(0), mask);
+    d = config->priority << gic->priority.shift_ct;
+    write_dist_byte(gic, intr_no, GICD_IPRIORITYR(0), d);
 
     gic->handlers[intr_no].entry = config->handler;
     gic->handlers[intr_no].arg = config->arg;
@@ -216,18 +219,12 @@ static errno_t configure(struct gic400 *gic, uint16_t intr_no, struct gic400_int
 static errno_t configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct gic400_interrupt_configuration const *config)
 {
     errno_t ret;
-    bool test;
     uint32_t lock;
 
     lock = cpu_lock_interrupts();
     spin_lock(&(gic->lock));
 
-    test = test_dist_bit(gic, intr_no, GICD_ISENABLER(0));
-    if (! test) {
-        ret = configure(gic, intr_no, config);
-    } else {
-        ret = -EPERM;
-    }
+    ret = configure(gic, intr_no, config);
 
     spin_unlock(&(gic->lock));
     cpu_unlock_interrupts(lock);

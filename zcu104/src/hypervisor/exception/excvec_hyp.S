@@ -155,7 +155,7 @@ store_rest_registers:
 
         mov             x0,  sp
         bl              exception_handler_el2
-        svc             #0
+        svc             #0xffff
 
         .balign         32
 store_vpc_registers:
@@ -192,7 +192,7 @@ store_vpc_registers:
 
         // x0 - vector offset
         bl              hyp_exception_handler
-        svc             #0
+        svc             #0xffff
 
         .end
 

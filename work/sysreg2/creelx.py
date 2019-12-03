@@ -26,6 +26,10 @@ SOURCE_MACRO = """\
         ldr             ip1, [ip0]
         br              ip1
         .endm
+
+        .macro          ILLEGAL_OP
+        svc             #0xffff
+        .endm
 """
 
 SOURCE_END = """\
@@ -49,7 +53,8 @@ aarch64_write_{lreg}:
         .quad           write_{lreg}_el1
         .quad           write_{lreg}_el2
         .quad           write_{lreg}_el3
-999:    svc             #0
+999:
+        ILLEGAL_OP
 write_{lreg}_el1:
         msr             {ureg}_EL1, x0
         ret
@@ -72,7 +77,8 @@ aarch64_read_{lreg}:
         .quad           read_{lreg}_el1
         .quad           read_{lreg}_el2
         .quad           read_{lreg}_el3
-999:    svc             #0
+999:
+        ILLEGAL_OP
 read_{lreg}_el1:
         mrs             x0, {ureg}_EL1
         ret

@@ -95,20 +95,6 @@ struct aarch64_mmu_attr {
     uint8_t     attrindx:3;
 };
 
-/* Attributes in descriptor for stage 2 translation */
-
-struct aarch64_mmu_stage2_attr {
-    /* attrinbutes in Block or Page descriptor */
-
-    /* upper attributes */
-    uint8_t     xn:1;
-    /* lower attributes */
-    uint8_t     af:1;
-    uint8_t     sh:2;
-    uint8_t     s2ap:2;
-    uint8_t     memattr:4;
-};
-
 struct aarch64_mmu_tcr_el0 {
     uint32_t        sh0:2;
     uint32_t        orgn0:2;

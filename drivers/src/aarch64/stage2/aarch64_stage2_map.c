@@ -26,7 +26,6 @@ errno_t aarch64_stage2_map(struct aarch64_stage2 *st2, void *va, void *pa, size_
     if ((st2->base.type == AARCH64_MMU_STAGE2) && (st2->base.granule == AARCH64_MMU_4KB_GRANULE)) {
         ret = aarch64_mmu_map_4KB_granule(&(st2->base), va, pa, sz, attr);
     } else {
-printk("!!\n");
         ret = -EINVAL;
     }
 

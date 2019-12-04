@@ -62,6 +62,7 @@ errno_t test_aarch64_mmu_st2_01(void)
     attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
     ret = aarch64_stage2_map(&test_st2_mmu, (void *)UART_IPA, (void *)UART_PA, 4096, &attr);
     printk("aarch64_stage2_map() -> %d\n", ret);
+    aarch64_stage2_dump_descriptor(&test_st2_mmu);
 
     printk("Done\n");
 

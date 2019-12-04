@@ -47,11 +47,11 @@ extern "C" {
 #define STAGE2_DESC_MEMATTR(n)          ((n) & 0x0fULL)
 
 #define STAGE2_SH_NSH                   0   /* Non-shareable */
-#define STAGE2_SH_NSH                   2   /* Outer Shareable */
-#define STAGE2_SH_NSH                   3   /* Inner Shareable */
+#define STAGE2_SH_OSH                   2   /* Outer Shareable */
+#define STAGE2_SH_ISH                   3   /* Inner Shareable */
 
 #define STAGE2_S2AP_NONE                0   /* None */
-#define STAGE2_S2AP_RO                  1   /* Read-only
+#define STAGE2_S2AP_RO                  1   /* Read-only */
 #define STAGE2_S2AP_WO                  2   /* Write-only */
 #define STAGE2_S2AP_RW                  3   /* Read/write */
 

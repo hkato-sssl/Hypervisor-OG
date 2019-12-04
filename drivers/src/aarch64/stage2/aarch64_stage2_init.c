@@ -1,5 +1,5 @@
 /*
- * aarch64/mmu/aarch64_mmu_stage2_init.c
+ * aarch64/stage2/aarch64_stage2_init.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -12,8 +12,8 @@
 #include "lib/system/errno.h"
 #include "driver/aarch64/system_register/vtcr_el2.h"
 #include "driver/aarch64/cache.h"
-#include "driver/aarch64/mmu_stage2.h"
-#include "mmu_stage2_local.h"
+#include "driver/aarch64/stage2.h"
+#include "stage2_local.h"
 
 /* defines */
 
@@ -24,14 +24,14 @@
 /* variables */
 
 static struct aarch64_mmu_ops const mmu_ops = {
-    (aarch64_mmu_desc_func_t)aarch64_mmu_stage2_table_descriptor,
-    (aarch64_mmu_desc_func_t)aarch64_mmu_stage2_block_descriptor,
-    (aarch64_mmu_desc_func_t)aarch64_mmu_stage2_page_descriptor
+    (aarch64_mmu_desc_func_t)aarch64_stage2_table_descriptor,
+    (aarch64_mmu_desc_func_t)aarch64_stage2_block_descriptor,
+    (aarch64_mmu_desc_func_t)aarch64_stage2_page_descriptor
 };
 
 /* functions */
 
-static uint64_t create_vtcr(struct aarch64_mmu_stage2_configuration const *config)
+static uint64_t create_vtcr(struct aarch64_stage2_configuration const *config)
 {
     uint64_t d;
 
@@ -52,7 +52,7 @@ static uint64_t create_vtcr(struct aarch64_mmu_stage2_configuration const *confi
     return d;
 }
 
-static errno_t validate_parameters(struct aarch64_mmu_stage2 *mmu, struct aarch64_mmu_stage2_configuration const *config)
+static errno_t validate_parameters(struct aarch64_stage2 *mmu, struct aarch64_stage2_configuration const *config)
 {
     errno_t ret;
 
@@ -69,7 +69,7 @@ static errno_t validate_parameters(struct aarch64_mmu_stage2 *mmu, struct aarch6
     return ret;
 }
 
-static errno_t mmu_stage2_init(struct aarch64_mmu_stage2 *mmu, struct aarch64_mmu_stage2_configuration const *config)
+static errno_t stage2_init(struct aarch64_stage2 *mmu, struct aarch64_stage2_configuration const *config)
 {
     errno_t ret;
 
@@ -93,13 +93,13 @@ static errno_t mmu_stage2_init(struct aarch64_mmu_stage2 *mmu, struct aarch64_mm
     return ret;
 }
 
-errno_t aarch64_mmu_stage2_init(struct aarch64_mmu_stage2 *mmu, struct aarch64_mmu_stage2_configuration const *config)
+errno_t aarch64_stage2_init(struct aarch64_stage2 *mmu, struct aarch64_stage2_configuration const *config)
 {
     errno_t ret;
 
     ret = validate_parameters(mmu, config);
     if (ret == SUCCESS) {
-        ret = mmu_stage2_init(mmu, config);
+        ret = stage2_init(mmu, config);
     }
 
     return ret;

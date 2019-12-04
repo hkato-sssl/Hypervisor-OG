@@ -40,11 +40,12 @@ extern "C" {
  */
 
 #define STAGE2_DESC_XN                  BIT(54)
+#define STAGE2_DESC_CONTIGUOUS          BIT(52)
 
 #define STAGE2_DESC_AF                  BIT(10)
 #define STAGE2_DESC_SH(n)               (((n) & 3ULL) << 8)
 #define STAGE2_DESC_S2AP(n)             (((n) & 3ULL) << 6)
-#define STAGE2_DESC_MEMATTR(n)          ((n) & 0x0fULL)
+#define STAGE2_DESC_MEMATTR(n)          (((n) & 0x0fULL) << 2)
 
 #define STAGE2_SH_NSH                   0   /* Non-shareable */
 #define STAGE2_SH_OSH                   2   /* Outer Shareable */
@@ -120,7 +121,7 @@ errno_t aarch64_stage2_map(struct aarch64_stage2 *st2, void *ipa, void *pa, size
 
 /* for debugging */
 
-void aarch64_stage2_dump_descriptor(struct aarch64_stage2 const *mmu);
+void aarch64_stage2_dump_descriptor(struct aarch64_stage2 const *st2);
 
 #ifdef __cplusplus
 }

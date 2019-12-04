@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 #include "lib/system/errno.h"
-#include "driver/aarch64/mmu_stage2.h"
+#include "driver/aarch64/stage2.h"
 
 /* defines */
 

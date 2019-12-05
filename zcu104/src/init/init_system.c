@@ -16,6 +16,7 @@
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/xilinx/axi/uart_lite.h"
+#include "hypervisor/tls.h"
 
 /* defines */
 
@@ -113,6 +114,23 @@ static errno_t init_printk(void)
     return ret;
 }
 
+static errno_t init_tls(void)
+{
+    char *p;
+    uintptr_t *tls;
+
+    void *exc_stack_top(void);
+
+    p = exc_stack_top();
+    p -= TLS_SIZE;
+    memset(p, 0, TLS_SIZE);
+
+    tls = (uintptr_t *)p;
+    tls[TLS_EXCEPTION_SP] = (uintptr_t)p;
+
+    return SUCCESS;
+}
+
 static errno_t init_exception(void)
 {
     extern char excvec_hyp[];
@@ -120,7 +138,7 @@ static errno_t init_exception(void)
     void *p;
 
     p = exc_stack_top();
-    aarch64_write_tpidr_el2((uintptr_t)p - 32);
+    aarch64_write_tpidr_el2((uintptr_t)p - TLS_SIZE);
     aarch64_isb();
     aarch64_write_vbar_el2((uint64_t)excvec_hyp);
     aarch64_isb();
@@ -138,6 +156,9 @@ errno_t init_system(void)
     }
     if (ret == SUCCESS) {
         ret = init_system_spin_lock(&system_lock);
+    }
+    if (ret == SUCCESS) {
+        ret = init_tls();
     }
 
     return ret;

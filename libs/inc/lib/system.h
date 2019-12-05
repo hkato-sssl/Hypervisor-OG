@@ -25,13 +25,19 @@ extern "C" {
 
 /* defines */
 
+#define SYSTEM_FAILURE()        system_assert(__func__, __LINE__)
+
 /* variables */
 
 /* functions */
 
 errno_t init_system_spin_lock(spin_lock_t *lock);
-void    system_spin_lock(void);
-void    system_spin_unlock(void);
+void system_spin_lock(void);
+void system_spin_unlock(void);
+static inline void system_failure(void *func, uint32_t line, ...)
+{
+    __asm volatile ("svc #0xfffe");
+}
 
 void udelay(uint32_t usec);
 

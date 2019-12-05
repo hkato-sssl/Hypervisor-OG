@@ -8,6 +8,7 @@
 #include "lib/asm.h"
 #include "lib/bit.h"
 #include "driver/aarch64/exception.h"
+#include "hypervisor/tls.h"
 #include "hypervisor/vpc_register.h"
 
         .extern         hyp_exception_handler
@@ -27,6 +28,7 @@
         dsb             sy
         msr             TPIDR_EL0, x2
         mrs             x2, TPIDR_EL2
+        ldr             x2, [x2, #TLS_EXCEPTION_SP * 8]
         stp             x0, x1,  [x2, #-((NR_EXC_REGS - EXC_X0) * 8)]
         mov             x0, sp
         stp             lr, x0,  [x2, #-((NR_EXC_REGS - EXC_LR) * 8)]
@@ -190,9 +192,29 @@ store_vpc_registers:
         msr             CPTR_EL2, x2
         isb
 
-        // x0 - vector offset
-        bl              hyp_exception_handler
-        svc             #0xffff
+        // restore the hypervisor context
+
+        ldp             x0,  x1,  [sp], #16
+        ldp             x2,  x3,  [sp], #16
+        ldp             x4,  x5,  [sp], #16
+        ldp             x6,  x7,  [sp], #16
+        ldp             x8,  x9,  [sp], #16
+        ldp             x10, x11, [sp], #16
+        ldp             x12, x13, [sp], #16
+        ldp             x14, x15, [sp], #16
+        ldp             x16, x17, [sp], #16
+        ldp             x18, x19, [sp], #16
+        ldp             x20, x21, [sp], #16
+        ldp             x22, x23, [sp], #16
+        ldp             x24, x25, [sp], #16
+        ldp             x26, x27, [sp], #16
+        ldp             x28, x29, [sp], #16
+        ldr             lr,  [sp], #16
+
+        // return from vpc_launch() or vpc_resume()
+
+	mov		x0, xzr
+        ret
 
         .end
 

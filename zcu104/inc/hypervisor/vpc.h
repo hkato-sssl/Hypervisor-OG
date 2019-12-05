@@ -53,15 +53,15 @@ struct vpc {
     uint64_t    *regs;
     struct {
     bool        launched;
-    } flag;
+    } boolean;
 };
 
 /* variables */
 
 /* functions */
 
-volatile void vpc_launch(struct vpc *vpc);
-volatile void vpc_resume(struct vpc *vpc);
+errno_t vpc_launch(struct vpc *vpc);
+errno_t vpc_resume(struct vpc *vpc);
 
 void vpc_load_ctx_fpu(uint64_t *regs);
 void vpc_store_ctx_fpu(uint64_t *regs);

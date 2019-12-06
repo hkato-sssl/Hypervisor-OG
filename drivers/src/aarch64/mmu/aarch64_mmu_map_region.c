@@ -41,7 +41,7 @@ static uint32_t desc_index(void *va, uint32_t level)
     return index;
 }
 
-uint64_t *new_table(struct aarch64_mmu_base *mmu, void const *attr, uint64_t *previous)
+static uint64_t *new_table(struct aarch64_mmu_base *mmu, void const *attr, uint64_t *previous)
 {
     void *table;
     uint64_t d;
@@ -56,7 +56,7 @@ uint64_t *new_table(struct aarch64_mmu_base *mmu, void const *attr, uint64_t *pr
     return table;
 }
 
-uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, void const *attr, uint32_t level)
+static uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, void const *attr, uint32_t level)
 {
     uint32_t i;
     uint64_t d;
@@ -82,7 +82,7 @@ uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, void const *attr, u
     return table;
 }
 
-uint64_t *desc_addr(struct aarch64_mmu_base *mmu, void *va, void const *attr, uint32_t level)
+static uint64_t *desc_addr(struct aarch64_mmu_base *mmu, void *va, void const *attr, uint32_t level)
 {
     uint64_t *table;
     uint64_t *desc;

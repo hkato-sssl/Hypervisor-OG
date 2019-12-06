@@ -49,7 +49,6 @@ static uint64_t *new_table(struct aarch64_mmu_base *mmu, void const *attr, uint6
     table = aarch64_mmu_block_calloc(mmu->pool, MEM_4KB);
     if (table != NULL) {
         d = (mmu->ops->table_descriptor)(table, attr);
-        d |= (uint64_t)table;
         aarch64_mmu_write_descriptor(previous, d);
     }
 

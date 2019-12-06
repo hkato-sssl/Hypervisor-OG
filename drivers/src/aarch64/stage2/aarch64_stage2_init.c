@@ -31,7 +31,7 @@ static struct aarch64_mmu_ops const mmu_ops = {
 
 /* functions */
 
-static uint64_t create_vtcr(struct aarch64_stage2_configuration const *config)
+static uint64_t generate_vtcr(struct aarch64_stage2_configuration const *config)
 {
     uint64_t d;
 
@@ -81,7 +81,7 @@ static errno_t stage2_init(struct aarch64_stage2 *mmu, struct aarch64_stage2_con
     mmu->base.ops = &mmu_ops;
     mmu->base.pool = config->base.pool;
     mmu->vmid = config->vmid;
-    mmu->vtcr_el2 = create_vtcr(config);
+    mmu->vtcr_el2 = generate_vtcr(config);
 
     mmu->base.addr = aarch64_mmu_block_calloc(mmu->base.pool, MMU_BLOCK_SZ);
     if (mmu->base.addr != NULL) {

@@ -30,13 +30,19 @@ static uint64_t *next_table_addr(uint64_t desc)
     return addr;
 }
 
-static uint32_t desc_index(void *va, uint32_t level)
+static uint32_t desc_index(struct aarch64_mmu_base *mmu, void *va, uint32_t level)
 {
     uint32_t index;
     uint32_t lsb;
+    uint32_t msb;
 
     lsb = (3 - level) * 9 + 12;
-    index = (uint32_t)BF_EXTRACT((uintptr_t)va, (lsb + 8), lsb);
+    if ((mmu->start_level > 0) && (mmu->start_level == level)) {
+        msb = lsb + 8 + 4;
+    } else {
+        msb = lsb + 8;
+    }
+    index = (uint32_t)BF_EXTRACT((uintptr_t)va, msb, lsb);
 
     return index;
 }
@@ -63,8 +69,8 @@ static uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, void const *
     uint64_t *next;
 
     table = mmu->addr;
-    for (i = 1; ((table != NULL) && (i <= level)); ++i) {
-        next = table + desc_index(va, (i - 1));
+    for (i = mmu->start_level + 1; ((table != NULL) && (i <= level)); ++i) {
+        next = table + desc_index(mmu, va, (i - 1));
         d = *next;
         if ((d & BIT(0)) == 0) {
             /* invalid descriptor */
@@ -88,7 +94,7 @@ static uint64_t *desc_addr(struct aarch64_mmu_base *mmu, void *va, void const *a
 
     table = table_addr(mmu, va, attr, level);
     if (table != NULL) {
-        desc = table + desc_index(va, level);
+        desc = table + desc_index(mmu, va, level);
     } else {
         desc = NULL;
     }

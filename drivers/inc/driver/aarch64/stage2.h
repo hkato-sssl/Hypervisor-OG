@@ -47,6 +47,18 @@ extern "C" {
 #define STAGE2_DESC_S2AP(n)             (((n) & 3ULL) << 6)
 #define STAGE2_DESC_MEMATTR(n)          (((n) & 0x0fULL) << 2)
 
+#define STAGE2_PA_RANGE_32BITS          0
+#define STAGE2_PA_RANGE_36BITS          1
+#define STAGE2_PA_RANGE_40BITS          2
+#define STAGE2_PA_RANGE_42BITS          3
+#define STAGE2_PA_RANGE_44BITS          4
+#define STAGE2_PA_RANGE_48BITS          5
+
+#define STAGE2_RGN_NORMAL_NC            0
+#define STAGE2_RGN_NORMAL_WBWA          1
+#define STAGE2_RGN_NORMAL_WT            2
+#define STAGE2_RGN_NORMAL_WB            3
+
 #define STAGE2_SH_NSH                   0   /* Non-shareable */
 #define STAGE2_SH_OSH                   2   /* Outer Shareable */
 #define STAGE2_SH_ISH                   3   /* Inner Shareable */
@@ -89,27 +101,30 @@ struct aarch64_stage2_attr {
     uint8_t     memattr:4;
 };
 
-struct aarch64_stage2_vtcr_el2 {
-    uint32_t    ps:3;
-    uint32_t    sh0:2;
-    uint32_t    orgn0:2;
-    uint32_t    irgn0:2;
-    uint32_t    t0sz:6;
-};
-
 struct aarch64_stage2 {
     struct aarch64_mmu_base base;
 
     uint16_t    vmid;
+    uint8_t     pa_width;
+    uint8_t     start_level;
     uint64_t    vtcr_el2;
+};
+
+struct aarch64_stage2_vtcr {
 };
 
 struct aarch64_stage2_configuration {
     struct aarch64_mmu_base_configuration base;
 
-    uint16_t    vmid;
+    uint16_t        vmid;
+    void            *first_table;
 
-    struct aarch64_stage2_vtcr_el2 vtcr_el2;
+    uint8_t         pa_range;
+    uint8_t         start_level;
+
+    uint32_t        sh:2;
+    uint32_t        orgn:2;
+    uint32_t        irgn:2;
 };
 
 /* variables */
@@ -118,11 +133,26 @@ struct aarch64_stage2_configuration {
 
 errno_t aarch64_stage2_init(struct aarch64_stage2 *st2, struct aarch64_stage2_configuration const *config);
 errno_t aarch64_stage2_map(struct aarch64_stage2 *st2, void *ipa, void *pa, size_t sz, struct aarch64_stage2_attr const *attr);
-errno_t aarch64_stage2_activate(struct aarch64_stage2 *st2);
 
 /* for debugging */
 
 void aarch64_stage2_dump_descriptor(struct aarch64_stage2 const *st2);
+
+/* inline functions */
+
+static inline uint64_t aarch64_stage2_vttbr_el2(struct aarch64_stage2 const *st2)
+{
+    uint64_t d;
+
+    d = ((uint64_t)(st2->vmid) << 48) | (uint64_t)(st2->base.addr);
+
+    return d;
+}
+
+static inline uint64_t aarch64_stage2_vtcr_el2(struct aarch64_stage2 const *st2)
+{
+    return st2->vtcr_el2;
+}
 
 #ifdef __cplusplus
 }

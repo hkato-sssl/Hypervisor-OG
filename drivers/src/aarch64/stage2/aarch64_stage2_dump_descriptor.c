@@ -14,17 +14,17 @@
 
 /* prototypes */
 
-static void dump_table(struct aarch64_mmu_base const *stage2, uint64_t *p, int level);
+static void dump_table(struct aarch64_stage2 const *stage2, uint64_t *p, int level);
 
 /* variables */
 
 /* functions */
 
-static void indent(int level)
+static void indent(struct aarch64_stage2 const *stage2, int level)
 {
     int i;
 
-    for (i = 0; i < level; ++i) {
+    for (i = stage2->start_level; i < level; ++i) {
         printk("   ");
     }
 }
@@ -38,17 +38,6 @@ static void dump_2bits(uint64_t desc)
     buff[2] = 'b';
     buff[3] = '\0';
     printk(buff);
-}
-
-static void dump_invalid_desc(uint64_t desc, int level, int index, int invalid_ct)
-{
-    if (invalid_ct == 0) {
-        indent(level);
-        printk("%03x:%016llx\n", index, desc);
-    } else if (invalid_ct == 1) {
-        indent(level);
-        printk("    ........\n");
-    }
 }
 
 static void dump_block_page_attr(uint64_t desc)
@@ -69,72 +58,90 @@ static void dump_block_page_attr(uint64_t desc)
     printk(", MemAttr=%x\n", BF_EXTRACT(desc, 4, 2));
 }
 
-static void dump_block_desc(uint64_t desc, int level, int index)
+static void dump_block_desc(struct aarch64_stage2 const *stage2, uint64_t desc, int level)
 {
     uint64_t out;
 
     out = desc & BITS(47, 12);
 
-    indent(level);
-    printk("%03x:%016llx: OutAddr=%016llx", index, desc, out);
+    printk("%016llx: OutAddr=%016llx", desc, out);
     dump_block_page_attr(desc);
 }
 
-static void dump_table_desc(struct aarch64_mmu_base const *stage2, uint64_t desc, int level, int index)
+static void dump_table_desc(struct aarch64_stage2 const *stage2, uint64_t desc, int level)
 {
     uint64_t next;
 
     next = desc & BITS(47, 12);
-    indent(level);
-    printk("%03x:%016llx Next-level=%016llx", index, desc, next);
+    printk("%016llx Next-level=%016llx", desc, next);
     printk("\n");
     dump_table(stage2, (uint64_t*)next, (level + 1));
 }
 
-static void dump_page_desc(uint64_t desc, int level, int index)
+static void dump_page_desc(struct aarch64_stage2 const *stage2, uint64_t desc, int level)
 {
     uint64_t out;
 
     out = desc & BITS(47, 12);
-    indent(level);
-    printk("%03x:%016x: OutAddr=%016x", index, desc, out);
+    printk("%016x: OutAddr=%016x", desc, out);
     dump_block_page_attr(desc);
 }
 
-static void dump_reserved_desc(uint64_t desc, int level, int index)
+static void dump_reserved_desc(struct aarch64_stage2 const *stage2, uint64_t desc, int level)
 {
-    indent(level);
-    printk("%03x:%016x: reserved\n", index, desc);
+    printk("%016x: reserved\n", desc);
 }
 
-static void dump_table(struct aarch64_mmu_base const *stage2, uint64_t *p, int level)
+static void dump_table(struct aarch64_stage2 const *stage2, uint64_t *p, int level)
 {
     int i;
+    int n;
     int invalid;
+    char const *fmt;
     uint64_t desc;
 
+    if (stage2->start_level == level) {
+        n = 1 << (stage2->pa_width - ((3 - level) * 9 + 12));
+    } else {
+        n = 512;
+    }
+
+    fmt = (n > 512) ? "%04x:" : "%03x:";
+
     invalid = 0;
-    for (i = 0; i < 512; ++i) {
+    for (i = 0; i < n; ++i) {
         desc = p[i];
         switch (desc & 3) {
         case 0:
         case 2:
-            dump_invalid_desc(desc, level, i, invalid);
+            if (invalid == 0) {
+                indent(stage2, level);
+                printk(fmt, i);
+                printk("%016llx\n", desc);
+            } else if (invalid == 1) {
+                indent(stage2, level);
+                printk(fmt, i);
+                printk("....\n");
+            }
             ++invalid;
             break;
         case 1:
+            indent(stage2, level);
+            printk(fmt, i);
             if (level < 3) {
-                dump_block_desc(desc, level, i);
+                dump_block_desc(stage2, desc, level);
             } else {
-                dump_reserved_desc(desc, level, i);
+                dump_reserved_desc(stage2, desc, level);
             }
             invalid = 0;
             break;
         case 3:
+            indent(stage2, level);
+            printk(fmt, i);
             if (level < 3) {
-                dump_table_desc(stage2, desc, level, i);
+                dump_table_desc(stage2, desc, level);
             } else {
-                dump_page_desc(desc, level, i);
+                dump_page_desc(stage2, desc, level);
             }
             invalid = 0;
             break;
@@ -144,12 +151,16 @@ static void dump_table(struct aarch64_mmu_base const *stage2, uint64_t *p, int l
 
 void aarch64_stage2_dump_descriptor(struct aarch64_stage2 const *stage2)
 {
-    uint64_t *p;
+    uint64_t d;
 
-    p = stage2->base.addr;
-    printk("<VTTBR_EL2:%016llx>\n", p);
+    printk("<%s>\n", __func__);
+    d = aarch64_stage2_vttbr_el2(stage2);
+    printk("  VTTBR_EL2:%016llx\n", d);
+    d = aarch64_stage2_vtcr_el2(stage2);
+    printk("   VTCR_EL2:%016llx\n", d);
+    printk("Start level: %u\n", stage2->start_level);
     if (stage2->base.granule == AARCH64_MMU_4KB_GRANULE) {
-        dump_table(&(stage2->base), p, 0);
+        dump_table(stage2, stage2->base.addr, stage2->start_level);
     }
 }
 

@@ -92,6 +92,7 @@ struct aarch64_mmu_base {
     bool                            active;
     enum aarch64_mmu_type           type;
     enum aarch64_mmu_granule        granule;
+    uint8_t                         start_level;
     uint64_t                        *addr;
     struct aarch64_mmu_block_pool   *pool;
     struct aarch64_mmu_ops const    *ops;

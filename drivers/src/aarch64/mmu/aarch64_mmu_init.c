@@ -143,6 +143,7 @@ static errno_t mmu_init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuratio
     mmu->base.granule = config->base.granule;
     mmu->base.pool = config->base.pool;
     mmu->base.ops = &mmu_ops;
+    mmu->base.start_level = 0;
     mmu->asid = config->asid;
     mmu->mair = config->mair;
     if (mmu->base.type == AARCH64_MMU_EL0) {

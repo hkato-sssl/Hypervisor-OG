@@ -48,21 +48,18 @@ static errno_t init_pool(void)
 static errno_t init(void)
 {
     errno_t ret;
-    uint64_t pa_range;
     struct aarch64_stage2_configuration config;
-
-    pa_range = aarch64_read_id_aa64mmfr0_el1() & BITS(3, 0);
 
     memset(&config, 0, sizeof(config));
     config.base.type = AARCH64_MMU_STAGE2;
     config.base.granule = AARCH64_MMU_4KB_GRANULE;
     config.base.pool = &pool;
     config.vmid = 1;
-    config.vtcr_el2.ps = pa_range;
-    config.vtcr_el2.sh0 = VTCR_SH_ISH;
-    config.vtcr_el2.orgn0 = VTCR_RGN_WBWA;
-    config.vtcr_el2.irgn0 = VTCR_RGN_WBWA;
-    config.vtcr_el2.t0sz = 16;
+    config.pa_range = STAGE2_PA_RANGE_40BITS;
+    config.start_level = 0;
+    config.sh = STAGE2_SH_ISH;
+    config.orgn = STAGE2_RGN_NORMAL_WBWA;
+    config.irgn = STAGE2_RGN_NORMAL_WBWA;
 
     ret = init_pool();
     if (ret == SUCCESS) {

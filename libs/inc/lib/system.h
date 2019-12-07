@@ -25,7 +25,7 @@ extern "C" {
 
 /* defines */
 
-#define SYSTEM_FAILURE()        system_assert(__func__, __LINE__)
+#define SYSTEM_FAILURE(msg)	system_failure(__func__, __LINE__, msg)
 
 /* variables */
 
@@ -34,7 +34,7 @@ extern "C" {
 errno_t init_system_spin_lock(spin_lock_t *lock);
 void system_spin_lock(void);
 void system_spin_unlock(void);
-static inline void system_failure(void *func, uint32_t line, ...)
+static inline volatile void system_failure(char const *func, uint32_t line, char const *msg)
 {
     __asm volatile ("svc #0xfffe");
 }

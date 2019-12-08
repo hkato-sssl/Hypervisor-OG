@@ -24,7 +24,7 @@ static void indent(struct aarch64_stage2 const *stage2, int level)
 {
     int i;
 
-    for (i = stage2->start_level; i < level; ++i) {
+    for (i = stage2->base.start_level; i < level; ++i) {
         printk("   ");
     }
 }
@@ -100,7 +100,7 @@ static void dump_table(struct aarch64_stage2 const *stage2, uint64_t *p, int lev
     char const *fmt;
     uint64_t desc;
 
-    if (stage2->start_level == level) {
+    if (stage2->base.start_level == level) {
         n = 1 << (stage2->pa_width - ((3 - level) * 9 + 12));
     } else {
         n = 512;
@@ -158,9 +158,9 @@ void aarch64_stage2_dump_descriptor(struct aarch64_stage2 const *stage2)
     printk("  VTTBR_EL2:%016llx\n", d);
     d = aarch64_stage2_vtcr_el2(stage2);
     printk("   VTCR_EL2:%016llx\n", d);
-    printk("Start level: %u\n", stage2->start_level);
+    printk("Start level: %u\n", stage2->base.start_level);
     if (stage2->base.granule == AARCH64_MMU_4KB_GRANULE) {
-        dump_table(stage2, stage2->base.addr, stage2->start_level);
+        dump_table(stage2, stage2->base.addr, stage2->base.start_level);
     }
 }
 

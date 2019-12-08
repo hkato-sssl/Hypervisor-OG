@@ -22,7 +22,7 @@ uint64_t aarch64_stage2_table_descriptor(void *pa, struct aarch64_stage2_attr co
 {
     uint64_t desc;
 
-    desc = MMU_DESC_TABLE;
+    desc = (uint64_t)pa | MMU_DESC_TABLE;
 
     return desc;
 }

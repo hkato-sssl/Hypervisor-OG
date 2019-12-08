@@ -106,7 +106,6 @@ struct aarch64_stage2 {
 
     uint16_t    vmid;
     uint8_t     pa_width;
-    uint8_t     start_level;
     uint64_t    vtcr_el2;
 };
 

@@ -141,9 +141,9 @@ static errno_t stage2_init(struct aarch64_stage2 *mmu, struct aarch64_stage2_con
     mmu->base.granule = config->base.granule;
     mmu->base.ops = &mmu_ops;
     mmu->base.pool = config->base.pool;
+    mmu->base.start_level = config->start_level;
     mmu->vmid = config->vmid;
     mmu->pa_width = pa_width(config);
-    mmu->start_level = config->start_level;
     mmu->vtcr_el2 = generate_vtcr_el2(config);
 
     if (config->first_table != NULL) {

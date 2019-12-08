@@ -30,6 +30,7 @@ static errno_t launch(struct vpc *vpc)
 
     tls_write(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
     tls_write(TLS_CURRENT_VPC, (uint64_t)vpc);
+    tls_write(TLS_CURRENT_VM, (uint64_t)(vpc->owner));
 
     vpc->boolean.launched = true;
     vpc_load_ctx_system_register(vpc->regs);

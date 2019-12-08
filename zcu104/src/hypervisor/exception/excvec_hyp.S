@@ -7,6 +7,7 @@
 #include "config/system.h"
 #include "lib/asm.h"
 #include "lib/bit.h"
+#include "lib/system/errno.h"
 #include "driver/aarch64/exception.h"
 #include "hypervisor/tls.h"
 #include "hypervisor/vpc_register.h"
@@ -45,7 +46,7 @@
         stp             x0, x1, [sp, #-16]!
         mov             x0, #\vector
         mrs             x1, TPIDR_EL2
-        ldr             x1, [x1]
+        ldr             x1, [x1, #(TLS_CURRENT_VPC_REGS * 8)]
         b               store_vpc_registers
         .endm
 
@@ -213,7 +214,7 @@ store_vpc_registers:
 
         // return from vpc_launch() or vpc_resume()
 
-	mov		x0, xzr
+	mov		x0, #SUCCESS
         ret
 
         .end

@@ -33,7 +33,7 @@ struct vm;
 
 enum vpc_arch { VPC_AARCH32, VPC_AARCH64 };
 
-struct vpc_config {
+struct vpc_configuration {
     struct vm       *owner;
     uint64_t        *regs;
 
@@ -49,10 +49,11 @@ struct vpc_config {
 };
 
 struct vpc {
-    struct vm   *owner;
-    uint64_t    *regs;
+    struct vm       *owner;
+    uint64_t        *regs;
+    uint8_t         proc_no;    // processor No.
     struct {
-    bool        launched;
+        bool        launched;
     } boolean;
 };
 
@@ -68,7 +69,16 @@ void vpc_store_ctx_fpu(uint64_t *regs);
 void vpc_load_ctx_system_register(uint64_t *regs);
 void vpc_store_ctx_system_register(uint64_t *regs);
 
-errno_t vpc_configure(struct vpc *vpc, const struct vpc_config *config);
+errno_t vpc_configure(struct vpc *vpc, const struct vpc_configuration *config);
+
+/* for debugging */
+
+void vpc_dump(struct vpc const *vpc, unsigned int level);
+
+static inline void vpc_simple_dump(struct vpc const *vpc)
+{
+    vpc_dump(vpc, 0);
+}
 
 #ifdef __cplusplus
 }

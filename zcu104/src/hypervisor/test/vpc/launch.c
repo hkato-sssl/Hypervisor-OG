@@ -21,7 +21,7 @@ void test_vpc_launch_entry(void);
 /* variables */
 
 static struct vpc vpc;
-static struct vpc_config config;
+static struct vpc_configuration config;
 static uint64_t register_array[NR_VPC_REGS];
 
 /* functions */

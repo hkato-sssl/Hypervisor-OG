@@ -40,6 +40,7 @@
 #define VPC_X28                 28
 #define VPC_X29                 29
 #define VPC_X30                 30
+#define VPC_LR                  VPC_X30
 #define VPC_SP_EL0              31
 #define VPC_SP_EL1              32
 #define VPC_PC                  33

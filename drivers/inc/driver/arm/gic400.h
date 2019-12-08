@@ -50,10 +50,6 @@ struct gic400 {
         uint8_t         shift_ct;
     } priority;
     uint16_t            nr_interrupts;
-    struct {
-        gic400_handler_t    entry;
-        void                *arg;
-    } handlers[NR_GIC400_INTERRUPTS];
 };
 
 struct gic400_interrupt_configuration {
@@ -63,9 +59,6 @@ struct gic400_interrupt_configuration {
         uint8_t         group1:1;
         uint8_t         edge:1;
     } flag;
-
-    gic400_handler_t    handler;
-    void                *arg;
 };
 
 /* variables */
@@ -83,8 +76,6 @@ errno_t gic400_set_level(struct gic400 *gic, uint32_t level);
 errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_disable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct gic400_interrupt_configuration const *config);
-errno_t gic400_register_handler(struct gic400 *gic, uint16_t intr_no, gic400_handler_t handler, void *arg);
-intptr_t gic400_call_handler(struct gic400 *gic);
 
 /* for debugging */
 

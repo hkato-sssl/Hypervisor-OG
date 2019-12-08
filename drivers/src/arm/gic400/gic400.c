@@ -69,26 +69,6 @@ errno_t gic400_write_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg
     return ret;
 }
 
-static bool test_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg0)
-{
-    bool ret;
-    uint32_t d;
-    uint32_t reg;
-    uint32_t bit;
-
-    bit = 1UL << (bit_no & 31);
-    reg = reg0 + (bit_no / 32) * sizeof(uint32_t);
-
-    d = gic400_read_dist(gic, reg);
-    if ((d & bit) != 0) {
-        ret = true;
-    } else {
-        ret = false;
-    }
-
-    return ret;
-}
-
 static void write_dist_byte(struct gic400 *gic, uint16_t byte_no, uintptr_t reg0, uint8_t byte_data)
 {
     uint32_t d;
@@ -210,9 +190,6 @@ static errno_t configure(struct gic400 *gic, uint16_t intr_no, struct gic400_int
     d = config->priority << gic->priority.shift_ct;
     write_dist_byte(gic, intr_no, GICD_IPRIORITYR(0), d);
 
-    gic->handlers[intr_no].entry = config->handler;
-    gic->handlers[intr_no].arg = config->arg;
-
     return SUCCESS;
 }
 
@@ -258,39 +235,3 @@ errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct 
     return ret;
 }
 
-static errno_t register_handler(struct gic400 *gic, uint16_t intr_no, gic400_handler_t handler, void *arg)
-{
-    errno_t ret;
-    bool test;
-    uint32_t lock;
-
-    lock = cpu_lock_interrupts();
-    spin_lock(&(gic->lock));
-
-    test = test_dist_bit(gic, intr_no, GICD_ISENABLER(0));
-    if (test == false) {
-        gic->handlers[intr_no].entry = handler;
-        gic->handlers[intr_no].arg = arg;
-        ret = SUCCESS;
-    } else {
-        ret = -EPERM;
-    }
-
-    spin_unlock(&(gic->lock));
-    cpu_unlock_interrupts(lock);
-
-    return ret;
-}
-
-errno_t gic400_register_handler(struct gic400 *gic, uint16_t intr_no, gic400_handler_t handler, void *arg)
-{
-    errno_t ret;
-
-    if (is_valid_parameter(gic, intr_no)) {
-        ret = register_handler(gic, intr_no, handler, arg);
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}

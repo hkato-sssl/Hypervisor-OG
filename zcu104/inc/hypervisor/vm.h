@@ -22,6 +22,7 @@ extern "C" {
 #include "config/system.h"
 #include <stdint.h>
 #include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 #include "driver/aarch64/stage2.h"
 #include "hypervisor/vpc.h"
 
@@ -30,8 +31,9 @@ extern "C" {
 /* types */
 
 struct vm {
+    spin_lock_t             lock;
     uint32_t                nr_vpcs;
-    struct vpc              vpc[CONFIG_NR_CPUS];
+    struct vpc              *vpc;
     struct aarch64_stage2   *stage2;
 };
 

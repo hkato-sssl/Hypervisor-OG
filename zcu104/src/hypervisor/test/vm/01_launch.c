@@ -103,7 +103,7 @@ void test_vm_01_launch(void)
         ret = vpc_launch(&(vm.vpc[0]));
         printk("vpc_launch() -> %d\n", ret);
         printk("\n");
-        vpc_simple_dump(&vm.vpc[0]);
+        vpc_dump(&vm.vpc[0], 0);
         printk("VTTBR_EL2: 0x%016llx\n", aarch64_read_vttbr_el2());
         printk(" VTCR_EL2: 0x%016llx\n", aarch64_read_vtcr_el2());
         printk("\n");

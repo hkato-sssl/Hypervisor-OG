@@ -24,6 +24,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 #include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 
 /* defines */
 
@@ -32,6 +33,16 @@ extern "C" {
 struct vm;
 
 enum vpc_arch { VPC_AARCH32, VPC_AARCH64 };
+
+struct vpc {
+    spin_lock_t     lock;
+    struct vm       *owner;
+    uint64_t        *regs;
+    uint8_t         proc_no;    // processor No.
+    struct {
+        bool        launched;
+    } boolean;
+};
 
 struct vpc_configuration {
     struct vm       *owner;
@@ -46,15 +57,6 @@ struct vpc_configuration {
         uint64_t    pc;
         uint64_t    sp;
     } gpr;
-};
-
-struct vpc {
-    struct vm       *owner;
-    uint64_t        *regs;
-    uint8_t         proc_no;    // processor No.
-    struct {
-        bool        launched;
-    } boolean;
 };
 
 /* variables */
@@ -74,11 +76,6 @@ errno_t vpc_configure(struct vpc *vpc, const struct vpc_configuration *config);
 /* for debugging */
 
 void vpc_dump(struct vpc const *vpc, unsigned int level);
-
-static inline void vpc_simple_dump(struct vpc const *vpc)
-{
-    vpc_dump(vpc, 0);
-}
 
 #ifdef __cplusplus
 }

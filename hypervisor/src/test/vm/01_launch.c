@@ -76,9 +76,6 @@ static errno_t init_vm(void)
     config.vpcs.size = sizeof(vpcs);
     config.regs.addr = regs[0];
     config.regs.size = sizeof(regs);
-    config.boot.arch = VPC_ARCH_AARCH64;
-    config.boot.pc = (uint64_t)test_vm_launch_guest_start;
-    config.boot.sp = 0;
     config.stage2 = &hyp_test_stage2;
     ret = vm_configure(&vm, &config);
 

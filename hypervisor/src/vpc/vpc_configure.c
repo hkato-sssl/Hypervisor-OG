@@ -16,8 +16,6 @@
 
 /* defines */
 
-#define	DEFAULT_SCTLR_EL1   (SCTLR_nTWE | SCTLR_nTWI | SCTLR_CP15BEN | SCTLR_SA0 | SCTLR_SA)
-
 /* types */
 
 /* prototypes */
@@ -43,11 +41,7 @@ static bool is_valid_parameter(struct vpc *vpc, const struct vpc_configuration *
     bool ret;
 
     if ((vpc != NULL) && (config != NULL) && (config->owner != NULL) && (config->regs != NULL)) {
-        if ((config->arch == VPC_ARCH_AARCH32) || (config->arch == VPC_ARCH_AARCH64)) {
-            ret = true;
-        } else {
-            ret = false;
-        }
+        ret = true;
     } else {
         ret = false;
     }
@@ -58,8 +52,6 @@ static bool is_valid_parameter(struct vpc *vpc, const struct vpc_configuration *
 errno_t vpc_configure(struct vpc *vpc, const struct vpc_configuration *config)
 {
     errno_t ret;
-
-    // VPCを起動する為に最低限の設定を行う
 
     if (is_valid_parameter(vpc, config)) {
         ret = configure(vpc, config);

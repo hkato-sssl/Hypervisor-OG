@@ -76,6 +76,9 @@ static errno_t launch(struct vpc *vpc, struct vpc_boot_configuration const *boot
     errno_t ret;
     struct vm *owner;
 
+    vpc->regs[VPC_PC] = boot->pc;
+    vpc->regs[VPC_SP_EL1] = boot->sp;
+
     owner = vpc->owner;
     vpc->regs[VPC_VTTBR_EL2] = aarch64_stage2_vttbr_el2(owner->stage2);
     vpc->regs[VPC_VTCR_EL2] = aarch64_stage2_vtcr_el2(owner->stage2);

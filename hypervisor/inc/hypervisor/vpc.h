@@ -47,9 +47,7 @@ struct vpc {
 struct vpc_configuration {
     struct vm       *owner;
     uint64_t        *regs;
-
     uint8_t         proc_no;    // processor No.
-    enum vpc_arch   arch;
 };
 
 struct vpc_boot_configuration {

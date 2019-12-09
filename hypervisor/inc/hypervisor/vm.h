@@ -49,13 +49,6 @@ struct vm_configuration {
         size_t              size;
     } regs;
     struct aarch64_stage2   *stage2;
-
-    /* boot status */
-    struct {
-        enum vpc_arch       arch;
-        uint64_t            pc;
-        uint64_t            sp;
-    } boot;
 };
 
 /* variables */

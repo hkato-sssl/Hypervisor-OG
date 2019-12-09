@@ -45,7 +45,9 @@ static errno_t configure(struct vm *vm, struct vm_configuration const *config)
     errno_t ret;
 
     memset(vm, 0, sizeof(*vm));
+    spin_lock_init(&(vm->lock));
     vm->nr_procs = config->nr_procs;
+    vm->vpcs = config->vpcs.addr;
     vm->stage2 = config->stage2;
 
     ret = configure_vpcs(vm, config);

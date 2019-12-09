@@ -53,9 +53,9 @@ struct vpc_configuration {
 };
 
 struct vpc_boot_configuration {
-    enum vpc_arch	arch;
-	uint64_t		pc;
-	uint64_t		sp;
+    enum vpc_arch   arch;
+    uint64_t        pc;
+    uint64_t        sp;
 };
 
 /* variables */

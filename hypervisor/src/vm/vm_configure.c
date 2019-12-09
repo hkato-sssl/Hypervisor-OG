@@ -49,6 +49,8 @@ static errno_t configure(struct vm *vm, struct vm_configuration const *config)
     vm->nr_procs = config->nr_procs;
     vm->vpcs = config->vpcs.addr;
     vm->stage2 = config->stage2;
+    vm->boolean.launched = false;
+    vm->boot = config->boot;
 
     ret = configure_vpcs(vm, config);
 

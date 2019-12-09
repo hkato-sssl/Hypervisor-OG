@@ -19,7 +19,7 @@ extern "C" {
 
 /* includes */
 
-#include "config/system.h"
+#include <stddef.h>
 #include <stdint.h>
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
@@ -32,24 +32,40 @@ extern "C" {
 
 struct vm {
     spin_lock_t             lock;
-    uint32_t                nr_vpcs;
-    struct vpc              *vpc;
+    uint32_t                nr_procs;
+    struct vpc              *vpcs;
     struct aarch64_stage2   *stage2;
 };
 
 struct vm_configuration {
-    uint32_t                nr_vpcs;
+    /* resources */
+    uint32_t                nr_procs;
     struct {
-        uint64_t            *regs;
-        struct {
-            uint64_t        pc;
-            uint64_t        sp;
-        } gpr;
-    } vpc[CONFIG_NR_CPUS];
+        struct vpc          *addr;
+        size_t              size;
+    } vpcs;
+    struct {
+        uint64_t            *addr;
+        size_t              size;
+    } regs;
     struct aarch64_stage2   *stage2;
+
+    /* boot status */
+    struct {
+        enum vpc_arch       arch;
+        uint64_t            pc;
+        uint64_t            sp;
+    } boot;
 };
 
 /* variables */
+
+/* inline functions */
+
+static inline struct vpc *vm_vpc(struct vm const *vm, uint32_t index)
+{
+    return (index < vm->nr_procs) ? &(vm->vpcs[index]) : NULL;
+}
 
 /* functions */
 

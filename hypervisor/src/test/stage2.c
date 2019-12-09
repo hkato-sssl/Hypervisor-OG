@@ -4,7 +4,6 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include "config/system.h"
 #include <stdint.h>
 #include <string.h>
 #include "lib/system/printk.h"

@@ -32,7 +32,7 @@ extern "C" {
 
 struct vm;
 
-enum vpc_arch { VPC_AARCH32, VPC_AARCH64 };
+enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
 
 struct vpc {
     spin_lock_t     lock;
@@ -50,20 +50,19 @@ struct vpc_configuration {
 
     uint8_t         proc_no;    // processor No.
     enum vpc_arch   arch;
+};
 
-    /* inital value of register */
-
-    struct {
-        uint64_t    pc;
-        uint64_t    sp;
-    } gpr;
+struct vpc_boot_configuration {
+    enum vpc_arch	arch;
+	uint64_t		pc;
+	uint64_t		sp;
 };
 
 /* variables */
 
 /* functions */
 
-errno_t vpc_launch(struct vpc *vpc);
+errno_t vpc_launch(struct vpc *vpc, struct vpc_boot_configuration const *boot);
 errno_t vpc_resume(struct vpc *vpc);
 
 void vpc_load_ctx_fpu(uint64_t *regs);

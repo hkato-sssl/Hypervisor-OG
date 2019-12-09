@@ -4,7 +4,6 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include "config/system.h"
 #include "lib/asm.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"

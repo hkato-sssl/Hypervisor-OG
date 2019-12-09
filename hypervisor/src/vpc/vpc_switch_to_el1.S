@@ -4,8 +4,6 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include "config/system.h"
-
 #include "lib/asm.h"
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/vpc_register.h"

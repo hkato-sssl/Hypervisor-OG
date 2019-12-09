@@ -7,23 +7,23 @@ WORKSPACE_LOC ?= $(abspath $(PROJ_HOME)/../)
 MAKE_PATH = $(WORKSPACE_LOC)/script/make
 
 WORKSPACE_LIBRARY_PATH := $(WORKSPACE_LOC)/lib
-WORKSPACE_LIBRARY := libs drivers hypervisor
+WORKSPACE_LIBRARY := libs drivers
 
 CROSS_COMPILE ?= aarch64-elf-
-TARGET_ARCH := aarch64
-TARGET_BOARD := zcu104
-LOAD_TYPE := ram
+#TARGET_ARCH := aarch64
+#TARGET_BOARD := zcu104
+#LOAD_TYPE := ram
 
-SRC_BASES := config src
-INCS := $(PROJ_HOME) $(PROJ_HOME)/inc
+SRC_BASES := src
+INCS := inc
 
 include $(MAKE_PATH)/project-env.mk
 include $(MAKE_PATH)/command.mk
 
 # Depending on the target you want to build,
 # uncomment either of the following two sentences.
-TARGET ?= $(notdir $(PROJ_HOME)).elf	# an executable
-#TARGET ?= $(notdir $(PROJ_HOME)).a	# an archive
+#TARGET ?= $(notdir $(PROJ_HOME)).elf	# an executable
+TARGET ?= $(notdir $(PROJ_HOME)).a	# an archive
 $(if $(TARGET),,$(error TARGET is undefined))
 
 $(OUTDIR)/$(TARGET): build
@@ -43,4 +43,4 @@ install: build
 	@mkdir -p $(WORKSPACE_LIBRARY_PATH)
 	@cp -v $(OUTDIR)/$(TARGET) $(WORKSPACE_LIBRARY_PATH)
 endif
-	
+

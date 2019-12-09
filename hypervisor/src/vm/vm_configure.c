@@ -28,13 +28,10 @@ static errno_t configure_vpcs(struct vm *vm, struct vm_configuration const *conf
     struct vpc_configuration vpc_config;
 
     vpc_config.owner = vm;
-    for (i = 0; i < config->nr_vpcs; ++i) {
-        vpc_config.regs = config->vpc[i].regs;
+    for (i = 0; i < config->nr_procs; ++i) {
+        vpc_config.regs = config->regs.addr + (i * NR_VPC_REGS);
         vpc_config.proc_no = (uint8_t)i;
-        vpc_config.arch = VPC_AARCH64;
-        vpc_config.gpr.pc = config->vpc[i].gpr.pc;
-        vpc_config.gpr.sp = config->vpc[i].gpr.sp;
-        ret = vpc_configure(&(vm->vpc[i]), &vpc_config);
+        ret = vpc_configure(vm_vpc(vm, i), &vpc_config);
         if (ret != SUCCESS) {
             break;
         }
@@ -48,7 +45,7 @@ static errno_t configure(struct vm *vm, struct vm_configuration const *config)
     errno_t ret;
 
     memset(vm, 0, sizeof(*vm));
-    vm->nr_vpcs = config->nr_vpcs;
+    vm->nr_procs = config->nr_procs;
     vm->stage2 = config->stage2;
 
     ret = configure_vpcs(vm, config);
@@ -60,7 +57,9 @@ static bool is_valid_parameter(struct vm *vm, struct vm_configuration const *con
 {
     bool valid;
 
-    if ((vm != NULL) && (config != NULL) && (config->nr_vpcs > 0) && (config->stage2 != NULL)) {
+    if ((vm != NULL) && (config != NULL) && (config->nr_procs > 0) && (config->stage2 != NULL) &&
+        ((config->vpcs.addr != NULL) && ((sizeof(struct vpc) * config->nr_procs) == config->vpcs.size)) &&
+        ((config->regs.addr != NULL) && ((sizeof(uint64_t) * NR_VPC_REGS) == config->regs.size))) {
         valid = true;
     } else {
         valid = false;

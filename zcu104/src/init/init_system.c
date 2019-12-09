@@ -15,6 +15,7 @@
 #include "lib/log.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
+#include "driver/system/cpu.h"
 #include "driver/xilinx/axi/uart_lite.h"
 #include "hypervisor/tls.h"
 
@@ -30,6 +31,8 @@ struct arg_printk {
 };
 
 /* prototypes */
+
+void *exc_stack_top(uint32_t no);
 
 static errno_t put_char(struct log_context *ctx, char ch);
 
@@ -114,51 +117,68 @@ static errno_t init_printk(void)
     return ret;
 }
 
-static errno_t init_tls(void)
+static errno_t init_tls(uint8_t no)
 {
+    errno_t ret;
     char *p;
     uintptr_t *tls;
 
-    void *exc_stack_top(void);
+    p = exc_stack_top(no);
+    if (p != NULL) {
+        p -= TLS_SIZE;
+        memset(p, 0, TLS_SIZE);
+        tls = (uintptr_t *)p;
+        tls[TLS_EXCEPTION_SP] = (uintptr_t)p;
 
-    p = exc_stack_top();
-    p -= TLS_SIZE;
-    memset(p, 0, TLS_SIZE);
+        aarch64_write_tpidr_el2((uintptr_t)tls);
+        aarch64_isb();
 
-    tls = (uintptr_t *)p;
-    tls[TLS_EXCEPTION_SP] = (uintptr_t)p;
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
 
-    return SUCCESS;
+    return ret;
 }
 
 static errno_t init_exception(void)
 {
     extern char excvec_hyp[];
-    void *exc_stack_top(void);
-    void *p;
 
-    p = exc_stack_top();
-    aarch64_write_tpidr_el2((uintptr_t)p - TLS_SIZE);
-    aarch64_isb();
     aarch64_write_vbar_el2((uint64_t)excvec_hyp);
     aarch64_isb();
 
     return SUCCESS;
 }
 
-errno_t init_system(void)
+errno_t init_thread(uint8_t no)
 {
     errno_t ret;
 
-    ret = init_printk();
+    ret = init_tls(no);
     if (ret == SUCCESS) {
-    	ret = init_exception();
+        ret = init_exception();
     }
-    if (ret == SUCCESS) {
-        ret = init_system_spin_lock(&system_lock);
-    }
-    if (ret == SUCCESS) {
-        ret = init_tls();
+
+    return ret;
+}
+
+errno_t init_system(void)
+{
+    errno_t ret;
+    uint8_t no;
+
+    no = cpu_no();
+    if (no == 0) {
+        ret = init_printk();
+        if (ret == SUCCESS) {
+            ret = init_system_spin_lock(&system_lock);
+        }
+        if (ret == SUCCESS) {
+            ret = init_thread(no);
+        }
+    } else {
+        ret = init_thread(no);
     }
 
     return ret;

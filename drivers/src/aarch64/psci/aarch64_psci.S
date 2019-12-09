@@ -1,8 +1,9 @@
-:*
+/*
  * aarch64/psci/aarch64_psci.S
  *
  * (C) 2019 Hidekazu Kato
  */
+
 #include "lib/asm.h"
 
         .global         aarch64_psci

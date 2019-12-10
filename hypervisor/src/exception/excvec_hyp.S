@@ -136,20 +136,20 @@ excvec_hyp:
 
         .balign         32
 store_rest_registers:
-        stp             x2,   x3,   [sp, #(EXC_X2 * 8)]
-        stp             x4,   x5,   [sp, #(EXC_X4 * 8)]
-        stp             x6,   x7,   [sp, #(EXC_X6 * 8)]
-        stp             x8,   x9,   [sp, #(EXC_X8 * 8)]
-        stp             x10,  x11,  [sp, #(EXC_X10 * 8)]
-        stp             x12,  x13,  [sp, #(EXC_X12 * 8)]
-        stp             x14,  x15,  [sp, #(EXC_X14 * 8)]
-        stp             x16,  x17,  [sp, #(EXC_X16 * 8)]
-        stp             x18,  x19,  [sp, #(EXC_X18 * 8)]
-        stp             x20,  x21,  [sp, #(EXC_X20 * 8)]
-        stp             x22,  x23,  [sp, #(EXC_X22 * 8)]
-        stp             x24,  x25,  [sp, #(EXC_X24 * 8)]
-        stp             x26,  x27,  [sp, #(EXC_X26 * 8)]
-        stp             x28,  x29,  [sp, #(EXC_X28 * 8)]
+        stp             x2,  x3,  [sp, #(EXC_X2 * 8)]
+        stp             x4,  x5,  [sp, #(EXC_X4 * 8)]
+        stp             x6,  x7,  [sp, #(EXC_X6 * 8)]
+        stp             x8,  x9,  [sp, #(EXC_X8 * 8)]
+        stp             x10, x11, [sp, #(EXC_X10 * 8)]
+        stp             x12, x13, [sp, #(EXC_X12 * 8)]
+        stp             x14, x15, [sp, #(EXC_X14 * 8)]
+        stp             x16, x17, [sp, #(EXC_X16 * 8)]
+        stp             x18, x19, [sp, #(EXC_X18 * 8)]
+        stp             x20, x21, [sp, #(EXC_X20 * 8)]
+        stp             x22, x23, [sp, #(EXC_X22 * 8)]
+        stp             x24, x25, [sp, #(EXC_X24 * 8)]
+        stp             x26, x27, [sp, #(EXC_X26 * 8)]
+        stp             x28, x29, [sp, #(EXC_X28 * 8)]
 
         mrs             x2, SPSR_EL2
         mrs             x3, ELR_EL2
@@ -176,14 +176,25 @@ store_vpc_registers:
         stp             x26, x27, [x1, #(VPC_X26 * 8)]
         stp             x28, x29, [x1, #(VPC_X28 * 8)]
         str             x30, [x1, #(VPC_X30 * 8)]
-        ldp             x2, x3, [sp], #16
-        stp             x2, x3, [x1, #(VPC_X0 * 8)]
-        mrs             x2, SP_EL0
-        mrs             x3, SP_EL1
-        stp             x2, x3, [x1, #(VPC_SP_EL0 * 8)]
-        mrs             x2, ELR_EL2
-        mrs             x3, SPSR_EL2
-        stp             x2, x3, [x1, #(VPC_PC * 8)]
+        ldp             x2,  x3,  [sp], #16
+        stp             x2,  x3,  [x1, #(VPC_X0 * 8)]
+        mrs             x2,  SP_EL0
+        mrs             x3,  SP_EL1
+        stp             x2,  x3,  [x1, #(VPC_SP_EL0 * 8)]
+        mrs             x2,  ELR_EL2
+        mrs             x3,  SPSR_EL2
+        stp             x2,  x3,  [x1, #(VPC_PC * 8)]
+
+        // store system registers
+
+        mrs             x0, PAR_EL1
+        str             x0, [x1, #(VPC_PAR_EL1 * 8)]
+
+        mrs             x0, ESR_EL2
+        str             x0, [x1, #(VPC_ESR_EL2 * 8)]
+
+        mrs             x0, HPFAR_EL2
+        str             x0, [x1, #(VPC_HPFAR_EL2 * 8)]
 
         // disable FPU/Advanced SIMD
 
@@ -192,7 +203,7 @@ store_vpc_registers:
         msr             CPTR_EL2, x2
         isb
 
-        // restore the hypervisor context
+        // load the hypervisor context
 
         ldp             x0,  x1,  [sp], #16
         ldp             x2,  x3,  [sp], #16
@@ -213,7 +224,7 @@ store_vpc_registers:
 
         // return from vpc_launch() or vpc_resume()
 
-	mov		x0, #SUCCESS
+        mov             x0, #SUCCESS
         ret
 
         .end

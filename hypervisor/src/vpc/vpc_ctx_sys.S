@@ -93,8 +93,11 @@ vpc_store_ctx_store_system_register:
         mrs             x3, CONTEXTIDR_EL1
         stp             x2, x3, [x1], #16
         mrs             x2, CPACR_EL1
-        mrs             x3, PAR_EL1
-        stp             x2, x3, [x1], #16
+        /* mrs             x3, PAR_EL1
+         * PAR_EL1 is always sotred when the context has switched
+         * from Guest to Hypervisor.
+         */
+        str             x2, [x1], #16
         mrs             x2, TPIDR_EL0
         mrs             x3, TPIDR_EL1
         stp             x2, x3, [x1], #16

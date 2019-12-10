@@ -32,6 +32,7 @@ static errno_t configure(struct vpc *vpc, const struct vpc_configuration *config
     vpc->owner = config->owner;
     vpc->regs = config->regs;
     vpc->proc_no = config->proc_no;
+    vpc->emulate.ops = config->emulate.ops;
 
     return SUCCESS;
 }
@@ -40,7 +41,7 @@ static bool is_valid_parameter(struct vpc *vpc, const struct vpc_configuration *
 {
     bool ret;
 
-    if ((vpc != NULL) && (config != NULL) && (config->owner != NULL) && (config->regs != NULL)) {
+    if ((vpc != NULL) && (config != NULL) && (config->owner != NULL) && (config->regs != NULL) && IS_ALIGNED(vpc->regs, 32) && (config->emulate.ops != NULL)) {
         ret = true;
     } else {
         ret = false;

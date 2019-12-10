@@ -36,7 +36,7 @@ void test_vm_launch_guest_start(void);
 
 static struct vm vm;
 static struct vpc vpcs[NR_CPUS];
-static uint64_t regs[NR_CPUS][NR_VPC_REGS];
+static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
 
 /* functions */
 
@@ -77,6 +77,9 @@ static errno_t init_vm(void)
     config.regs.addr = regs[0];
     config.regs.size = sizeof(regs);
     config.stage2 = &hyp_test_stage2;
+    config.boot.arch = VPC_ARCH_AARCH64;
+    config.boot.pc = (uint64_t)test_vm_launch_guest_start;
+    config.boot.sp = 0;
     ret = vm_configure(&vm, &config);
 
     return ret;
@@ -85,7 +88,6 @@ static errno_t init_vm(void)
 void test_vm_01_launch(void)
 {
     errno_t ret;
-    struct vpc_boot_configuration boot;
 
     printk("<%s>\n", __func__);
 
@@ -103,12 +105,8 @@ void test_vm_01_launch(void)
     }
 
     if (ret == SUCCESS) {
-        memset(&boot, 0, sizeof(boot));
-        boot.arch = VPC_ARCH_AARCH64;
-        boot.pc = (uint64_t)test_vm_launch_guest_start;
-        boot.sp = 0;
-        ret = vpc_launch(vm_vpc(&vm, 0), &boot);
-        printk("vpc_launch() -> %d\n", ret);
+        ret = vm_launch(&vm);
+        printk("vm_launch() -> %d\n", ret);
         printk("\n");
         vpc_dump(vm_vpc(&vm, 0), 0);
         printk("VTTBR_EL2: 0x%016llx\n", aarch64_read_vttbr_el2());

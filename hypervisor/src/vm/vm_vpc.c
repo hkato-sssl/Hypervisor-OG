@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system.h"
+#include "lib/system/assert.h"
 #include "hypervisor/vm.h"
 
 /* defines */
@@ -23,12 +23,9 @@ struct vpc *vm_vpc(struct vm const *vm, uint32_t index)
 {
     struct vpc *p;
 
-    if ((vm != NULL) && (vm->vpcs != NULL) && (vm->nr_procs > index)) {
-        p = vm->vpcs + index;
-    } else {
-        SYSTEM_FAILURE("Illegal value of index.");
-        p = NULL;
-    }
+    SYSTEM_ASSERT((vm != NULL) && (vm->vpcs != NULL) && (vm->nr_procs > index));
+
+    p = vm->vpcs + index;
 
     return p;
 }

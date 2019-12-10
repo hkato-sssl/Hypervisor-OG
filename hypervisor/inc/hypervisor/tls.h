@@ -14,9 +14,10 @@
 #define TLS_SIZE                256
 
 #define TLS_EXCEPTION_SP        0
-#define TLS_CURRENT_VPC_REGS    1
-#define TLS_CURRENT_VPC         2
-#define TLS_CURRENT_VM          3
+#define TLS_EXCEPTION_VECTOR    1
+#define TLS_CURRENT_VPC_REGS    2
+#define TLS_CURRENT_VPC         3
+#define TLS_CURRENT_VM          4
 
 #ifndef ASSEMBLY
 

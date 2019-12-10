@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "hypervisor/vm.h"
+#include "vm_local.h"
 
 /* defines */
 
@@ -22,7 +23,9 @@ static errno_t launch(struct vm *vm)
 {
     errno_t ret;
 
-    ret = vpc_launch(vm_vpc(vm, 0), &(vm->boot));
+    vm->boolean.launched = true;
+    ret = vm_event_loop(vm, 0, &(vm->boot));
+    vm->boolean.launched = false;
 
     return ret;
 }

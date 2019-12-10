@@ -45,6 +45,7 @@
         stp             x0, x1, [sp, #-16]!
         mov             x0, #\vector
         mrs             x1, TPIDR_EL2
+        str             x0, [x1, #(TLS_EXCEPTION_VECTOR * 8)]
         ldr             x1, [x1, #(TLS_CURRENT_VPC_REGS * 8)]
         b               store_vpc_registers
         .endm

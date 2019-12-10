@@ -21,13 +21,18 @@ extern "C" {
 
 /* defines */
 
+#define SYSTEM_ASSERT(exp) do { if (! (exp)) system_assert(__func__, __LINE__); } while (0)
+
 /* types */
 
 /* variables */
 
-/* functions */
+/* inline functions */
 
-volatile void assert_exception(void *arg);
+static inline void system_assert(char const *func, uint32_t line)
+{
+    __asm volatile ("svc #0xffff");
+}
 
 #ifdef __cplusplus
 }

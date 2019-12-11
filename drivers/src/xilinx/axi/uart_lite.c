@@ -66,7 +66,7 @@ static errno_t poll_putc(struct uart_lite *uart, int ch)
     return SUCCESS;
 }
 
-errno_t uart_lite_poll_putc(struct uart_lite *uart, int ch)
+errno_t uart_lite_putc_poll(struct uart_lite *uart, int ch)
 {
     errno_t ret;
 

@@ -45,7 +45,7 @@ struct uart_lite {
 /* functions */
 
 errno_t uart_lite_init(struct uart_lite *uart, const struct uart_lite_configuration *conf);
-errno_t uart_lite_poll_putc(struct uart_lite *uart, int ch);
+errno_t uart_lite_putc_poll(struct uart_lite *uart, int ch);
 
 #ifdef __cplusplus
 }

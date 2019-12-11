@@ -81,13 +81,13 @@ static errno_t put_char(struct log_context *ctx, char ch)
 
     arg = ctx->request.ops->arg;
     if (ch == '\n') {
-        ret = uart_lite_poll_putc(arg->uart, '\r');
+        ret = uart_lite_putc_poll(arg->uart, '\r');
         if (ret == SUCCESS) {
-            ret = uart_lite_poll_putc(arg->uart, ch);
+            ret = uart_lite_putc_poll(arg->uart, ch);
         }
         arg->ct += 2;
     } else {
-        ret = uart_lite_poll_putc(arg->uart, ch);
+        ret = uart_lite_putc_poll(arg->uart, ch);
         ++(arg->ct);
     }
 

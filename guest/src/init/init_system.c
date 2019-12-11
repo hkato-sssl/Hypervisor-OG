@@ -15,16 +15,16 @@
 #include "lib/log.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
-#include "driver/xilinx/axi/uart_lite.h"
+#include "driver/xilinx/mpsoc/ps_uart.h"
 
 /* defines */
 
-#define UART_LITE_BASE      0xa0001000
+#define UART0_BASE      0xff000000
 
 /* types */
 
 struct arg_printk {
-    struct uart_lite    *uart;
+    uintptr_t           reg_base;
     int                 ct;
 };
 
@@ -35,8 +35,7 @@ static errno_t put_char(struct log_context *ctx, char ch);
 /* variables */
 
 static struct log_context log_ctx;
-static struct uart_lite uart;
-static struct log_ops ops = { &uart, put_char };
+static struct log_ops ops = { NULL, put_char };
 static spin_lock_t lock;
 static spin_lock_t system_lock;
 
@@ -48,7 +47,7 @@ errno_t printk(const char *fmt, ...)
     va_list vargs;
     struct arg_printk arg;
 
-    arg.uart = &uart;
+    arg.reg_base = UART0_BASE;
     arg.ct = 0;
 
     spin_lock(&lock);
@@ -77,13 +76,13 @@ static errno_t put_char(struct log_context *ctx, char ch)
 
     arg = ctx->request.ops->arg;
     if (ch == '\n') {
-        ret = uart_lite_poll_putc(arg->uart, '\r');
+        ret = ps_uart_putc_poll(arg->reg_base, '\r');
         if (ret == SUCCESS) {
-            ret = uart_lite_poll_putc(arg->uart, ch);
+            ret = ps_uart_putc_poll(arg->reg_base, ch);
         }
         arg->ct += 2;
     } else {
-        ret = uart_lite_poll_putc(arg->uart, ch);
+        ret = ps_uart_putc_poll(arg->reg_base, ch);
         ++(arg->ct);
     }
 
@@ -92,15 +91,7 @@ static errno_t put_char(struct log_context *ctx, char ch)
 
 static errno_t init_uart(void)
 {
-    errno_t ret;
-    struct uart_lite_configuration config;
-
-    memset(&config, 0, sizeof(config));
-    config.base = UART_LITE_BASE;
-    config.boolean.init = true;
-    ret = uart_lite_init(&uart, &config);
-
-    return ret;
+    return SUCCESS; /* no work */
 }
 
 static errno_t init_printk(void)

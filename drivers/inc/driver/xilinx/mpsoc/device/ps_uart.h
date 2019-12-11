@@ -13,22 +13,22 @@
 
 /* defines */
 
-#define UART_CONTROL                    0x0000
-#define UART_MODE                       0x0004
-#define UART_INTRPT_EN                  0x0008
-#define UART_INTRPT_DIS                 0x000c
-#define UART_INTRPT_MASK                0x0010
-#define UART_CHNL_INT_STS               0x0014
-#define UART_BAUD_RATE_GEN              0x0018
-#define UART_RCVR_TIMEOUT               0x001c
-#define UART_RCVR_FIFO_TRIGGER_LEVEL    0x0020
-#define UART_MODEM_CTRL                 0x0024
-#define UART_MODEM_STS                  0x0028
-#define UART_CHANNEL_STS                0x002c
-#define UART_TX_RX_FIFO                 0x0030
-#define UART_BAUD_RATE_DIVIDER          0x0034
-#define UART_FLOW_DELAY                 0x0038
-#define UART_TX_FIFO_TRIGGER_LEVEL      0x0044
+#define PS_UART_CONTROL                 0x0000
+#define PS_UART_MODE                    0x0004
+#define PS_UART_INTRPT_EN               0x0008
+#define PS_UART_INTRPT_DIS              0x000c
+#define PS_UART_INTRPT_MASK             0x0010
+#define PS_UART_CHNL_INT_STS            0x0014
+#define PS_UART_BAUD_RATE_GEN           0x0018
+#define PS_UART_RCVR_TIMEOUT            0x001c
+#define PS_UART_RCVR_FIFO_TRIGGER_LEVEL 0x0020
+#define PS_UART_MODEM_CTRL              0x0024
+#define PS_UART_MODEM_STS               0x0028
+#define PS_UART_CHANNEL_STS             0x002c
+#define PS_UART_TX_RX_FIFO              0x0030
+#define PS_UART_BAUD_RATE_DIVIDER       0x0034
+#define PS_UART_FLOW_DELAY              0x0038
+#define PS_UART_TX_FIFO_TRIGGER_LEVEL   0x0044
 #define UART_RX_FIFO_BYTE_STATUS        0x0048
 
 /* control register */

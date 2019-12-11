@@ -15,6 +15,9 @@
 
 /* includes */
 
+#include <stdint.h>
+#include "lib/system/errno.h"
+
 /* defines */
 
 /* types */
@@ -26,6 +29,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+errno_t ps_uart_putc_poll(uintptr_t reg_base, int ch);
 
 #ifdef __cplusplus
 }

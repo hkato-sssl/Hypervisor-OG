@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "lib/system/errno.h"
+#include "lib/system/memio.h"
 #include "lib/system/printk.h"
 #include "lib/system/spin_lock.h"
 #include "lib/system.h"
@@ -16,6 +17,7 @@
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/xilinx/mpsoc/ps_uart.h"
+#include "driver/xilinx/mpsoc/device/ps_uart.h"
 
 /* defines */
 
@@ -91,7 +93,9 @@ static errno_t put_char(struct log_context *ctx, char ch)
 
 static errno_t init_uart(void)
 {
-    return SUCCESS; /* no work */
+    REG_WRITE32_SYNC(UART0_BASE, PS_UART_INTRPT_MASK, 0xff);
+
+    return SUCCESS;
 }
 
 static errno_t init_printk(void)

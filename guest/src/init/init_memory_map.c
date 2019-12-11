@@ -71,18 +71,18 @@ static errno_t init_map(void)
     }
 
     if (ret == SUCCESS) {
-	attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
-	ret = map((void*)0xa0001000, (void*)0xa0002000, &attr);
+        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
+        ret = map((void*)0xff000000, (void*)0xff001000, &attr);
     }
 
     if (ret == SUCCESS) {
-	attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
-	ret = map((void*)0xf9010000, (void*)0xf9013fff, &attr);
+        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
+        ret = map((void*)0xf9010000, (void*)0xf9013fff, &attr);
     }
 
     if (ret == SUCCESS) {
-	attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
-	ret = map((void*)0xf9020000, (void*)0xf9023fff, &attr);
+        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
+        ret = map((void*)0xf9020000, (void*)0xf9023fff, &attr);
     }
 
     return ret;
@@ -137,9 +137,9 @@ errno_t init_memory_map(void)
     ret = init_mmu();
     if (ret == SUCCESS) {
         ret = init_map();
-	if (ret == SUCCESS) {
-	    ret = aarch64_mmu_enable(&sys_mmu);
-	}
+        if (ret == SUCCESS) {
+            ret = aarch64_mmu_enable(&sys_mmu);
+        }
     }
 
     return ret;

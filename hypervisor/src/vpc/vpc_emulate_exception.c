@@ -1,5 +1,5 @@
 /*
- * emulate/emulate_exception.c
+ * vpc/vpc_emulate_exception.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -12,7 +12,7 @@
 #include "hypervisor/tls.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
-#include "hypervisor/emulate.h"
+#include "hypervisor/emulator.h"
 
 /* defines */
 
@@ -24,7 +24,7 @@
 
 /* functions */
 
-static errno_t call_emulator(struct vpc *vpc, emulate_func_t func)
+static errno_t call_emulator(struct vpc *vpc, emulator_func_t func)
 {
     errno_t ret;
 
@@ -47,13 +47,13 @@ static errno_t emulate_synchronous(struct vpc *vpc)
     ec = (uint32_t)BF_EXTRACT(d, 31, 26);
     switch (ec) {
     case 0x15:  /* 010101 - SVC instruction execution in AArch64 state */
-        ret = call_emulator(vpc, vpc->emulate.ops->aarch64.svc);
+        ret = call_emulator(vpc, vpc->emulator.ops->aarch64.svc);
         break;
     case 0x16:  /* 010110 - HVC instruction execution in AArch64 state */
-        ret = call_emulator(vpc, vpc->emulate.ops->aarch64.hvc);
+        ret = call_emulator(vpc, vpc->emulator.ops->aarch64.hvc);
         break;
     case 0x17:  /* 010111 - SMC instruction execution in AArch64 state */
-        ret = call_emulator(vpc, vpc->emulate.ops->aarch64.smc);
+        ret = call_emulator(vpc, vpc->emulator.ops->aarch64.smc);
         break;
     default:
         printk("%s: ESR_EL2.EC=0x%02x\n", __func__, ec);
@@ -66,12 +66,12 @@ static errno_t emulate_synchronous(struct vpc *vpc)
 
 static errno_t emulate_irq(struct vpc *vpc)
 {
-    return call_emulator(vpc, vpc->emulate.ops->irq);
+    return call_emulator(vpc, vpc->emulator.ops->irq);
 }
 
 static errno_t emulate_fiq(struct vpc *vpc)
 {
-    return call_emulator(vpc, vpc->emulate.ops->fiq);
+    return call_emulator(vpc, vpc->emulator.ops->fiq);
 }
 
 static errno_t emulate_serror(struct vpc *vpc)
@@ -79,7 +79,7 @@ static errno_t emulate_serror(struct vpc *vpc)
     return -ENOSYS;
 }
 
-errno_t emulate_exception(struct vpc *vpc)
+errno_t vpc_emulate_exception(struct vpc *vpc)
 {
     errno_t ret;
     uint64_t d;

@@ -31,7 +31,7 @@ extern "C" {
 /* types */
 
 struct vm;
-struct emulate_ops;
+struct emulator_ops;
 
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
 
@@ -46,8 +46,8 @@ struct vpc {
     } boolean;
 
     struct {
-        struct emulate_ops  *ops;
-    } emulate;
+        struct emulator_ops *ops;
+    } emulator;
 };
 
 struct vpc_configuration {
@@ -55,8 +55,8 @@ struct vpc_configuration {
     uint64_t                *regs;
     uint8_t                 proc_no;    // processor No.
     struct {
-        struct emulate_ops  *ops;
-    } emulate;
+        struct emulator_ops *ops;
+    } emulator;
 };
 
 struct vpc_boot_configuration {
@@ -78,6 +78,7 @@ void vpc_load_ctx_system_register(uint64_t *regs);
 void vpc_store_ctx_system_register(uint64_t *regs);
 
 errno_t vpc_configure(struct vpc *vpc, const struct vpc_configuration *config);
+errno_t vpc_emulate_exception(struct vpc *vpc);
 
 /* for debugging */
 

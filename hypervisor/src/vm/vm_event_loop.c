@@ -9,7 +9,6 @@
 #include "lib/system/assert.h"
 #include "lib/system/errno.h"
 #include "hypervisor/vm.h"
-#include "hypervisor/emulate.h"
 #include "hypervisor/vpc.h"
 
 /* defines */
@@ -26,11 +25,11 @@ static errno_t event_loop(struct vpc *vpc)
 {
     errno_t ret;
 
-    ret = emulate_exception(vpc);
+    ret = vpc_emulate_exception(vpc);
     while (ret == SUCCESS) {
         ret = vpc_resume(vpc);
         if (ret == SUCCESS) {
-            ret = emulate_exception(vpc);
+            ret = vpc_emulate_exception(vpc);
         }
     }
 

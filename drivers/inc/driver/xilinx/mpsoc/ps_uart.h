@@ -1,15 +1,13 @@
 /*
- * driver/xilinx/mpsoc/uart.h
+ * driver/xilinx/mpsoc/ps_uart.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef DRIVER_XILINX_MPSOC_UART_H
-#define DRIVER_XILINX_MPSOC_UART_H
+#ifndef DRIVER_XILINX_MPSOC_PS_UART_H
+#define DRIVER_XILINX_MPSOC_PS_UART_H
 
 /* includes */
-
-#include "driver/xilinx/mpsoc/device/uart.h"
 
 /* defines */
 
@@ -35,5 +33,5 @@ extern "C" {
 
 #endif /* ASSEMBLY */
 
-#endif /* DRIVER_XILINX_MPSOC_UART_H */
+#endif /* DRIVER_XILINX_MPSOC_PS_UART_H */
 

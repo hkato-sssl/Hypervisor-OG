@@ -1,11 +1,11 @@
 /*
- * driver/xilix/mpsoc/device/uart.h
+ * driver/xilix/mpsoc/device/ps_uart.h
  *
  * (C) 2019 Hidekazu Kato
  */
 
-#ifndef DRIVER_XILIX_MPSOC_DEVICE_UART_H
-#define DRIVER_XILIX_MPSOC_DEVICE_UART_H
+#ifndef DRIVER_XILIX_MPSOC_DEVICE_PS_UART_H
+#define DRIVER_XILIX_MPSOC_DEVICE_PS_UART_H
 
 /* includes */
 
@@ -115,5 +115,5 @@
 #define RFBS_BYTE0_FRM_ERR              BIT(1)
 #define RFBS_BYTE0_PAR_ERR              BIT(0)
 
-#endif /* DRIVER_XILIX_MPSOC_DEVICE_UART_H */
+#endif /* DRIVER_XILIX_MPSOC_DEVICE_PS_UART_H */
 

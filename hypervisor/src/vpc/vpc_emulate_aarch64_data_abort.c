@@ -24,7 +24,7 @@
 static void generate_access_request(struct vpc *vpc, struct vpc_memory_access_request *req)
 {
     uint64_t esr;
-
+    
     esr = vpc->regs[VPC_ESR_EL2];
     req->access = ((esr & ISS_DATA_ABORT_WnR) != 0) ? VPC_WRITE_ACCESS : VPC_READ_ACCESS;
     req->size = 1 << ISS_DATA_ABORT_SAS(esr);
@@ -46,10 +46,17 @@ errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc)
 {
     errno_t ret;
     uint64_t esr;
+    uint64_t dfsc;
 
     esr = vpc->regs[VPC_ESR_EL2];
     if ((esr & ISS_DATA_ABORT_ISV) != 0) {
-        ret = emulate_aarch64_data_abort(vpc);
+        dfsc = ISS_DATA_ABORT_DFSC(esr);
+        if ((dfsc >= 9) && (dfsc <= 11)) {
+            /* Access flag fault */
+            ret = emulate_aarch64_data_abort(vpc);
+        } else {
+            ret = -ENOSYS;
+        }
     } else {
         ret = -ENOSYS;
     }

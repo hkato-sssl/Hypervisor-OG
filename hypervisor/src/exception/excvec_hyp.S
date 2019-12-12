@@ -194,6 +194,9 @@ store_vpc_registers:
         mrs             x0, ESR_EL2
         str             x0, [x1, #(VPC_ESR_EL2 * 8)]
 
+        mrs             x0, HCR_EL2
+        str             x0, [x1, #(VPC_HCR_EL2 * 8)]
+
         mrs             x0, HPFAR_EL2
         str             x0, [x1, #(VPC_HPFAR_EL2 * 8)]
 

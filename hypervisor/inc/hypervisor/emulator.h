@@ -34,7 +34,7 @@ typedef errno_t (*emulator_func_t)(struct vpc *);
 
 /* functions */
 
-errno_t emulator_exception(struct vpc *vpc);
+errno_t emulator_aarch64_data_abort(struct vpc *vpc);
 
 struct emulator_ops {
     emulator_func_t     irq;
@@ -44,6 +44,7 @@ struct emulator_ops {
         emulator_func_t svc;
         emulator_func_t hvc;
         emulator_func_t smc;
+        emulator_func_t data_abort;
     } aarch64;
 
     struct {

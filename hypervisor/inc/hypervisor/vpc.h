@@ -21,6 +21,7 @@ extern "C" {
 
 /* includes */
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "lib/system/errno.h"
@@ -31,9 +32,30 @@ extern "C" {
 /* types */
 
 struct vm;
-struct emulator_ops;
+struct vpc;
+struct vpc_memory_access_request;
 
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
+typedef errno_t (*vpc_emulator_t)(struct vpc *vpc);
+typedef errno_t (*vpc_memory_access_emulator_t)(struct vpc *vpc, const struct vpc_memory_access_request *req);
+
+struct vpc_emulator_ops {
+    vpc_emulator_t      irq;
+    vpc_emulator_t      fiq;
+
+    struct {
+        vpc_emulator_t  svc;
+        vpc_emulator_t  hvc;
+        vpc_emulator_t  smc;
+        vpc_emulator_t  data_abort;
+    } aarch64;
+};
+
+struct vpc_memory_access_request {
+    enum { VPC_WRITE_ACCESS, VPC_READ_ACCESS } access;
+    uintptr_t   addr;
+    size_t      size;
+};
 
 struct vpc {
     spin_lock_t     lock;
@@ -46,16 +68,17 @@ struct vpc {
     } boolean;
 
     struct {
-        struct emulator_ops *ops;
+        struct vpc_emulator_ops     *ops;
+        struct vpc_memory_region    *trapped_region;
     } emulator;
 };
 
 struct vpc_configuration {
-    struct vm               *owner;
-    uint64_t                *regs;
-    uint8_t                 proc_no;    // processor No.
+    struct vm                   *owner;
+    uint64_t                    *regs;
+    uint8_t                     proc_no;    // processor No.
     struct {
-        struct emulator_ops *ops;
+        struct vpc_emulator_ops *ops;
     } emulator;
 };
 
@@ -79,6 +102,7 @@ void vpc_store_ctx_system_register(uint64_t *regs);
 
 errno_t vpc_configure(struct vpc *vpc, const struct vpc_configuration *config);
 errno_t vpc_emulate_exception(struct vpc *vpc);
+errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc);
 
 /* for debugging */
 

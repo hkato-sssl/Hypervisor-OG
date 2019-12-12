@@ -30,6 +30,13 @@ extern "C" {
 
 /* types */
 
+struct vm_region_trap {
+    struct vm_region_trap               *next;
+    uint64_t                            addr;
+    size_t                              size;
+    vpc_memory_access_emulator_t        emulator;
+};
+
 struct vm {
     spin_lock_t             lock;
     uint32_t                nr_procs;
@@ -39,6 +46,12 @@ struct vm {
         bool                launched;
     } boolean;
     struct vpc_boot_configuration boot;
+
+    struct {
+        struct {
+            struct vm_region_trap   *memory_region;
+        } trap;
+    } emulator;
 };
 
 struct vm_configuration {
@@ -63,6 +76,9 @@ struct vm_configuration {
 errno_t vm_configure(struct vm *vm, struct vm_configuration const *config);
 errno_t vm_launch(struct vm *vm);
 struct vpc *vm_vpc(struct vm const *vm, uint32_t index);
+
+errno_t vm_register_access_trap(struct vm *vm, struct vm_region_trap *trap);
+errno_t vm_emulate_aarch64_memory_access(struct vpc *vpc, const struct vpc_memory_access_request *req);
 
 #ifdef __cplusplus
 }

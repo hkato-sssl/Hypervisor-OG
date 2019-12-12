@@ -17,14 +17,18 @@ import re
 import sys
 import string
 
-DEF_NAME_WIDTH = 20
+DEF_NAME_WIDTH = 28
 DEF_VALUE_WIDTH = 12
 DEFINE = '#define '
 
 def spc_name(name):
     global DEF_NAME_WIDTH
 
-    return ' ' * (DEF_NAME_WIDTH - len(name))
+    n = DEF_NAME_WIDTH - len(name)
+    if n <= 0:
+        raise Exception("DEF_NAME_WIDTH is too small.");
+
+    return ' ' * n;
 
 def out_def_bit_field(prefix, name, msb, lsb):
     global DEFINE

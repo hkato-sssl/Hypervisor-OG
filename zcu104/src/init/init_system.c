@@ -172,7 +172,7 @@ errno_t init_system(void)
     if (no == 0) {
         ret = init_printk();
         if (ret == SUCCESS) {
-            ret = init_system_spin_lock(&system_lock);
+            ret = system_register_spin_lock(&system_lock);
         }
         if (ret == SUCCESS) {
             ret = init_thread(no);

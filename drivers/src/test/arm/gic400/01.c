@@ -11,9 +11,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "lib/system/stdc/string.h"
 #include "driver/arm/gic400.h"
 
 /* defines */

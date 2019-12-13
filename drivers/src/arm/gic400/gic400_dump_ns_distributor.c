@@ -6,9 +6,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "lib/system.h"
 #include "lib/system/printk.h"
-#include "lib/system/stdc/stdio.h"
 #include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "gic400_local.h"

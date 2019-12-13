@@ -15,7 +15,7 @@ TARGET_BOARD := zcu104
 LOAD_TYPE := ram
 
 SRC_BASES := src
-INCS := inc
+INCS := inc inc/lib/system/stdc
 
 include $(MAKE_PATH)/project-env.mk
 include $(MAKE_PATH)/command.mk

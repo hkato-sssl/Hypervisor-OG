@@ -1,5 +1,5 @@
 /*
- * lib/stdc/vsprintf.c
+ * system/stdc/stdio/vsprintf.c
  *
  * (C) 2018 Hidekazu Kato
  */
@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include "lib/system/spin_lock.h"
 #include "lib/log.h"
-#include "lib/system/stdc/stdio.h"
 
 /* defines */
 

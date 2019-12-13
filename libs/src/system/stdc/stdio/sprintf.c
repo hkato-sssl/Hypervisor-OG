@@ -1,12 +1,12 @@
 /*
- * lib/stdc/snprintf.c
+ * system/stdc/stdio/sprintf.c
  *
  * (C) 2018 Hidekazu Kato
  */
 
 #include <stddef.h>
 #include <stdarg.h>
-#include "lib/system/stdc/stdio.h"
+#include <stdio.h>
 
 /* defines */
 
@@ -18,13 +18,13 @@
 
 /* functions */
 
-int snprintf(char *str, size_t size, const char *fmt, ...)
+int sprintf(char *str, const char *fmt, ...)
 {
     int ret;
     va_list vargs;
 
     va_start(vargs, fmt);
-    ret = vsnprintf(str, size, fmt, vargs);
+    ret = vsprintf(str, fmt, vargs);
     va_end(vargs);
 
     return ret;

@@ -6,8 +6,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <assert.h>
 #include "lib/system/errno.h"
-#include "lib/system/stdc/assert.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 

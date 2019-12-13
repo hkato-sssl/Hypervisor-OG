@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/stdc/assert.h"
+#include <assert.h>
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
 

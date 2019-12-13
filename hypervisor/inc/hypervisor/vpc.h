@@ -92,7 +92,7 @@ struct vpc_boot_configuration {
 
 /* functions */
 
-errno_t vpc_launch(struct vpc *vpc, struct vpc_boot_configuration const *boot);
+errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot);
 errno_t vpc_resume(struct vpc *vpc);
 
 void vpc_load_ctx_fpu(uint64_t *regs);
@@ -106,7 +106,7 @@ errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc);
 
 /* for debugging */
 
-void vpc_dump(struct vpc const *vpc, unsigned int level);
+void vpc_dump(const struct vpc *vpc, unsigned int level);
 
 #ifdef __cplusplus
 }

@@ -71,7 +71,7 @@ static errno_t setup_aarch32(struct vpc *vpc)
     return ret;
 }
 
-static errno_t launch(struct vpc *vpc, struct vpc_boot_configuration const *boot)
+static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
     struct vm *owner;
@@ -114,7 +114,7 @@ static bool is_valid_arch(enum vpc_arch arch)
     return valid;
 }
 
-errno_t vpc_launch(struct vpc *vpc, struct vpc_boot_configuration const *boot)
+errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
 

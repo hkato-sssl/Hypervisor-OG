@@ -73,9 +73,9 @@ struct vm_configuration {
 
 /* functions */
 
-errno_t vm_configure(struct vm *vm, struct vm_configuration const *config);
+errno_t vm_configure(struct vm *vm, const struct vm_configuration *config);
 errno_t vm_launch(struct vm *vm);
-struct vpc *vm_vpc(struct vm const *vm, uint32_t index);
+struct vpc *vm_vpc(const struct vm *vm, uint32_t index);
 
 errno_t vm_register_access_trap(struct vm *vm, struct vm_region_trap *trap);
 errno_t vm_emulate_aarch64_memory_access(struct vpc *vpc, const struct vpc_memory_access_request *req);

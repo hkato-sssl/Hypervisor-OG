@@ -18,7 +18,7 @@
 
 /* functions */
 
-errno_t aarch64_stage2_map(struct aarch64_stage2 *st2, void *va, void *pa, size_t sz, struct aarch64_stage2_attr const *attr)
+errno_t aarch64_stage2_map(struct aarch64_stage2 *st2, void *va, void *pa, size_t sz, const struct aarch64_stage2_attr *attr)
 {
     errno_t ret;
 

@@ -130,16 +130,16 @@ struct aarch64_stage2_configuration {
 
 /* functions */
 
-errno_t aarch64_stage2_init(struct aarch64_stage2 *st2, struct aarch64_stage2_configuration const *config);
-errno_t aarch64_stage2_map(struct aarch64_stage2 *st2, void *ipa, void *pa, size_t sz, struct aarch64_stage2_attr const *attr);
+errno_t aarch64_stage2_init(struct aarch64_stage2 *st2, const struct aarch64_stage2_configuration *config);
+errno_t aarch64_stage2_map(struct aarch64_stage2 *st2, void *ipa, void *pa, size_t sz, const struct aarch64_stage2_attr *attr);
 
 /* for debugging */
 
-void aarch64_stage2_dump_descriptor(struct aarch64_stage2 const *st2);
+void aarch64_stage2_dump_descriptor(const struct aarch64_stage2 *st2);
 
 /* inline functions */
 
-static inline uint64_t aarch64_stage2_vttbr_el2(struct aarch64_stage2 const *st2)
+static inline uint64_t aarch64_stage2_vttbr_el2(const struct aarch64_stage2 *st2)
 {
     uint64_t d;
 
@@ -148,7 +148,7 @@ static inline uint64_t aarch64_stage2_vttbr_el2(struct aarch64_stage2 const *st2
     return d;
 }
 
-static inline uint64_t aarch64_stage2_vtcr_el2(struct aarch64_stage2 const *st2)
+static inline uint64_t aarch64_stage2_vtcr_el2(const struct aarch64_stage2 *st2)
 {
     return st2->vtcr_el2;
 }

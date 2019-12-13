@@ -18,7 +18,7 @@
 
 /* functions */
 
-uint64_t aarch64_mmu_table_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+uint64_t aarch64_mmu_table_descriptor(void *pa, const struct aarch64_mmu_attr *attr)
 {
     uint64_t desc;
 
@@ -32,7 +32,7 @@ uint64_t aarch64_mmu_table_descriptor(void *pa, struct aarch64_mmu_attr const *a
     return desc;
 }
 
-static uint64_t block_page_descriptor(void *pa, struct aarch64_mmu_attr const *attr, uint64_t desc)
+static uint64_t block_page_descriptor(void *pa, const struct aarch64_mmu_attr *attr, uint64_t desc)
 {
     desc |= (uint64_t)pa;
     desc |= (uint64_t)attr->xn << 54;
@@ -47,7 +47,7 @@ static uint64_t block_page_descriptor(void *pa, struct aarch64_mmu_attr const *a
     return desc;
 }
 
-uint64_t aarch64_mmu_block_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+uint64_t aarch64_mmu_block_descriptor(void *pa, const struct aarch64_mmu_attr *attr)
 {
     uint64_t desc;
 
@@ -56,7 +56,7 @@ uint64_t aarch64_mmu_block_descriptor(void *pa, struct aarch64_mmu_attr const *a
     return desc;
 }
 
-uint64_t aarch64_mmu_page_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+uint64_t aarch64_mmu_page_descriptor(void *pa, const struct aarch64_mmu_attr *attr)
 {
     uint64_t desc;
 
@@ -65,7 +65,7 @@ uint64_t aarch64_mmu_page_descriptor(void *pa, struct aarch64_mmu_attr const *at
     return desc;
 }
 
-uint64_t aarch64_mmu_contiguous_block_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+uint64_t aarch64_mmu_contiguous_block_descriptor(void *pa, const struct aarch64_mmu_attr *attr)
 {
     uint64_t desc;
 
@@ -75,7 +75,7 @@ uint64_t aarch64_mmu_contiguous_block_descriptor(void *pa, struct aarch64_mmu_at
     return desc;
 }
 
-uint64_t aarch64_mmu_contiguous_page_descriptor(void *pa, struct aarch64_mmu_attr const *attr)
+uint64_t aarch64_mmu_contiguous_page_descriptor(void *pa, const struct aarch64_mmu_attr *attr)
 {
     uint64_t desc;
 

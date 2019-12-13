@@ -32,7 +32,7 @@ extern "C" {
 
 /* functions */
 
-errno_t vm_event_loop(struct vm *vm, uint32_t proc_no, struct vpc_boot_configuration const *boot);
+errno_t vm_event_loop(struct vm *vm, uint32_t proc_no, const struct vpc_boot_configuration *boot);
 
 #ifdef __cplusplus
 }

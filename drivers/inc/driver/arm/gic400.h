@@ -65,7 +65,7 @@ struct gic400_interrupt_configuration {
 
 /* functions */
 
-errno_t gic400_init(struct gic400 *gic, struct gic400_configuration const *config);
+errno_t gic400_init(struct gic400 *gic, const struct gic400_configuration *config);
 uint32_t gic400_ack(struct gic400 *gic);
 void gic400_eoi(struct gic400 *gic, uint32_t iar);
 errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no);
@@ -75,12 +75,12 @@ errno_t gic400_assert_spi(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_set_level(struct gic400 *gic, uint32_t level);
 errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_disable_interrupt(struct gic400 *gic, uint16_t intr_no);
-errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct gic400_interrupt_configuration const *config);
+errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config);
 
 /* for debugging */
 
-void gic400_dump_ns_cpuif(struct gic400 const *gic);
-void gic400_dump_ns_distributor(struct gic400 const *gic);
+void gic400_dump_ns_cpuif(const struct gic400 *gic);
+void gic400_dump_ns_distributor(const struct gic400 *gic);
 
 #ifdef __cplusplus
 }

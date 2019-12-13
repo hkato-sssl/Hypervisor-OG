@@ -47,7 +47,7 @@ static uint32_t desc_index(struct aarch64_mmu_base *mmu, void *va, uint32_t leve
     return index;
 }
 
-static uint64_t *new_table(struct aarch64_mmu_base *mmu, void const *attr, uint64_t *previous)
+static uint64_t *new_table(struct aarch64_mmu_base *mmu, const void *attr, uint64_t *previous)
 {
     void *table;
     uint64_t d;
@@ -61,7 +61,7 @@ static uint64_t *new_table(struct aarch64_mmu_base *mmu, void const *attr, uint6
     return table;
 }
 
-static uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, void const *attr, uint32_t level)
+static uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, const void *attr, uint32_t level)
 {
     uint32_t i;
     uint64_t d;
@@ -87,7 +87,7 @@ static uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, void const *
     return table;
 }
 
-static uint64_t *desc_addr(struct aarch64_mmu_base *mmu, void *va, void const *attr, uint32_t level)
+static uint64_t *desc_addr(struct aarch64_mmu_base *mmu, void *va, const void *attr, uint32_t level)
 {
     uint64_t *table;
     uint64_t *desc;
@@ -102,7 +102,7 @@ static uint64_t *desc_addr(struct aarch64_mmu_base *mmu, void *va, void const *a
     return desc;
 }
 
-static bool is_unmapped_contiguous_region(uint64_t const *desc)
+static bool is_unmapped_contiguous_region(const uint64_t *desc)
 {
     bool ret;
     int i;
@@ -131,7 +131,7 @@ static bool is_valid_parameter(void *va, void *pa, size_t sz)
     return valid;
 }
 
-errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level)
+errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr, uint32_t level)
 {
     errno_t ret;
     uint64_t *p;
@@ -161,7 +161,7 @@ errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va
     return ret;
 }
 
-errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level)
+errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr, uint32_t level)
 {
     errno_t ret;
     uint64_t *p;

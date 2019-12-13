@@ -18,7 +18,7 @@
 
 /* functions */
 
-uint64_t aarch64_stage2_table_descriptor(void *pa, struct aarch64_stage2_attr const *attr)
+uint64_t aarch64_stage2_table_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 
@@ -27,7 +27,7 @@ uint64_t aarch64_stage2_table_descriptor(void *pa, struct aarch64_stage2_attr co
     return desc;
 }
 
-static uint64_t block_page_descriptor(void *pa, struct aarch64_stage2_attr const *attr, uint64_t desc)
+static uint64_t block_page_descriptor(void *pa, const struct aarch64_stage2_attr *attr, uint64_t desc)
 {
     desc |= (uint64_t)pa;
     desc |= (uint64_t)attr->xn << 54;
@@ -39,7 +39,7 @@ static uint64_t block_page_descriptor(void *pa, struct aarch64_stage2_attr const
     return desc;
 }
 
-uint64_t aarch64_stage2_block_descriptor(void *pa, struct aarch64_stage2_attr const *attr)
+uint64_t aarch64_stage2_block_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 
@@ -48,7 +48,7 @@ uint64_t aarch64_stage2_block_descriptor(void *pa, struct aarch64_stage2_attr co
     return desc;
 }
 
-uint64_t aarch64_stage2_page_descriptor(void *pa, struct aarch64_stage2_attr const *attr)
+uint64_t aarch64_stage2_page_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 
@@ -57,7 +57,7 @@ uint64_t aarch64_stage2_page_descriptor(void *pa, struct aarch64_stage2_attr con
     return desc;
 }
 
-uint64_t aarch64_stage2_contiguous_block_descriptor(void *pa, struct aarch64_stage2_attr const *attr)
+uint64_t aarch64_stage2_contiguous_block_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 
@@ -67,7 +67,7 @@ uint64_t aarch64_stage2_contiguous_block_descriptor(void *pa, struct aarch64_sta
     return desc;
 }
 
-uint64_t aarch64_stage2_contiguous_page_descriptor(void *pa, struct aarch64_stage2_attr const *attr)
+uint64_t aarch64_stage2_contiguous_page_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 

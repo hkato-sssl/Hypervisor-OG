@@ -31,9 +31,9 @@
 extern "C" {
 #endif
 
-uint64_t aarch64_mmu_table_descriptor(void *pa, struct aarch64_mmu_attr const *attr);
-uint64_t aarch64_mmu_block_descriptor(void *pa, struct aarch64_mmu_attr const *attr);
-uint64_t aarch64_mmu_page_descriptor(void *pa, struct aarch64_mmu_attr const *attr);
+uint64_t aarch64_mmu_table_descriptor(void *pa, const struct aarch64_mmu_attr *attr);
+uint64_t aarch64_mmu_block_descriptor(void *pa, const struct aarch64_mmu_attr *attr);
+uint64_t aarch64_mmu_page_descriptor(void *pa, const struct aarch64_mmu_attr *attr);
 
 errno_t aarch64_mmu_set_translation_table(struct aarch64_mmu *mmu);
 errno_t aarch64_mmu_enable_asm(void);

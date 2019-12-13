@@ -80,7 +80,7 @@ struct aarch64_mmu_block_pool_configuration {
     } block_region;
 };
 
-typedef uint64_t (*aarch64_mmu_desc_func_t)(void *pa, void const *attr);
+typedef uint64_t (*aarch64_mmu_desc_func_t)(void *pa, const void *attr);
 
 struct aarch64_mmu_ops {
     aarch64_mmu_desc_func_t table_descriptor;
@@ -95,7 +95,7 @@ struct aarch64_mmu_base {
     uint8_t                         start_level;
     uint64_t                        *addr;
     struct aarch64_mmu_block_pool   *pool;
-    struct aarch64_mmu_ops const    *ops;
+    const struct aarch64_mmu_ops    *ops;
 };
 
 struct aarch64_mmu_base_configuration {
@@ -108,13 +108,13 @@ struct aarch64_mmu_base_configuration {
 
 /* functions */
 
-errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config);
+errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config);
 void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);
 errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block, size_t block_sz);
 
-errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, void const *attr);
-errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level);
-errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, void const *attr, uint32_t level);
+errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr);
+errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr, uint32_t level);
+errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr, uint32_t level);
 
 void aarch64_mmu_write_descriptor(uint64_t *addr, uint64_t desc);
 

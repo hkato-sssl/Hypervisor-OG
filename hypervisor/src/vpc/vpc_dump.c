@@ -18,7 +18,7 @@
 
 /* functions */
 
-void vpc_dump(struct vpc const *vpc, unsigned int level)
+void vpc_dump(const struct vpc *vpc, unsigned int level)
 {
     uint64_t *regs;
 

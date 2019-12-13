@@ -24,7 +24,7 @@
 
 /* functions */
 
-static errno_t validate_parameters(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config)
+static errno_t validate_parameters(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config)
 {
     errno_t ret;
 
@@ -42,7 +42,7 @@ static errno_t validate_parameters(struct aarch64_mmu_block_pool *pool, struct a
     return ret;
 }
 
-static errno_t mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config)
+static errno_t mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config)
 {
     errno_t ret;
     size_t n;
@@ -71,7 +71,7 @@ static errno_t mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct a
     return ret;
 }
 
-errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, struct aarch64_mmu_block_pool_configuration const *config)
+errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config)
 {
     errno_t ret;
 

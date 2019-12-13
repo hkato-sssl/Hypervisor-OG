@@ -24,7 +24,7 @@
 
 /* variables */
 
-static struct aarch64_mmu_ops const mmu_ops = {
+static const struct aarch64_mmu_ops mmu_ops = {
     (aarch64_mmu_desc_func_t)aarch64_stage2_table_descriptor,
     (aarch64_mmu_desc_func_t)aarch64_stage2_block_descriptor,
     (aarch64_mmu_desc_func_t)aarch64_stage2_page_descriptor
@@ -32,7 +32,7 @@ static struct aarch64_mmu_ops const mmu_ops = {
 
 /* functions */
 
-static uint8_t vtcr_el2_sl0(struct aarch64_stage2_configuration const *config)
+static uint8_t vtcr_el2_sl0(const struct aarch64_stage2_configuration *config)
 {
     uint8_t sl0;
 
@@ -45,14 +45,14 @@ static uint8_t vtcr_el2_sl0(struct aarch64_stage2_configuration const *config)
     return sl0;
 }
 
-static uint8_t pa_width(struct aarch64_stage2_configuration const *config)
+static uint8_t pa_width(const struct aarch64_stage2_configuration *config)
 {
-    static uint8_t const width[6] = { 32, 36, 40, 42, 44, 48 };
+    static const uint8_t width[6] = { 32, 36, 40, 42, 44, 48 };
 
     return width[config->pa_range];
 }
 
-static uint64_t generate_vtcr_el2(struct aarch64_stage2_configuration const *config)
+static uint64_t generate_vtcr_el2(const struct aarch64_stage2_configuration *config)
 {
     uint64_t d;
 
@@ -73,7 +73,7 @@ static uint64_t generate_vtcr_el2(struct aarch64_stage2_configuration const *con
     return d;
 }
 
-static bool is_valid_pa_range(struct aarch64_stage2_configuration const *config)
+static bool is_valid_pa_range(const struct aarch64_stage2_configuration *config)
 {
     bool valid;
     uint64_t pa_range;
@@ -84,7 +84,7 @@ static bool is_valid_pa_range(struct aarch64_stage2_configuration const *config)
     return valid;
 }
 
-static bool is_valid_start_level(struct aarch64_stage2_configuration const *config)
+static bool is_valid_start_level(const struct aarch64_stage2_configuration *config)
 {
     bool valid;
 
@@ -113,7 +113,7 @@ static bool is_valid_start_level(struct aarch64_stage2_configuration const *conf
     return valid;
 }
 
-static errno_t validate_parameters(struct aarch64_stage2 *mmu, struct aarch64_stage2_configuration const *config)
+static errno_t validate_parameters(struct aarch64_stage2 *mmu, const struct aarch64_stage2_configuration *config)
 {
     errno_t ret;
 
@@ -130,7 +130,7 @@ static errno_t validate_parameters(struct aarch64_stage2 *mmu, struct aarch64_st
     return ret;
 }
 
-static errno_t stage2_init(struct aarch64_stage2 *mmu, struct aarch64_stage2_configuration const *config)
+static errno_t stage2_init(struct aarch64_stage2 *mmu, const struct aarch64_stage2_configuration *config)
 {
     errno_t ret;
 
@@ -161,7 +161,7 @@ static errno_t stage2_init(struct aarch64_stage2 *mmu, struct aarch64_stage2_con
     return ret;
 }
 
-errno_t aarch64_stage2_init(struct aarch64_stage2 *mmu, struct aarch64_stage2_configuration const *config)
+errno_t aarch64_stage2_init(struct aarch64_stage2 *mmu, const struct aarch64_stage2_configuration *config)
 {
     errno_t ret;
 

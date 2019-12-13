@@ -19,7 +19,7 @@
 
 /* functions */
 
-errno_t aarch64_mmu_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr)
+errno_t aarch64_mmu_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, const struct aarch64_mmu_attr *attr)
 {
     errno_t ret;
 

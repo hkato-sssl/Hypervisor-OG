@@ -25,7 +25,7 @@
 /* variables */
 
 static struct reg_type1 {
-    char const  *name;
+    const char  *name;
     uint32_t    reg;
 } list1[] = {
     ELEMENT(GICD_CTLR),
@@ -49,7 +49,7 @@ static struct reg_type1 {
 } ;
 
 static struct reg_type2 {
-    char const  *name;
+    const char  *name;
     uint32_t    reg;
     uint32_t    diff;
 } list3[] = {
@@ -62,12 +62,12 @@ static struct reg_type2 {
     { NULL, 0, 0 }      /* terminator */
 };
 
-static char const out_fmt[] = "%-17s: %08x\n";
+static const char out_fmt[] = "%-17s: %08x\n";
 
 /* functions */
 
 
-static void dump_sr(struct gic400 const *gic)
+static void dump_sr(const struct gic400 *gic)
 {
     int n;
     uint32_t d;
@@ -87,7 +87,7 @@ static void dump_sr(struct gic400 const *gic)
  
 }
 
-static void dump_array(struct gic400 const *gic, struct reg_type2 const list[])
+static void dump_array(const struct gic400 *gic, const struct reg_type2 list[])
 {
     int i;
     int n;
@@ -107,7 +107,7 @@ static void dump_array(struct gic400 const *gic, struct reg_type2 const list[])
     }
 }
 
-static void dump(struct gic400 const *gic, struct reg_type1 const list[])
+static void dump(const struct gic400 *gic, const struct reg_type1 list[])
 {
     int i;
 
@@ -116,7 +116,7 @@ static void dump(struct gic400 const *gic, struct reg_type1 const list[])
     }
 }
 
-static void dump_ns_distributor(struct gic400 const *gic)
+static void dump_ns_distributor(const struct gic400 *gic)
 {
     printk("<GIC-400 Distributor>\n");
     printk("# of interrupts: %u\n", gic->nr_interrupts);
@@ -126,7 +126,7 @@ static void dump_ns_distributor(struct gic400 const *gic)
     dump(gic, list2);
 }
 
-void gic400_dump_ns_distributor(struct gic400 const *gic)
+void gic400_dump_ns_distributor(const struct gic400 *gic)
 {
     if (gic != NULL) {
         dump_ns_distributor(gic);

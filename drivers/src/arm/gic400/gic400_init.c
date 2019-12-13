@@ -87,7 +87,7 @@ static void init_banked_distributor(struct gic400 *gic)
     gic400_write_dist(gic, GICD_IGROUPR(0), 0);
 }
 
-static errno_t init(struct gic400 *gic, struct gic400_configuration const *config)
+static errno_t init(struct gic400 *gic, const struct gic400_configuration *config)
 {
     uint32_t lock;
 
@@ -115,7 +115,7 @@ static errno_t init(struct gic400 *gic, struct gic400_configuration const *confi
     return SUCCESS;
 }
 
-static errno_t validate_parameters(struct gic400 *gic, struct gic400_configuration const *config)
+static errno_t validate_parameters(struct gic400 *gic, const struct gic400_configuration *config)
 {
     errno_t ret;
 
@@ -142,7 +142,7 @@ static errno_t validate_parameters(struct gic400 *gic, struct gic400_configurati
     return ret;
 }
 
-errno_t gic400_init(struct gic400 *gic, struct gic400_configuration const *config)
+errno_t gic400_init(struct gic400 *gic, const struct gic400_configuration *config)
 {
     errno_t ret;
 

@@ -31,9 +31,9 @@
 extern "C" {
 #endif
 
-uint64_t aarch64_stage2_table_descriptor(void *pa, struct aarch64_stage2_attr const *attr);
-uint64_t aarch64_stage2_block_descriptor(void *pa, struct aarch64_stage2_attr const *attr);
-uint64_t aarch64_stage2_page_descriptor(void *pa, struct aarch64_stage2_attr const *attr);
+uint64_t aarch64_stage2_table_descriptor(void *pa, const struct aarch64_stage2_attr *attr);
+uint64_t aarch64_stage2_block_descriptor(void *pa, const struct aarch64_stage2_attr *attr);
+uint64_t aarch64_stage2_page_descriptor(void *pa, const struct aarch64_stage2_attr *attr);
 
 #ifdef __cplusplus
 }

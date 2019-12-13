@@ -14,7 +14,7 @@
 
 /* prototypes */
 
-static void dump_table(struct aarch64_mmu_base const *mmu, uint64_t *p, int level);
+static void dump_table(const struct aarch64_mmu_base *mmu, uint64_t *p, int level);
 
 /* variables */
 
@@ -89,7 +89,7 @@ static void dump_block_desc(uint64_t desc, int level, int index)
     dump_block_page_attr(desc);
 }
 
-static void dump_table_desc(struct aarch64_mmu_base const *mmu, uint64_t desc, int level, int index)
+static void dump_table_desc(const struct aarch64_mmu_base *mmu, uint64_t desc, int level, int index)
 {
     uint64_t next;
 
@@ -127,7 +127,7 @@ static void dump_reserved_desc(uint64_t desc, int level, int index)
     printk("%03x:%016x: reserved\n", index, desc);
 }
 
-static void dump_table(struct aarch64_mmu_base const *mmu, uint64_t *p, int level)
+static void dump_table(const struct aarch64_mmu_base *mmu, uint64_t *p, int level)
 {
     int i;
     int invalid;
@@ -162,7 +162,7 @@ static void dump_table(struct aarch64_mmu_base const *mmu, uint64_t *p, int leve
     }
 }
 
-void aarch64_mmu_dump_descriptor(struct aarch64_mmu const *mmu)
+void aarch64_mmu_dump_descriptor(const struct aarch64_mmu *mmu)
 {
     uint64_t *p;
 

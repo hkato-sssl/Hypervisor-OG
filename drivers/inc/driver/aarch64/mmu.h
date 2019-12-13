@@ -147,15 +147,15 @@ struct aarch64_mmu_configuration {
 
 /* functions */
 
-errno_t aarch64_mmu_init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config);
+errno_t aarch64_mmu_init(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config);
 errno_t aarch64_mmu_disable(void);
 errno_t aarch64_mmu_enable(struct aarch64_mmu *mmu);
 
-errno_t aarch64_mmu_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, struct aarch64_mmu_attr const *attr);
+errno_t aarch64_mmu_map(struct aarch64_mmu *mmu, void *va, void *pa, size_t sz, const struct aarch64_mmu_attr *attr);
 
 /* for debugging */
 
-void aarch64_mmu_dump_descriptor(struct aarch64_mmu const *mmu);
+void aarch64_mmu_dump_descriptor(const struct aarch64_mmu *mmu);
 
 #ifdef __cplusplus
 }

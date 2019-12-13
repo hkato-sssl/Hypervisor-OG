@@ -39,7 +39,7 @@ struct aarch64_mmu test_mmu;
 
 /* functions */
 
-static errno_t map(char *start, char *end, struct aarch64_mmu_attr const *attr)
+static errno_t map(char *start, char *end, const struct aarch64_mmu_attr *attr)
 {
     errno_t ret;
     size_t sz;

@@ -23,7 +23,7 @@
 /* variables */
 
 static const struct {
-    char const  *name;
+    const char  *name;
     uint32_t    reg;
 } list[] = {
     ELEMENT(GICC_CTLR),
@@ -37,7 +37,7 @@ static const struct {
 
 /* functions */
 
-void gic400_dump_ns_cpuif(struct gic400 const *gic)
+void gic400_dump_ns_cpuif(const struct gic400 *gic)
 {
     int i;
 

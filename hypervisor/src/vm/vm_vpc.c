@@ -20,7 +20,7 @@
 
 /* functions */
 
-struct vpc *vm_vpc(struct vm const *vm, uint32_t index)
+struct vpc *vm_vpc(const struct vm *vm, uint32_t index)
 {
     struct vpc *p;
 

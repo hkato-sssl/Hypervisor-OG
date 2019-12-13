@@ -25,7 +25,7 @@
 
 /* functions */
 
-static bool is_valid_parameter(struct gic400 const *gic,  uint16_t intr_no)
+static bool is_valid_parameter(const struct gic400 *gic,  uint16_t intr_no)
 {
     bool ret;
 
@@ -180,7 +180,7 @@ errno_t gic400_assert_spi(struct gic400 *gic, uint16_t intr_no)
     return ret;
 }
 
-static errno_t configure(struct gic400 *gic, uint16_t intr_no, struct gic400_interrupt_configuration const *config)
+static errno_t configure(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)
 {
     uint32_t d;
 
@@ -193,7 +193,7 @@ static errno_t configure(struct gic400 *gic, uint16_t intr_no, struct gic400_int
     return SUCCESS;
 }
 
-static errno_t configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct gic400_interrupt_configuration const *config)
+static errno_t configure_interrupt(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)
 {
     errno_t ret;
     uint32_t lock;
@@ -209,7 +209,7 @@ static errno_t configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct 
     return ret;
 }
 
-static bool is_valid_configuration(struct gic400 const *gic, struct gic400_interrupt_configuration const *config)
+static bool is_valid_configuration(const struct gic400 *gic, const struct gic400_interrupt_configuration *config)
 {
     bool ret;
 
@@ -222,7 +222,7 @@ static bool is_valid_configuration(struct gic400 const *gic, struct gic400_inter
     return ret;
 }
 
-errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, struct gic400_interrupt_configuration const *config)
+errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)
 {
     errno_t ret;
 

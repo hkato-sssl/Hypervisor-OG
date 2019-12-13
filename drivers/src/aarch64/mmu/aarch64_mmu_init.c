@@ -22,7 +22,7 @@
 
 /* variables */
 
-static struct aarch64_mmu_ops const mmu_ops = {
+static const struct aarch64_mmu_ops mmu_ops = {
     (aarch64_mmu_desc_func_t)aarch64_mmu_table_descriptor,
     (aarch64_mmu_desc_func_t)aarch64_mmu_block_descriptor,
     (aarch64_mmu_desc_func_t)aarch64_mmu_page_descriptor
@@ -30,7 +30,7 @@ static struct aarch64_mmu_ops const mmu_ops = {
 
 /* functions */
 
-static uint64_t create_tcr_el0(struct aarch64_mmu_configuration const *config)
+static uint64_t create_tcr_el0(const struct aarch64_mmu_configuration *config)
 {
     uint64_t d;
 
@@ -49,7 +49,7 @@ static uint64_t create_tcr_el0(struct aarch64_mmu_configuration const *config)
     return d;
 }
 
-static uint64_t create_tcr_el1(struct aarch64_mmu_configuration const *config)
+static uint64_t create_tcr_el1(const struct aarch64_mmu_configuration *config)
 {
     uint64_t d;
 
@@ -77,7 +77,7 @@ static uint64_t create_tcr_el1(struct aarch64_mmu_configuration const *config)
     return d;
 }
 
-static uint64_t create_tcr_el23(struct aarch64_mmu_configuration const *config)
+static uint64_t create_tcr_el23(const struct aarch64_mmu_configuration *config)
 {
     uint64_t d;
 
@@ -98,7 +98,7 @@ static uint64_t create_tcr_el23(struct aarch64_mmu_configuration const *config)
     return d;
 }
 
-static bool is_valid_type(struct aarch64_mmu_configuration const *config)
+static bool is_valid_type(const struct aarch64_mmu_configuration *config)
 {
     bool valid;
 
@@ -114,7 +114,7 @@ static bool is_valid_type(struct aarch64_mmu_configuration const *config)
     return valid;
 }
 
-static errno_t validate_parameters(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config)
+static errno_t validate_parameters(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config)
 {
     errno_t ret;
 
@@ -132,7 +132,7 @@ static errno_t validate_parameters(struct aarch64_mmu *mmu, struct aarch64_mmu_c
     return ret;
 }
 
-static errno_t mmu_init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config)
+static errno_t mmu_init(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config)
 {
     errno_t ret;
 
@@ -164,7 +164,7 @@ static errno_t mmu_init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuratio
     return ret;
 }
 
-errno_t aarch64_mmu_init(struct aarch64_mmu *mmu, struct aarch64_mmu_configuration const *config)
+errno_t aarch64_mmu_init(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config)
 {
     errno_t ret;
 

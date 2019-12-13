@@ -21,7 +21,7 @@
 
 /* functions */
 
-static errno_t configure_vpcs(struct vm *vm, struct vm_configuration const *config)
+static errno_t configure_vpcs(struct vm *vm, const struct vm_configuration *config)
 {
     errno_t ret;
     uint32_t i;
@@ -40,7 +40,7 @@ static errno_t configure_vpcs(struct vm *vm, struct vm_configuration const *conf
     return ret;
 }
 
-static errno_t configure(struct vm *vm, struct vm_configuration const *config)
+static errno_t configure(struct vm *vm, const struct vm_configuration *config)
 {
     errno_t ret;
 
@@ -57,7 +57,7 @@ static errno_t configure(struct vm *vm, struct vm_configuration const *config)
     return ret;
 }
 
-static bool is_valid_parameter(struct vm *vm, struct vm_configuration const *config)
+static bool is_valid_parameter(struct vm *vm, const struct vm_configuration *config)
 {
     bool valid;
 
@@ -72,7 +72,7 @@ static bool is_valid_parameter(struct vm *vm, struct vm_configuration const *con
     return valid;
 }
 
-errno_t vm_configure(struct vm *vm, struct vm_configuration const *config)
+errno_t vm_configure(struct vm *vm, const struct vm_configuration *config)
 {
     errno_t ret;
 

@@ -29,10 +29,8 @@ extern "C" {
 
 /* inline functions */
 
-static inline void system_assert(char const *func, uint32_t line)
-{
-    __asm volatile ("svc #0xffff");
-}
+void system_assert(const char *func, uint32_t line);
+void system_alert(const char *func, uint32_t line, const char *message);
 
 #ifdef __cplusplus
 }

@@ -6,8 +6,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/assert.h"
 #include "lib/system/errno.h"
+#include "lib/system/stdc/assert.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 
@@ -41,7 +41,7 @@ errno_t vm_event_loop(struct vm *vm, uint32_t proc_no, struct vpc_boot_configura
     errno_t ret;
     struct vpc *vpc;
 
-    SYSTEM_ASSERT((vm != NULL) && (proc_no < vm->nr_procs) && (boot != NULL));
+    assert((vm != NULL) && (proc_no < vm->nr_procs) && (boot != NULL));
 
     vpc = vm_vpc(vm, proc_no);
     ret = vpc_launch(vpc, boot);

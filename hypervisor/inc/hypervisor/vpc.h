@@ -54,7 +54,10 @@ struct vpc_emulator_ops {
 struct vpc_memory_access_request {
     enum { VPC_WRITE_ACCESS, VPC_READ_ACCESS } access;
     uintptr_t   addr;
-    size_t      size;
+    uint8_t     size;
+    struct {
+        uint8_t sign:1;
+    } flag;
 };
 
 struct vpc {

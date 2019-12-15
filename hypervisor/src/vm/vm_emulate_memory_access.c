@@ -47,7 +47,7 @@ static struct vm_region_trap *search_trap(struct vpc *vpc, const struct vpc_memo
     return trap;
 }
 
-static errno_t emulate_memory_access(struct vpc *vpc, const struct vpc_memory_access_request *req)
+errno_t vm_emulate_memory_access(struct vpc *vpc, const struct vpc_memory_access_request *req)
 {
     errno_t ret;
     struct vm_region_trap *trap;
@@ -55,21 +55,6 @@ static errno_t emulate_memory_access(struct vpc *vpc, const struct vpc_memory_ac
     trap = search_trap(vpc, req);
     if (trap != NULL) {
         ret = (trap->emulator)(vpc, req);
-    } else {
-        ret = -ENOSYS;
-    }
-
-    return ret;
-}
-
-errno_t vm_emulate_memory_access(struct vpc *vpc, const struct vpc_memory_access_request *req)
-{
-    errno_t ret;
-    struct vm_region_trap *head;
-
-    head = vpc->owner->emulator.trap.memory_region;
-    if (head != NULL) {
-        ret = emulate_memory_access(vpc, req);
     } else {
         ret = -ENOSYS;
     }

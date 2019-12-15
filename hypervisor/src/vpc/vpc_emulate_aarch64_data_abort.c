@@ -29,6 +29,7 @@ static void generate_access_request(struct vpc *vpc, struct vpc_memory_access_re
     req->access = ((esr & ISS_DATA_ABORT_WnR) != 0) ? VPC_WRITE_ACCESS : VPC_READ_ACCESS;
     req->size = 1 << ISS_DATA_ABORT_SAS(esr);
     req->addr = (vpc->regs[VPC_HPFAR_EL2] & BITS(39, 4)) << 8;
+    req->flag.sign = ((esr & ISS_DATA_ABORT_SSE) == 0) ? 0 : 1;
 }
 
 static errno_t emulate_aarch64_data_abort(struct vpc *vpc)
@@ -42,21 +43,35 @@ static errno_t emulate_aarch64_data_abort(struct vpc *vpc)
     return ret;
 }
 
-errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc)
+static bool is_emulatable(const struct vpc *vpc)
 {
-    errno_t ret;
+    bool     ret;
     uint64_t esr;
     uint64_t dfsc;
 
     esr = vpc->regs[VPC_ESR_EL2];
-    if ((esr & ISS_DATA_ABORT_ISV) != 0) {
+    if (((esr & ISS_DATA_ABORT_ISV) != 0) &&
+        ((esr & ISS_DATA_ABORT_CM) == 0)) {
         dfsc = ISS_DATA_ABORT_DFSC(esr);
         if ((dfsc >= 9) && (dfsc <= 11)) {
             /* Access flag fault */
-            ret = emulate_aarch64_data_abort(vpc);
+            ret = true;
         } else {
-            ret = -ENOSYS;
+            ret = false;
         }
+    } else {
+        ret = false;
+    }
+
+    return ret;
+}
+
+errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc)
+{
+    errno_t ret;
+
+    if (is_emulatable(vpc)) {
+        ret = emulate_aarch64_data_abort(vpc);
     } else {
         ret = -ENOSYS;
     }

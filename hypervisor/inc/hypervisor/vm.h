@@ -31,21 +31,21 @@ extern "C" {
 /* types */
 
 struct vm_region_trap {
-    struct vm_region_trap               *next;
-    uint64_t                            addr;
-    size_t                              size;
-    vpc_memory_access_emulator_t        emulator;
+    struct vm_region_trap          *next;
+    uint64_t                       addr;
+    size_t                         size;
+    vpc_memory_access_emulator_t   emulator;
 };
 
 struct vm {
-    spin_lock_t             lock;
-    uint32_t                nr_procs;
-    struct vpc              *vpcs;
-    struct aarch64_stage2   *stage2;
+    spin_lock_t                     lock;
+    uint32_t                        nr_procs;
+    struct vpc                      *vpcs;
+    struct aarch64_stage2           *stage2;
     struct {
-        bool                launched;
+        bool                        launched;
     } boolean;
-    struct vpc_boot_configuration boot;
+    struct vpc_boot_configuration   boot;
 
     struct {
         struct {
@@ -56,17 +56,17 @@ struct vm {
 
 struct vm_configuration {
     /* resources */
-    uint32_t                nr_procs;
+    uint32_t                        nr_procs;
     struct {
-        struct vpc          *addr;
-        size_t              size;
+        struct vpc                  *addr;
+        size_t                      size;
     } vpcs;
     struct {
-        uint64_t            *addr;
-        size_t              size;
+        uint64_t                    *addr;
+        size_t                      size;
     } regs;
-    struct aarch64_stage2   *stage2;
-    struct vpc_boot_configuration boot;
+    struct aarch64_stage2           *stage2;
+    struct vpc_boot_configuration   boot;
 };
 
 /* variables */

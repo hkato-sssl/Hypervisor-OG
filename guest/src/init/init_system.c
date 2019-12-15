@@ -133,7 +133,7 @@ errno_t init_system(void)
     	ret = init_exception();
     }
     if (ret == SUCCESS) {
-        ret = init_system_spin_lock(&system_lock);
+        ret = system_register_spin_lock(&system_lock);
     }
 
     return ret;

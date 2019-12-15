@@ -71,17 +71,16 @@ struct vpc {
     } boolean;
 
     struct {
-        struct vpc_emulator_ops     *ops;
-        struct vpc_memory_region    *trapped_region;
+        const struct vpc_emulator_ops   *ops;
     } emulator;
 };
 
 struct vpc_configuration {
-    struct vm                   *owner;
-    uint64_t                    *regs;
-    uint8_t                     proc_no;    // processor No.
+    struct vm       *owner;
+    uint64_t        *regs;
+    uint8_t         proc_no;    // processor No.
     struct {
-        struct vpc_emulator_ops *ops;
+        const struct vpc_emulator_ops   *ops;
     } emulator;
 };
 

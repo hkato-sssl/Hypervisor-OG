@@ -49,7 +49,7 @@ struct vm {
 
     struct {
         struct {
-            struct vm_region_trap   *memory_region;
+            struct vm_region_trap       *memory_region;
         } trap;
     } emulator;
 };
@@ -67,6 +67,11 @@ struct vm_configuration {
     } regs;
     struct aarch64_stage2           *stage2;
     struct vpc_boot_configuration   boot;
+    struct {
+        struct {
+            const struct vpc_emulator_ops   *ops;
+        } emulator;
+    } vpc;
 };
 
 /* variables */

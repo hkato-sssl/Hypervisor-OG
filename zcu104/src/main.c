@@ -21,6 +21,7 @@ errno_t init_system(void);
 errno_t init_memory_map(void);
 void init_hw(void);
 void launch_system(void);
+void hypervisor_start(void);
 
 int main(void)
 {
@@ -35,5 +36,7 @@ int main(void)
 void init_hw(void) { return ; }
 void launch_system(void)
 {
+    hypervisor_start();
+
     printk("Done\n");
 }

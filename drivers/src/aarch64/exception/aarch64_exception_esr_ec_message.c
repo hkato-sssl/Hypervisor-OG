@@ -1,5 +1,5 @@
 /*
- * aarch64/exception/aarch64_esr_ec_message.c
+ * aarch64/exception/aarch64_exception_esr_ec_message.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -15,7 +15,7 @@
 
 /* functions */
 
-const char *aarch64_esr_ec_message(uint32_t ec)
+const char *aarch64_exception_esr_ec_message(uint32_t ec)
 {
     const char *msg;
 

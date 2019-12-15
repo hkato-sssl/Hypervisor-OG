@@ -70,7 +70,8 @@ extern "C" {
 
 /* functions */
 
-const char *aarch64_esr_ec_message(uint32_t ec);
+const char *aarch64_exception_esr_ec_message(uint32_t ec);
+void aarch64_exception_dump(const uint64_t *ei);
 
 #ifdef __cplusplus
 }

@@ -117,52 +117,6 @@ static errno_t init_printk(void)
     return ret;
 }
 
-static errno_t init_tls(uint8_t no)
-{
-    errno_t ret;
-    char *p;
-    uintptr_t *tls;
-
-    p = exc_stack_top(no);
-    if (p != NULL) {
-        p -= TLS_SIZE;
-        memset(p, 0, TLS_SIZE);
-        tls = (uintptr_t *)p;
-        tls[TLS_EXCEPTION_SP] = (uintptr_t)p;
-
-        aarch64_write_tpidr_el2((uintptr_t)tls);
-        aarch64_isb();
-
-        ret = SUCCESS;
-    } else {
-        ret = -EINVAL;
-    }
-
-    return ret;
-}
-
-static errno_t init_exception(void)
-{
-    extern char excvec_hyp[];
-
-    aarch64_write_vbar_el2((uint64_t)excvec_hyp);
-    aarch64_isb();
-
-    return SUCCESS;
-}
-
-errno_t init_thread(uint8_t no)
-{
-    errno_t ret;
-
-    ret = init_tls(no);
-    if (ret == SUCCESS) {
-        ret = init_exception();
-    }
-
-    return ret;
-}
-
 errno_t init_system(void)
 {
     errno_t ret;
@@ -174,11 +128,6 @@ errno_t init_system(void)
         if (ret == SUCCESS) {
             ret = system_register_spin_lock(&system_lock);
         }
-        if (ret == SUCCESS) {
-            ret = init_thread(no);
-        }
-    } else {
-        ret = init_thread(no);
     }
 
     return ret;

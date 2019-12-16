@@ -59,8 +59,8 @@ errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *region)
 {
     errno_t ret;
 
-    ret = system_validate_data_region(region, sizeof(*region));
-    if (ret == SUCCESS) {
+    ret = system_validate_stack_region(region, sizeof(*region));
+    if (ret != SUCCESS) {
         ret = register_region_trap(vm, region);
     } else {
         ret = -EINVAL;

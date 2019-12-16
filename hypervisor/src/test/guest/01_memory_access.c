@@ -1,5 +1,5 @@
 /*
- * hypervisor/test/vm/02_memory_access.c
+ * hypervisor/test/guest/01_memory_access.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -120,7 +120,7 @@ static errno_t init_vm(void)
     return ret;
 }
 
-void test_vm_02(void)
+void test_guest_01(void)
 {
     errno_t ret;
 

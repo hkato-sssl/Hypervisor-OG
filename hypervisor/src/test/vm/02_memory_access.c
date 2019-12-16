@@ -17,7 +17,7 @@
 #define NR_CPUS     1
 
 #define RAM_START   0x20000000
-#define RAM_SIZE    0x00100000
+#define RAM_SIZE    0x01000000
 
 #define UART_IPA    0xff000000  /* PS UART0 */
 #define UART_PA     0xff000000
@@ -90,6 +90,7 @@ static errno_t init_trap(void)
     trap.size = TRAP_SIZE;
     trap.emulator = emulator_02;
     ret = vm_register_region_trap(&vm, &trap);
+    printk("vm_register_region_trap() -> %d\n", ret);
 
     return ret;
 }
@@ -111,6 +112,7 @@ static errno_t init_vm(void)
     config.boot.sp = 0;
     config.vpc.emulator.ops = &ops;
     ret = vm_configure(&vm, &config);
+    printk("vm_configure() -> %d\n", ret);
     if (ret == SUCCESS) {
         ret = init_trap();
     }

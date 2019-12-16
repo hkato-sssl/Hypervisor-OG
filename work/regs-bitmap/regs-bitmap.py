@@ -6,10 +6,11 @@
     CSVファイルからregister bitmap定義マクロを生成
 
 Usage:
-    regs-bitmap.py [-h] <file>
+    regs-bitmap.py [-h] <file> [-w <width>]
 
 Options:
     -h       : help
+    -w       : width of a definition name (default: 28)
 """
 from docopt import docopt
 import os
@@ -26,7 +27,7 @@ def spc_name(name):
 
     n = DEF_NAME_WIDTH - len(name)
     if n <= 0:
-        raise Exception("DEF_NAME_WIDTH is too small.");
+        raise Exception("DEF_NAME_WIDTH is too small. (default: {})".format(DEF_NAME_WIDTH));
 
     return ' ' * n;
 
@@ -46,6 +47,10 @@ def out_def_bit_field(prefix, name, msb, lsb):
 
     name = nm + '(n)'
     value = '(((n) << {}_LSB) & {}_MASK)'.format(nm, nm)
+    print(DEFINE + name + spc_name(name) + value)
+
+    name = 'EXTRACT_{}(d)'.format(nm);
+    value = '(((d) & {}_MASK) >> {}_LSB)'.format(nm, nm);
     print(DEFINE + name + spc_name(name) + value)
 
 def out_def_bit(prefix, name, bit_no):
@@ -131,4 +136,6 @@ def main(args):
 
 if __name__ == "__main__":
     args = docopt(__doc__)
+    if args['-w']:
+        DEF_NAME_WIDTH = int(args['<width>'])
     main(args)

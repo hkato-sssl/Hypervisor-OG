@@ -26,8 +26,8 @@ errno_t system_register_spin_lock(spin_lock_t *lock)
 {
     errno_t ret;
 
-    ret = system_validate_data_region(lock, sizeof(*lock));
-    if (ret == SUCCESS) {
+    ret = system_validate_stack_region(lock, sizeof(*lock));
+    if (ret != SUCCESS) {
         spin_lock_init(lock);
         system_lock = lock;
     }

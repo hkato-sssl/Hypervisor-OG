@@ -1,5 +1,5 @@
 /*
- * system/system_validate_data_region.c
+ * system/system_validate_stack_region.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -22,7 +22,7 @@ extern char __stack_end[];
 
 /* functions */
 
-errno_t system_validate_data_region(void *addr, size_t size)
+errno_t system_validate_stack_region(void *addr, size_t size)
 {
     errno_t ret;
 

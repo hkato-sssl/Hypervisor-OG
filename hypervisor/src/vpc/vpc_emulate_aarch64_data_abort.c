@@ -29,9 +29,9 @@ static void generate_memory_access(struct vpc *vpc, struct vpc_memory_access *ac
     esr = vpc->regs[VPC_ESR_EL2];
     access->request.type = ((esr & ISS_DATA_ABORT_WnR) != 0) ? VPC_WRITE_ACCESS : VPC_READ_ACCESS;
     access->request.addr = (vpc->regs[VPC_HPFAR_EL2] & BITS(39, 4)) << 8;
-    sas = BF_EXTRACT(esr, ISS_DATA_ABORT_SAS_MSB, ISS_DATA_ABORT_SAS_LSB);
+    sas = EXTRACT_ISS_DATA_ABORT_SAS(esr);
     access->request.size = 1 << sas;
-    access->request.gpr = (uint8_t)BF_EXTRACT(esr, ISS_DATA_ABORT_SRT_MSB, ISS_DATA_ABORT_SRT_LSB);
+    access->request.gpr = (uint8_t)EXTRACT_ISS_DATA_ABORT_SRT(esr);
     access->request.flag.sign = ((esr & ISS_DATA_ABORT_SSE) == 0) ? 0 : 1;
 }
 

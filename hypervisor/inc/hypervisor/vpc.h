@@ -33,11 +33,11 @@ extern "C" {
 
 struct vm;
 struct vpc;
-struct vpc_memory_access_request;
+struct vpc_memory_access;
 
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
 typedef errno_t (*vpc_emulator_t)(struct vpc *vpc);
-typedef errno_t (*vpc_memory_access_emulator_t)(struct vpc *vpc, const struct vpc_memory_access_request *req);
+typedef errno_t (*vpc_memory_access_emulator_t)(struct vpc *vpc, const struct vpc_memory_access *access);
 
 struct vpc_emulator_ops {
     vpc_emulator_t      irq;
@@ -51,13 +51,23 @@ struct vpc_emulator_ops {
     } aarch64;
 };
 
-struct vpc_memory_access_request {
-    enum { VPC_WRITE_ACCESS, VPC_READ_ACCESS } access;
-    uintptr_t   addr;
-    uint8_t     size;
+enum vpc_access_type {
+    VPC_READ_ACCESS,
+    VPC_WRITE_ACCESS
+};
+
+struct vpc_memory_access {
     struct {
-        uint8_t sign:1;
-    } flag;
+        enum vpc_access_type    type;
+        uintptr_t               addr;
+        uint8_t                 size;
+        uint8_t                 gpr;
+        struct {
+            uint8_t             sign:1;
+        } flag;
+    } request;
+
+    uint64_t                    result;
 };
 
 struct vpc {

@@ -21,26 +21,27 @@
 
 /* functions */
 
-static void generate_access_request(struct vpc *vpc, struct vpc_memory_access_request *req)
+static void generate_memory_access(struct vpc *vpc, struct vpc_memory_access *access)
 {
     uint64_t esr;
     uint64_t sas;
     
     esr = vpc->regs[VPC_ESR_EL2];
     sas = BF_EXTRACT(esr, ISS_DATA_ABORT_SAS_MSB, ISS_DATA_ABORT_SAS_LSB);
-    req->access = ((esr & ISS_DATA_ABORT_WnR) != 0) ? VPC_WRITE_ACCESS : VPC_READ_ACCESS;
-    req->addr = (vpc->regs[VPC_HPFAR_EL2] & BITS(39, 4)) << 8;
-    req->size = 1 << sas;
-    req->flag.sign = ((esr & ISS_DATA_ABORT_SSE) == 0) ? 0 : 1;
+    access->request.type = ((esr & ISS_DATA_ABORT_WnR) != 0) ? VPC_WRITE_ACCESS : VPC_READ_ACCESS;
+    access->request.addr = (vpc->regs[VPC_HPFAR_EL2] & BITS(39, 4)) << 8;
+    access->request.size = 1 << sas;
+    access->request.gpr = (uint8_t)BF_EXTRACT(esr, ISS_DATA_ABORT_SRT_MSB, ISS_DATA_ABORT_SRT_LSB);
+    access->request.flag.sign = ((esr & ISS_DATA_ABORT_SSE) == 0) ? 0 : 1;
 }
 
 static errno_t emulate_aarch64_data_abort(struct vpc *vpc)
 {
     errno_t ret;
-    struct vpc_memory_access_request req;
+    struct vpc_memory_access access;
 
-    generate_access_request(vpc, &req);
-    ret = vm_emulate_memory_access(vpc, &req);
+    generate_memory_access(vpc, &access);
+    ret = vm_emulate_memory_access(vpc, &access);
 
     return ret;
 }

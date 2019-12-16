@@ -33,7 +33,7 @@
 extern struct aarch64_stage2 hyp_test_stage2;
 
 errno_t hyp_test_stage2_init(void);
-errno_t emulator_02(struct vpc *vpc, const struct vpc_memory_access_request *req);
+errno_t emulator_02(struct vpc *vpc, const struct vpc_memory_access *access);
 
 /* variables */
 

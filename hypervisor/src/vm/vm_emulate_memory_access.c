@@ -21,12 +21,12 @@
 
 /* functions */
 
-static bool is_in_region(const struct vm_region_trap *trap, const struct vpc_memory_access_request *req)
+static bool is_in_region(const struct vm_region_trap *trap, const struct vpc_memory_access *access)
 {
     bool ret;
 
-    if ((trap->addr <= req->addr) &&
-        ((req->addr + req->size) <= (trap->addr + trap->size))) {
+    if ((trap->addr <= access->request.addr) &&
+        ((access->request.addr + access->request.size) <= (trap->addr + trap->size))) {
         ret = true;
     } else {
         ret = false;
@@ -35,26 +35,26 @@ static bool is_in_region(const struct vm_region_trap *trap, const struct vpc_mem
     return ret;
 }
 
-static struct vm_region_trap *search_trap(struct vpc *vpc, const struct vpc_memory_access_request *req)
+static struct vm_region_trap *search_trap(struct vpc *vpc, const struct vpc_memory_access *access)
 {
     struct vm_region_trap *trap;
 
     trap = vpc->owner->emulator.trap.memory_region;
-    while ((trap != NULL) && (! is_in_region(trap, req))) {
+    while ((trap != NULL) && (! is_in_region(trap, access))) {
         trap = trap->next;
     }
 
     return trap;
 }
 
-errno_t vm_emulate_memory_access(struct vpc *vpc, const struct vpc_memory_access_request *req)
+errno_t vm_emulate_memory_access(struct vpc *vpc, const struct vpc_memory_access *access)
 {
     errno_t ret;
     struct vm_region_trap *trap;
 
-    trap = search_trap(vpc, req);
+    trap = search_trap(vpc, access);
     if (trap != NULL) {
-        ret = (trap->emulator)(vpc, req);
+        ret = (trap->emulator)(vpc, access);
     } else {
         ret = -ENOSYS;
     }

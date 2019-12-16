@@ -83,7 +83,7 @@ errno_t vm_launch(struct vm *vm);
 struct vpc *vm_vpc(const struct vm *vm, uint32_t index);
 
 errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *trap);
-errno_t vm_emulate_memory_access(struct vpc *vpc, const struct vpc_memory_access_request *req);
+errno_t vm_emulate_memory_access(struct vpc *vpc, const struct vpc_memory_access *access);
 
 #ifdef __cplusplus
 }

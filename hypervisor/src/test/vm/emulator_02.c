@@ -19,20 +19,20 @@
 
 /* functions */
 
-void print_request(const struct vpc_memory_access_request *req)
+void print_access(const struct vpc_memory_access *access)
 {
-    printk(" Access : %s\n", ((req->access == VPC_WRITE_ACCESS) ? "WRITE" : "READ"));
-    printk("Address : %018p\n", req->addr);
-    printk("   Size : %u\n", req->size);
-    printk("   Sign : %u\n", req->flag.sign);
+    printk(" Access : %s\n", ((access->request.type == VPC_WRITE_ACCESS) ? "WRITE" : "READ"));
+    printk("Address : %018p\n", access->request.addr);
+    printk("   Size : %u\n", access->request.size);
+    printk("   Sign : %u\n", access->request.flag.sign);
 }
 
-errno_t emulator_02(struct vpc *vpc, const struct vpc_memory_access_request *req)
+errno_t emulator_02(struct vpc *vpc, const struct vpc_memory_access *access)
 {
     errno_t ret;
 
     printk("<%s>\n", __func__);
-    print_request(req);
+    print_access(access);
 
     ret = -ENOSYS;
 

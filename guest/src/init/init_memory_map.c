@@ -77,12 +77,7 @@ static errno_t init_map(void)
 
     if (ret == SUCCESS) {
         attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
-        ret = map((void*)0xf9010000, (void*)0xf9013fff, &attr);
-    }
-
-    if (ret == SUCCESS) {
-        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
-        ret = map((void*)0xf9020000, (void*)0xf9023fff, &attr);
+        ret = map((void*)0xb0010000, (void*)0xb0011000, &attr);
     }
 
     return ret;

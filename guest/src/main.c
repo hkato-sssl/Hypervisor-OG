@@ -35,5 +35,7 @@ int main(void)
 void init_hw(void) { return ; }
 void launch_system(void)
 {
+    printk("<%s>\n", __func__);
+    *(volatile uint32_t *)0xb0010000 = 0;
     printk("Done\n");
 }

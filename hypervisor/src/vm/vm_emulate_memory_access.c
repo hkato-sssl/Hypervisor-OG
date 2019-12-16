@@ -25,8 +25,8 @@ static bool is_in_region(const struct vm_region_trap *trap, const struct vpc_mem
 {
     bool ret;
 
-    if ((trap->addr >= req->addr) &&
-        ((trap->addr + trap->size) <= (req->addr + req->size))) {
+    if ((trap->addr <= req->addr) &&
+        ((req->addr + req->size) <= (trap->addr + trap->size))) {
         ret = true;
     } else {
         ret = false;

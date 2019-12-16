@@ -30,12 +30,6 @@ struct vpc;
 
 typedef errno_t (*emulator_func_t)(struct vpc *);
 
-/* variables */
-
-/* functions */
-
-errno_t emulator_aarch64_data_abort(struct vpc *vpc);
-
 struct emulator_ops {
     emulator_func_t     irq;
     emulator_func_t     fiq;
@@ -52,6 +46,10 @@ struct emulator_ops {
         emulator_func_t distributor;
     } gic;
 };
+
+/* variables */
+
+/* functions */
 
 #ifdef __cplusplus
 }

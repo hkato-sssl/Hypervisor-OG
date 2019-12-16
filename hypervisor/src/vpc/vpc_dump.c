@@ -25,6 +25,7 @@ void vpc_dump(const struct vpc *vpc, unsigned int level)
     printk("<VPC#%u>\n", vpc->proc_no);
 
     regs = vpc->regs;
+    printk(" ESR_EL2: 0x%08x\n", regs[VPC_ESR_EL2]);
     printk("SPSR_EL2: 0x%08x\n", regs[VPC_SPSR_EL2]);
     printk("  SP_EL0: 0x%016lx\n", regs[VPC_SP_EL0]);
     printk("  SP_EL1: 0x%016lx\n", regs[VPC_SP_EL1]);

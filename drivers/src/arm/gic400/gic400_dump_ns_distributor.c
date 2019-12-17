@@ -74,13 +74,13 @@ static void dump_sr(const struct gic400 *gic)
     uint32_t reg;
     char buff[32];
 
-    d = gic400_read_dist(gic, GICD_PPISR);
+    d = gic400_read_distributor(gic, GICD_PPISR);
     printk(out_fmt, "GICD_PPISR", d);
     n = 0;
     reg = GICD_SPISR(0);
     for (d = 32; d < gic->nr_interrupts; d += 32) {
         snprintf(buff, sizeof(buff), "GICD_SPISR%d", n);
-        printk(out_fmt, buff, gic400_read_dist(gic, reg));
+        printk(out_fmt, buff, gic400_read_distributor(gic, reg));
         reg += 4;
         ++n;
     }
@@ -100,7 +100,7 @@ static void dump_array(const struct gic400 *gic, const struct reg_type2 list[])
         n = 0;
         for (d = 0; d < gic->nr_interrupts; d += list[i].diff) {
             snprintf(buff, sizeof(buff), "%s%d", list[i].name, n);
-            printk(out_fmt, buff, gic400_read_dist(gic, reg));
+            printk(out_fmt, buff, gic400_read_distributor(gic, reg));
             reg += 4;
             ++n;
         }
@@ -112,7 +112,7 @@ static void dump(const struct gic400 *gic, const struct reg_type1 list[])
     int i;
 
     for (i = 0; list[i].name != NULL; ++i) {
-        printk(out_fmt, list[i].name, gic400_read_dist(gic, list[i].reg));
+        printk(out_fmt, list[i].name, gic400_read_distributor(gic, list[i].reg));
     }
 }
 

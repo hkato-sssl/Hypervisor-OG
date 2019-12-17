@@ -41,7 +41,7 @@ static bool is_valid_parameter(const struct gic400 *gic,  uint16_t intr_no)
 static void sync_dist_io(struct gic400 *gic)
 {
     memory_barrier();
-    gic400_read_dist(gic, GICD_CTLR);
+    gic400_read_distributor(gic, GICD_CTLR);
 }
 
 static errno_t write_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg0)
@@ -51,7 +51,7 @@ static errno_t write_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg
 
     bit = 1UL << (bit_no & 31);
     reg = reg0 + (bit_no / 32)  * sizeof(uint32_t);
-    gic400_write_dist(gic, reg, bit);
+    gic400_write_distributor(gic, reg, bit);
 
     return SUCCESS;
 }
@@ -80,9 +80,9 @@ static void write_dist_byte(struct gic400 *gic, uint16_t byte_no, uintptr_t reg0
     mask = ~((uint32_t)0xff << shift_ct);
     reg = reg0 + (byte_no / 4) * sizeof(uint32_t);
 
-    d = gic400_read_dist(gic, reg);
+    d = gic400_read_distributor(gic, reg);
     d = (d & mask) | ((uint32_t)byte_data << shift_ct);
-    gic400_write_dist(gic, reg, d);
+    gic400_write_distributor(gic, reg, d);
 }
 
 uint32_t gic400_ack(struct gic400 *gic)
@@ -127,7 +127,7 @@ static errno_t assert_sgi(struct gic400 *gic, uint8_t targets, uint16_t intr_no)
     uint32_t d;
 
     d = ((uint32_t)targets << 16) | (uint32_t)intr_no;
-    gic400_write_dist(gic, GICD_SGIR, d);
+    gic400_write_distributor(gic, GICD_SGIR, d);
 
     return SUCCESS;
 }

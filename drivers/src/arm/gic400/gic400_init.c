@@ -60,7 +60,7 @@ static void init_distributor(struct gic400 *gic)
     uint32_t i;
     uint32_t d;
 
-    d = gic400_read_distributir(gic, GICD_TYPER);
+    d = gic400_read_distributor(gic, GICD_TYPER);
     d = ((d & BITS(4, 0)) + 1) * 32;
     gic->nr_interrupts = (uint16_t)d;
 

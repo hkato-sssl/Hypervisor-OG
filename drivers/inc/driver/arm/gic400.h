@@ -32,8 +32,8 @@ extern "C" {
 /* types */
 
 struct gic400_base_register {
-    void    *dist;      /* distributor */
-    void    *cpuif;     /* CPU interface */
+    void    *distributor;
+    void    *cpuif;
 };
 
 struct gic400_configuration {
@@ -62,6 +62,13 @@ struct gic400_interrupt_configuration {
 };
 
 /* variables */
+
+/* inline functions */
+
+static inline void *gic400_distributor_register_base(const struct gic400 *gic)
+{
+    return gic->config.base.distributor;
+}
 
 /* functions */
 

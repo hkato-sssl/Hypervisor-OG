@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-errno_t gic400_dist_write_bit(const struct gic400 *gic, uint16_t bit_no, uintptr_t reg0);
+errno_t gic400_distributor_write_bit(const struct gic400 *gic, uint16_t bit_no, uintptr_t reg0);
 
 static inline void gic400_write_cpuif(const struct gic400 *gic, uintptr_t reg, uint32_t d)
 {
@@ -55,23 +55,23 @@ static inline uint32_t gic400_read_cpuif(const struct gic400 *gic, uintptr_t reg
     return d;
 }
 
-static inline void gic400_write_dist(const struct gic400 *gic, uintptr_t reg, uint32_t d)
+static inline void gic400_write_distributor(const struct gic400 *gic, uintptr_t reg, uint32_t d)
 {
-    REG_WRITE32(gic->config.base.dist, reg, d);
+    REG_WRITE32(gic->config.base.distributor, reg, d);
 }
 
-static inline void gic400_write_sync_dist(const struct gic400 *gic, uintptr_t reg, uint32_t d)
+static inline void gic400_write_sync_distributor(const struct gic400 *gic, uintptr_t reg, uint32_t d)
 {
-    REG_WRITE32(gic->config.base.dist, reg, d);
+    REG_WRITE32(gic->config.base.distributor, reg, d);
     memory_barrier();
-    REG_READ32(gic->config.base.dist, reg);
+    REG_READ32(gic->config.base.distributor, reg);
 }
 
-static inline uint32_t gic400_read_dist(const struct gic400 *gic, uintptr_t reg)
+static inline uint32_t gic400_read_distributor(const struct gic400 *gic, uintptr_t reg)
 {
     uint32_t d;
 
-    d = REG_READ32(gic->config.base.dist, reg);
+    d = REG_READ32(gic->config.base.distributor, reg);
 
     return d;
 }

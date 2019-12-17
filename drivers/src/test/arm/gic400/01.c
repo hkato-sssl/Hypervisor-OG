@@ -39,7 +39,7 @@ static errno_t init(void)
     struct gic400_configuration config;
 
     memset(&config, 0, sizeof(config));
-    config.base.dist = (void *)GIC400_DIST_BASE;
+    config.base.distributor = (void *)GIC400_DIST_BASE;
     config.base.cpuif = (void *)GIC400_CPUIF_BASE;
     ret = gic400_init(&gic, &config);
     printk("gic400_init() -> %d\n", ret);

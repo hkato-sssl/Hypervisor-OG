@@ -28,18 +28,21 @@ extern "C" {
 
 /* defines */
 
+#define VM_MAX_NR_PROCS             4
+
 /* types */
 
 struct vm_region_trap {
-    struct vm_region_trap          *next;
-    uint64_t                       addr;
-    size_t                         size;
-    vpc_memory_access_emulator_t   emulator;
+    struct vm_region_trap           *next;
+    uint64_t                        addr;
+    size_t                          size;
+    vpc_memory_access_emulator_t    emulator;
 };
 
 struct vm {
     spin_lock_t                     lock;
-    uint32_t                        nr_procs;
+    uint8_t                         nr_procs;
+    uint8_t                         proc_map[VM_MAX_NR_PROCS];
     struct vpc                      *vpcs;
     struct aarch64_stage2           *stage2;
     struct {
@@ -56,7 +59,7 @@ struct vm {
 
 struct vm_configuration {
     /* resources */
-    uint32_t                        nr_procs;
+    uint8_t                         nr_procs;
     struct {
         struct vpc                  *addr;
         size_t                      size;

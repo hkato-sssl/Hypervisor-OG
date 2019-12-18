@@ -63,7 +63,7 @@ static bool is_valid_parameter(struct vm *vm, const struct vm_configuration *con
 {
     bool valid;
 
-    if ((vm != NULL) && (config != NULL) && (config->nr_procs > 0) && (config->stage2 != NULL) &&
+    if ((vm != NULL) && (config != NULL) && (config->nr_procs > 0) && (config->nr_procs <= VM_MAX_NR_PROCS) && (config->stage2 != NULL) &&
         ((config->vpcs.addr != NULL) && ((sizeof(struct vpc) * config->nr_procs) == config->vpcs.size)) &&
         ((config->regs.addr != NULL) && ((sizeof(uint64_t) * NR_VPC_REGS) == config->regs.size))) {
         valid = true;

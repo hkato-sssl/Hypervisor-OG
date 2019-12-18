@@ -26,6 +26,7 @@ static void generate_memory_access(struct vpc *vpc, struct vpc_memory_access *ac
     uint64_t esr;
     uint64_t sas;
 
+    access->vpc = vpc;
     esr = vpc->regs[VPC_ESR_EL2];
     access->request.type = ((esr & ISS_DATA_ABORT_WnR) != 0) ? VPC_WRITE_ACCESS : VPC_READ_ACCESS;
     access->request.addr = (vpc->regs[VPC_HPFAR_EL2] & BITS(39, 4)) << 8;
@@ -33,6 +34,7 @@ static void generate_memory_access(struct vpc *vpc, struct vpc_memory_access *ac
     access->request.size = 1 << sas;
     access->request.gpr = (uint8_t)EXTRACT_ISS_DATA_ABORT_SRT(esr);
     access->request.flag.sign = ((esr & ISS_DATA_ABORT_SSE) == 0) ? 0 : 1;
+    access->request.flag.a32 = ((esr & ISS_DATA_ABORT_SF) == 0) ? 0 : 1;
 }
 
 static errno_t emulate_aarch64_data_abort(struct vpc *vpc)
@@ -41,7 +43,7 @@ static errno_t emulate_aarch64_data_abort(struct vpc *vpc)
     struct vpc_memory_access access;
 
     generate_memory_access(vpc, &access);
-    ret = vm_emulate_memory_access(vpc, &access);
+    ret = vm_emulate_memory_access(vpc->owner, &access);
 
     return ret;
 }

@@ -37,7 +37,7 @@ struct vpc_memory_access;
 
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
 typedef errno_t (*vpc_emulator_t)(struct vpc *vpc);
-typedef errno_t (*vpc_memory_access_emulator_t)(struct vpc *vpc, const struct vpc_memory_access *access);
+typedef errno_t (*vpc_memory_access_emulator_t)(const struct vpc_memory_access *access);
 
 struct vpc_emulator_ops {
     vpc_emulator_t      irq;
@@ -57,17 +57,18 @@ enum vpc_access_type {
 };
 
 struct vpc_memory_access {
+    struct vpc                  *vpc;   /* an originator */
+
     struct {
         enum vpc_access_type    type;
         uintptr_t               addr;
         uint8_t                 size;
-        uint8_t                 gpr;
+        uint8_t                 gpr;    /* general purpose register */
         struct {
-            uint8_t             sign:1;
+            uint8_t             sign:1; /* sign extension */
+            uint8_t             a32:1;  /* access with a 32-bit wide register */
         } flag;
     } request;
-
-    uint64_t                    result;
 };
 
 struct vpc {

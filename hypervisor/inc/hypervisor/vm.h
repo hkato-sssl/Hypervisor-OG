@@ -49,7 +49,7 @@ struct vm {
 
     struct {
         struct {
-            struct vm_region_trap       *memory_region;
+            struct vm_region_trap   *memory_region;
         } trap;
     } emulator;
 };
@@ -83,7 +83,7 @@ errno_t vm_launch(struct vm *vm);
 struct vpc *vm_vpc(const struct vm *vm, uint32_t index);
 
 errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *trap);
-errno_t vm_emulate_memory_access(struct vpc *vpc, const struct vpc_memory_access *access);
+errno_t vm_emulate_memory_access(struct vm *vm, const struct vpc_memory_access *access);
 
 #ifdef __cplusplus
 }

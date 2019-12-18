@@ -35,11 +35,11 @@ static bool is_in_region(const struct vm_region_trap *trap, const struct vpc_mem
     return ret;
 }
 
-static struct vm_region_trap *search_trap(struct vpc *vpc, const struct vpc_memory_access *access)
+static struct vm_region_trap *search_trap(struct vm *vm, const struct vpc_memory_access *access)
 {
     struct vm_region_trap *trap;
 
-    trap = vpc->owner->emulator.trap.memory_region;
+    trap = vm->emulator.trap.memory_region;
     while ((trap != NULL) && (! is_in_region(trap, access))) {
         trap = trap->next;
     }
@@ -47,14 +47,14 @@ static struct vm_region_trap *search_trap(struct vpc *vpc, const struct vpc_memo
     return trap;
 }
 
-errno_t vm_emulate_memory_access(struct vpc *vpc, const struct vpc_memory_access *access)
+errno_t vm_emulate_memory_access(struct vm *vm, const struct vpc_memory_access *access)
 {
     errno_t ret;
     struct vm_region_trap *trap;
 
-    trap = search_trap(vpc, access);
+    trap = search_trap(vm, access);
     if (trap != NULL) {
-        ret = (trap->emulator)(vpc, access);
+        ret = (trap->emulator)(access);
     } else {
         ret = -ENOSYS;
     }

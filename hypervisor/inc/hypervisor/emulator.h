@@ -40,11 +40,6 @@ struct emulator_ops {
         emulator_func_t smc;
         emulator_func_t data_abort;
     } aarch64;
-
-    struct {
-        emulator_func_t cpuif;
-        emulator_func_t distributor;
-    } gic;
 };
 
 /* variables */

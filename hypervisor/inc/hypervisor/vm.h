@@ -28,7 +28,7 @@ extern "C" {
 
 /* defines */
 
-#define VM_MAX_NR_PROCS             4
+#define VM_MAX_NR_PROCS             8
 
 /* types */
 
@@ -42,7 +42,10 @@ struct vm_region_trap {
 struct vm {
     spin_lock_t                     lock;
     uint8_t                         nr_procs;
-    uint8_t                         proc_map[VM_MAX_NR_PROCS];
+    struct {
+        uint8_t                     virtual[VM_MAX_NR_PROCS];
+        uint8_t                     physical[VM_MAX_NR_PROCS];
+    } proc_map;
     struct vpc                      *vpcs;
     struct aarch64_stage2           *stage2;
     struct {
@@ -84,6 +87,8 @@ struct vm_configuration {
 errno_t vm_configure(struct vm *vm, const struct vm_configuration *config);
 errno_t vm_launch(struct vm *vm);
 struct vpc *vm_vpc(const struct vm *vm, uint32_t index);
+uint8_t vm_virtual_proc_no(struct vm *vm, uint8_t physical_no);
+uint8_t vm_physical_proc_no(struct vm *vm, uint8_t virtual_no);
 
 errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *trap);
 errno_t vm_emulate_memory_access(struct vm *vm, const struct vpc_memory_access *access);

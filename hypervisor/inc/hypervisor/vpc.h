@@ -117,6 +117,10 @@ errno_t vpc_configure(struct vpc *vpc, const struct vpc_configuration *config);
 errno_t vpc_emulate_exception(struct vpc *vpc);
 errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc);
 
+void vpc_load_to_gpr_b(const struct vpc_memory_access *access, uint64_t d);
+void vpc_load_to_gpr_h(const struct vpc_memory_access *access, uint64_t d);
+void vpc_load_to_gpr_w(const struct vpc_memory_access *access, uint64_t d);
+
 /* for debugging */
 
 void vpc_dump(const struct vpc *vpc, unsigned int level);

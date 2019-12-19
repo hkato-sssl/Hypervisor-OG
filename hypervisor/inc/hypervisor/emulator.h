@@ -21,12 +21,11 @@ extern "C" {
 
 #include <stdint.h>
 #include "lib/system/errno.h"
+#include "hypervisor/vpc.h"
 
 /* defines */
 
 /* types */
-
-struct vpc;
 
 typedef errno_t (*emulator_func_t)(struct vpc *);
 
@@ -45,6 +44,9 @@ struct emulator_ops {
 /* variables */
 
 /* functions */
+
+uint64_t emulator_ldrsb(uint64_t d, const struct vpc_memory_access *access);
+uint64_t emulator_ldrsw(uint64_t d, const struct vpc_memory_access *access);
 
 #ifdef __cplusplus
 }

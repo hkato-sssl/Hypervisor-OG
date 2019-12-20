@@ -23,16 +23,25 @@
 
 /* functions */
 
+static uint64_t irq_no(uintptr_t reg, uintptr_t base)
+{
+    uint64_t no;
+
+    no = (reg - base) * 8;
+
+    return no;
+}
+
 static errno_t read_bit_register_b(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
 {
     uint64_t d;
     uint64_t mask;
-    uint64_t offset;
+    uint64_t no;
 
     d = VGIC400_READ8(access->request.addr);
-    offset = reg - base;
-    mask = vgic->active.irq[offset / 32];
-    mask >>= ((offset & BITS(1, 0)) * 8);
+    no = irq_no(reg, base);
+    mask = vgic->active.irq[no / 32];
+    mask >>= (no & 7);
     d &= mask;
 
     vpc_load_to_gpr_b(access, d);
@@ -44,11 +53,11 @@ static errno_t read_bit_register_w(struct vgic400 *vgic, const struct vpc_memory
 {
     uint64_t d;
     uint64_t mask;
-    uint64_t offset;
+    uint64_t no;
 
     d = VGIC400_READ32(access->request.addr);
-    offset = reg - base;
-    mask = vgic->active.irq[offset / 32];
+    no = irq_no(reg, base);
+    mask = vgic->active.irq[no / 32];
     d &= mask;
 
     vpc_load_to_gpr_w(access, d);
@@ -60,12 +69,12 @@ static errno_t write_bit_register_b(struct vgic400 *vgic, const struct vpc_memor
 {
     uint64_t d;
     uint64_t mask;
-    uint64_t offset;
+    uint64_t no;
 
     d = gpr_value(access);
-    offset = reg - base;
-    mask = vgic->active.irq[offset / 32];
-    mask >>= ((offset & BITS(1, 0)) * 8);
+    no = irq_no(reg, base);
+    mask = vgic->active.irq[no / 32];
+    mask >>= (no & 7);
     d &= mask;
     VGIC400_WRITE8(access->request.addr, d);
 
@@ -76,11 +85,11 @@ static errno_t write_bit_register_w(struct vgic400 *vgic, const struct vpc_memor
 {
     uint64_t d;
     uint64_t mask;
-    uint64_t offset;
+    uint64_t no;
 
     d = gpr_value(access);
-    offset = reg - base;
-    mask = vgic->active.irq[offset / 32];
+    no = irq_no(reg, base);
+    mask = vgic->active.irq[no / 32];
     d &= mask;
     VGIC400_WRITE32(access->request.addr, d);
 

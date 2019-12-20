@@ -67,6 +67,7 @@ static errno_t read_icfgr_b(const struct vgic400 *vgic, const struct vpc_memory_
     d = VGIC400_READ8(access->request.addr);
     gic400_unlock(vgic->gic);
     d &= mask;
+
     vpc_load_to_gpr_b(access, d);
 
     return SUCCESS;
@@ -82,6 +83,7 @@ static errno_t read_icfgr_w(const struct vgic400 *vgic, const struct vpc_memory_
     d = VGIC400_READ32(access->request.addr);
     gic400_unlock(vgic->gic);
     d &= mask;
+
     vpc_load_to_gpr_w(access, d);
 
     return SUCCESS;

@@ -24,12 +24,21 @@
 
 /* functions */
 
-static errno_t read_byte_register_b(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
+static uint64_t irq_no(uintptr_t reg, uintptr_t base)
 {
-    uintptr_t no;
-    uint64_t d;
+    uint64_t no;
 
     no = reg - base;
+
+    return no;
+}
+
+static errno_t read_byte_register_b(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
+{
+    uint64_t d;
+    uint64_t no;
+
+    no = irq_no(reg, base);
     if (is_active_irq(vgic, no)) {
         gic400_lock(vgic->gic);
         d = VGIC400_READ8(access->request.addr);
@@ -53,9 +62,10 @@ static errno_t read_byte_register_w(struct vgic400 *vgic, const struct vpc_memor
     d = VGIC400_READ32(access->request.addr);
     gic400_unlock(vgic->gic);
 
-    no = reg - base;
+    no = irq_no(reg, base);
     mask = vgic400_quad_byte_mask(vgic, no);
     d &= mask;
+
     vpc_load_to_gpr_w(access, d);
 
     return SUCCESS;
@@ -63,11 +73,11 @@ static errno_t read_byte_register_w(struct vgic400 *vgic, const struct vpc_memor
 
 static errno_t write_byte_register_b(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
 {
-    uint16_t no;
     uint64_t d;
+    uint64_t no;
 
     d = gpr_value(access);
-    no = reg - base;
+    no = irq_no(reg, base);
     if (is_active_irq(vgic, no)) {
         gic400_lock(vgic->gic);
         VGIC400_WRITE8(access->request.addr, d);
@@ -79,13 +89,13 @@ static errno_t write_byte_register_b(struct vgic400 *vgic, const struct vpc_memo
 
 static errno_t write_byte_register_w(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
 {
-    uint32_t mask;
     uint64_t d;
     uint64_t d0;
+    uint64_t mask;
     uint64_t no;
 
     d = gpr_value(access);
-    no = reg - base;
+    no = irq_no(reg, base);
     mask = vgic400_quad_byte_mask(vgic, no);
     d &= mask;
 

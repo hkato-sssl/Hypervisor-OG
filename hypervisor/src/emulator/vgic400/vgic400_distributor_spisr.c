@@ -27,10 +27,11 @@ static errno_t read_spisr_w(struct vgic400 *vgic, const struct vpc_memory_access
     uint32_t idx;
     uint32_t mask;
 
-    idx = (reg - GICD_SPISR(0)) / 32 + 1;
+    idx = (reg - GICD_SPISR(0)) / 4 + 1;
     mask = vgic->active.irq[idx];
     d = VGIC400_READ32(access->request.addr);
     d &= mask;
+
     vpc_load_to_gpr_w(access, d);
 
     return SUCCESS;

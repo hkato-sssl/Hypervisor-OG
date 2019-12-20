@@ -38,10 +38,8 @@ static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct vpc_mem
         gic400_lock(vgic->gic);
         d = VGIC400_READ8(access->request.addr);
         gic400_unlock(vgic->gic);
+
         d = vgic400_p2v_cpu_map_b(d, access->vpc->owner);
-        if (access->request.flag.sign != 0) {
-            d = emulator_ldrsb(d, access);
-        }
     } else {
         d = 0;
     }
@@ -62,10 +60,9 @@ static errno_t read_itargetsr_w(const struct vgic400 *vgic, const struct vpc_mem
     d = VGIC400_READ32(access->request.addr);
     gic400_unlock(vgic->gic);
     d &= mask;
+
     d = vgic400_p2v_cpu_map_w(d, access->vpc->owner);
-    if (access->request.flag.sign != 0) {
-        d = emulator_ldrsw(d, access);
-    }
+
     vpc_load_to_gpr_w(access, d);
 
     return SUCCESS;
@@ -80,6 +77,7 @@ static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct vpc_me
     no = irq_no(reg);
     if (is_active_irq(vgic, no)) {
         d = vgic400_v2p_cpu_map_b(d, access->vpc->owner);
+
         gic400_lock(vgic->gic);
         VGIC400_WRITE8(access->request.addr, d);
         gic400_unlock(vgic->gic);

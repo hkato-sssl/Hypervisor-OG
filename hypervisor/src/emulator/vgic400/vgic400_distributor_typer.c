@@ -21,20 +21,37 @@
 
 /* functions */
 
-errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct vpc_memory_access *access)
+static errno_t read_typer_w(struct vgic400 *vgic, const struct vpc_memory_access *access)
 {
     uint64_t d;
     uint64_t nr_cpus;
 
-    /* a write operation will be ignored */
+    d = VGIC400_READ32(access->request.addr);
+    nr_cpus = access->vpc->owner->nr_procs;
+    d = (d & ~(uint32_t)BITS(7, 5)) | (nr_cpus << 5);
 
-    if (access->request.type == VPC_READ_ACCESS) {
-        d = VGIC400_READ32(access->request.addr);
-        nr_cpus = access->vpc->owner->nr_procs;
-        d = (d & ~(uint32_t)BITS(7, 5)) | (nr_cpus << 5);
-        vpc_load_to_gpr_w(access, d);
-    }
+    vpc_load_to_gpr_w(access, d);
 
     return SUCCESS;
+}
+
+errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct vpc_memory_access *access)
+{
+    errno_t ret;
+
+    /* a write operation will be ignored */
+
+    if (is_aligned_word_access(access)) {
+        if (access->request.type == VPC_READ_ACCESS) {
+            ret = read_typer_w(vgic, access);
+        } else {
+            ret = SUCCESS;
+        }
+    } else {
+        vgic400_distributor_error(access, ERR_MSG_UNAUTH);
+        ret = -EPERM;
+    }
+
+    return ret;
 }
 

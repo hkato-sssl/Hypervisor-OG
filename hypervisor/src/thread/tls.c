@@ -1,12 +1,12 @@
 /*
- * hypervisor/tls.c
+ * hypervisor/thread/tls.c
  *
  * (C) 2019 Hidekazu Kato
  */
 
 #include <stdint.h>
 #include "driver/aarch64/system_register.h"
-#include "hypervisor/tls.h"
+#include "hypervisor/thread.h"
 
 /* defines */
 
@@ -18,7 +18,7 @@
 
 /* functions */
 
-uint64_t tls_read(uint32_t index)
+uint64_t thread_read_tls(uint32_t index)
 {
     uint64_t d;
     uint64_t *p;
@@ -29,7 +29,7 @@ uint64_t tls_read(uint32_t index)
     return d;
 }
 
-void tls_write(uint32_t index, uint64_t d)
+void thread_write_tls(uint32_t index, uint64_t d)
 {
     uint64_t *p;
 

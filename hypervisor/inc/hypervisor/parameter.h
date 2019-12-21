@@ -13,5 +13,7 @@
 
 #define HYP_MAX_NR_VPCS         8
 
+#define HYP_KERNEL_STACK_SIZE   (4 * 1024)
+
 #endif /* HYPERVISOR_PARAMETER_H */
 

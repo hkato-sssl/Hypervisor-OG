@@ -13,17 +13,6 @@
 
         .extern         hyp_exception_handler
 
-        .macro          exc_entry_sp0, vector
-        dsb             sy
-        stp             x0, x1,  [sp, #-((NR_EXC_REGS - EXC_X0) * 8)]
-        mrs             x0, SP_EL0
-        stp             lr, x0,  [sp, #-((NR_EXC_REGS - EXC_LR) * 8)]
-        mov             x0, #\vector
-        mrs             x1, ESR_EL2
-        stp             x0, x1,  [sp, #-((NR_EXC_REGS - EXC_VECTOR) * 8)]!
-        b               store_rest_registers
-        .endm
-
         .macro          exc_entry_spx, vector
         dsb             sy
         msr             TPIDR_EL0, x2
@@ -61,19 +50,19 @@ excvec_hyp:
 
         /* Synchronous */
         .org            0x0000
-        exc_entry_sp0   0x0000
+        exc_entry_spx   0x0000
 
         /* IRQ */
         .org            0x0080
-        exc_entry_sp0   0x0080
+        exc_entry_spx   0x0080
 
         /* FIQ */
         .org            0x0100
-        exc_entry_sp0   0x0100
+        exc_entry_spx   0x0100
 
         /* SError */
         .org            0x0180
-        exc_entry_sp0   0x0180
+        exc_entry_spx   0x0180
 
         /*
          * current EL with SPx

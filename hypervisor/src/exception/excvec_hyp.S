@@ -8,10 +8,22 @@
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/aarch64/exception.h"
-#include "hypervisor/tls.h"
+#include "hypervisor/thread.h"
 #include "hypervisor/vpc_register.h"
 
         .extern         hyp_exception_handler
+
+        .macro          exc_entry_sp0, vector
+        dsb             sy
+        sub             sp, sp, #(NR_EXC_REGS * 8)
+        stp             x0, x1, [sp, #(EXC_X0 * 8)]
+        mrs             x0, SP_EL0
+        stp             x0, lr, [sp, #(EXC_SP * 8)]
+        mov             x0, #\vector
+        mrs             x1, ESR_EL2
+        stp             x0, x1, [sp, #(EXC_VECTOR * 8)]
+        b               store_rest_registers
+        .endm
 
         .macro          exc_entry_spx, vector
         dsb             sy
@@ -32,10 +44,10 @@
         .macro          hyp_exc_entry, vector
         dsb             sy
         stp             x0, x1, [sp, #-16]!
-        mov             x0, #\vector
-        mrs             x1, TPIDR_EL2
-        str             x0, [x1, #(TLS_EXCEPTION_VECTOR * 8)]
-        ldr             x1, [x1, #(TLS_CURRENT_VPC_REGS * 8)]
+        mrs             x0, TPIDR_EL2
+        mov             x1, #\vector
+        str             x1, [x0, #(TLS_EXCEPTION_VECTOR * 8)]
+        ldr             x1, [x0, #(TLS_CURRENT_VPC_REGS * 8)]
         b               store_vpc_registers
         .endm
 
@@ -50,19 +62,19 @@ excvec_hyp:
 
         /* Synchronous */
         .org            0x0000
-        exc_entry_spx   0x0000
+        exc_entry_sp0   0x0000
 
         /* IRQ */
         .org            0x0080
-        exc_entry_spx   0x0080
+        exc_entry_sp0   0x0080
 
         /* FIQ */
         .org            0x0100
-        exc_entry_spx   0x0100
+        exc_entry_sp0   0x0100
 
         /* SError */
         .org            0x0180
-        exc_entry_spx   0x0180
+        exc_entry_sp0   0x0180
 
         /*
          * current EL with SPx
@@ -177,17 +189,17 @@ store_vpc_registers:
 
         // store system registers
 
-        mrs             x0, PAR_EL1
-        str             x0, [x1, #(VPC_PAR_EL1 * 8)]
+        mrs             x2, PAR_EL1
+        str             x2, [x1, #(VPC_PAR_EL1 * 8)]
 
-        mrs             x0, ESR_EL2
-        str             x0, [x1, #(VPC_ESR_EL2 * 8)]
+        mrs             x2, ESR_EL2
+        str             x2, [x1, #(VPC_ESR_EL2 * 8)]
 
-        mrs             x0, HCR_EL2
-        str             x0, [x1, #(VPC_HCR_EL2 * 8)]
+        mrs             x2, HCR_EL2
+        str             x2, [x1, #(VPC_HCR_EL2 * 8)]
 
-        mrs             x0, HPFAR_EL2
-        str             x0, [x1, #(VPC_HPFAR_EL2 * 8)]
+        mrs             x2, HPFAR_EL2
+        str             x2, [x1, #(VPC_HPFAR_EL2 * 8)]
 
         // disable FPU/Advanced SIMD
 
@@ -197,6 +209,10 @@ store_vpc_registers:
         isb
 
         // load the hypervisor context
+
+        msr             SPSel, #0
+        ldr             x1,  [x0, #(TLS_THREAD_SP * 8)]
+        mov             sp,  x1
 
         ldp             x0,  x1,  [sp], #16
         ldp             x2,  x3,  [sp], #16

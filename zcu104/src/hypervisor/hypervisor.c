@@ -8,7 +8,7 @@
 #include <string.h>
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
-#include "hypervisor/tls.h"
+#include "hypervisor/thread.h"
 
 /* defines */
 
@@ -50,6 +50,6 @@ void hypervisor(void)
     init_tls();
     init_exception();
 
-    test_vm_01_launch();
+    test_guest_01();
 }
 

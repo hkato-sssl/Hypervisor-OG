@@ -13,7 +13,8 @@
 hypervisor_start:
         /* reset SP */
 
-        bl              main_stack_top
+        bl              kernel_stack_top
+        msr             SPSel, #1
         mov             sp, x0
 
         bl              hypervisor

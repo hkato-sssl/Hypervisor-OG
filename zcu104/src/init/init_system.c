@@ -17,7 +17,6 @@
 #include "driver/aarch64/system_register.h"
 #include "driver/system/cpu.h"
 #include "driver/xilinx/axi/uart_lite.h"
-#include "hypervisor/tls.h"
 
 /* defines */
 

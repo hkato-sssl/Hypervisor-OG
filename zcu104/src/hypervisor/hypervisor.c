@@ -16,26 +16,11 @@
 
 /* prototypes */
 
-void *exc_stack_top(void);
+void *main_stack_top(void);
 
 /* variables */
 
 /* functions */
-
-static void init_tls(void)
-{
-    char *sp;
-    uint64_t *tls;
-
-    sp = exc_stack_top();
-    sp -= TLS_SIZE;
-
-    tls = (uint64_t *)sp;
-    memset(tls, 0, TLS_SIZE);
-    tls[TLS_EXCEPTION_SP] = (uint64_t)sp;
-
-    aarch64_write_tpidr_el2((uint64_t)tls);
-}
 
 static void init_exception(void)
 {
@@ -47,9 +32,11 @@ static void init_exception(void)
 
 void hypervisor(void)
 {
-    init_tls();
-    init_exception();
+    void test_guest_01(void);
+    void *sp;
 
-    test_guest_01();
+    init_exception();
+    sp = main_stack_top();
+    thread_launch((void *)test_guest_01, sp, NULL);
 }
 

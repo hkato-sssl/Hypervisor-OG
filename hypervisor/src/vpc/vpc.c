@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "driver/aarch64/system_register.h"
-#include "hypervisor/tls.h"
+#include "hypervisor/thread.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 
@@ -89,9 +89,9 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
 	setup_aarch32(vpc);
     }
 
-    tls_write(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
-    tls_write(TLS_CURRENT_VPC, (uint64_t)vpc);
-    tls_write(TLS_CURRENT_VM, (uint64_t)(vpc->owner));
+    thread_write_tls(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
+    thread_write_tls(TLS_CURRENT_VPC, (uint64_t)vpc);
+    thread_write_tls(TLS_CURRENT_VM, (uint64_t)(vpc->owner));
 
     vpc->boolean.launched = true;
     vpc_load_ctx_system_register(vpc->regs);

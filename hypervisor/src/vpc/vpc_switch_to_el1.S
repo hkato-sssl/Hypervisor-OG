@@ -6,6 +6,7 @@
 
 #include "lib/asm.h"
 #include "driver/aarch64/system_register.h"
+#include "hypervisor/thread.h"
 #include "hypervisor/vpc_register.h"
 
         .global         vpc_switch_to_el1
@@ -39,6 +40,12 @@ vpc_switch_to_el1:
         stp             x4,  x5,  [sp, #-16]!
         stp             x2,  x3,  [sp, #-16]!
         stp             x0,  x1,  [sp, #-16]!
+
+        // save current sp
+
+        mrs             x1,  TPIDR_EL2
+        mov             x2,  sp
+        str             x2,  [x1, #(TLS_THREAD_SP * 8)]
 
         // restore a system register
 

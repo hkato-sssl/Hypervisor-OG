@@ -11,7 +11,7 @@
 #include "lib/system/printk.h"
 #include "lib/bit.h"
 #include "driver/aarch64/system_register/hcr_el2.h"
-#include "hypervisor/tls.h"
+#include "hypervisor/thread.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/emulator.h"
@@ -126,7 +126,7 @@ errno_t vpc_emulate_exception(struct vpc *vpc)
     errno_t ret;
     uint64_t d;
 
-    d = tls_read(TLS_EXCEPTION_VECTOR);
+    d = thread_read_tls(TLS_EXCEPTION_VECTOR);
     printk("%s: vector=0x%04x\n", __func__, d);
     switch (d) {
     case 0x0400:    /* Synchronous */

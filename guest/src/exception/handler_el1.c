@@ -28,3 +28,7 @@ void exception_handler_el1(uint64_t *ei)
     for (;;);
 }
 
+void interrupt_handler_el1(uint16_t vector)
+{
+    printk("<%s>\n", __func__);
+}

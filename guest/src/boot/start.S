@@ -8,11 +8,12 @@
 #include "lib/asm.h"
 #include "driver/aarch64/system_register.h"
 
-        .extern         main_stack_region
         .extern         __bss_start
         .extern         __bss_end
 
         .extern         init_processor_el1
+        .extern         exc_stack_top
+        .extern         main_stack_top
         .extern         main
 
         .global         _start
@@ -25,13 +26,13 @@ _start:
 
         // initialize SP
 
-        msr		SPsel, #0
-        mov		x1, xzr
-        mov		sp, x1
+        bl              exc_stack_top
+        msr		        SPSel, #1
+        mov             sp, x0
 
-        msr             SPsel, #1
-        adrl            x1, (main_stack_region + CONFIG_STACK_SIZE)
-        mov             sp, x1
+        bl              main_stack_top
+        msr             SPSel, #0
+        mov             sp, x0
 
         // check parameters of .bss region
 

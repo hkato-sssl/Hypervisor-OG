@@ -71,18 +71,27 @@ static errno_t init_map(void)
     }
 
     if (ret == SUCCESS) {
-	attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
-	ret = map((void*)0xa0001000, (void*)0xa0002000, &attr);
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+	    ret = map((void*)0xa0001000, (void*)0xa0002000, &attr);
     }
 
     if (ret == SUCCESS) {
-	attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
-	ret = map((void*)0xf9010000, (void*)0xf9013fff, &attr);
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+	    ret = map((void*)CONFIG_GICD_BASE, (void*)(CONFIG_GICD_BASE + 4096), &attr);
     }
 
     if (ret == SUCCESS) {
-	attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
-	ret = map((void*)0xf9020000, (void*)0xf9023fff, &attr);
+	    ret = map((void*)CONFIG_GICC_BASE, (void*)(CONFIG_GICC_BASE + 4096), &attr);
+    }
+
+    if (ret == SUCCESS) {
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+	    ret = map((void*)CONFIG_GICH_BASE, (void*)(CONFIG_GICH_BASE + 4096), &attr);
+    }
+
+    if (ret == SUCCESS) {
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+	    ret = map((void*)CONFIG_GICV_BASE, (void*)(CONFIG_GICV_BASE + 4096), &attr);
     }
 
     return ret;

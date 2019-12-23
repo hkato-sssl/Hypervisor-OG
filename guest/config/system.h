@@ -11,3 +11,6 @@
 #define CONFIG_EXC_STACK_SIZE           (8 * 1024)
 #define CONFIG_NR_MMU_MEMORY_BLOCKS     1024
 
+#define CONFIG_GICD_BASE                0xf9010000
+#define CONFIG_GICC_BASE                0xf9020000
+

@@ -72,6 +72,16 @@ static errno_t init_map(void)
 
     if (ret == SUCCESS) {
         attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
+        ret = map((void*)CONFIG_GICD_BASE, (void*)(CONFIG_GICD_BASE + 4096), &attr);
+    }
+
+    if (ret == SUCCESS) {
+        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
+        ret = map((void*)CONFIG_GICC_BASE, (void*)(CONFIG_GICC_BASE + 4096), &attr);
+    }
+
+    if (ret == SUCCESS) {
+        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
         ret = map((void*)0xff000000, (void*)0xff001000, &attr);
     }
 

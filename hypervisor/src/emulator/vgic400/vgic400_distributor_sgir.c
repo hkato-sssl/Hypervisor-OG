@@ -32,8 +32,10 @@ static errno_t write_sgir(struct vgic400 *vgic, const struct vpc_memory_access *
     if (irq < 8) {
         v_target_list = BF_EXTRACT(d, 23, 16);
         p_target_list = vgic400_v2p_cpu_map_b(v_target_list, access->vpc->owner);
-        d = (d & ~(uint32_t)BITS(23, 16)) | (p_target_list << 16);
-        VGIC400_WRITE32(access->request.addr, d);
+        if (p_target_list != 0) {
+            d = (d & ~(uint32_t)BITS(23, 16)) | (p_target_list << 16);
+            VGIC400_WRITE32(access->request.addr, d);
+        }
     }
 
     return SUCCESS;

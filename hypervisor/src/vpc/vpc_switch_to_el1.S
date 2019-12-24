@@ -31,15 +31,6 @@ vpc_switch_to_el1:
         stp             x22, x23, [sp, #-16]!
         stp             x20, x21, [sp, #-16]!
         stp             x18, x19, [sp, #-16]!
-        stp             x16, x17, [sp, #-16]!
-        stp             x14, x15, [sp, #-16]!
-        stp             x12, x13, [sp, #-16]!
-        stp             x10, x11, [sp, #-16]!
-        stp             x8,  x9,  [sp, #-16]!
-        stp             x6,  x7,  [sp, #-16]!
-        stp             x4,  x5,  [sp, #-16]!
-        stp             x2,  x3,  [sp, #-16]!
-        stp             x0,  x1,  [sp, #-16]!
 
         // save current sp
 

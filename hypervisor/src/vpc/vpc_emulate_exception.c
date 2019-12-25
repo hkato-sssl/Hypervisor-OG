@@ -37,21 +37,6 @@ static uint8_t esr_el2_ec(struct vpc *vpc)
     return ec;
 }
 
-static bool is_aarch64_state(const struct vpc *vpc)
-{
-    bool ret;
-
-    if ((vpc->regs[VPC_HCR_EL2] & HCR_EL2_RW) == 0) {
-        ret = false;
-    } else if ((vpc->regs[VPC_SPSR_EL2] & BIT(4)) != 0) {  /* PSTATE.nRW */
-        ret = false;
-    } else {
-        ret = true;
-    }
-
-    return ret;
-}
-
 static errno_t call_emulator(struct vpc *vpc, emulator_func_t func)
 {
     errno_t ret;
@@ -93,19 +78,6 @@ static errno_t emulate_aarch64_synchronous(struct vpc *vpc)
     return ret;
 }
 
-static errno_t emulate_synchronous(struct vpc *vpc)
-{
-    errno_t ret;
-
-    if (is_aarch64_state(vpc)) {
-        ret = emulate_aarch64_synchronous(vpc);
-    } else {
-        ret = -ENOSYS;
-    }
-
-    return ret;
-}
-
 static errno_t emulate_irq(struct vpc *vpc)
 {
     return call_emulator(vpc, vpc->emulator.ops->irq);
@@ -130,7 +102,7 @@ errno_t vpc_emulate_exception(struct vpc *vpc)
     printk("%s: vector=0x%04x\n", __func__, d);
     switch (d) {
     case 0x0400:    /* Synchronous */
-        ret = emulate_synchronous(vpc);
+        ret = emulate_aarch64_synchronous(vpc);
         break;
     case 0x0480:    /* IRQ */
         ret = emulate_irq(vpc);

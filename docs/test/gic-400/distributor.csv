@@ -1,0 +1,35 @@
+0x000,GICD_CTLR,RW,0x00000000c,Distributor Control Register
+0x004,GICD_TYPER,RO,Configuration-dependentd,Interrupt Controller Type Register
+0x008,GICD_IIDR,RO,0x0200143B,Distributor Implementer Identification Register
+0x080-0x0BC,GICD_IGROUPRn,RW,0x00000000,Interrupt Group Registerse
+0x100,GICD_ISENABLERn,RW,SGIs and PPIs: 0x0000FFFF,Interrupt Set-Enable Registers
+0x104-0x13C,,,SPIs: 0x00000000,
+0x180,GICD_ICENABLERn,RW,0x0000FFFF,Interrupt Clear-Enable Registers
+0x184-0x1BC,,,0x00000000,
+0x200-0x23C,GICD_ISPENDRn,RW,0x00000000,Interrupt Set-Pending Registers
+0x280-0x2BC,GICD_ICPENDRn,RW,0x00000000,Interrupt Clear-Pending Registers
+0x300-0x33C,GICD_ISACTIVERn,RW,0x00000000,Interrupt Set-Active Registers
+0x380-0x3BC,GICD_ICACTIVERn,RW,0x00000000,Interrupt Clear-Active Registers
+0x400-0x5FC,GICD_IPRIORITYRn,RW,0x00000000,Interrupt Priority Registers
+0x800-0x81C,GICD_ITARGETSRn,RO,-,Interrupt Processor Targets Registersi
+0x820-0x9FC,,RW,0x00000000,
+0xC00,GICD_ICFGRn,RO,SGIs: 0xAAAAAAAA ,Interrupt Configuration Registers
+0xC04,,RO,PPIs: 0x55540000,
+0xC08-0xC7C,,RW,SPIs: 0x55555555,
+0xD00,GICD_PPISR,RO,0x00000000,Private Peripheral Interrupt Status Register
+0xD04-0xD3C,GICD_SPISRn,RO,0x00000000,Shared Peripheral Interrupt Status Registers
+0xF00,GICD_SGIR,WO,-,Software Generated Interrupt Register
+0xF10-0xF1C,GICD_CPENDSGIRn,RW,0x00000000,SGI Clear-Pending Registers
+0xF20-0xF2C,GICD_SPENDSGIRn,RW,0x00000000,SGI Set-Pending Registers
+0xFD0,GICD_PIDR4,RO,0x00000004,Peripheral ID 4 Register
+0xFD4,GICD_PIDR5,RO,0x00000000,Peripheral ID 5 Register
+0xFD8,GICD_PIDR6,RO,0x00000000,Peripheral ID 6 Register
+0xFDC,GICD_PIDR7,RO,0x00000000,Peripheral ID 7 Register
+0xFE0,GICD_PIDR0,RO,0x00000090,Peripheral ID 0 Register
+0xFE4,GICD_PIDR1,RO,0x000000B4,Peripheral ID 1 Register
+0xFE8,GICD_PIDR2,RO,0x0000002B,Peripheral ID 2 Register
+0xFEC,GICD_PIDR3,RO,0x00000000,Peripheral ID 3 Register
+0xFF0,GICD_CIDR0,RO,0x0000000D,Component ID 0 Register
+0xFF4,GICD_CIDR1,RO,0x000000F0,Component ID 1 Register
+0xFF8,GICD_CIDR2,RO,0x00000005,Component ID 2 Register
+0xFFC,GICD_CIDR3,RO,0x000000B1,Component ID 3 Register

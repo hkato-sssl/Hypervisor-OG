@@ -1,0 +1,19 @@
+0x0000,GICC_CTLR,RW,0x00000000,CPU Interface Control Register
+0x0004,GICC_PMR,RW,0x00000000,Interrupt Priority Mask Register
+0x0008,GICC_BPR,RW,0x00000002b,Binary Point Register
+,,,,The minimum value of the Binary Point Register depends on which security-banked copy is considered:
+,,,,0x2 Secure copy
+,,,,0x3 Non-secure copy
+0x000C,GICC_IAR,RO,0x000003FF,Interrupt Acknowledge Register
+0x0010,GICC_EOIR,WO,-,End of Interrupt Register
+0x0014,GICC_RPR,RO,0x000000FF,Running Priority Register
+0x0018,GICC_HPPIR,RO,0x000003FF,Highest Priority Pending Interrupt Register
+0x001C,GICC_ABPR,RW,0x00000003,Aliased Binary Point Register
+,,,,The minimum value of the Aliased Binary Point Register is 0x3.
+0x0020,GICC_AIAR,RO,0x000003FF,Aliased Interrupt Acknowledge Register
+0x0024,GICC_AEOIR,WO,-,Aliased End of Interrupt Register
+0x0028,GICC_AHPPIR,RO,0x000003FF,Aliased Highest Priority Pending Interrupt Register
+0x00D0,GICC_APR0,RW,0x00000000,Active Priority Register
+0x00E0,GICC_NSAPR0,RW,0x00000000,Non-Secure Active Priority Register
+0x00FC,GICC_IIDR,RO,0x0202143B,CPU Interface Identification Register
+0x1000,GICC_DIR,WO,-,Deactivate Interrupt Register

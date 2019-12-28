@@ -32,23 +32,6 @@ static uint64_t irq_no(uintptr_t reg, uintptr_t base)
     return no;
 }
 
-static errno_t read_bit_register_b(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
-{
-    uint64_t d;
-    uint64_t mask;
-    uint64_t no;
-
-    d = VGIC400_READ8(access->request.addr);
-    no = irq_no(reg, base);
-    mask = vgic->active.irq[no / 32];
-    mask >>= (no & 7);
-    d &= mask;
-
-    vpc_load_to_gpr_b(access, d);
-
-    return SUCCESS;
-}
-
 static errno_t read_bit_register_w(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
 {
     uint64_t d;
@@ -61,22 +44,6 @@ static errno_t read_bit_register_w(struct vgic400 *vgic, const struct vpc_memory
     d &= mask;
 
     vpc_load_to_gpr_w(access, d);
-
-    return SUCCESS;
-}
-
-static errno_t write_bit_register_b(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
-{
-    uint64_t d;
-    uint64_t mask;
-    uint64_t no;
-
-    d = gpr_value(access);
-    no = irq_no(reg, base);
-    mask = vgic->active.irq[no / 32];
-    mask >>= (no & 7);
-    d &= mask;
-    VGIC400_WRITE8(access->request.addr, d);
 
     return SUCCESS;
 }
@@ -101,18 +68,14 @@ errno_t vgic400_distributor_access_bit_register(struct vgic400 *vgic, const stru
     errno_t ret;
 
     if (access->request.type == VPC_READ_ACCESS) {
-        if (access->request.size == 1) {
-            ret = read_bit_register_b(vgic, access, reg, base);
-        } else if (access->request.size == 4) {
+        if (is_aligned_word_access(access)) {
             ret = read_bit_register_w(vgic, access, reg, base);
         } else {
             vgic400_distributor_error(access, ERR_MSG_UNAUTH);
             ret = -EPERM;
         }
     } else {
-        if (access->request.size == 1) {
-            ret = write_bit_register_b(vgic, access, reg, base);
-        } else if (access->request.size == 4) {
+        if (is_aligned_word_access(access)) {
             ret = write_bit_register_w(vgic, access, reg, base);
         } else {
             vgic400_distributor_error(access, ERR_MSG_UNAUTH);

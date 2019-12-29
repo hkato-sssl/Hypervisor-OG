@@ -22,7 +22,7 @@
 
 /* functions */
 
-errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg)
+errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct vpc_memory_access *access)
 {
     errno_t ret;
     uint64_t d;

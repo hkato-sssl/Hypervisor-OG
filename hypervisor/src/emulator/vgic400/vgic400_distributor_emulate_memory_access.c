@@ -36,7 +36,7 @@ errno_t vgic400_distributor_emulate_memory_access(struct vgic400 *vgic, const st
     base = (uintptr_t)gic400_distributor_register_base(vgic->gic);
     reg = (access->request.addr - base);
     if (reg == 0x0000) {    /* GICD_CTLR */
-        ret = vgic400_distributor_ro_word_register(vgic, access);
+        ret = vgic400_distributor_ctlr(vgic, access);
     } else if (reg == 0x0004) { /* GICD_TYPER */
         ret = vgic400_distributor_typer(vgic, access);
     } else if (reg == 0x0008) { /* GICD_IIDR */

@@ -35,8 +35,7 @@ errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct 
         /* write operation will be ignored */
         ret = SUCCESS;
     } else {
-        vgic400_distributor_error(access, ERR_MSG_UNAUTH);
-        ret = -EIO;
+        ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
     }
 
     return ret;

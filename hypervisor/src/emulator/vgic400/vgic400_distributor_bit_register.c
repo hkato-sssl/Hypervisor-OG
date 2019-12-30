@@ -71,15 +71,13 @@ errno_t vgic400_distributor_access_bit_register(struct vgic400 *vgic, const stru
         if (is_aligned_word_access(access)) {
             ret = read_bit_register_w(vgic, access, reg, base);
         } else {
-            vgic400_distributor_error(access, ERR_MSG_UNAUTH);
-            ret = -EPERM;
+            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
         }
     } else {
         if (is_aligned_word_access(access)) {
             ret = write_bit_register_w(vgic, access, reg, base);
         } else {
-            vgic400_distributor_error(access, ERR_MSG_UNAUTH);
-            ret = -EPERM;
+            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
         }
     }
 

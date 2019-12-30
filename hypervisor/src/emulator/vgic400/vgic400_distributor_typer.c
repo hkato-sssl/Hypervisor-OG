@@ -48,8 +48,7 @@ errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct vpc_memory_
             ret = SUCCESS;
         }
     } else {
-        vgic400_distributor_error(access, ERR_MSG_UNAUTH);
-        ret = -EPERM;
+        ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
     }
 
     return ret;

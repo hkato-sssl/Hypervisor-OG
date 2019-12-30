@@ -118,8 +118,7 @@ errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct vpc_mem
         } else if (is_aligned_word_access(access)) {
             ret = read_itargetsr_w(vgic, access, reg);
         } else {
-            vgic400_distributor_error(access, ERR_MSG_UNAUTH);
-            ret = -EPERM;
+            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
         }
     } else {
         if (access->request.size == 1) {
@@ -127,8 +126,7 @@ errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct vpc_mem
         } else if (is_aligned_word_access(access)) {
             ret = write_itargetsr_w(vgic, access, reg);
         } else {
-            vgic400_distributor_error(access, ERR_MSG_UNAUTH);
-            ret = -EPERM;
+            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
         }
     }
 

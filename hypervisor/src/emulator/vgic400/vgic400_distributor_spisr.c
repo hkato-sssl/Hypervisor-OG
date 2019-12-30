@@ -47,15 +47,13 @@ errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct vpc_memory_
         if (is_aligned_word_access(access)) {
             ret = read_spisr_w(vgic, access, reg);
         } else {
-            vgic400_distributor_error(access, ERR_MSG_UNAUTH);
-            ret = -EPERM;
+            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
         }
     } else {
         if (is_aligned_word_access(access)) {
             ret = SUCCESS;
         } else {
-            vgic400_distributor_error(access, ERR_MSG_UNAUTH);
-            ret = -EPERM;
+            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
         }
     }
 

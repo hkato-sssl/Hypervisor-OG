@@ -75,6 +75,7 @@ static inline bool is_aligned_word_access(const struct vpc_memory_access *access
 errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct vpc_memory_access *access);
 errno_t vgic400_distributor_bit_register(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base);
 errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base);
+errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct vpc_memory_access *access);
 errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct vpc_memory_access *access);
 errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg);
 errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg);

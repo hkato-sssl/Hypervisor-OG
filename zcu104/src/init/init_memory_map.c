@@ -12,6 +12,7 @@
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/system_register/tcr_elx.h"
 #include "driver/aarch64/mmu.h"
+#include "driver/system/cpu.h"
 #include "hypervisor/mmu.h"
 
 /* defines */
@@ -142,13 +143,19 @@ static errno_t init_mmu(void)
 errno_t init_memory_map(void)
 {
     errno_t ret;
+    uint8_t no;
 
-    ret = init_mmu();
-    if (ret == SUCCESS) {
-        ret = init_map();
-	if (ret == SUCCESS) {
+    no = cpu_no();
+    if (no == 0) {
+        ret = init_mmu();
+        if (ret == SUCCESS) {
+            ret = init_map();
+	        if (ret == SUCCESS) {
+	            ret = aarch64_mmu_enable(&sys_mmu);
+	        }
+        }
+    } else {
 	    ret = aarch64_mmu_enable(&sys_mmu);
-	}
     }
 
     return ret;

@@ -127,6 +127,8 @@ errno_t init_system(void)
         if (ret == SUCCESS) {
             ret = system_register_spin_lock(&system_lock);
         }
+    } else {
+        ret = SUCCESS;
     }
 
     return ret;

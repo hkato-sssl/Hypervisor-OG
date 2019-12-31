@@ -12,7 +12,7 @@
         .extern         __bss_end
 
         .extern         init_processor_el2
-        .extern         exc_stack_top
+        .extern         kernel_stack_top
         .extern         main_stack_top
         .extern         main
 
@@ -26,13 +26,17 @@ _start:
 
         // initialize SP
 
-        bl              exc_stack_top
+        bl              kernel_stack_top
         msr             SPSel, #1
         mov             sp, x0
 
         bl              main_stack_top
         msr             SPSel, #0
         mov             sp, x0
+
+        mrs             x0, MPIDR_EL1
+        and             x0, x0, #0xff
+        cbnz            x0, call_main
 
         // check parameters of .bss region
 
@@ -55,7 +59,7 @@ _start:
         bne             0b
 
         // call main()
-
+call_main:
         mov             x0, xzr                 // argc = 0
         mov             x1, xzr                 // argv = NULL
         bl              main

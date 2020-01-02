@@ -1,0 +1,3 @@
+ISTATUS, bit [2]
+IMASK, bit [1]
+ENABLE, bit [0]

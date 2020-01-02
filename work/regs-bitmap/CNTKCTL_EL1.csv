@@ -1,0 +1,7 @@
+EL0PTEN, bit [9]
+EL0VTEN, bit [8]
+EVNTI, bits [7:4]
+EVNTDIR, bit [3]
+EVNTEN, bit [2]
+EL0VCTEN, bit [1]
+EL0PCTEN, bit [0]

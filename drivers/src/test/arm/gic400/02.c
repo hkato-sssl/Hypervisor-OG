@@ -76,7 +76,7 @@ errno_t test_arm_gic400_02(void)
     printk("gic400_assert_sgi() -> %d\n", ret);
     ret = gic400_enable_interrupt(&gic, 7);
     printk("gic400_enable_interrupt() -> %d\n", ret);
-    ret = gic400_set_level(&gic, 0xff);
+    ret = gic400_set_priority_mask(&gic, 0xff);
     printk("gic400_set_level() -> %d\n", ret);
 
     arm_enable_interrupts();

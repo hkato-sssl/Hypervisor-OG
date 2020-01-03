@@ -89,7 +89,7 @@ errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_disable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_assert_sgi(struct gic400 *gic, uint8_t targets, uint16_t intr_no);
 errno_t gic400_assert_spi(struct gic400 *gic, uint16_t intr_no);
-errno_t gic400_set_level(struct gic400 *gic, uint32_t level);
+errno_t gic400_set_priority_mask(struct gic400 *gic, uint32_t priority);
 errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_disable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config);

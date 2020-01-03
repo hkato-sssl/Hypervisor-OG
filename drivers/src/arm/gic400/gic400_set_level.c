@@ -1,5 +1,5 @@
 /*
- * arm/gic400/gic400_set_level.c
+ * arm/gic400/gic400_set_priority_mask.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -21,7 +21,7 @@
 
 /* functions */
 
-static errno_t set_level(struct gic400 *gic, uint32_t level)
+static errno_t set_priority_mask(struct gic400 *gic, uint32_t level)
 {
     uint32_t d;
 
@@ -31,7 +31,7 @@ static errno_t set_level(struct gic400 *gic, uint32_t level)
     return SUCCESS;
 }
 
-errno_t gic400_set_level(struct gic400 *gic, uint32_t level)
+errno_t gic400_set_priority_mask(struct gic400 *gic, uint32_t priority)
 {
     errno_t ret;
 
@@ -39,7 +39,7 @@ errno_t gic400_set_level(struct gic400 *gic, uint32_t level)
     // 設定される事が保証される為、パラメータ値のチェックは省略する。
 
     if (gic != NULL) {
-        ret = set_level(gic, level);
+        ret = set_priority_mask(gic, priority);
     } else {
         ret = -EINVAL;
     }

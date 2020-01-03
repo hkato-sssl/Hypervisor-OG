@@ -45,9 +45,10 @@ vpc_switch_to_el1:
 
         // restore special purpose registers
 
+        msr             SPSel, #0
         ldp             x2,  x3,  [x0, #(VPC_SP_EL0 * 8)]
         ldp             x4,  x5,  [x0, #(VPC_PC * 8)]
-        msr             SP_EL0, x2
+        mov             sp,  x2
         msr             SP_EL1, x3
         msr             ELR_EL2, x4
         msr             SPSR_EL2, x5

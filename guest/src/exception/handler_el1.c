@@ -4,6 +4,7 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include <stddef.h>
 #include <stdint.h>
 #include "lib/bit.h"
 #include "lib/system/printk.h"
@@ -19,6 +20,8 @@ void exception_handler_el1(uint64_t *ei) __attribute__((weak));
 
 /* variables */
 
+void (*interrupt_handler)(uint16_t vector);
+
 /* functions */
 
 void exception_handler_el1(uint64_t *ei)
@@ -30,5 +33,9 @@ void exception_handler_el1(uint64_t *ei)
 
 void interrupt_handler_el1(uint16_t vector)
 {
-    printk("<%s>\n", __func__);
+    if (interrupt_handler != NULL) {
+        interrupt_handler(vector);
+    } else {
+        printk("<%s>\n", __func__);
+    }
 }

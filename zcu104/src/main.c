@@ -33,7 +33,6 @@ int main(void)
     return 0;
 }
 
-void init_hw(void) { return ; }
 void launch_system(void)
 {
     hypervisor_start();

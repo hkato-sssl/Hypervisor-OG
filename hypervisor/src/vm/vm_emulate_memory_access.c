@@ -54,7 +54,7 @@ errno_t vm_emulate_memory_access(struct vm *vm, const struct vpc_memory_access *
 
     trap = search_trap(vm, access);
     if (trap != NULL) {
-        ret = (trap->emulator)(access);
+        ret = (trap->emulator)(access, trap->arg);
     } else {
         ret = -ENOSYS;
     }

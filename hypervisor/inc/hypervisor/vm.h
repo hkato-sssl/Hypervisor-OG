@@ -36,6 +36,7 @@ struct vm_region_trap {
     struct vm_region_trap           *next;
     uint64_t                        addr;
     size_t                          size;
+    void                            *arg;
     vpc_memory_access_emulator_t    emulator;
 };
 

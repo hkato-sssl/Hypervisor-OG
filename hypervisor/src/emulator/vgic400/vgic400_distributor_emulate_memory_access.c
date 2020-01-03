@@ -27,7 +27,7 @@
 
 /* functions */
 
-errno_t vgic400_distributor_emulate_memory_access(struct vgic400 *vgic, const struct vpc_memory_access *access)
+errno_t vgic400_distributor_emulate_memory_access(const struct vpc_memory_access *access, struct vgic400 *vgic)
 {
     errno_t ret;
     uintptr_t base;

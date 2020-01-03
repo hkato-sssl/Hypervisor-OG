@@ -1,5 +1,5 @@
 /*
- * emulator/vgic400/vgic400_distributor_access_bit_register.c
+ * emulator/vgic400/vgic400_distributor_bit_register.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -63,7 +63,7 @@ static errno_t write_bit_register_w(struct vgic400 *vgic, const struct vpc_memor
     return SUCCESS;
 }
 
-errno_t vgic400_distributor_access_bit_register(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
+errno_t vgic400_distributor_bit_register(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
 {
     errno_t ret;
 

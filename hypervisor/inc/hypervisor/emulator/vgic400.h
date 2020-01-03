@@ -65,7 +65,7 @@ static inline bool vgic400_is_active_irq(struct vgic400 *vgic, uint16_t irq)
 /* functions */
 
 errno_t vgic400_configure(struct vgic400 *vgic, const struct vgic400_configuration *config);
-errno_t vgic400_distributor_emulate_memory_access(struct vgic400 *vgic, const struct vpc_memory_access *access);
+errno_t vgic400_distributor_emulate_memory_access(const struct vpc_memory_access *access, struct vgic400 *vgic);
 
 #ifdef __cplusplus
 }

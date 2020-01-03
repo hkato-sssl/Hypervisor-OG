@@ -33,7 +33,8 @@
 extern struct aarch64_stage2 hyp_test_stage2;
 
 errno_t hyp_test_stage2_init(void);
-errno_t emulator_02(const struct vpc_memory_access *access);
+errno_t emulator_02(const struct vpc_memory_access *access, void *arg);
+errno_t hypervisor_init_vgic400(struct vm *vm);
 
 /* variables */
 
@@ -137,6 +138,11 @@ void test_guest_01(void)
     if (ret == SUCCESS) {
         ret = init_vm();
         printk("init_vm() -> %d\n", ret);
+    }
+
+    if (ret == SUCCESS) {
+        ret = hypervisor_init_vgic400(&vm);
+        printk("hypervisor_map_vgic400() -> %d\n", ret);
     }
 
     if (ret == SUCCESS) {

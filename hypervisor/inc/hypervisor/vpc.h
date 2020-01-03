@@ -37,7 +37,7 @@ struct vpc_memory_access;
 
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
 typedef errno_t (*vpc_emulator_t)(struct vpc *vpc);
-typedef errno_t (*vpc_memory_access_emulator_t)(const struct vpc_memory_access *access);
+typedef errno_t (*vpc_memory_access_emulator_t)(const struct vpc_memory_access *access, void *arg);
 
 struct vpc_emulator_ops {
     vpc_emulator_t      irq;

@@ -26,6 +26,18 @@ FILES = [ 'SPR', 'EL0-EL1', 'EL2', 'FP-SIMD']
 
 offset = 0
 
+def out_alias(name, value, comment):
+    global PREFIX
+    global DEF_NAME_WIDTH
+    global DEF_VALUE_WIDTH
+
+    spc1 = ' ' * (DEF_NAME_WIDTH - len(name))
+    if len(comment) > 0:
+        spc2 = ' ' * (DEF_VALUE_WIDTH - len(value))
+        print('#define ' + name + spc1 + value + spc2 + '// ' + comment)
+    else:
+        print('#define ' + name + spc1 + value)
+
 def out_desc(name, comment):
     global PREFIX
     global DEF_NAME_WIDTH
@@ -61,9 +73,14 @@ def create_desc(lines):
 def create_gpr():
     for n in range(31):
         out_desc(PREFIX + 'X' + str(n), '')
+    out_alias(PREFIX + 'LR', PREFIX + 'X30', '')
 
 def create_fpu():
     global offset
+
+    if (offset % 2) != 0:
+        out_desc(PREFIX + 'PAD', '')
+
     for n in range(32):
         out_desc(PREFIX + 'Q' + str(n), '')
         offset += 1

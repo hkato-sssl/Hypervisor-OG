@@ -1,0 +1,3 @@
+EC, bits [31:26]
+IL, bit [25]
+ISS, bits [24:0]

@@ -5,7 +5,7 @@ IFSR32_EL2,RW,32,Instruction Fault Status Register,〇,0,
 AFSR0_EL2,RW,32,Auxiliary Fault Status Register 0,,,
 AFSR1_EL2,RW,32,Auxiliary Fault Status Register 1,,,
 ESR_EL2,RW,32,Exception Syndrome Register,〇,0,EL2が例外をトラップ後にVMを切り替える状況を考慮してRegister Arrayに追加
-FAR_EL2,RW,64,Fault Address Register,,,
+FAR_EL2,RW,64,Fault Address Register,〇,,
 HPFAR_EL2,RW,64,Hypervisor IPA Fault Address Register,〇,0,
 VBAR_EL2,RW,64,Vector Base Address Register,,,
 SCTLR_EL2,RW,32,System Control Register,,,

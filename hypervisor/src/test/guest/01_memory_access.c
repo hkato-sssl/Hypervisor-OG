@@ -142,7 +142,7 @@ void test_guest_01(void)
 
     if (ret == SUCCESS) {
         ret = hypervisor_init_vgic400(&vm);
-        printk("hypervisor_map_vgic400() -> %d\n", ret);
+        printk("hypervisor_init_vgic400() -> %d\n", ret);
     }
 
     if (ret == SUCCESS) {

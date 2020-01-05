@@ -29,15 +29,20 @@ extern "C" {
 /* defines */
 
 #define VM_MAX_NR_PROCS             8
+#define UNIT_VM_TRAP_REGION         4096
 
 /* types */
 
 struct vm_region_trap {
-    struct vm_region_trap           *next;
-    uint64_t                        addr;
-    size_t                          size;
-    void                            *arg;
-    vpc_memory_access_emulator_t    emulator;
+    struct vm_region_trap               *next;
+    struct {
+        uint64_t                        addr;
+        size_t                          size;
+    } ipa;
+    struct {
+        void                            *arg;
+        vpc_memory_access_emulator_t    handler;
+    } emulator;
 };
 
 struct vm {
@@ -92,7 +97,7 @@ uint8_t vm_virtual_proc_no(struct vm *vm, uint8_t physical_no);
 uint8_t vm_physical_proc_no(struct vm *vm, uint8_t virtual_no);
 
 errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *trap);
-errno_t vm_emulate_memory_access(struct vm *vm, const struct vpc_memory_access *access);
+struct vm_region_trap *vm_search_region_trap(const struct vm *vm, uintptr_t addr);
 
 #ifdef __cplusplus
 }

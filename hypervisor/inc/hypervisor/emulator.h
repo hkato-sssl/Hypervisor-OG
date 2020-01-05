@@ -21,6 +21,7 @@ extern "C" {
 
 #include <stdint.h>
 #include "lib/system/errno.h"
+#include "hypervisor/insn.h"
 #include "hypervisor/vpc.h"
 
 /* defines */
@@ -45,8 +46,8 @@ struct emulator_ops {
 
 /* functions */
 
-uint64_t emulator_ldrsb(uint64_t d, const struct vpc_memory_access *access);
-uint64_t emulator_ldrsw(uint64_t d, const struct vpc_memory_access *access);
+uint64_t emulator_ldrsb(uint64_t d, const struct insn *insn);
+uint64_t emulator_ldrsw(uint64_t d, const struct insn *insn);
 
 #ifdef __cplusplus
 }

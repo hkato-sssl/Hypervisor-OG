@@ -23,8 +23,9 @@ extern "C" {
 #include <stdbool.h>
 #include "lib/bit.h"
 #include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "hypervisor/insn.h"
 #include "hypervisor/emulator/vgic400.h"
 
 /* defines */
@@ -52,16 +53,16 @@ static inline bool is_active_irq(const struct vgic400 *vgic, uint16_t irq)
     return ((vgic->active.irq[irq / 32] & bit) != 0) ? true : false;
 }
 
-static inline uint64_t gpr_value(const struct vpc_memory_access *access)
+static inline uint64_t str_value(const struct insn *insn)
 {
-    return access->vpc->regs[access->request.gpr];
+    return insn->vpc->regs[insn->op.str.gpr.src];
 }
 
-static inline bool is_aligned_word_access(const struct vpc_memory_access *access)
+static inline bool is_aligned_word_access(const struct insn *insn)
 {
     bool ret;
 
-    if (IS_ALIGNED(access->request.addr, 4) && (access->request.size == 4)) {
+    if (IS_ALIGNED(insn->op.ldr.ipa, 4) && (insn->op.ldr.size == 4)) {
         ret = true;
     } else {
         ret = false;
@@ -72,16 +73,16 @@ static inline bool is_aligned_word_access(const struct vpc_memory_access *access
 
 /* functions */
 
-errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct vpc_memory_access *access);
-errno_t vgic400_distributor_bit_register(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base);
-errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base);
-errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct vpc_memory_access *access);
-errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct vpc_memory_access *access);
-errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg);
-errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg);
-errno_t vgic400_distributor_igroupr(struct vgic400 *vgic, const struct vpc_memory_access *access);
-errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct vpc_memory_access *access);
-errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg);
+errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct insn *insn);
+errno_t vgic400_distributor_bit_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base);
+errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base);
+errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct insn *insn);
+errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct insn *insn);
+errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_igroupr(struct vgic400 *vgic, const struct insn *insn);
+errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn);
+errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
 
 uint32_t vgic400_quad_byte_mask(const struct vgic400 *vgic, uint32_t irq);
 uint64_t vgic400_p2v_cpu_map_b(uint64_t src, const struct vm *vm);
@@ -89,7 +90,7 @@ uint64_t vgic400_p2v_cpu_map_w(uint64_t src, const struct vm *vm);
 uint64_t vgic400_v2p_cpu_map_b(uint64_t src, const struct vm *vm);
 uint64_t vgic400_v2p_cpu_map_w(uint64_t src, const struct vm *vm);
 
-errno_t vgic400_distributor_error(const struct vpc_memory_access *access, const char *msg);
+errno_t vgic400_distributor_error(const struct insn *insn, const char *msg);
 
 #ifdef __cplusplus
 }

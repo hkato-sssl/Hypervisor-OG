@@ -8,6 +8,7 @@
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "hypervisor/vpc.h"
+#include "hypervisor/insn.h"
 #include "vgic400_local.h"
 
 /* defines */
@@ -20,12 +21,12 @@
 
 /* functions */
 
-errno_t vgic400_distributor_error(const struct vpc_memory_access *access, const char *msg)
+errno_t vgic400_distributor_error(const struct insn *insn, const char *msg)
 {
     printk("VGIC400-D: %s\n", msg);
-    printk("           type = <%s>\n", (access->request.type == VPC_READ_ACCESS) ? "READ" : "WRITE");
-    printk("           addr = %p\n", access->request.addr);
-    printk("           size = %u\n", access->request.size);
+    printk("           type = <%s>\n", (insn->type == INSN_TYPE_LDR) ? "LDR" : "STR");
+    printk("           addr = %p\n", insn->op.ldr.ipa);
+    printk("           size = %u\n", insn->op.ldr.size);
 
     return -EPERM;
 }

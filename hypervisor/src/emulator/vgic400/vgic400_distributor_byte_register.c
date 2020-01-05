@@ -10,6 +10,7 @@
 #include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
 #include "hypervisor/vpc.h"
+#include "hypervisor/insn.h"
 #include "hypervisor/emulator.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
@@ -33,7 +34,7 @@ static uint64_t irq_no(uintptr_t reg, uintptr_t base)
     return no;
 }
 
-static errno_t read_byte_register_b(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
+static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
     uint64_t d;
     uint64_t no;
@@ -41,92 +42,92 @@ static errno_t read_byte_register_b(struct vgic400 *vgic, const struct vpc_memor
     no = irq_no(reg, base);
     if (is_active_irq(vgic, no)) {
         gic400_lock(vgic->gic);
-        d = VGIC400_READ8(access->request.addr);
+        d = VGIC400_READ8(insn->op.ldr.ipa);
         gic400_unlock(vgic->gic);
     } else {
         d = 0;
     }
 
-    vpc_load_to_gpr_b(access, d);
+    vpc_load_to_gpr_b(insn, d);
 
     return SUCCESS;
 }
 
-static errno_t read_byte_register_w(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
+static errno_t read_byte_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
     uint64_t d;
     uint64_t no;
     uint64_t mask;
 
     gic400_lock(vgic->gic);
-    d = VGIC400_READ32(access->request.addr);
+    d = VGIC400_READ32(insn->op.ldr.ipa);
     gic400_unlock(vgic->gic);
 
     no = irq_no(reg, base);
     mask = vgic400_quad_byte_mask(vgic, no);
     d &= mask;
 
-    vpc_load_to_gpr_w(access, d);
+    vpc_load_to_gpr_w(insn, d);
 
     return SUCCESS;
 }
 
-static errno_t write_byte_register_b(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
+static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
     uint64_t d;
     uint64_t no;
 
-    d = gpr_value(access);
+    d = str_value(insn);
     no = irq_no(reg, base);
     if (is_active_irq(vgic, no)) {
         gic400_lock(vgic->gic);
-        VGIC400_WRITE8(access->request.addr, d);
+        VGIC400_WRITE8(insn->op.str.ipa, d);
         gic400_unlock(vgic->gic);
     }
 
     return SUCCESS;
 }
 
-static errno_t write_byte_register_w(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
+static errno_t write_byte_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
     uint64_t d;
     uint64_t d0;
     uint64_t mask;
     uint64_t no;
 
-    d = gpr_value(access);
+    d = str_value(insn);
     no = irq_no(reg, base);
     mask = vgic400_quad_byte_mask(vgic, no);
     d &= mask;
 
     gic400_lock(vgic->gic);
-    d0 = VGIC400_READ32(access->request.addr);
+    d0 = VGIC400_READ32(insn->op.str.ipa);
     d |= d0 & ~mask;
-    VGIC400_WRITE32(access->request.addr, d);
+    VGIC400_WRITE32(insn->op.str.ipa, d);
     gic400_unlock(vgic->gic);
 
     return SUCCESS;
 }
 
-errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg, uintptr_t base)
+errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
     errno_t ret;
 
-    if (access->request.type == VPC_READ_ACCESS) {
-        if (access->request.size == 1) {
-            ret = read_byte_register_b(vgic, access, reg, base);
-        } else if (is_aligned_word_access(access)) {
-            ret = read_byte_register_w(vgic, access, reg, base);
+    if (insn->type == INSN_TYPE_LDR) {
+        if (insn->op.ldr.size == 1) {
+            ret = read_byte_register_b(vgic, insn, reg, base);
+        } else if (is_aligned_word_access(insn)) {
+            ret = read_byte_register_w(vgic, insn, reg, base);
         } else {
-            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
+            ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }
     } else {
-        if (access->request.size == 1) {
-            ret = write_byte_register_b(vgic, access, reg, base);
-        } else if (is_aligned_word_access(access)) {
-            ret = write_byte_register_w(vgic, access, reg, base);
+        if (insn->op.str.size == 1) {
+            ret = write_byte_register_b(vgic, insn, reg, base);
+        } else if (is_aligned_word_access(insn)) {
+            ret = write_byte_register_w(vgic, insn, reg, base);
         } else {
-            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
+            ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }
     }
 

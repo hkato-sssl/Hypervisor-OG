@@ -6,8 +6,9 @@
 
 #include <stdint.h>
 #include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "hypervisor/insn.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
 
@@ -21,34 +22,34 @@
 
 /* functions */
 
-static errno_t read_typer_w(struct vgic400 *vgic, const struct vpc_memory_access *access)
+static errno_t read_typer_w(struct vgic400 *vgic, const struct insn *insn)
 {
     uint64_t d;
     uint64_t nr_cpus;
 
-    d = VGIC400_READ32(access->request.addr);
-    nr_cpus = access->vpc->owner->nr_procs;
+    d = VGIC400_READ32(insn->op.ldr.ipa);
+    nr_cpus = insn->vpc->owner->nr_procs;
     d = (d & ~(uint32_t)BITS(7, 5)) | (nr_cpus << 5);
 
-    vpc_load_to_gpr_w(access, d);
+    vpc_load_to_gpr_w(insn, d);
 
     return SUCCESS;
 }
 
-errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct vpc_memory_access *access)
+errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct insn *insn)
 {
     errno_t ret;
 
     /* a write operation will be ignored */
 
-    if (is_aligned_word_access(access)) {
-        if (access->request.type == VPC_READ_ACCESS) {
-            ret = read_typer_w(vgic, access);
+    if (is_aligned_word_access(insn)) {
+        if (insn->type == INSN_TYPE_LDR) {
+            ret = read_typer_w(vgic, insn);
         } else {
             ret = SUCCESS;
         }
     } else {
-        ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
+        ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
     }
 
     return ret;

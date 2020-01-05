@@ -20,19 +20,19 @@
 
 /* functions */
 
-errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct vpc_memory_access *access)
+errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct insn *insn)
 {
     errno_t ret;
 
     /* a write operation will be ignored */
 
-    if (is_aligned_word_access(access)) {
-        if (access->request.type == VPC_READ_ACCESS) {
-            vpc_load_to_gpr_w(access, 1);
+    if (is_aligned_word_access(insn)) {
+        if (insn->type == INSN_TYPE_LDR) {
+            vpc_load_to_gpr_w(insn, 1);
         }
         ret = SUCCESS;
     } else {
-        ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
+        ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
     }
 
     return ret;

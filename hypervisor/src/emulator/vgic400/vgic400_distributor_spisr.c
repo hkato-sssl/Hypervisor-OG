@@ -8,6 +8,7 @@
 #include "lib/system/errno.h"
 #include "driver/arm/device/gic400.h"
 #include "hypervisor/vpc.h"
+#include "hypervisor/insn.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
 
@@ -21,7 +22,7 @@
 
 /* functions */
 
-static errno_t read_spisr_w(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg)
+static errno_t read_spisr_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     uint32_t d;
     uint32_t idx;
@@ -29,31 +30,31 @@ static errno_t read_spisr_w(struct vgic400 *vgic, const struct vpc_memory_access
 
     idx = (reg - GICD_SPISR(0)) / 4 + 1;
     mask = vgic->active.irq[idx];
-    d = VGIC400_READ32(access->request.addr);
+    d = VGIC400_READ32(insn->op.ldr.ipa);
     d &= mask;
 
-    vpc_load_to_gpr_w(access, d);
+    vpc_load_to_gpr_w(insn, d);
 
     return SUCCESS;
 }
 
-errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct vpc_memory_access *access, uintptr_t reg)
+errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
 
     /* a write operation will be ignored */
 
-    if (access->request.type == VPC_READ_ACCESS) {
-        if (is_aligned_word_access(access)) {
-            ret = read_spisr_w(vgic, access, reg);
+    if (insn->type == INSN_TYPE_LDR) {
+        if (is_aligned_word_access(insn)) {
+            ret = read_spisr_w(vgic, insn, reg);
         } else {
-            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
+            ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }
     } else {
-        if (is_aligned_word_access(access)) {
+        if (is_aligned_word_access(insn)) {
             ret = SUCCESS;
         } else {
-            ret = vgic400_distributor_error(access, ERR_MSG_UNAUTH);
+            ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }
     }
 

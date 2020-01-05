@@ -11,6 +11,7 @@
 #include "lib/system/printk.h"
 #include "lib/bit.h"
 #include "driver/aarch64/system_register/hcr_el2.h"
+#include "driver/aarch64/system_register/esr_elx.h"
 #include "hypervisor/thread.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
@@ -32,7 +33,7 @@ static uint8_t esr_el2_ec(struct vpc *vpc)
     uint64_t esr;
 
     esr = vpc->regs[VPC_ESR_EL2];
-    ec = (uint8_t)BF_EXTRACT(esr, 31, 26);
+    ec = (uint8_t)EXTRACT_ESR_EC(esr);
 
     return ec;
 }
@@ -56,6 +57,7 @@ static errno_t emulate_aarch64_synchronous(struct vpc *vpc)
     uint8_t ec;
 
     ec = esr_el2_ec(vpc);
+printk("%s: ec=0x%x\n", __func__, ec);
     switch (ec) {
     case 0x15:  /* 010101 - SVC instruction execution in AArch64 state */
         ret = call_emulator(vpc, vpc->emulator.ops->aarch64.svc);

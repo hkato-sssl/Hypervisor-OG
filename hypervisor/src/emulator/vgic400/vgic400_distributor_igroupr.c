@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include "lib/system/errno.h"
 #include "hypervisor/vpc.h"
+#include "hypervisor/insn.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
 
@@ -20,14 +21,14 @@
 
 /* functions */
 
-errno_t vgic400_distributor_igroupr(struct vgic400 *gic, const struct vpc_memory_access *access)
+errno_t vgic400_distributor_igroupr(struct vgic400 *gic, const struct insn *insn)
 {
     errno_t ret;
 
-    if (is_aligned_word_access(access)) {
+    if (is_aligned_word_access(insn)) {
         /* RAZ/WI */
-        if (access->request.type == VPC_READ_ACCESS) {
-            vpc_load_to_gpr_w(access, 0);
+        if (insn->type == INSN_TYPE_LDR) {
+            vpc_load_to_gpr_w(insn, 0);
         }
         ret = SUCCESS;
     } else {

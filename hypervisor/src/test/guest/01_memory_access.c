@@ -42,7 +42,7 @@ static struct vm vm;
 static struct vpc vpcs[NR_CPUS];
 static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
 static struct vm_region_trap trap;
-static struct vpc_emulator_ops ops = {
+static struct vpc_exception_ops ops = {
     .aarch64.data_abort = vpc_emulate_aarch64_data_abort,
 };
 
@@ -112,7 +112,7 @@ static errno_t init_vm(void)
     config.boot.arch = VPC_ARCH_AARCH64;
     config.boot.pc = (uint64_t)RAM_START;
     config.boot.sp = 0;
-    config.vpc.emulator.ops = &ops;
+    config.vpc.exception.ops = &ops;
     ret = vm_configure(&vm, &config);
     printk("vm_configure() -> %d\n", ret);
     if (ret == SUCCESS) {

@@ -15,7 +15,6 @@
 #include "hypervisor/thread.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
-#include "hypervisor/emulator.h"
 
 /* defines */
 
@@ -38,7 +37,7 @@ static uint8_t esr_el2_ec(struct vpc *vpc)
     return ec;
 }
 
-static errno_t call_emulator(struct vpc *vpc, emulator_func_t func)
+static errno_t call_emulator(struct vpc *vpc, vpc_exception_emulator_t func)
 {
     errno_t ret;
 
@@ -60,16 +59,16 @@ static errno_t emulate_aarch64_synchronous(struct vpc *vpc)
 printk("%s: ec=0x%x\n", __func__, ec);
     switch (ec) {
     case 0x15:  /* 010101 - SVC instruction execution in AArch64 state */
-        ret = call_emulator(vpc, vpc->emulator.ops->aarch64.svc);
+        ret = call_emulator(vpc, vpc->exception.ops->aarch64.svc);
         break;
     case 0x16:  /* 010110 - HVC instruction execution in AArch64 state */
-        ret = call_emulator(vpc, vpc->emulator.ops->aarch64.hvc);
+        ret = call_emulator(vpc, vpc->exception.ops->aarch64.hvc);
         break;
     case 0x17:  /* 010111 - SMC instruction execution in AArch64 state */
-        ret = call_emulator(vpc, vpc->emulator.ops->aarch64.smc);
+        ret = call_emulator(vpc, vpc->exception.ops->aarch64.smc);
         break;
     case 0x24:  /*100100 - Data Abort from a lower Exception level */
-        ret = call_emulator(vpc, vpc->emulator.ops->aarch64.data_abort);
+        ret = call_emulator(vpc, vpc->exception.ops->aarch64.data_abort);
         break;
     default:
         printk("%s: ESR_EL2.EC=0x%02x\n", __func__, ec);
@@ -82,12 +81,12 @@ printk("%s: ec=0x%x\n", __func__, ec);
 
 static errno_t emulate_irq(struct vpc *vpc)
 {
-    return call_emulator(vpc, vpc->emulator.ops->irq);
+    return call_emulator(vpc, vpc->exception.ops->irq);
 }
 
 static errno_t emulate_fiq(struct vpc *vpc)
 {
-    return call_emulator(vpc, vpc->emulator.ops->fiq);
+    return call_emulator(vpc, vpc->exception.ops->fiq);
 }
 
 static errno_t emulate_serror(struct vpc *vpc)

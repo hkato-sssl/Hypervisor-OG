@@ -34,14 +34,14 @@ extern "C" {
 /* types */
 
 struct vm_region_trap {
-    struct vm_region_trap               *next;
+    struct vm_region_trap   *next;
     struct {
-        uint64_t                        addr;
-        size_t                          size;
+        uint64_t            addr;
+        size_t              size;
     } ipa;
     struct {
-        void                            *arg;
-        vpc_memory_access_emulator_t    handler;
+        void                *arg;
+        vpc_emulator_t      handler;
     } emulator;
 };
 
@@ -81,8 +81,8 @@ struct vm_configuration {
     struct vpc_boot_configuration   boot;
     struct {
         struct {
-            const struct vpc_emulator_ops   *ops;
-        } emulator;
+            const struct vpc_exception_ops  *ops;
+        } exception;
     } vpc;
 };
 

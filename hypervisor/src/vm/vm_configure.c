@@ -29,7 +29,7 @@ static errno_t configure_vpcs(struct vm *vm, const struct vm_configuration *conf
 
     memset(&vpc_config, 0, sizeof(vpc_config));
     vpc_config.vm = vm;
-    vpc_config.emulator.ops = config->vpc.emulator.ops;
+    vpc_config.exception.ops = config->vpc.exception.ops;
     for (i = 0; i < config->nr_procs; ++i) {
         vpc_config.regs = config->regs.addr + (i * NR_VPC_REGS);
         vpc_config.proc_no = (uint8_t)i;

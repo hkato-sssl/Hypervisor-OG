@@ -36,18 +36,18 @@ struct vpc;
 struct insn;
 
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
-typedef errno_t (*vpc_emulator_t)(struct vpc *vpc);
-typedef errno_t (*vpc_memory_access_emulator_t)(const struct insn *insn, void *arg);
+typedef errno_t (*vpc_emulator_t)(const struct insn *insn, void *arg);
+typedef errno_t (*vpc_exception_emulator_t)(struct vpc *);
 
-struct vpc_emulator_ops {
-    vpc_emulator_t      irq;
-    vpc_emulator_t      fiq;
+struct vpc_exception_ops {
+    vpc_exception_emulator_t        irq;
+    vpc_exception_emulator_t        fiq;
 
     struct {
-        vpc_emulator_t  svc;
-        vpc_emulator_t  hvc;
-        vpc_emulator_t  smc;
-        vpc_emulator_t  data_abort;
+        vpc_exception_emulator_t    svc;
+        vpc_exception_emulator_t    hvc;
+        vpc_exception_emulator_t    smc;
+        vpc_exception_emulator_t    data_abort;
     } aarch64;
 };
 
@@ -62,8 +62,8 @@ struct vpc {
     } boolean;
 
     struct {
-        const struct vpc_emulator_ops   *ops;
-    } emulator;
+        const struct vpc_exception_ops  *ops;
+    } exception;
 };
 
 struct vpc_configuration {
@@ -71,8 +71,8 @@ struct vpc_configuration {
     uint64_t        *regs;
     uint8_t         proc_no;    // processor No.
     struct {
-        const struct vpc_emulator_ops   *ops;
-    } emulator;
+        const struct vpc_exception_ops  *ops;
+    } exception;
 };
 
 struct vpc_boot_configuration {
@@ -101,6 +101,7 @@ errno_t vpc_update_pc(struct vpc *vpc);
 void vpc_load_to_gpr_b(const struct insn *insn, uint64_t d);
 void vpc_load_to_gpr_h(const struct insn *insn, uint64_t d);
 void vpc_load_to_gpr_w(const struct insn *insn, uint64_t d);
+void vpc_post_operation(const struct insn *insn);
 
 /* for debugging */
 

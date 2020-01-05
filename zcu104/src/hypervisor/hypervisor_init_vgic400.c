@@ -35,7 +35,7 @@ static errno_t register_trap(struct vm *vm)
     trap.ipa.addr = CONFIG_GICD_BASE;
     trap.ipa.size = 4096;
     trap.emulator.arg = &vgic;
-    trap.emulator.handler = (vpc_memory_access_emulator_t)vgic400_distributor_emulate_memory_access;
+    trap.emulator.handler = (vpc_emulator_t)vgic400_distributor_emulate_memory_access;
     ret = vm_register_region_trap(vm, &trap);
 
     return ret;

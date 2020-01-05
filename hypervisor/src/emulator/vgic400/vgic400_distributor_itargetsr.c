@@ -43,7 +43,7 @@ static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *i
     } else {
         d = 0;
     }
-    vpc_load_to_gpr_b(insn, d);
+    vpc_emulate_ldrb(insn, d);
 
     return SUCCESS;
 }
@@ -63,7 +63,7 @@ static errno_t read_itargetsr_w(const struct vgic400 *vgic, const struct insn *i
 
     d = vgic400_p2v_cpu_map_w(d, insn->vpc->vm);
 
-    vpc_load_to_gpr_w(insn, d);
+    vpc_emulate_ldrw(insn, d);
 
     return SUCCESS;
 }

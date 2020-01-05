@@ -1,5 +1,5 @@
 /*
- * vpc/vpc_load_to_gpr.c
+ * vpc/vpc_emulate_ldr.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -19,7 +19,7 @@
 
 /* functions */
 
-void vpc_load_to_gpr_b(const struct insn *insn, uint64_t d)
+void vpc_emulate_ldrb(const struct insn *insn, uint64_t d)
 {
     if (insn->op.ldr.flag.a32 == 0) {
         if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(7)) != 0)) {
@@ -37,7 +37,7 @@ void vpc_load_to_gpr_b(const struct insn *insn, uint64_t d)
     insn->vpc->regs[insn->op.ldr.gpr.dst] = d;
 }
 
-void vpc_load_to_gpr_h(const struct insn *insn, uint64_t d)
+void vpc_emulate_ldrh(const struct insn *insn, uint64_t d)
 {
     if (insn->op.ldr.flag.a32 == 0) {
         if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(15)) != 0)) {
@@ -55,7 +55,7 @@ void vpc_load_to_gpr_h(const struct insn *insn, uint64_t d)
     insn->vpc->regs[insn->op.ldr.gpr.dst] = d;
 }
 
-void vpc_load_to_gpr_w(const struct insn *insn, uint64_t d)
+void vpc_emulate_ldrw(const struct insn *insn, uint64_t d)
 {
     if (insn->op.ldr.flag.a32 == 0) {
         if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(31)) != 0)) {

@@ -68,7 +68,7 @@ static errno_t read_icfgr_w(const struct vgic400 *vgic, const struct insn *insn,
     gic400_unlock(vgic->gic);
     d &= mask;
 
-    vpc_load_to_gpr_w(insn, d);
+    vpc_emulate_ldrw(insn, d);
 
     return SUCCESS;
 }

@@ -31,7 +31,7 @@ static errno_t read_typer_w(struct vgic400 *vgic, const struct insn *insn)
     nr_cpus = insn->vpc->vm->nr_procs;
     d = (d & ~(uint32_t)BITS(7, 5)) | ((nr_cpus - 1) << 5);
 
-    vpc_load_to_gpr_w(insn, d);
+    vpc_emulate_ldrw(insn, d);
 
     return SUCCESS;
 }

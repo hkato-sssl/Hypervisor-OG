@@ -31,7 +31,7 @@ errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct 
     if (is_aligned_word_access(insn)) {
         if (insn->type == INSN_TYPE_LDR) {
             d = VGIC400_READ32(insn->op.ldr.ipa);
-            vpc_load_to_gpr_w(insn, d);
+            vpc_emulate_ldrw(insn, d);
         }
         /* write operation will be ignored */
         ret = SUCCESS;

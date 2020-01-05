@@ -33,7 +33,7 @@ extern "C" {
 errno_t system_register_spin_lock(spin_lock_t *lock);
 void system_spin_lock(void);
 void system_spin_unlock(void);
-errno_t system_validate_stack_region(void *addr, size_t size);
+errno_t system_validate_stack_region(const void *addr, size_t size);
 
 void udelay(uint32_t usec);
 

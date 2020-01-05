@@ -70,15 +70,6 @@ static errno_t init_stage2_mapping(void)
         ret = aarch64_stage2_map(&hyp_test_stage2, (void *)UART_IPA, (void *)UART_PA, UART_SIZE, &attr);
     }
 
-    if (ret == SUCCESS) {
-        attr.xn = 1;
-        attr.af = 0;
-        attr.sh = STAGE2_SH_OSH;
-        attr.s2ap = STAGE2_S2AP_RW;
-        attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
-        ret = aarch64_stage2_map(&hyp_test_stage2, (void *)TRAP_START, (void *)TRAP_START, TRAP_SIZE, &attr);
-    }
-
     return ret;
 }
 
@@ -92,7 +83,6 @@ static errno_t init_trap(void)
     trap.emulator.arg = NULL;
     trap.emulator.handler = emulator_02;
     ret = vm_register_region_trap(&vm, &trap);
-    printk("vm_register_region_trap() -> %d\n", ret);
 
     return ret;
 }
@@ -115,9 +105,6 @@ static errno_t init_vm(void)
     config.vpc.exception.ops = &ops;
     ret = vm_configure(&vm, &config);
     printk("vm_configure() -> %d\n", ret);
-    if (ret == SUCCESS) {
-        ret = init_trap();
-    }
 
     return ret;
 }
@@ -139,6 +126,11 @@ void test_guest_01(void)
     if (ret == SUCCESS) {
         ret = init_vm();
         printk("init_vm() -> %d\n", ret);
+    }
+
+    if (ret == SUCCESS) {
+        ret = init_trap();
+        printk("init_trap() -> %d\n", ret);
     }
 
     if (ret == SUCCESS) {

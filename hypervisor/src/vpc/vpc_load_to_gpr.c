@@ -21,10 +21,17 @@
 
 void vpc_load_to_gpr_b(const struct insn *insn, uint64_t d)
 {
-    if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(7)) != 0)) {
-        d |= 0xffffffffffffff00ULL;
+    if (insn->op.ldr.flag.a32 == 0) {
+        if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(7)) != 0)) {
+            d |= 0xffffffffffffff00ULL;
+        } else {
+            d &= BITS(7, 0);
+        }
     } else {
         d &= BITS(7, 0);
+        if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(7)) != 0)) {
+            d |= 0x00000000ffffff00UL;
+        }
     }
 
     insn->vpc->regs[insn->op.ldr.gpr.dst] = d;
@@ -32,10 +39,17 @@ void vpc_load_to_gpr_b(const struct insn *insn, uint64_t d)
 
 void vpc_load_to_gpr_h(const struct insn *insn, uint64_t d)
 {
-    if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(15)) != 0)) {
-        d |= 0xffffffffffff0000ULL;
+    if (insn->op.ldr.flag.a32 == 0) {
+        if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(15)) != 0)) {
+            d |= 0xffffffffffff0000ULL;
+        } else {
+            d &= BITS(15, 0);
+        }
     } else {
         d &= BITS(15, 0);
+        if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(15)) != 0)) {
+            d |= 0x00000000ffff0000ULL;
+        }
     }
 
     insn->vpc->regs[insn->op.ldr.gpr.dst] = d;
@@ -43,8 +57,12 @@ void vpc_load_to_gpr_h(const struct insn *insn, uint64_t d)
 
 void vpc_load_to_gpr_w(const struct insn *insn, uint64_t d)
 {
-    if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(31)) != 0)) {
-        d |= 0xffffffff00000000ULL;
+    if (insn->op.ldr.flag.a32 == 0) {
+        if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(31)) != 0)) {
+            d |= 0xffffffff00000000ULL;
+        } else {
+            d &= BITS(31, 0);
+        }
     } else {
         d &= BITS(31, 0);
     }

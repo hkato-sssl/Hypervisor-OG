@@ -97,5 +97,7 @@ void vpc_emulate_ldr(const struct insn *insn, uint64_t d)
         SYSTEM_ASSERT(0);
         break;
     }
+
+    vpc_emulate_post_operation(insn);
 }
 

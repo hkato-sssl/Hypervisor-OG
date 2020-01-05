@@ -88,7 +88,7 @@ static bool is_valid_parameter(const struct vm *vm, const struct vm_region_trap 
     errno_t ret;
 
     ret = system_validate_stack_region(region, sizeof(*region));
-    if (ret == SUCCESS) {
+    if (ret != SUCCESS) {
         if ((vm != NULL) && (region != NULL) &&
             (region->ipa.size > 0) && ((region->ipa.size % UNIT_VM_TRAP_REGION) == 0)) {
             valid = true;

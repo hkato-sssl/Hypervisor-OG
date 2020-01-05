@@ -43,7 +43,7 @@ static errno_t read_bit_register_w(struct vgic400 *vgic, const struct insn *insn
     mask = vgic->active.irq[no / 32];
     d &= mask;
 
-    vpc_emulate_ldrw(insn, d);
+    vpc_emulate_ldr(insn, d);
 
     return SUCCESS;
 }

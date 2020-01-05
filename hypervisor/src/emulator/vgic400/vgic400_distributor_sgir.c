@@ -51,7 +51,7 @@ errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn)
         if (insn->type == INSN_TYPE_STR) {
             ret = write_sgir(vgic, insn);
         } else {
-            vpc_emulate_ldrw(insn, 0);
+            vpc_emulate_ldr(insn, 0);
             ret = SUCCESS;
         }
     } else {

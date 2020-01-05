@@ -33,7 +33,7 @@ static errno_t read_spisr_w(struct vgic400 *vgic, const struct insn *insn, uintp
     d = VGIC400_READ32(insn->op.ldr.ipa);
     d &= mask;
 
-    vpc_emulate_ldrw(insn, d);
+    vpc_emulate_ldr(insn, d);
 
     return SUCCESS;
 }

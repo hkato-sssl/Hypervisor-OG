@@ -47,7 +47,7 @@ static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *ins
         d = 0;
     }
 
-    vpc_emulate_ldrb(insn, d);
+    vpc_emulate_ldr(insn, d);
 
     return SUCCESS;
 }
@@ -66,7 +66,7 @@ static errno_t read_byte_register_w(struct vgic400 *vgic, const struct insn *ins
     mask = vgic400_quad_byte_mask(vgic, no);
     d &= mask;
 
-    vpc_emulate_ldrw(insn, d);
+    vpc_emulate_ldr(insn, d);
 
     return SUCCESS;
 }

@@ -98,9 +98,7 @@ errno_t vpc_emulate_exception(struct vpc *vpc);
 errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc);
 errno_t vpc_update_pc(struct vpc *vpc);
 
-void vpc_emulate_ldrb(const struct insn *insn, uint64_t d);
-void vpc_emulate_ldrh(const struct insn *insn, uint64_t d);
-void vpc_emulate_ldrw(const struct insn *insn, uint64_t d);
+void vpc_emulate_ldr(const struct insn *insn, uint64_t d);
 void vpc_post_operation(const struct insn *insn);
 
 /* for debugging */

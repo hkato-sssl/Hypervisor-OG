@@ -28,7 +28,7 @@ errno_t vgic400_distributor_igroupr(struct vgic400 *gic, const struct insn *insn
     if (is_aligned_word_access(insn)) {
         /* RAZ/WI */
         if (insn->type == INSN_TYPE_LDR) {
-            vpc_emulate_ldrw(insn, 0);
+            vpc_emulate_ldr(insn, 0);
         }
         ret = SUCCESS;
     } else {

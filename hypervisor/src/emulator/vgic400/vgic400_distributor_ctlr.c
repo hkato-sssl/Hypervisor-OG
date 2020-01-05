@@ -29,7 +29,7 @@ errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct insn *insn)
 
     if (is_aligned_word_access(insn)) {
         if (insn->type == INSN_TYPE_LDR) {
-            vpc_emulate_ldrw(insn, 1);
+            vpc_emulate_ldr(insn, 1);
         }
         ret = SUCCESS;
     } else {

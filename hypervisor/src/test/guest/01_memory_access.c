@@ -33,7 +33,7 @@
 extern struct aarch64_stage2 hyp_test_stage2;
 
 errno_t hyp_test_stage2_init(void);
-errno_t emulator_02(const struct vpc_memory_access *access, void *arg);
+errno_t emulator_02(const struct insn *insn, void *arg);
 errno_t hypervisor_init_vgic400(struct vm *vm);
 
 /* variables */
@@ -87,9 +87,10 @@ static errno_t init_trap(void)
     errno_t ret;
 
     memset(&trap, 0, sizeof(trap));
-    trap.addr = TRAP_START;
-    trap.size = TRAP_SIZE;
-    trap.emulator = emulator_02;
+    trap.ipa.addr = TRAP_START;
+    trap.ipa.size = TRAP_SIZE;
+    trap.emulator.arg = NULL;
+    trap.emulator.handler = emulator_02;
     ret = vm_register_region_trap(&vm, &trap);
     printk("vm_register_region_trap() -> %d\n", ret);
 

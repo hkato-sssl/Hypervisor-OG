@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include "lib/system/printk.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/vm.h"
+#include "hypervisor/insn.h"
 
 /* defines */
 
@@ -19,20 +19,20 @@
 
 /* functions */
 
-void print_access(const struct vpc_memory_access *access)
+void print_insn(const struct insn *insn)
 {
-    printk(" Access : %s\n", ((access->request.type == VPC_WRITE_ACCESS) ? "WRITE" : "READ"));
-    printk("Address : %018p\n", access->request.addr);
-    printk("   Size : %u\n", access->request.size);
-    printk("   Sign : %u\n", access->request.flag.sign);
+    printk(" Access : %s\n", ((insn->type == INSN_TYPE_STR) ? "STR" : "LDR"));
+    printk("Address : %018p\n", insn->op.ldr.ipa);
+    printk("   Size : %u\n", insn->op.ldr.size);
+    printk("   Sign : %u\n", insn->op.ldr.flag.sign);
 }
 
-errno_t emulator_02(struct vpc *vpc, const struct vpc_memory_access *access)
+errno_t emulator_02(struct vpc *vpc, const struct insn *insn)
 {
     errno_t ret;
 
     printk("<%s>\n", __func__);
-    print_access(access);
+    print_insn(insn);
 
     ret = -ENOSYS;
 

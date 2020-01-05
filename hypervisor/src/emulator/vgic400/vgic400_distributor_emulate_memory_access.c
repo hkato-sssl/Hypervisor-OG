@@ -110,7 +110,7 @@ printk("%s: size = %u\n", __func__, insn->op.ldr.size);
     return ret;
 }
 
-errno_t vgic400_distributor_emulate_memory_insn(const struct insn *insn, struct vgic400 *vgic)
+errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic)
 {
     errno_t ret;
 

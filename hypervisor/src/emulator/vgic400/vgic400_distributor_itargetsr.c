@@ -10,7 +10,6 @@
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
-#include "hypervisor/emulator.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
 

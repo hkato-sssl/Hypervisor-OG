@@ -1,11 +1,11 @@
 /*
- * hypervisor/insn.h
+ * hypervisor/emulator/insn.h
  *
  * (C) 2020 Hidekazu Kato
  */
 
-#ifndef HYPERVISOR_INSN_H
-#define HYPERVISOR_INSN_H
+#ifndef HYPERVISOR_EMULATOR_INSN_H
+#define HYPERVISOR_EMULATOR_INSN_H
 
 /* includes */
 
@@ -74,5 +74,5 @@ errno_t insn_generate_ldr_str(struct insn *insn, struct vpc *vpc);
 
 #endif /* ASSEMBLY */
 
-#endif /* HYPERVISOR_INSN_H */
+#endif /* HYPERVISOR_EMULATOR_INSN_H */
 

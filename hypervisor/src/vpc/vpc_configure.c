@@ -29,7 +29,7 @@ static errno_t configure(struct vpc *vpc, const struct vpc_configuration *config
     memset(vpc, 0, sizeof(struct vpc));
     memset(config->regs, 0, (sizeof(uint64_t) * NR_VPC_REGS));
 
-    vpc->owner = config->owner;
+    vpc->vm = config->vm;
     vpc->regs = config->regs;
     vpc->proc_no = config->proc_no;
     vpc->emulator.ops = config->emulator.ops;
@@ -41,7 +41,7 @@ static bool is_valid_parameter(struct vpc *vpc, const struct vpc_configuration *
 {
     bool ret;
 
-    if ((vpc != NULL) && (config != NULL) && (config->owner != NULL) && (config->regs != NULL) && IS_ALIGNED(vpc->regs, 32) && (config->emulator.ops != NULL)) {
+    if ((vpc != NULL) && (config != NULL) && (config->vm != NULL) && (config->regs != NULL) && IS_ALIGNED(vpc->regs, 32) && (config->emulator.ops != NULL)) {
         ret = true;
     } else {
         ret = false;

@@ -74,14 +74,14 @@ static errno_t setup_aarch32(struct vpc *vpc)
 static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
-    struct vm *owner;
+    struct vm *vm;
 
     vpc->regs[VPC_PC] = boot->pc;
     vpc->regs[VPC_SP_EL1] = boot->sp;
 
-    owner = vpc->owner;
-    vpc->regs[VPC_VTTBR_EL2] = aarch64_stage2_vttbr_el2(owner->stage2);
-    vpc->regs[VPC_VTCR_EL2] = aarch64_stage2_vtcr_el2(owner->stage2);
+    vm = vpc->vm;
+    vpc->regs[VPC_VTTBR_EL2] = aarch64_stage2_vttbr_el2(vm->stage2);
+    vpc->regs[VPC_VTCR_EL2] = aarch64_stage2_vtcr_el2(vm->stage2);
 
     if (boot->arch == VPC_ARCH_AARCH64) {
 	setup_aarch64(vpc);
@@ -91,7 +91,7 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
 
     thread_write_tls(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
     thread_write_tls(TLS_CURRENT_VPC, (uint64_t)vpc);
-    thread_write_tls(TLS_CURRENT_VM, (uint64_t)(vpc->owner));
+    thread_write_tls(TLS_CURRENT_VM, (uint64_t)(vpc->vm));
 
     vpc->boolean.launched = true;
     vpc_load_ctx_system_register(vpc->regs);

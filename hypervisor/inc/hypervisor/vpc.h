@@ -53,7 +53,7 @@ struct vpc_emulator_ops {
 
 struct vpc {
     spin_lock_t     lock;
-    struct vm       *owner;
+    struct vm       *vm;
     uint64_t        *regs;
     uint8_t         proc_no;    // processor No.
 
@@ -67,7 +67,7 @@ struct vpc {
 };
 
 struct vpc_configuration {
-    struct vm       *owner;
+    struct vm       *vm;
     uint64_t        *regs;
     uint8_t         proc_no;    // processor No.
     struct {

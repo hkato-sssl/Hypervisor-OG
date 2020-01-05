@@ -34,7 +34,7 @@ void test_vpc_launch(void)
     printk("<%s>\n", __func__);
 
     memset(&config, 0, sizeof(config));
-    config.owner = (void*)0xff; // dummy
+    config.vm = (void*)0xff; // dummy
     config.regs = register_array;
     config.proc_no = 0;
 

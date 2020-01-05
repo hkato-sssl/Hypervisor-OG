@@ -40,7 +40,7 @@ static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *i
         d = VGIC400_READ8(insn->op.ldr.ipa);
         gic400_unlock(vgic->gic);
 
-        d = vgic400_p2v_cpu_map_b(d, insn->vpc->owner);
+        d = vgic400_p2v_cpu_map_b(d, insn->vpc->vm);
     } else {
         d = 0;
     }
@@ -62,7 +62,7 @@ static errno_t read_itargetsr_w(const struct vgic400 *vgic, const struct insn *i
     gic400_unlock(vgic->gic);
     d &= mask;
 
-    d = vgic400_p2v_cpu_map_w(d, insn->vpc->owner);
+    d = vgic400_p2v_cpu_map_w(d, insn->vpc->vm);
 
     vpc_load_to_gpr_w(insn, d);
 
@@ -77,7 +77,7 @@ static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *
     d = str_value(insn);
     no = irq_no(reg);
     if (is_active_irq(vgic, no)) {
-        d = vgic400_v2p_cpu_map_b(d, insn->vpc->owner);
+        d = vgic400_v2p_cpu_map_b(d, insn->vpc->vm);
 
         gic400_lock(vgic->gic);
         VGIC400_WRITE8(insn->op.str.ipa, d);
@@ -98,7 +98,7 @@ static errno_t write_itargetsr_w(const struct vgic400 *vgic, const struct insn *
     mask = vgic400_quad_byte_mask(vgic, no);
     d = str_value(insn);
     d &= mask;
-    d = vgic400_v2p_cpu_map_w(d, insn->vpc->owner);
+    d = vgic400_v2p_cpu_map_w(d, insn->vpc->vm);
 
     gic400_lock(vgic->gic);
     d0 = VGIC400_READ32(insn->op.str.ipa);

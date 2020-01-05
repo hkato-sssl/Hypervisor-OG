@@ -10,8 +10,8 @@
 #include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/insn.h"
 #include "hypervisor/emulator.h"
+#include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
 

@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include "lib/system/printk.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/insn.h"
+#include "hypervisor/emulator/insn.h"
 
 /* defines */
 

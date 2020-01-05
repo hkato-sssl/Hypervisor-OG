@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include "lib/bit.h"
 #include "lib/system/errno.h"
-#include "hypervisor/insn.h"
+#include "hypervisor/emulator/insn.h"
 #include "hypervisor/vpc.h"
 
 /* defines */

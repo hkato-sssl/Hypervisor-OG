@@ -21,12 +21,13 @@ extern "C" {
 
 #include <stdint.h>
 #include "lib/system/errno.h"
-#include "hypervisor/insn.h"
-#include "hypervisor/vpc.h"
 
 /* defines */
 
 /* types */
+
+struct vpc;
+struct insn;
 
 typedef errno_t (*emulator_func_t)(struct vpc *);
 

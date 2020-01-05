@@ -8,7 +8,7 @@
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/insn.h"
+#include "hypervisor/emulator/insn.h"
 #include "vgic400_local.h"
 
 /* defines */

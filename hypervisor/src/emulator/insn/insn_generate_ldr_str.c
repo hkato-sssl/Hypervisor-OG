@@ -10,7 +10,7 @@
 #include "driver/aarch64/system_register/esr_el2_iss.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/insn.h"
+#include "hypervisor/emulator/insn.h"
 
 /* defines */
 

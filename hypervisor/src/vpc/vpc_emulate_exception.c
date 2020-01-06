@@ -56,7 +56,6 @@ static errno_t emulate_aarch64_synchronous(struct vpc *vpc)
     uint8_t ec;
 
     ec = esr_el2_ec(vpc);
-printk("%s: ec=0x%x\n", __func__, ec);
     switch (ec) {
     case 0x15:  /* 010101 - SVC instruction execution in AArch64 state */
         ret = call_emulator(vpc, vpc->exception.ops->aarch64.svc);

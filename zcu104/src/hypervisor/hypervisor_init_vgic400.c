@@ -41,6 +41,22 @@ static errno_t register_trap(struct vm *vm)
     return ret;
 }
 
+static errno_t map_cpuif(struct vm *vm)
+{
+    errno_t ret;
+    struct aarch64_stage2_attr attr;
+
+    memset(&attr, 0, sizeof(attr));
+    attr.xn = 1;
+    attr.af = 1;
+    attr.sh = STAGE2_SH_OSH;
+    attr.s2ap = STAGE2_S2AP_RW;
+    attr.memattr = STAGE2_MEMATTR_DEVICE_GRE;
+    ret = aarch64_stage2_map(vm->stage2, (void *)CONFIG_GICC_BASE, (void *)CONFIG_GICV_BASE, 4096, &attr);
+
+    return ret;
+}
+
 static errno_t configure(struct vm *vm)
 {
     errno_t ret;
@@ -60,12 +76,14 @@ errno_t hypervisor_init_vgic400(struct vm *vm)
 {
     errno_t ret;
 
-printk("<%s>\n", __func__);
     ret = configure(vm);
-printk("configure() -> %d\n", ret);
+
+    if (ret == SUCCESS) {
+        ret = map_cpuif(vm);
+    }
+
     if (ret == SUCCESS) {
         ret = register_trap(vm);
-printk("register_trap() -> %d\n", ret);
     }
 
     return ret;

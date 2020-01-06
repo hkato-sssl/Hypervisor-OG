@@ -25,18 +25,10 @@ static errno_t mmu_map(struct aarch64_mmu_base *mmu, void **va, void **pa, size_
 {
     errno_t ret;
 
-    if ((*sz >= MEM_16GB) && ((ret = aarch64_mmu_map_contiguous_region(mmu, *va, *pa, MEM_16GB, attr, 1)) == SUCCESS)) {
-        *(char **)va += MEM_16GB;
-        *(char **)pa += MEM_16GB;
-        *sz -= MEM_16GB;
-    } else if ((*sz >= MEM_1GB) && ((ret = aarch64_mmu_map_single_region(mmu, *va, *pa, MEM_1GB, attr, 1)) == SUCCESS)) {
+    if ((*sz >= MEM_1GB) && ((ret = aarch64_mmu_map_single_region(mmu, *va, *pa, MEM_1GB, attr, 1)) == SUCCESS)) {
         *(char **)va += MEM_1GB;
         *(char **)pa += MEM_1GB;
         *sz -= MEM_1GB;
-    } else if ((*sz >= MEM_32MB) && ((ret = aarch64_mmu_map_contiguous_region(mmu, *va, *pa, MEM_32MB, attr, 2)) == SUCCESS)) {
-        *(char **)va += MEM_32MB;
-        *(char **)pa += MEM_32MB;
-        *sz -= MEM_32MB;
     } else if ((*sz >= MEM_2MB) && ((ret = aarch64_mmu_map_single_region(mmu, *va, *pa, MEM_2MB, attr, 2)) == SUCCESS)) {
         *(char **)va += MEM_2MB;
         *(char **)pa += MEM_2MB;

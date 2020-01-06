@@ -99,7 +99,6 @@ errno_t vpc_emulate_exception(struct vpc *vpc)
     uint64_t d;
 
     d = thread_read_tls(TLS_EXCEPTION_VECTOR);
-    printk("%s: vector=0x%04x\n", __func__, d);
     switch (d) {
     case 0x0400:    /* Synchronous */
         ret = emulate_aarch64_synchronous(vpc);

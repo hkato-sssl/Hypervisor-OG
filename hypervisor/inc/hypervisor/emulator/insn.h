@@ -29,7 +29,7 @@ extern "C" {
 struct vpc;
 
 enum insn_type {
-    INSN_TYPE_INVALID,
+    INSN_TYPE_NULL,
     INSN_TYPE_LDR,
     INSN_TYPE_STR
 };
@@ -68,6 +68,7 @@ struct insn {
 
 errno_t insn_generate_ldr_str(struct insn *insn, struct vpc *vpc);
 uint64_t insn_str_src_value(const struct insn *insn);
+void insn_print(const struct insn *insn);
 
 #ifdef __cplusplus
 }

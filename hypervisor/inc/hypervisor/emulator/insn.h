@@ -67,6 +67,7 @@ struct insn {
 /* functions */
 
 errno_t insn_generate_ldr_str(struct insn *insn, struct vpc *vpc);
+uint64_t insn_str_src_value(const struct insn *insn);
 
 #ifdef __cplusplus
 }

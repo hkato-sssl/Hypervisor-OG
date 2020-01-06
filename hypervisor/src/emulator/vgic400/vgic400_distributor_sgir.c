@@ -29,7 +29,7 @@ static errno_t write_sgir(struct vgic400 *vgic, const struct insn *insn)
     uint64_t v_target_list;
     uint64_t p_target_list;
 
-    d = str_value(insn);
+    d = insn_str_src_value(insn);
     irq = d & BITS(3, 0);
     if (irq < 8) {
         v_target_list = BF_EXTRACT(d, 23, 16);

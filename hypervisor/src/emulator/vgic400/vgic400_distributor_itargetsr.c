@@ -73,7 +73,7 @@ static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *
     uint64_t d;
     uintptr_t no;
 
-    d = str_value(insn);
+    d = insn_str_src_value(insn);
     no = irq_no(reg);
     if (is_active_irq(vgic, no)) {
         d = vgic400_v2p_cpu_map_b(d, insn->vpc->vm);
@@ -95,7 +95,7 @@ static errno_t write_itargetsr_w(const struct vgic400 *vgic, const struct insn *
 
     no = irq_no(reg);
     mask = vgic400_quad_byte_mask(vgic, no);
-    d = str_value(insn);
+    d = insn_str_src_value(insn);
     d &= mask;
     d = vgic400_v2p_cpu_map_w(d, insn->vpc->vm);
 

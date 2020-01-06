@@ -54,7 +54,7 @@ static errno_t write_bit_register_w(struct vgic400 *vgic, const struct insn *ins
     uint64_t mask;
     uint64_t no;
 
-    d = str_value(insn);
+    d = insn_str_src_value(insn);
     no = irq_no(reg, base);
     mask = vgic->active.irq[no / 32];
     d &= mask;

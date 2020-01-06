@@ -76,7 +76,7 @@ static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *in
     uint64_t d;
     uint64_t no;
 
-    d = str_value(insn);
+    d = insn_str_src_value(insn);
     no = irq_no(reg, base);
     if (is_active_irq(vgic, no)) {
         gic400_lock(vgic->gic);
@@ -94,7 +94,7 @@ static errno_t write_byte_register_w(struct vgic400 *vgic, const struct insn *in
     uint64_t mask;
     uint64_t no;
 
-    d = str_value(insn);
+    d = insn_str_src_value(insn);
     no = irq_no(reg, base);
     mask = vgic400_quad_byte_mask(vgic, no);
     d &= mask;

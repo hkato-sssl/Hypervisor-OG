@@ -53,11 +53,6 @@ static inline bool is_active_irq(const struct vgic400 *vgic, uint16_t irq)
     return ((vgic->active.irq[irq / 32] & bit) != 0) ? true : false;
 }
 
-static inline uint64_t str_value(const struct insn *insn)
-{
-    return insn->vpc->regs[insn->op.str.gpr.src];
-}
-
 static inline bool is_aligned_word_access(const struct insn *insn)
 {
     bool ret;

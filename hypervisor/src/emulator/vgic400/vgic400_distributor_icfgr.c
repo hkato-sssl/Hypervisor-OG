@@ -35,9 +35,9 @@ static uint64_t byte_mask(const struct vgic400 *vgic, uintptr_t reg)
         0xf0, 0xf3, 0xfc, 0xff
     };
 
-    no = (uint32_t)(reg - GICD_ICFGR(0)) * 4;
+    no = (uint32_t)(reg - GICD_ICFGR(0)) * 4;   /* interrupt No. in LSB */
     mask = vgic->active.irq[no / 32];
-    mask >>= no & 0x0f;
+    mask = (mask >> (no % 32)) & 0x0f;
     mask = table[mask];
 
     return mask;
@@ -79,7 +79,7 @@ static errno_t write_icfgr_w(const struct vgic400 *vgic, const struct insn *insn
     uint64_t d0;
     uint64_t mask;
 
-    d = str_value(insn);
+    d = insn_str_src_value(insn);
     mask = word_mask(vgic, reg);
     d &= mask;
 

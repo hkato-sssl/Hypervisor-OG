@@ -42,8 +42,15 @@ static void print_ldr(const struct insn *insn)
 
 static void print_str(const struct insn *insn)
 {
+    uint8_t gpr;
+
     printk("<INSN_TYPE_STR>\n");
-    printk(" src: %c%u(0x%016x)\n", (insn->op.str.flag.a32 ? 'W' : 'X'), insn->op.str.gpr.src, insn_str_src_value(insn));
+    gpr = insn->op.str.gpr.src;
+    if (gpr < 31) {
+        printk(" src: %c%u(0x%016x)\n", (insn->op.str.flag.a32 ? 'W' : 'X'), gpr, insn_str_src_value(insn));
+    } else {
+        printk(" src: %cZR(0x%016x)\n", (insn->op.str.flag.a32 ? 'W' : 'X'), insn_str_src_value(insn));
+    }
     printk("  va: %p\n", insn->op.str.va);
     printk(" ipa: %p\n", insn->op.str.ipa);
     printk("size: %u\n", insn->op.str.size);

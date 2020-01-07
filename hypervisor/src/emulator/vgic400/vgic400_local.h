@@ -23,6 +23,7 @@ extern "C" {
 #include <stdbool.h>
 #include "lib/bit.h"
 #include "lib/system/errno.h"
+#include "lib/system/memio.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
@@ -33,10 +34,10 @@ extern "C" {
 #define ERR_MSG_UNAUTH  "An unauthorized access has occured."
 #define ERR_MSG_OOR     "A register is out of range."
 
-#define VGIC400_READ8(a)        (*(volatile uint8_t *)(a))
-#define VGIC400_READ32(a)       (*(volatile uint32_t *)(a))
-#define VGIC400_WRITE8(a, d)    (*(volatile uint8_t *)(a) = (uint8_t)(d))
-#define VGIC400_WRITE32(a, d)   (*(volatile uint32_t *)(a) = (uint32_t)(d))
+#define VGIC400_READ8(a)        REG_READ8((a), 0)
+#define VGIC400_READ32(a)       REG_READ32((a), 0)
+#define VGIC400_WRITE8(a, d)    REG_WRITE8((a), 0, (d))
+#define VGIC400_WRITE32(a, d)   REG_WRITE32((a), 0, (d))
 
 /* types */
 

@@ -82,7 +82,7 @@ static bool is_emulatable(const struct vpc *vpc)
     uint64_t dfsc;
 
     esr = vpc->regs[VPC_ESR_EL2];
-    if ((esr & ISS_DATA_ABORT_CM) == 0) {
+    if ((esr & (ISS_DATA_ABORT_EA | ISS_DATA_ABORT_CM | ISS_DATA_ABORT_S1PTW)) == 0) {
         dfsc = EXTRACT_ISS_DATA_ABORT_DFSC(esr);
         if ((dfsc >= 9) && (dfsc <= 11)) {
             /* Access flag fault */

@@ -94,6 +94,12 @@ errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_disable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config);
 
+/* for driver & emulator */
+
+void gic400_write_distributor(const struct gic400 *gic, uintptr_t reg, uint32_t d);
+void gic400_write_sync_distributor(const struct gic400 *gic, uintptr_t reg, uint32_t d);
+uint32_t gic400_read_distributor(const struct gic400 *gic, uintptr_t reg);
+
 /* for debugging */
 
 void gic400_dump_ns_cpuif(const struct gic400 *gic);

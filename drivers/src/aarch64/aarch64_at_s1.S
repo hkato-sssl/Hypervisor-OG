@@ -12,9 +12,7 @@
         .type           aarch64_at_s1e0r, %function
         .balign         4
 aarch64_at_s1e0r:
-        dsb             osh
         at              s1e0r, x0
-        dsb             nsh
         isb
         mrs             x0, PAR_EL1
         ret
@@ -23,9 +21,7 @@ aarch64_at_s1e0r:
         .type           aarch64_at_s1e0w, %function
         .balign         4
 aarch64_at_s1e0w:
-        dsb             osh
         at              s1e0w, x0
-        dsb             nsh
         isb
         mrs             x0, PAR_EL1
         ret
@@ -34,9 +30,7 @@ aarch64_at_s1e0w:
         .type           aarch64_at_s1e1r, %function
         .balign         4
 aarch64_at_s1e1r:
-        dsb             osh
         at              s1e1r, x0
-        dsb             nsh
         isb
         mrs             x0, PAR_EL1
         ret
@@ -45,9 +39,7 @@ aarch64_at_s1e1r:
         .type           aarch64_at_s1e1w, %function
         .balign         4
 aarch64_at_s1e1w:
-        dsb             osh
         at              s1e1w, x0
-        dsb             nsh
         isb
         mrs             x0, PAR_EL1
         ret

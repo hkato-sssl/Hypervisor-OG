@@ -24,8 +24,6 @@
 static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *region)
 {
     errno_t ret;
-    size_t rest;
-    uintptr_t addr;
     struct aarch64_stage2_attr attr;
 
     memset(&attr, 0, sizeof(attr));
@@ -36,13 +34,7 @@ static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *region)
     attr.s2ap = STAGE2_S2AP_RW;
     attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
 
-    addr = region->ipa.addr;
-    rest = region->ipa.size;
-    do {
-        ret = aarch64_stage2_map(vm->stage2, (void *)addr, (void *)addr, UNIT_VM_TRAP_REGION, &attr);
-        addr += UNIT_VM_TRAP_REGION;
-        rest -= UNIT_VM_TRAP_REGION;
-    } while ((ret == SUCCESS) && (rest > 0));
+    ret = aarch64_stage2_map(vm->stage2, (void *)region->ipa.addr, (void *)region->ipa.addr, region->ipa.size, &attr);
 
     return ret;
 }
@@ -90,7 +82,7 @@ static bool is_valid_parameter(const struct vm *vm, const struct vm_region_trap 
     ret = system_validate_stack_region(region, sizeof(*region));
     if (ret != SUCCESS) {
         if ((vm != NULL) && (region != NULL) &&
-            (region->ipa.size > 0) && ((region->ipa.size % UNIT_VM_TRAP_REGION) == 0)) {
+            (region->ipa.size > 0) && ((region->ipa.size % 4096) == 0)) {
             valid = true;
         } else {
             valid = false;

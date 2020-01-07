@@ -29,7 +29,6 @@ extern "C" {
 /* defines */
 
 #define VM_MAX_NR_PROCS             8
-#define UNIT_VM_TRAP_REGION         4096
 
 /* types */
 

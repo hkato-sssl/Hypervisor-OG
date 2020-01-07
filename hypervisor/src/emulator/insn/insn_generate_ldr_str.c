@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/aarch64/system_register/esr_el2_iss.h"
 #include "hypervisor/vm.h"
@@ -62,7 +63,7 @@ static errno_t parse(struct insn *insn, struct vpc *vpc)
 
     memset(insn, 0, sizeof(*insn));
 
-    mask = UNIT_VM_TRAP_REGION - 1;
+    mask = BITS(11, 0);
     va = vpc->regs[VPC_FAR_EL2];
     ipa = (vpc->regs[VPC_HPFAR_EL2] << 8) | (va & mask);
 

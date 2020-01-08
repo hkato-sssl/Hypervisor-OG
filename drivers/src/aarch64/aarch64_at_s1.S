@@ -13,6 +13,7 @@
         .balign         4
 aarch64_at_s1e0r:
         at              s1e0r, x0
+        dsb             nsh
         isb
         mrs             x0, PAR_EL1
         ret
@@ -22,6 +23,7 @@ aarch64_at_s1e0r:
         .balign         4
 aarch64_at_s1e0w:
         at              s1e0w, x0
+        dsb             nsh
         isb
         mrs             x0, PAR_EL1
         ret
@@ -31,6 +33,7 @@ aarch64_at_s1e0w:
         .balign         4
 aarch64_at_s1e1r:
         at              s1e1r, x0
+        dsb             nsh
         isb
         mrs             x0, PAR_EL1
         ret
@@ -40,6 +43,7 @@ aarch64_at_s1e1r:
         .balign         4
 aarch64_at_s1e1w:
         at              s1e1w, x0
+        dsb             nsh
         isb
         mrs             x0, PAR_EL1
         ret

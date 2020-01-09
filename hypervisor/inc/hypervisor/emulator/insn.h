@@ -35,9 +35,9 @@ enum insn_type {
 };
 
 struct insn_ldr_str {
-    uintptr_t       va;
-    uintptr_t       ipa;
-    uintptr_t       offset;
+    uint64_t        va;
+    uint64_t        ipa;
+    uint64_t        offset;
     uint8_t         size;
 
     struct {
@@ -46,10 +46,10 @@ struct insn_ldr_str {
     } gpr;
 
     struct {
+        uint8_t     wreg:1;
         uint8_t     sign:1;
-        uint8_t     a32:1;
-        uint8_t     wb:1;
         uint8_t     post:1;
+        uint8_t     wb:1;
     } flag;
 };
 

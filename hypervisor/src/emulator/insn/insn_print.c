@@ -32,11 +32,12 @@ static void print_null(const struct insn *insn)
 static void print_ldr(const struct insn *insn)
 {
     printk("<INSN_TYPE_LDR>\n");
-    printk("  va: %p\n", insn->op.ldr.va);
-    printk(" ipa: %p\n", insn->op.ldr.ipa);
-    printk("size: %u\n", insn->op.ldr.size);
-    printk(" dst: %c%u\n", (insn->op.ldr.flag.a32 ? 'W' : 'X'), insn->op.ldr.gpr.dst);
-    printk("flag: sign=%u, a32=%u\n", insn->op.ldr.flag.sign, insn->op.ldr.flag.a32);
+    printk("    va: 0x%016llx\n", insn->op.ldr.va);
+    printk("   ipa: 0x%016llx\n", insn->op.ldr.ipa);
+    printk("offset: 0x%016llx(%lld)\n", insn->op.ldr.offset, insn->op.ldr.offset);
+    printk("  size: %u\n", insn->op.ldr.size);
+    printk("   dst: %c%u\n", (insn->op.ldr.flag.wreg ? 'W' : 'X'), insn->op.ldr.gpr.dst);
+    printk("  flag: wreg=%u, sign=%u, post=%u, wb=%u\n", insn->op.ldr.flag.wreg, insn->op.ldr.flag.sign, insn->op.ldr.flag.post, insn->op.ldr.flag.wb);
     printk("\n");
 }
 
@@ -47,14 +48,15 @@ static void print_str(const struct insn *insn)
     printk("<INSN_TYPE_STR>\n");
     gpr = insn->op.str.gpr.src;
     if (gpr < 31) {
-        printk(" src: %c%u(0x%016x)\n", (insn->op.str.flag.a32 ? 'W' : 'X'), gpr, insn_str_src_value(insn));
+        printk(" src: %c%u(0x%016x)\n", (insn->op.str.flag.wreg ? 'W' : 'X'), gpr, insn_str_src_value(insn));
     } else {
-        printk(" src: %cZR(0x%016x)\n", (insn->op.str.flag.a32 ? 'W' : 'X'), insn_str_src_value(insn));
+        printk(" src: %cZR(0x%016x)\n", (insn->op.str.flag.wreg ? 'W' : 'X'), insn_str_src_value(insn));
     }
-    printk("  va: %p\n", insn->op.str.va);
-    printk(" ipa: %p\n", insn->op.str.ipa);
-    printk("size: %u\n", insn->op.str.size);
-    printk("flag: sign=%u, a32=%u\n", insn->op.str.flag.sign, insn->op.str.flag.a32);
+    printk("    va: 0x%016llx\n", insn->op.str.va);
+    printk("   ipa: 0x%016llx\n", insn->op.str.ipa);
+    printk("offset: 0x%016llx(%lld)\n", insn->op.str.offset, insn->op.str.offset);
+    printk("  size: %u\n", insn->op.str.size);
+    printk("  flag: wreg=%u, sign=%u, post=%u, wb=%u\n", insn->op.str.flag.wreg, insn->op.str.flag.sign, insn->op.str.flag.post, insn->op.str.flag.wb);
     printk("\n");
 }
 

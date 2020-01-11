@@ -81,7 +81,7 @@
  * hvc #0はテスト完了とする。
  */
 
-#define TRAP_REGION     0xb0000000
+#define TRAP_REGION     0xb00000000
 #define TEST_NO(s, n)   (((s) << 8) | (n))
 
         .global         test_insn_01
@@ -117,8 +117,9 @@ test_insn_01_ldr64:
 
         ldr             x0, [x1], #0
         ldr             x7, [x1], #1
-        ldr             x30, [x1], #2
-        ldr             xzr, [x1], #3
+        ldr             x30, [x1], #128
+        ldr             xzr, [x1], #255
+        ldr             xzr, [x1], #-256
 
         // (2) LDR Xn, [<Xt|SP>, #simm9]!
 
@@ -220,8 +221,9 @@ test_insn_01_ldr32:
 
         ldr             w0, [x1], #0
         ldr             w7, [x1], #1
-        ldr             w30, [x1], #2
-        ldr             wzr, [x1], #3
+        ldr             wzr, [x1], #128
+        ldr             wzr, [x1], #255
+        ldr             wzr, [x1], #-256
 
         // (2) LDR Wn, [<Xt|SP>, #simm9]!
 
@@ -420,8 +422,9 @@ test_insn_01_ldr16:
 
         ldrh            w0, [x1], #0
         ldrh            w7, [x1], #1
-        ldrh            w30, [x1], #2
-        ldrh            wzr, [x1], #3
+        ldrh            w30, [x1], #128
+        ldrh            wzr, [x1], #255
+        ldrh            wzr, [x1], #-256
 
         // (2) LDRH Wn, [<Xt|SP>, #simm9]!
 
@@ -598,8 +601,9 @@ test_insn_01_ldr8:
 
         ldrb            w0, [x1], #0
         ldrb            w7, [x1], #1
-        ldrb            w30, [x1], #2
-        ldrb            wzr, [x1], #3
+        ldrb            w30, [x1], #128
+        ldrb            wzr, [x1], #255
+        ldrb            wzr, [x1], #-256
 
         // (2) LDRB Wn, [<Xt|SP>, #simm9]!
 

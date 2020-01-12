@@ -11,6 +11,8 @@
  *
  * 1.解析対象命令
  * Hypervisorが解析を実行するLDR命令は以下の通り。
+ * (4)の様なliteralを用いる形式の実行にはメモリマッピングの調整が必要とな
+ * る為、別途テスト環境を用意する。
  *
  * LDR (64-bit)
  * (1) LDR Xn, [<Xt|SP>], #simm9
@@ -81,8 +83,28 @@
  * hvc #0はテスト完了とする。
  */
 
-#define TRAP_REGION     0xb00000000
+#include "config/system.h"
+#include "lib/asm.h"
+
 #define TEST_NO(s, n)   (((s) << 8) | (n))
+
+        .macro          func_entry
+        str             lr, [sp, #-16]!
+        mov             x0, sp
+        msr             TPIDR_EL1, x0
+        .endm
+
+        .macro          func_exit
+        mrs             x0, TPIDR_EL1
+        mov             sp, x0
+        ldr             lr, [sp], #16
+        .endm
+
+        .macro          test_entry,no
+        bl              init_regs
+        mov             lr, x1
+        hvc             #\no
+        .endm
 
         .global         test_insn_01
 
@@ -90,20 +112,59 @@
         .type           test_insn_01, %function
         .balign         4
 test_insn_01:
+        str             lr, [sp, #-16]!
+
         bl              test_insn_01_ldr64
         bl              test_insn_01_ldr32
         bl              test_insn_01_ldr16
         bl              test_insn_01_ldr8
+
+        ldr             lr, [sp], #16
+        ret
+
+init_regs:
+        ldr             x0, =CONFIG_TRAP_REGION
+        mov             x1, x0
+        mov             x2, x0
+        mov             x3, x0
+        mov             x4, x0
+        mov             x5, x0
+        mov             x6, x0
+        mov             x7, x0
+        mov             x8, x0
+        mov             x9, x0
+        mov             x10, x0
+        mov             x11, x0
+        mov             x12, x0
+        mov             x13, x0
+        mov             x14, x0
+        mov             x15, x0
+        mov             x16, x0
+        mov             x17, x0
+        mov             x18, x0
+        mov             x19, x0
+        mov             x20, x0
+        mov             x21, x0
+        mov             x22, x0
+        mov             x23, x0
+        mov             x24, x0
+        mov             x25, x0
+        mov             x26, x0
+        mov             x27, x0
+        mov             x28, x0
+        mov             x29, x0
+        mov             sp, x0
         ret
 
         .section        ".text.test_insn_01_ldr64", "ax", %progbits
         .type           test_insn_01_ldr64, %function
         .balign         4
 test_insn_01_ldr64:
+        func_entry
 
         // (1) LDR Xn, [<Xt|SP>], #simm9
 
-        hvc             #TEST_NO(64, 1)
+        test_entry      TEST_NO(64, 1)
 
         ldr             x0, [x1], #8
         ldr             x7, [x1], #8
@@ -123,7 +184,7 @@ test_insn_01_ldr64:
 
         // (2) LDR Xn, [<Xt|SP>, #simm9]!
 
-        hvc             #TEST_NO(64, 2)
+        test_entry      TEST_NO(64, 2)
 
         ldr             x0, [x1, #8]!
         ldr             x7, [x1, #8]!
@@ -142,7 +203,7 @@ test_insn_01_ldr64:
 
         // (3) LDR Xn, [<Xt|SP>{, #pimm12}]
 
-        hvc             #TEST_NO(64, 3)
+        test_entry      TEST_NO(64, 3)
 
         ldr             x0, [x1, #8]
         ldr             x7, [x1, #8]
@@ -158,20 +219,9 @@ test_insn_01_ldr64:
         ldr             x0, [x0, #256]
         ldr             x0, [x0, #32760]
 
-        // (4) LDR Xn, <label>
-
-        hvc             #TEST_NO(64, 4)
-
-        ldr             x2, 0f
-        b               1f
-
-0:      .quad           TRAP_REGION
-
-        .balign         4
-1:
         // (5) LDR Xn, [<Xt|SP>, <Wm|Xm>{ <extend> {<amount>}}]
 
-        hvc             #TEST_NO(64, 5)
+        test_entry      TEST_NO(64, 5)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -188,7 +238,7 @@ test_insn_01_ldr64:
 
         // (6) LDUR Xn, [<Xt|SP>{, #simm9}]
 
-        hvc             #TEST_NO(64, 5)
+        test_entry      TEST_NO(64, 5)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -199,15 +249,18 @@ test_insn_01_ldr64:
         ldur             x0, [x8, #255]
         ldur             x0, [x8, #-256]
 
+        func_exit
         ret
 
         .section        ".text.test_insn_01_ldr32", "ax", %progbits
         .type           test_insn_01_ldr32, %function
         .balign         4
 test_insn_01_ldr32:
+        func_entry
+
         // (1) LDR Wn, [<Xt|SP>], #simm9
 
-        hvc             #TEST_NO(32, 1)
+        test_entry      TEST_NO(32, 1)
 
         ldr             w0, [x1], #8
         ldr             w7, [x1], #8
@@ -227,7 +280,7 @@ test_insn_01_ldr32:
 
         // (2) LDR Wn, [<Xt|SP>, #simm9]!
 
-        hvc             #TEST_NO(32, 2)
+        test_entry      TEST_NO(32, 2)
 
         ldr             w0, [x1, #8]!
         ldr             w7, [x1, #8]!
@@ -246,7 +299,7 @@ test_insn_01_ldr32:
 
         // (3) LDR Wn, [<Xt|SP>{, #pimm12}]
 
-        hvc             #TEST_NO(32, 3)
+        test_entry      TEST_NO(32, 3)
 
         ldr             w0, [x1, #8]
         ldr             w7, [x1, #8]
@@ -262,20 +315,9 @@ test_insn_01_ldr32:
         ldr             w0, [x0, #256]
         ldr             w0, [x0, #16380]
 
-        // (4) LDR Wn, <label>
-
-        hvc             #TEST_NO(32, 4)
-
-        ldr             w2, 0f
-        b               1f
-
-0:      .quad           TRAP_REGION
-
-        .balign         4
-1:
         // (5) LDR Wn, [<Xt|SP>, <Wm|Xm>{ <extend> {<amount>}}]
 
-        hvc             #TEST_NO(32, 5)
+        test_entry      TEST_NO(32, 5)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -292,7 +334,7 @@ test_insn_01_ldr32:
 
         // (6) LDUR Wn, [<Xt|SP>{, #simm9}]
 
-        hvc             #TEST_NO(32, 6)
+        test_entry      TEST_NO(32, 6)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -305,7 +347,7 @@ test_insn_01_ldr32:
 
         // (7) LDRSW Xn, [<Xt|SP>], #simm9
 
-        hvc             #TEST_NO(32, 7)
+        test_entry      TEST_NO(32, 7)
 
         ldrsw           x0, [x1], #8
         ldrsw           x7, [x1], #8
@@ -324,7 +366,7 @@ test_insn_01_ldr32:
 
         // (8) LDRSW Xn, [<Xt|SP>, #simm9]!
 
-        hvc             #TEST_NO(32, 8)
+        test_entry      TEST_NO(32, 8)
 
         ldrsw           x0, [x1, #8]!
         ldrsw           x7, [x1, #8]!
@@ -343,7 +385,7 @@ test_insn_01_ldr32:
 
         // (9) LDRSW Xn, [<Xt|SP>{, #pimm12}]
 
-        hvc             #TEST_NO(32, 9)
+        test_entry      TEST_NO(32, 9)
 
         ldrsw           x0, [x1, #8]
         ldrsw           x7, [x1, #8]
@@ -359,20 +401,9 @@ test_insn_01_ldr32:
         ldrsw           x0, [x0, #256]
         ldrsw           x0, [x0, #16380]
 
-        // (10) LDRSW Xn, <label>
-
-        hvc             #TEST_NO(32, 10)
-
-        ldrsw           x2, 0f
-        b               1f
-
-0:      .quad           TRAP_REGION
-
-        .balign         4
-1:
         // (11) LDRSW Xn, [<Xt|SP>, <Wm|Xm>{ <extend> {<amount>}}]
 
-        hvc             #TEST_NO(32, 11)
+        test_entry      TEST_NO(32, 11)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -389,7 +420,7 @@ test_insn_01_ldr32:
 
         // (12) LDURSW Xn, [<Xt|SP>{, #simm9}]
 
-        hvc             #TEST_NO(32, 12)
+        test_entry      TEST_NO(32, 12)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -400,15 +431,18 @@ test_insn_01_ldr32:
         ldursw          x0, [x8, #255]
         ldursw          x0, [x8, #-256]
 
+        func_exit
         ret
 
         .section        ".text.test_insn_01_ldr16", "ax", %progbits
         .type           test_insn_01_ldr16, %function
         .balign         4
 test_insn_01_ldr16:
+        func_entry
+
         // (1) LDRH Wn, [<Xt|SP>], #simm9
 
-        hvc             #TEST_NO(16, 1)
+        test_entry      TEST_NO(16, 1)
 
         ldrh            w0, [x1], #8
         ldrh            w7, [x1], #8
@@ -428,7 +462,7 @@ test_insn_01_ldr16:
 
         // (2) LDRH Wn, [<Xt|SP>, #simm9]!
 
-        hvc             #TEST_NO(16, 2)
+        test_entry      TEST_NO(16, 2)
 
         ldrh            w0, [x1, #8]!
         ldrh            w7, [x1, #8]!
@@ -447,7 +481,7 @@ test_insn_01_ldr16:
 
         // (3) LDRH Wn, [<Xt|SP>{, #pimm12}]
 
-        hvc             #TEST_NO(16, 3)
+        test_entry      TEST_NO(16, 3)
 
         ldrh            w0, [x1, #8]
         ldrh            w7, [x1, #8]
@@ -465,7 +499,7 @@ test_insn_01_ldr16:
 
         // (4) LDRH Wn, [<Xt|SP>, <Wm|Xm>{ <extend> {<amount>}}]
 
-        hvc             #TEST_NO(16, 4)
+        test_entry      TEST_NO(16, 4)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -482,7 +516,7 @@ test_insn_01_ldr16:
 
         // (5) LDURH Wn, [<Xt|SP>{, #simm9}]
 
-        hvc             #TEST_NO(16, 5)
+        test_entry      TEST_NO(16, 5)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -495,7 +529,7 @@ test_insn_01_ldr16:
 
         // (6) LDRSH Xn, [<Xt|SP>], #simm9
 
-        hvc             #TEST_NO(16, 6)
+        test_entry      TEST_NO(16, 6)
 
         ldrsh           x0, [x1], #8
         ldrsh           x7, [x1], #8
@@ -514,7 +548,7 @@ test_insn_01_ldr16:
 
         // (7) LDRSH Xn, [<Xt|SP>, #simm9]!
 
-        hvc             #TEST_NO(16, 7)
+        test_entry      TEST_NO(16, 7)
 
         ldrsh           x0, [x1, #8]!
         ldrsh           x7, [x1, #8]!
@@ -533,7 +567,7 @@ test_insn_01_ldr16:
 
         // (8) LDRSH Xn, [<Xt|SP>{, #pimm12}]
 
-        hvc             #TEST_NO(16, 8)
+        test_entry      TEST_NO(16, 8)
 
         ldrsh           x0, [x1, #8]
         ldrsh           x7, [x1, #8]
@@ -551,7 +585,7 @@ test_insn_01_ldr16:
 
         // (9) LDRSH Xn, [<Xt|SP>, <Wm|Xm>{ <extend> {<amount>}}]
 
-        hvc             #TEST_NO(16, 9)
+        test_entry      TEST_NO(16, 9)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -568,7 +602,7 @@ test_insn_01_ldr16:
 
         // (10) LDURSH Xn, [<Xt|SP>{, #simm9}]
 
-        hvc             #TEST_NO(16, 10)
+        test_entry      TEST_NO(16, 10)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -579,15 +613,18 @@ test_insn_01_ldr16:
         ldursh          x0, [x8, #255]
         ldursh          x0, [x8, #-256]
 
+        func_exit
         ret
 
         .section        ".text.test_insn_01_ldr8", "ax", %progbits
         .type           test_insn_01_ldr8, %function
         .balign         4
 test_insn_01_ldr8:
+        func_entry
+
         // (1) LDRB Wn, [<Xt|SP>], #simm9
 
-        hvc             #TEST_NO(8, 1)
+        test_entry      TEST_NO(8, 1)
 
         ldrb            w0, [x1], #8
         ldrb            w7, [x1], #8
@@ -607,7 +644,7 @@ test_insn_01_ldr8:
 
         // (2) LDRB Wn, [<Xt|SP>, #simm9]!
 
-        hvc             #TEST_NO(8, 2)
+        test_entry      TEST_NO(8, 2)
 
         ldrb            w0, [x1, #8]!
         ldrb            w7, [x1, #8]!
@@ -626,7 +663,7 @@ test_insn_01_ldr8:
 
         // (3) LDRB Wn, [<Xt|SP>{, #pimm12}]
 
-        hvc             #TEST_NO(8, 3)
+        test_entry      TEST_NO(8, 3)
 
         ldrb            w0, [x1, #8]
         ldrb            w7, [x1, #8]
@@ -644,7 +681,7 @@ test_insn_01_ldr8:
 
         // (4) LDRB Wn, [<Xt|SP>, <Wm|Xm>{ <extend> {<amount>}}]
 
-        hvc             #TEST_NO(8, 4)
+        test_entry      TEST_NO(8, 4)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -660,7 +697,7 @@ test_insn_01_ldr8:
 
         // (5) LDURB Wn, [<Xt|SP>{, #simm9}]
 
-        hvc             #TEST_NO(8, 5)
+        test_entry      TEST_NO(8, 5)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -673,7 +710,7 @@ test_insn_01_ldr8:
 
         // (6) LDRSB Xn, [<Xt|SP>], #simm9
 
-        hvc             #TEST_NO(8, 6)
+        test_entry      TEST_NO(8, 6)
 
         ldrsb           x0, [x1], #8
         ldrsb           x7, [x1], #8
@@ -692,7 +729,7 @@ test_insn_01_ldr8:
 
         // (7) LDRSB Xn, [<Xt|SP>, #simm9]!
 
-        hvc             #TEST_NO(8, 7)
+        test_entry      TEST_NO(8, 7)
 
         ldrsb           x0, [x1, #8]!
         ldrsb           x7, [x1, #8]!
@@ -711,7 +748,7 @@ test_insn_01_ldr8:
 
         // (8) LDRSB Xn, [<Xt|SP>{, #pimm12}]
 
-        hvc             #TEST_NO(8, 8)
+        test_entry      TEST_NO(8, 8)
 
         ldrsb           x0, [x1, #8]
         ldrsb           x7, [x1, #8]
@@ -729,7 +766,7 @@ test_insn_01_ldr8:
 
         // (9) LDRSB Xn, [<Xt|SP>, <Wm|Xm>{ <extend> {<amount>}}]
 
-        hvc             #TEST_NO(8, 9)
+        test_entry      TEST_NO(8, 9)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -745,7 +782,7 @@ test_insn_01_ldr8:
 
         // (10) LDURSB Xn, [<Xt|SP>{, #simm9}]
 
-        hvc             #TEST_NO(8, 10)
+        test_entry      TEST_NO(8, 10)
 
         ldr             x0, =0xbbbbbbbbcccccccc
         mov             sp, x0
@@ -756,6 +793,7 @@ test_insn_01_ldr8:
         ldursb          x0, [x8, #255]
         ldursb          x0, [x8, #-256]
 
+        func_exit
         ret
 
         .end

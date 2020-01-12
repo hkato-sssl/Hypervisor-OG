@@ -4,6 +4,13 @@
  * (C) 2019 Hidekazu Kato
  */
 
+/* テスト内容：struct insn解析結果確認
+ *
+ * 引数で指定した範囲にトラップを設定して、Guestがアクセスした命令の解
+ * 析結果を表示する。
+ * 解析結果を表示した後、トラップした命令の次からGuestの実行を再開する。
+ */
+
 #include <stdint.h>
 #include <string.h>
 #include "lib/system/printk.h"
@@ -23,9 +30,6 @@
 #define UART_PA     0xff000000
 #define UART_SIZE   4096
 
-#define TRAP_START  0xb0000000
-#define TRAP_SIZE   0x01000000
-
 /* types */
 
 /* prototypes */
@@ -36,6 +40,8 @@ errno_t hyp_test_stage2_init(void);
 errno_t hypervisor_init_vgic400(struct vm *vm);
 errno_t guest_02_data_abort(const struct insn *insn, void *arg);
 
+static errno_t emulate_aarch64_hvc(struct vpc *vpc);
+
 /* variables */
 
 static struct vm vm;
@@ -43,10 +49,18 @@ static struct vpc vpcs[NR_CPUS];
 static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
 static struct vm_region_trap trap;
 static struct vpc_exception_ops ops = {
+    .aarch64.hvc = emulate_aarch64_hvc,
     .aarch64.data_abort = vpc_emulate_aarch64_data_abort,
 };
 
 /* functions */
+
+static errno_t emulate_aarch64_hvc(struct vpc *vpc)
+{
+    printk("HVC!!\n");
+
+    return SUCCESS;
+}
 
 static errno_t init_stage2_mapping(void)
 {
@@ -73,13 +87,13 @@ static errno_t init_stage2_mapping(void)
     return ret;
 }
 
-static errno_t init_trap(void)
+static errno_t init_trap(uint64_t *args)
 {
     errno_t ret;
 
     memset(&trap, 0, sizeof(trap));
-    trap.ipa.addr = TRAP_START;
-    trap.ipa.size = TRAP_SIZE;
+    trap.ipa.addr = args[0];
+    trap.ipa.size = args[1];
     trap.emulator.arg = NULL;
     trap.emulator.handler = guest_02_data_abort;
     ret = vm_register_region_trap(&vm, &trap);
@@ -109,7 +123,7 @@ static errno_t init_vm(void)
     return ret;
 }
 
-void test_guest_02(void)
+void test_guest_02(uint64_t *args)
 {
     errno_t ret;
 
@@ -129,7 +143,7 @@ void test_guest_02(void)
     }
 
     if (ret == SUCCESS) {
-        ret = init_trap();
+        ret = init_trap(args);
         printk("init_trap() -> %d\n", ret);
     }
 

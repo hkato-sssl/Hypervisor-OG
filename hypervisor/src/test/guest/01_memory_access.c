@@ -23,8 +23,8 @@
 #define UART_PA     0xff000000
 #define UART_SIZE   4096
 
-#define TRAP_START  0xb0010000
-#define TRAP_SIZE   4096
+#define TRAP_START  0xb0000000
+#define TRAP_SIZE   0x01000000
 
 /* types */
 

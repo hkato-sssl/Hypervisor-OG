@@ -22,19 +22,20 @@
         .endm
 
         .macro mov32, reg, val
-        movz \reg, #:abs_g0_nc:\val
-        movk \reg, #:abs_g1:\val
+        movz        \reg, #:abs_g0_nc:\val
+        movk        \reg, #:abs_g1:\val
         .endm
 
         .macro mov64, reg, val
-        movz \reg, #:abs_g0_nc:\val
-        movk \reg, #:abs_g1_nc:\val
-        movk \reg, #:abs_g2_nc:\val
-        movk \reg, #:abs_g3:\val
+        movz        \reg, #:abs_g0_nc:\val
+        movk        \reg, #:abs_g1_nc:\val
+        movk        \reg, #:abs_g2_nc:\val
+        movk        \reg, #:abs_g3:\val
         .endm
 
         .macro adrl, reg, val
-        ldr \reg, =\val
+        adrp        \reg, \val
+        add         \reg, \reg, #:lo12:\val
         .endm
 #endif /* ASSEMBLY */
 

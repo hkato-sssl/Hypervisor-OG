@@ -123,7 +123,7 @@ test_insn_01:
         ret
 
 init_regs:
-        ldr             x0, =CONFIG_TRAP_REGION
+        mov64           x0, CONFIG_REGION_TRAP
         mov             x1, x0
         mov             x2, x0
         mov             x3, x0

@@ -1,5 +1,5 @@
 /*
- * test/insn/01_memory_access.S
+ * test/insn/01_parse_aarch64_ldr.S
  *
  * (C) 2020 Hidekazu Kato
  */

@@ -12,8 +12,6 @@
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
-#include "driver/aarch64/system_register.h"
-
 
 /* defines */
 
@@ -121,14 +119,12 @@ static errno_t parse_aarch64_str(struct insn *insn, uint32_t code)
     return SUCCESS;
 }
 
-static errno_t parse_aarch64(struct insn *insn, uint64_t pc)
+static errno_t parse_aarch64(struct insn *insn, uint32_t code)
 {
     errno_t ret;
     uint32_t d;
-    uint32_t code;
     uint64_t esr;
 
-    code = *(uint32_t *)pc;
     d = code & (BITS(29, 21) | BITS(11, 10));
     esr = insn->vpc->regs[VPC_ESR_EL2];
     if ((esr & ISS_DATA_ABORT_WnR) == 0) {
@@ -176,29 +172,27 @@ static errno_t parse_aarch64(struct insn *insn, uint64_t pc)
     return ret;
 }
 
-static errno_t parse_instruction(struct insn *insn)
+static errno_t parse_instruction(struct insn *insn, struct vpc *vpc)
 {
     errno_t ret;
+    uint32_t code;
     uint64_t pc;
 
-    ret = vpc_pa_pc(insn->vpc, &pc);
+    pc = vpc->regs[VPC_PC];
+    ret = vpc_read_instruction(vpc, &code, pc);
     if (ret == SUCCESS) {
-        if (vpc_is_aarch64(insn->vpc)) {
-            ret = parse_aarch64(insn, pc);
-        } else {
-            ret = -ENOTSUP;
-        }
+        ret = parse_aarch64(insn, code);
     }
 
     return ret;
 }
 
-static errno_t parse_system_register(struct insn *insn)
+static errno_t parse_system_register(struct insn *insn, struct vpc *vpc)
 {
     uint64_t esr;
     uint64_t sas;
 
-    esr = insn->vpc->regs[VPC_ESR_EL2];
+    esr = vpc->regs[VPC_ESR_EL2];
     insn->type = ((esr & ISS_DATA_ABORT_WnR) != 0) ? INSN_TYPE_STR : INSN_TYPE_LDR;
     sas = EXTRACT_ISS_DATA_ABORT_SAS(esr);
     insn->op.ldr.size = 1 << sas;
@@ -231,9 +225,9 @@ static errno_t parse(struct insn *insn, struct vpc *vpc)
     insn->op.ldr.ipa = ipa;
 
     if ((vpc->regs[VPC_ESR_EL2] & ISS_DATA_ABORT_ISV) == 0) {
-        ret = parse_instruction(insn);
+        ret = parse_instruction(insn, vpc);
     } else {
-        ret = parse_system_register(insn);
+        ret = parse_system_register(insn, vpc);
     }
 
     return ret;

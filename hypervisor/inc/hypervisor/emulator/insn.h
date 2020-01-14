@@ -31,7 +31,8 @@ struct vpc;
 enum insn_operand_type {
     INSN_TYPE_NULL,
     INSN_TYPE_LDR,
-    INSN_TYPE_STR
+    INSN_TYPE_STR,
+    INSN_TYPE_HVC
 };
 
 struct insn_ldr_str {
@@ -72,6 +73,7 @@ struct insn {
 /* functions */
 
 errno_t insn_parse_aarch64_ldr_str(struct insn *insn, struct vpc *vpc);
+errno_t insn_parse_aarch64_hvc(struct insn *insn, struct vpc *vpc);
 uint64_t insn_str_src_value(const struct insn *insn);
 
 void insn_print(const struct insn *insn);

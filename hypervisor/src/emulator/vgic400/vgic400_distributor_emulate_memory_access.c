@@ -32,9 +32,6 @@ static errno_t emulate_memory_insn(const struct insn *insn, struct vgic400 *vgic
     uintptr_t base;
     uintptr_t reg;
 
-printk("%s: addr = %p\n", __func__, insn->op.ldr.ipa);
-printk("%s: size = %u\n", __func__, insn->op.ldr.size);
-
     base = (uintptr_t)gic400_distributor_register_base(vgic->gic);
     reg = (insn->op.ldr.ipa - base);
     if (reg == 0x0000) {    /* GICD_CTLR */

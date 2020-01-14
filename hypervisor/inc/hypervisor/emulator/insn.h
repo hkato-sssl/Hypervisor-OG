@@ -28,7 +28,7 @@ extern "C" {
 
 struct vpc;
 
-enum insn_type {
+enum insn_operand_type {
     INSN_TYPE_NULL,
     INSN_TYPE_LDR,
     INSN_TYPE_STR
@@ -54,8 +54,8 @@ struct insn_ldr_str {
 };
 
 struct insn {
-    struct vpc      *vpc;
-    enum insn_type  type;
+    struct vpc              *vpc;
+    enum insn_operand_type  type;
     union {
         struct insn_ldr_str ldr;
         struct insn_ldr_str str;

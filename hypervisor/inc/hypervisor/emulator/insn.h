@@ -71,8 +71,9 @@ struct insn {
 
 /* functions */
 
-errno_t insn_parse_ldr_str(struct insn *insn, struct vpc *vpc);
+errno_t insn_parse_aarch64_ldr_str(struct insn *insn, struct vpc *vpc);
 uint64_t insn_str_src_value(const struct insn *insn);
+
 void insn_print(const struct insn *insn);
 
 #ifdef __cplusplus

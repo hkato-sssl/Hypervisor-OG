@@ -41,7 +41,7 @@ errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc)
     errno_t ret;
     struct insn insn;
 
-    ret = insn_parse_ldr_str(&insn, vpc);
+    ret = insn_parse_aarch64_ldr_str(&insn, vpc);
     if (ret == SUCCESS) {
         ret = call_emulator(vpc, &insn);
     } else {

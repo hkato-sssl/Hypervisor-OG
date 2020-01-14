@@ -1,5 +1,5 @@
 /*
- * vpc/vpc_va_to_pa.c
+ * vpc/vpc_va_to_pa_r.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -21,7 +21,7 @@
 
 /* functions */
 
-static errno_t va_to_pa(const struct vpc *vpc, uint64_t *pa, uint64_t va)
+static errno_t va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va)
 {
     errno_t ret;
     uint64_t par;
@@ -42,12 +42,12 @@ static errno_t va_to_pa(const struct vpc *vpc, uint64_t *pa, uint64_t va)
     return ret;
 }
 
-errno_t vpc_va_to_pa(const struct vpc *vpc, uint64_t *pa, uint64_t va)
+errno_t vpc_va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va)
 {
     errno_t ret;
 
     if (vpc->vm->boolean.launched) {
-        ret = va_to_pa(vpc, pa, va);
+        ret = va_to_pa_r(vpc, pa, va);
     } else {
         ret = -EPERM;
     }

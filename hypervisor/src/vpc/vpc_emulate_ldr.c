@@ -22,7 +22,7 @@
 
 static void emulate_ldrb(const struct insn *insn, uint64_t d)
 {
-    if (insn->op.ldr.flag.a32 == 0) {
+    if (insn->op.ldr.flag.wreg == 0) {
         if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(7)) != 0)) {
             d |= 0xffffffffffffff00ULL;
         } else {
@@ -40,7 +40,7 @@ static void emulate_ldrb(const struct insn *insn, uint64_t d)
 
 static void emulate_ldrh(const struct insn *insn, uint64_t d)
 {
-    if (insn->op.ldr.flag.a32 == 0) {
+    if (insn->op.ldr.flag.wreg == 0) {
         if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(15)) != 0)) {
             d |= 0xffffffffffff0000ULL;
         } else {
@@ -58,7 +58,7 @@ static void emulate_ldrh(const struct insn *insn, uint64_t d)
 
 static void emulate_ldrw(const struct insn *insn, uint64_t d)
 {
-    if (insn->op.ldr.flag.a32 == 0) {
+    if (insn->op.ldr.flag.wreg == 0) {
         if ((insn->op.ldr.flag.sign != 0) && ((d & BIT(31)) != 0)) {
             d |= 0xffffffff00000000ULL;
         } else {

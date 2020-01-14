@@ -109,9 +109,6 @@ struct aarch64_stage2 {
     uint64_t    vtcr_el2;
 };
 
-struct aarch64_stage2_vtcr {
-};
-
 struct aarch64_stage2_configuration {
     struct aarch64_mmu_base_configuration base;
 

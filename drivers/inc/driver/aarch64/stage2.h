@@ -106,6 +106,7 @@ struct aarch64_stage2 {
 
     uint16_t    vmid;
     uint8_t     pa_width;
+    uintptr_t   pa_mask;
     uint64_t    vtcr_el2;
 };
 
@@ -127,27 +128,27 @@ struct aarch64_stage2_configuration {
 
 /* functions */
 
-errno_t aarch64_stage2_init(struct aarch64_stage2 *st2, const struct aarch64_stage2_configuration *config);
-errno_t aarch64_stage2_map(struct aarch64_stage2 *st2, void *ipa, void *pa, size_t sz, const struct aarch64_stage2_attr *attr);
+errno_t aarch64_stage2_init(struct aarch64_stage2 *stage2, const struct aarch64_stage2_configuration *config);
+errno_t aarch64_stage2_map(struct aarch64_stage2 *stage2, void *ipa, void *pa, size_t sz, const struct aarch64_stage2_attr *attr);
 
 /* for debugging */
 
-void aarch64_stage2_dump_descriptor(const struct aarch64_stage2 *st2);
+void aarch64_stage2_dump_descriptor(const struct aarch64_stage2 *stage2);
 
 /* inline functions */
 
-static inline uint64_t aarch64_stage2_vttbr_el2(const struct aarch64_stage2 *st2)
+static inline uint64_t aarch64_stage2_vttbr_el2(const struct aarch64_stage2 *stage2)
 {
     uint64_t d;
 
-    d = ((uint64_t)(st2->vmid) << 48) | (uint64_t)(st2->base.addr);
+    d = ((uint64_t)(stage2->vmid) << 48) | (uint64_t)(stage2->base.addr);
 
     return d;
 }
 
-static inline uint64_t aarch64_stage2_vtcr_el2(const struct aarch64_stage2 *st2)
+static inline uint64_t aarch64_stage2_vtcr_el2(const struct aarch64_stage2 *stage2)
 {
-    return st2->vtcr_el2;
+    return stage2->vtcr_el2;
 }
 
 #ifdef __cplusplus

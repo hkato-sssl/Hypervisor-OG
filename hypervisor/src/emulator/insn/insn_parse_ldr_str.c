@@ -1,5 +1,5 @@
 /*
- * insn/insn_generate_ldr_str.c
+ * insn/insn_parse_ldr_str.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -261,7 +261,7 @@ static bool is_emulatable(const struct vpc *vpc)
     return ret;
 }
 
-errno_t insn_generate_ldr_str(struct insn *insn, struct vpc *vpc)
+errno_t insn_parse_ldr_str(struct insn *insn, struct vpc *vpc)
 {
     errno_t ret;
 

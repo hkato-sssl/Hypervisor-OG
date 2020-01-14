@@ -53,12 +53,17 @@ struct insn_ldr_str {
     } flag;
 };
 
+struct insn_hvc {
+    uint16_t        imm;
+};
+
 struct insn {
     struct vpc              *vpc;
     enum insn_operand_type  type;
     union {
         struct insn_ldr_str ldr;
         struct insn_ldr_str str;
+        struct insn_hvc     hvc;
     } op;
 };
 
@@ -66,7 +71,7 @@ struct insn {
 
 /* functions */
 
-errno_t insn_generate_ldr_str(struct insn *insn, struct vpc *vpc);
+errno_t insn_parse_ldr_str(struct insn *insn, struct vpc *vpc);
 uint64_t insn_str_src_value(const struct insn *insn);
 void insn_print(const struct insn *insn);
 

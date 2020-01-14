@@ -32,7 +32,7 @@ static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *region)
     attr.af = 0;
     attr.sh = STAGE2_SH_ISH;
     attr.s2ap = STAGE2_S2AP_RW;
-    attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
+    attr.memattr = STAGE2_MEMATTR_DEVICE_GRE;
 
     ret = aarch64_stage2_map(vm->stage2, (void *)region->ipa.addr, (void *)region->ipa.addr, region->ipa.size, &attr);
 

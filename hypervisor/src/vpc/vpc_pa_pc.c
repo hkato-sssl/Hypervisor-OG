@@ -29,7 +29,7 @@ errno_t vpc_pa_pc(const struct vpc *vpc, uint64_t *pc)
     if (is_el0(vpc)) {
         par = aarch64_at_s12e0r(va);
     } else {
-        par = aarch64_at_s12e0r(va);
+        par = aarch64_at_s12e1r(va);
     }
 
     if ((par & BIT(0)) == 0) {

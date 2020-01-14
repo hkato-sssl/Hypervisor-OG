@@ -58,6 +58,7 @@ static int parse_type(struct log_context *ctx, char ch)
                 ret = log_output_unsigned_number(ctx);
                 break;
         case 'p':
+                ctx->syntax.length = CFL_T;
                 ctx->syntax.flag.hash = true;
                 ctx->syntax.radix = &lower_case_hex;
                 ret = log_output_unsigned_number(ctx);

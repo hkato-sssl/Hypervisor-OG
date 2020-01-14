@@ -78,6 +78,14 @@ int log_output_unsigned_number(struct log_context *ctx)
 		v = va_arg(ctx->request.vargs, unsigned long long);
 		ret = output_llu(ctx, v);
 		break;
+	case CFL_Z:
+		v = (unsigned long long)va_arg(ctx->request.vargs, size_t);
+		ret = output_llu(ctx, v);
+		break;
+	case CFL_T:
+		v = va_arg(ctx->request.vargs, ptrdiff_t);
+		ret = output_llu(ctx, v);
+		break;
 	default:
 		ret = -EINVAL;
 		break;

@@ -186,6 +186,8 @@ test_insn_01_ldr64:
 
         test_entry      TEST_NO(64, 2)
 
+        add             x2, x1, #0x1000
+
         ldr             x0, [x1, #8]!
         ldr             x7, [x1, #8]!
         ldr             x30, [x1, #8]!
@@ -198,8 +200,8 @@ test_insn_01_ldr64:
 
         ldr             x0, [x1, #0]!
         ldr             x0, [x1, #128]!
-        ldr             x0, [x1, #255]!
-        ldr             x0, [x1, #-256]!
+        ldr             x0, [x1, #248]!
+        ldr             x0, [x2, #-256]!
 
         // (3) LDR Xn, [<Xt|SP>{, #pimm12}]
 
@@ -223,31 +225,29 @@ test_insn_01_ldr64:
 
         test_entry      TEST_NO(64, 5)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        ldr             x9, =0x00012340
+        ldr             x10, =0xffffffff00012340
+        mov             x11, #32
+        add             x12, x8, #0x20000
 
         ldr             x0, [x8, x9]
         ldr             x1, [sp, x9]
-        ldr             x2, [x8, w9, uxtw]
-        ldr             x3, [x8, x9, lsl #0]
-        ldr             x3, [x8, x9, lsl #3]
-        ldr             x4, [x8, w9, sxtw]
-        ldr             xzr, [x8, x9, sxtx]
+        ldr             x2, [x8, w10, uxtw]
+        ldr             x3, [x8, x11, lsl #0]
+        ldr             x3, [x8, x11, lsl #3]
+        ldr             x4, [x8, w10, sxtw]
+        mov             x10, #-8
+        ldr             xzr, [x12, x10, sxtx]
 
         // (6) LDUR Xn, [<Xt|SP>{, #simm9}]
 
         test_entry      TEST_NO(64, 5)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        add             x9, x8, #0x10000
 
         ldur             x0, [x8, #0]
-        ldur             x0, [x8, #255]
-        ldur             x0, [x8, #-256]
+        ldur             x0, [x8, #248]
+        ldur             x0, [x9, #-256]
 
         func_exit
         ret
@@ -282,6 +282,8 @@ test_insn_01_ldr32:
 
         test_entry      TEST_NO(32, 2)
 
+        add             x2, x1, #0x10000
+
         ldr             w0, [x1, #8]!
         ldr             w7, [x1, #8]!
         ldr             w30, [x1, #8]!
@@ -294,8 +296,8 @@ test_insn_01_ldr32:
 
         ldr             w0, [x1, #0]!
         ldr             w0, [x1, #128]!
-        ldr             w0, [x1, #255]!
-        ldr             w0, [x1, #-256]!
+        ldr             w0, [x1, #252]!
+        ldr             w0, [x2, #-256]!
 
         // (3) LDR Wn, [<Xt|SP>{, #pimm12}]
 
@@ -319,30 +321,28 @@ test_insn_01_ldr32:
 
         test_entry      TEST_NO(32, 5)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        ldr             x9, =0x00012340
+        ldr             x10, =0xfffffffffffffff8
+        mov             x11, #256
+        ldr             x12, =0xfffffff0
+        mov             x13, #0x100000000
+        add             x13, x8, x13
 
         ldr             w0, [x8, x9]
         ldr             w1, [sp, x9]
-        ldr             w2, [x8, w9, uxtw]
-        ldr             w3, [x8, x9, lsl #0]
-        ldr             w3, [x8, x9, lsl #2]
-        ldr             w4, [x8, w9, sxtw]
-        ldr             wzr, [x8, x9, sxtx]
+        ldr             w2, [x8, w11, uxtw]
+        ldr             w3, [x8, x11, lsl #0]
+        ldr             w3, [x8, x11, lsl #2]
+        ldr             w4, [x13, w12, sxtw]
+        ldr             wzr, [x13, x10, sxtx]
 
         // (6) LDUR Wn, [<Xt|SP>{, #simm9}]
 
         test_entry      TEST_NO(32, 6)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
-
+        add              x8, x8, #0x1000
         ldur             w0, [x8, #0]
-        ldur             w0, [x8, #255]
+        ldur             w0, [x8, #252]
         ldur             w0, [x8, #-256]
 
         // (7) LDRSW Xn, [<Xt|SP>], #simm9
@@ -368,6 +368,8 @@ test_insn_01_ldr32:
 
         test_entry      TEST_NO(32, 8)
 
+        add             x2, x1, #0x10000
+
         ldrsw           x0, [x1, #8]!
         ldrsw           x7, [x1, #8]!
         ldrsw           x30, [x1, #8]!
@@ -380,8 +382,8 @@ test_insn_01_ldr32:
 
         ldrsw           x0, [x1, #0]!
         ldrsw           x0, [x1, #128]!
-        ldrsw           x0, [x1, #255]!
-        ldrsw           x0, [x1, #-256]!
+        ldrsw           x0, [x1, #252]!
+        ldrsw           x0, [x2, #-256]!
 
         // (9) LDRSW Xn, [<Xt|SP>{, #pimm12}]
 
@@ -405,31 +407,28 @@ test_insn_01_ldr32:
 
         test_entry      TEST_NO(32, 11)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        ldr             x9, =0x00012340
+        ldr             x10, =0xffffffff00012340
+        mov             x11, #16
+        ldr             x12, =0xa0000000
 
         ldrsw           x0, [x8, x9]
         ldrsw           x1, [sp, x9]
-        ldrsw           x2, [x8, w9, uxtw]
-        ldrsw           x3, [x8, x9, lsl #0]
-        ldrsw           x3, [x8, x9, lsl #2]
-        ldrsw           x4, [x8, w9, sxtw]
-        ldrsw           xzr, [x8, x9, sxtx]
+        ldrsw           x2, [x8, w10, uxtw]
+        ldrsw           x3, [x8, x11, lsl #0]
+        ldrsw           x3, [x8, x11, lsl #2]
+        ldrsw           x4, [x8, w10, sxtw]
+        ldrsw           xzr, [x8, x12, sxtx]
 
         // (12) LDURSW Xn, [<Xt|SP>{, #simm9}]
 
         test_entry      TEST_NO(32, 12)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        add             x9, x8, #0x10000
 
         ldursw          x0, [x8, #0]
-        ldursw          x0, [x8, #255]
-        ldursw          x0, [x8, #-256]
+        ldursw          x0, [x8, #252]
+        ldursw          x0, [x9, #-256]
 
         func_exit
         ret
@@ -464,6 +463,8 @@ test_insn_01_ldr16:
 
         test_entry      TEST_NO(16, 2)
 
+        add             x2, x1, #0x10000
+
         ldrh            w0, [x1, #8]!
         ldrh            w7, [x1, #8]!
         ldrh            w30, [x1, #8]!
@@ -476,8 +477,8 @@ test_insn_01_ldr16:
 
         ldrh            w0, [x1, #0]!
         ldrh            w0, [x1, #128]!
-        ldrh            w0, [x1, #255]!
-        ldrh            w0, [x1, #-256]!
+        ldrh            w0, [x1, #254]!
+        ldrh            w0, [x2, #-256]!
 
         // (3) LDRH Wn, [<Xt|SP>{, #pimm12}]
 
@@ -501,31 +502,27 @@ test_insn_01_ldr16:
 
         test_entry      TEST_NO(16, 4)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        mov             x9, #0xff0
+        add             x10, x8, #0x10000
+        ldr             x11, =0xfffffff0
 
         ldrh            w0, [x8, x9]
         ldrh            w1, [sp, x9]
         ldrh            w2, [x8, w9, uxtw]
         ldrh            w3, [x8, x9, lsl #0]
         ldrh            w3, [x8, x9, lsl #1]
-        ldrh            w4, [x8, w9, sxtw]
-        ldrh            wzr, [x8, x9, sxtx]
+        ldrh            w4, [x10, w11, sxtw]
+        ldrh            wzr, [x8, x11, sxtx]
 
         // (5) LDURH Wn, [<Xt|SP>{, #simm9}]
 
         test_entry      TEST_NO(16, 5)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        add             x9, x8, #0x100
 
         ldurh           w0, [x8, #0]
-        ldurh           w0, [x8, #255]
-        ldurh           w0, [x8, #-256]
+        ldurh           w0, [x8, #254]
+        ldurh           w0, [x9, #-256]
 
         // (6) LDRSH Xn, [<Xt|SP>], #simm9
 
@@ -550,6 +547,8 @@ test_insn_01_ldr16:
 
         test_entry      TEST_NO(16, 7)
 
+        add             x2, x1, #0x10000
+
         ldrsh           x0, [x1, #8]!
         ldrsh           x7, [x1, #8]!
         ldrsh           x30, [x1, #8]!
@@ -562,8 +561,8 @@ test_insn_01_ldr16:
 
         ldrsh           x0, [x1, #0]!
         ldrsh           x0, [x1, #128]!
-        ldrsh           x0, [x1, #255]!
-        ldrsh           x0, [x1, #-256]!
+        ldrsh           x0, [x1, #254]!
+        ldrsh           x0, [x2, #-256]!
 
         // (8) LDRSH Xn, [<Xt|SP>{, #pimm12}]
 
@@ -587,31 +586,28 @@ test_insn_01_ldr16:
 
         test_entry      TEST_NO(16, 9)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        mov             x9, #0xfffffff0
+        mov             x10, #0x100000000
+        add             x10, x10, x8
+        mov             x11, #32
 
         ldrsh           x0, [x8, x9]
         ldrsh           x1, [sp, x9]
         ldrsh           x2, [x8, w9, uxtw]
         ldrsh           x3, [x8, x9, lsl #0]
-        ldrsh           x3, [x8, x9, lsl #1]
-        ldrsh           x4, [x8, w9, sxtw]
+        ldrsh           x3, [x8, x11, lsl #1]
+        ldrsh           x4, [x10, w9, sxtw]
         ldrsh           xzr, [x8, x9, sxtx]
 
         // (10) LDURSH Xn, [<Xt|SP>{, #simm9}]
 
         test_entry      TEST_NO(16, 10)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        add             x9, x8, #0x10000
 
         ldursh          x0, [x8, #0]
-        ldursh          x0, [x8, #255]
-        ldursh          x0, [x8, #-256]
+        ldursh          x0, [x8, #254]
+        ldursh          x0, [x9, #-256]
 
         func_exit
         ret
@@ -646,6 +642,8 @@ test_insn_01_ldr8:
 
         test_entry      TEST_NO(8, 2)
 
+        add             x2, x1, #0x1000
+
         ldrb            w0, [x1, #8]!
         ldrb            w7, [x1, #8]!
         ldrb            w30, [x1, #8]!
@@ -659,7 +657,7 @@ test_insn_01_ldr8:
         ldrb            w0, [x1, #0]!
         ldrb            w0, [x1, #128]!
         ldrb            w0, [x1, #255]!
-        ldrb            w0, [x1, #-256]!
+        ldrb            w0, [x2, #-256]!
 
         // (3) LDRB Wn, [<Xt|SP>{, #pimm12}]
 
@@ -683,15 +681,14 @@ test_insn_01_ldr8:
 
         test_entry      TEST_NO(8, 4)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        mov             x9, #0x1000
+        mov             x10, #0xfffffffffffffff0
+        mov             x11, #33
 
         ldrb            w0, [x8, x9]
         ldrb            w1, [sp, x9]
-        ldrb            w2, [x8, w9, uxtw]
-        ldrb            w3, [x8, x9, lsl #0]
+        ldrb            w2, [x8, w10, uxtw]
+        ldrb            w3, [x8, x11, lsl #0]
         ldrb            w4, [x8, w9, sxtw]
         ldrb            wzr, [x8, x9, sxtx]
 
@@ -699,14 +696,11 @@ test_insn_01_ldr8:
 
         test_entry      TEST_NO(8, 5)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        add             x9, x8, #0x2000
 
         ldurb           w0, [x8, #0]
         ldurb           w0, [x8, #255]
-        ldurb           w0, [x8, #-256]
+        ldurb           w0, [x9, #-256]
 
         // (6) LDRSB Xn, [<Xt|SP>], #simm9
 
@@ -731,6 +725,8 @@ test_insn_01_ldr8:
 
         test_entry      TEST_NO(8, 7)
 
+        add             x2, x1, #0x1000
+
         ldrsb           x0, [x1, #8]!
         ldrsb           x7, [x1, #8]!
         ldrsb           x30, [x1, #8]!
@@ -744,7 +740,7 @@ test_insn_01_ldr8:
         ldrsb           x0, [x1, #0]!
         ldrsb           x0, [x1, #128]!
         ldrsb           x0, [x1, #255]!
-        ldrsb           x0, [x1, #-256]!
+        ldrsb           x0, [x2, #-256]!
 
         // (8) LDRSB Xn, [<Xt|SP>{, #pimm12}]
 
@@ -768,30 +764,27 @@ test_insn_01_ldr8:
 
         test_entry      TEST_NO(8, 9)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        mov             x9, #0x1000
+        mov             x10, #0xffffffffffffffff
+        add             x11, x8, #0x20000
 
         ldrsb           x0, [x8, x9]
         ldrsb           x1, [sp, x9]
         ldrsb           x2, [x8, w9, uxtw]
         ldrsb           x3, [x8, x9, lsl #0]
-        ldrsb           x4, [x8, w9, sxtw]
-        ldrsb           xzr, [x8, x9, sxtx]
+        ldrsb           x4, [x11, w10, sxtw]
+        ldrsb           xzr, [x11, x10, sxtx]
 
         // (10) LDURSB Xn, [<Xt|SP>{, #simm9}]
 
         test_entry      TEST_NO(8, 10)
 
-        ldr             x0, =0xbbbbbbbbcccccccc
-        mov             sp, x0
-        ldr             x8, =0xaaaaaaaaffffffff
-        ldr             x9, =0x8000000080000000
+        mov             x9, #0xffff
+        add             x9, x9, x8
 
         ldursb          x0, [x8, #0]
         ldursb          x0, [x8, #255]
-        ldursb          x0, [x8, #-256]
+        ldursb          x0, [x9, #-256]
 
         func_exit
         ret

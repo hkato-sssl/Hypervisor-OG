@@ -9,6 +9,7 @@
 #include "lib/bit.h"
 #include "lib/system/printk.h"
 #include "driver/aarch64/exception.h"
+#include "driver/aarch64/system_register.h"
 
 /* defines */
 
@@ -28,6 +29,7 @@ void exception_handler_el1(uint64_t *ei)
 {
     printk("<%s>\n", __func__);
     aarch64_exception_dump(ei);
+    printk("FAR_EL1: %p\n", aarch64_read_far_el1());
     for (;;);
 }
 

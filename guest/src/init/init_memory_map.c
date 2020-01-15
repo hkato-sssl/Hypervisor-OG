@@ -85,10 +85,11 @@ static errno_t init_map(void)
         ret = map((void*)0xff000000, (void*)0xff001000, &attr);
     }
 
+#ifdef CONFIG_REGION_TRAP
     if (ret == SUCCESS) {
-        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
-        ret = map((void*)0xb0010000, (void*)0xb0011000, &attr);
+        ret = aarch64_mmu_map(&sys_mmu, (void *)CONFIG_REGION_TRAP, (void *)CONFIG_REGION_TRAP_PA, CONFIG_REGION_TRAP_SIZE, &attr);
     }
+#endif
 
     return ret;
 }

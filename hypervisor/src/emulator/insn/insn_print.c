@@ -34,29 +34,65 @@ static void print_ldr(const struct insn *insn)
     printk("<INSN_TYPE_LDR>\n");
     printk("    va: 0x%016llx\n", insn->op.ldr.va);
     printk("   ipa: 0x%016llx\n", insn->op.ldr.ipa);
-    printk("offset: 0x%016llx(%lld)\n", insn->op.ldr.offset, insn->op.ldr.offset);
+    if (insn->op.str.flag.isv == 0) {
+        printk("offset: 0x%016llx(%lld)\n", insn->op.ldr.offset, insn->op.ldr.offset);
+    }
     printk("  size: %u\n", insn->op.ldr.size);
-    printk("   dst: %c%u\n", (insn->op.ldr.flag.wreg ? 'W' : 'X'), insn->op.ldr.gpr.dst);
-    printk("  flag: wreg=%u, sign=%u, post=%u, wb=%u\n", insn->op.ldr.flag.wreg, insn->op.ldr.flag.sign, insn->op.ldr.flag.post, insn->op.ldr.flag.wb);
+    if (insn->op.str.flag.isv == 0) {
+        if (insn->op.ldr.gpr.src == 31) {
+            printk("   src: SP\n");
+        } else {
+            printk("   src: X%u\n", insn->op.ldr.gpr.src);
+        }
+    }
+
+    if ((insn->op.ldr.size < 8) && (insn->op.ldr.flag.sign == 0)) {
+        if (insn->op.ldr.gpr.dst == 31) {
+            printk("   dst: WZR\n");
+        } else {
+            printk("   dst: W%u\n", insn->op.ldr.gpr.dst);
+        }
+    } else {
+        if (insn->op.ldr.gpr.dst == 31) {
+            printk("   dst: XZR\n");
+        } else {
+            printk("   dst: X%u\n", insn->op.ldr.gpr.dst);
+        }
+    }
+    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, wb=%u\n", insn->op.ldr.flag.isv, insn->op.ldr.flag.wreg, insn->op.ldr.flag.sign, insn->op.ldr.flag.post, insn->op.ldr.flag.wb);
     printk("\n");
 }
 
 static void print_str(const struct insn *insn)
 {
-    uint8_t gpr;
-
     printk("<INSN_TYPE_STR>\n");
-    gpr = insn->op.str.gpr.src;
-    if (gpr < 31) {
-        printk(" src: %c%u(0x%016x)\n", (insn->op.str.flag.wreg ? 'W' : 'X'), gpr, insn_str_src_value(insn));
+    if (insn->op.str.flag.isv == 0) {
+        if (insn->op.str.size < 8) {
+            if (insn->op.str.gpr.src == 31) {
+                printk("   src: XZR(0x%016x)\n", insn_str_src_value(insn));
+            } else {
+                printk("   src: X%u(0x%016x)\n", insn->op.str.gpr.src, insn_str_src_value(insn));
+            }
+        } else {
+            if (insn->op.str.gpr.src == 31) {
+                printk("   src: WZR(0x%016x)\n", insn_str_src_value(insn));
+            } else {
+                printk("   src: W%u(0x%016x)\n", insn->op.str.gpr.src, insn_str_src_value(insn));
+            }
+        }
+    }
+    if (insn->op.str.gpr.dst == 31) {
+        printk("   dst: SP\n");
     } else {
-        printk(" src: %cZR(0x%016x)\n", (insn->op.str.flag.wreg ? 'W' : 'X'), insn_str_src_value(insn));
+        printk("   dst: X%u\n", insn->op.str.gpr.dst);
     }
     printk("    va: 0x%016llx\n", insn->op.str.va);
     printk("   ipa: 0x%016llx\n", insn->op.str.ipa);
-    printk("offset: 0x%016llx(%lld)\n", insn->op.str.offset, insn->op.str.offset);
+    if (insn->op.str.flag.isv == 0) {
+        printk("offset: 0x%016llx(%lld)\n", insn->op.str.offset, insn->op.str.offset);
+    }
     printk("  size: %u\n", insn->op.str.size);
-    printk("  flag: wreg=%u, sign=%u, post=%u, wb=%u\n", insn->op.str.flag.wreg, insn->op.str.flag.sign, insn->op.str.flag.post, insn->op.str.flag.wb);
+    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, wb=%u\n", insn->op.str.flag.isv, insn->op.str.flag.wreg, insn->op.str.flag.sign, insn->op.str.flag.post, insn->op.str.flag.wb);
     printk("\n");
 }
 

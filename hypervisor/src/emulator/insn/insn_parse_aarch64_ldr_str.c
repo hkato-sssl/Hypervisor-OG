@@ -203,8 +203,9 @@ static errno_t parse_system_register(struct insn *insn, struct vpc *vpc)
         insn->op.ldr.gpr.src = (uint8_t)EXTRACT_ISS_DATA_ABORT_SRT(esr);
     }
 
-    insn->op.ldr.flag.sign = ((esr & ISS_DATA_ABORT_SSE) == 0) ? 0 : 1;
+    insn->op.ldr.flag.isv = 1;
     insn->op.ldr.flag.wreg = ((esr & ISS_DATA_ABORT_SF) == 0) ? 1 : 0;
+    insn->op.ldr.flag.sign = ((esr & ISS_DATA_ABORT_SSE) == 0) ? 0 : 1;
 
     return SUCCESS;
 }

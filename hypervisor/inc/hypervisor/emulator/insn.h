@@ -47,6 +47,7 @@ struct insn_ldr_str {
     } gpr;
 
     struct {
+        uint8_t     isv:1;
         uint8_t     wreg:1;
         uint8_t     sign:1;
         uint8_t     post:1;

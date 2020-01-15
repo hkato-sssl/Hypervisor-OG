@@ -20,7 +20,7 @@
 #define OP_LDRS_POST_W      0x38c00400
 #define OP_LDR_WB           0x38400c00
 #define OP_LDRS_WB          0x38800000
-#define OP_LDRS_WB_W        0x38c00c00
+#define OP_LDRS_WB_W        0x38800c00
 #define OP_STR_POST         0x38000400
 #define OP_STR_WB           0x38000c00
 

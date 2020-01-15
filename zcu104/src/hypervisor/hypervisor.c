@@ -4,6 +4,7 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "config/system.h"
 #include <stdint.h>
 #include <string.h>
 #include "driver/aarch64.h"
@@ -30,13 +31,19 @@ static void init_exception(void)
     aarch64_isb();
 }
 
+static uint64_t args[] = {
+    CONFIG_REGION_TRAP,
+    CONFIG_REGION_TRAP_SIZE
+};
+
 void hypervisor(void)
 {
-    void test_guest_01(void);
     void *sp;
+
+    void test_guest_02(void *, void *);
 
     init_exception();
     sp = main_stack_top();
-    thread_launch((void *)test_guest_01, sp, NULL);
+    thread_launch((void *)test_guest_02, sp, args);
 }
 

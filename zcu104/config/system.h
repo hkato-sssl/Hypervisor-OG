@@ -16,3 +16,6 @@
 #define CONFIG_GICC_BASE                0xf9020000
 #define CONFIG_GICH_BASE                0xf9040000
 #define CONFIG_GICV_BASE                0xf9060000
+
+#define CONFIG_REGION_TRAP              0xa00000000
+#define CONFIG_REGION_TRAP_SIZE         0x100000000

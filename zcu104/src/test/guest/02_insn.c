@@ -18,6 +18,7 @@
 #include "driver/aarch64/stage2.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
+#include "hypervisor/emulator/insn.h"
 
 /* defines */
 
@@ -57,9 +58,17 @@ static struct vpc_exception_ops ops = {
 
 static errno_t emulate_aarch64_hvc(struct vpc *vpc)
 {
-    printk("HVC!!\n");
+    errno_t ret;
+    struct insn insn;
 
-    return SUCCESS;
+    ret = insn_parse_aarch64_hvc(&insn, vpc);
+    if (ret == SUCCESS) {
+        printk(">>>> %u-bit(%u)\n\n", (insn.op.hvc.imm >> 8), (insn.op.hvc.imm & 0xff));
+    } else {
+        printk("%s> ERROR at %p\n", __func__, (vpc->regs[VPC_PC] - 4));
+    }
+
+    return ret;
 }
 
 static errno_t init_stage2_mapping(void)
@@ -87,9 +96,11 @@ static errno_t init_stage2_mapping(void)
     return ret;
 }
 
-static errno_t init_trap(uint64_t *args)
+static errno_t init_trap(uint64_t args[])
 {
     errno_t ret;
+
+    printk("%s> start=%p, size=%p\n", __func__, args[0], args[1]);
 
     memset(&trap, 0, sizeof(trap));
     trap.ipa.addr = args[0];
@@ -123,7 +134,7 @@ static errno_t init_vm(void)
     return ret;
 }
 
-void test_guest_02(uint64_t *args)
+void test_guest_02(uint64_t args[])
 {
     errno_t ret;
 

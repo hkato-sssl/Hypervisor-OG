@@ -5,6 +5,7 @@
  */
 
 #include <stdint.h>
+#include "lib/system/printk.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 
@@ -16,10 +17,13 @@
 
 /* variables */
 
+int test_no;
+
 /* functions */
 
 errno_t guest_02_data_abort(const struct insn *insn, void *arg)
 {
+    printk("#%d\n", ++test_no);
     insn_print(insn);
     vpc_update_pc(insn->vpc);
 

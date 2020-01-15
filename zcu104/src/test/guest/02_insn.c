@@ -58,9 +58,12 @@ static struct vpc_exception_ops ops = {
 
 static errno_t emulate_aarch64_hvc(struct vpc *vpc)
 {
+    extern int test_no;
+
     errno_t ret;
     struct insn insn;
 
+    test_no = 0;
     ret = insn_parse_aarch64_hvc(&insn, vpc);
     if (ret == SUCCESS) {
         printk(">>>> %u-bit(%u)\n\n", (insn.op.hvc.imm >> 8), (insn.op.hvc.imm & 0xff));

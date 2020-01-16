@@ -253,11 +253,11 @@ test_insn_01_ldr64:
 
         test_entry      TEST_NO(64, 6)
 
-        add             x1, x0, #0x10000
+        add             x2, x1, #0x10000
 
-        ldur            x0, [x1, #0]
+        ldur            x0, [x8, #0]
         ldur            x0, [sp, #248]
-        ldur            xzr, [x1, #-256]
+        ldur            xzr, [x2, #-256]
 
         func_exit
         ret
@@ -327,7 +327,7 @@ test_insn_01_ldr32:
 
         ldur             w0, [x8, #0]
         ldur             w0, [sp, #252]
-        ldur             wzr, [x8, #-256]
+        ldur             wzr, [x2, #-256]
 
         // (7) LDRSW Xn, [<Xt|SP>], #simm9
 
@@ -385,7 +385,7 @@ test_insn_01_ldr32:
 
         ldursw          x0, [x8, #0]
         ldursw          x0, [sp, #252]
-        ldursw          xzr, [x8, #-256]
+        ldursw          xzr, [x2, #-256]
 
         func_exit
         ret
@@ -455,7 +455,7 @@ test_insn_01_ldr16:
 
         ldurh            w0, [x8, #0]
         ldurh            w0, [sp, #252]
-        ldurh            wzr, [x8, #-256]
+        ldurh            wzr, [x2, #-256]
 
         // (6) LDRSH Xn, [<Xt|SP>], #simm9
 
@@ -513,7 +513,7 @@ test_insn_01_ldr16:
 
         ldursh           x0, [x8, #0]
         ldursh           x0, [sp, #252]
-        ldursh           xzr, [x8, #-256]
+        ldursh           xzr, [x2, #-256]
 
         // (11) LDRSH Wn, [<Xt|SP>], #simm9
 
@@ -571,7 +571,7 @@ test_insn_01_ldr16:
 
         ldursh           w0, [x8, #0]
         ldursh           w0, [sp, #252]
-        ldursh           wzr, [x8, #-256]
+        ldursh           wzr, [x2, #-256]
 
         func_exit
         ret
@@ -640,7 +640,7 @@ test_insn_01_ldr8:
 
         ldurb            w0, [x8, #0]
         ldurb            w0, [sp, #252]
-        ldurb            wzr, [x8, #-256]
+        ldurb            wzr, [x2, #-256]
 
         // (6) LDRSB Xn, [<Xt|SP>], #simm9
 
@@ -697,7 +697,7 @@ test_insn_01_ldr8:
 
         ldursb           x0, [x8, #0]
         ldursb           x0, [sp, #252]
-        ldursb           xzr, [x8, #-256]
+        ldursb           xzr, [x2, #-256]
 
         // (11) LDRSB Wn, [<Xt|SP>], #simm9
 
@@ -750,9 +750,11 @@ test_insn_01_ldr8:
 
         test_entry      TEST_NO(8, 15)
 
+        add              x2, x1, #0x20000
+
         ldursb           w0, [x8, #0]
         ldursb           w0, [sp, #252]
-        ldursb           wzr, [x8, #-256]
+        ldursb           wzr, [x2, #-256]
 
         func_exit
         ret

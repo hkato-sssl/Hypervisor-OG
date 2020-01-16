@@ -66,25 +66,25 @@ static void print_ldr(const struct insn *insn)
 static void print_str(const struct insn *insn)
 {
     printk("<INSN_TYPE_STR>\n");
-    if (insn->op.str.flag.isv == 0) {
-        if (insn->op.str.size < 8) {
-            if (insn->op.str.gpr.src == 31) {
-                printk("   src: XZR(0x%016x)\n", insn_str_src_value(insn));
-            } else {
-                printk("   src: X%u(0x%016x)\n", insn->op.str.gpr.src, insn_str_src_value(insn));
-            }
+    if (insn->op.str.size < 8) {
+        if (insn->op.str.gpr.src == 31) {
+            printk("   src: WZR(0x%016llx)\n", insn_str_src_value(insn));
         } else {
-            if (insn->op.str.gpr.src == 31) {
-                printk("   src: WZR(0x%016x)\n", insn_str_src_value(insn));
-            } else {
-                printk("   src: W%u(0x%016x)\n", insn->op.str.gpr.src, insn_str_src_value(insn));
-            }
+            printk("   src: W%u(0x%016llx)\n", insn->op.str.gpr.src, insn_str_src_value(insn));
+        }
+    } else {
+        if (insn->op.str.gpr.src == 31) {
+            printk("   src: XZR(0x%016llx)\n", insn_str_src_value(insn));
+        } else {
+            printk("   src: X%u(0x%016llx)\n", insn->op.str.gpr.src, insn_str_src_value(insn));
         }
     }
-    if (insn->op.str.gpr.dst == 31) {
-        printk("   dst: SP\n");
-    } else {
-        printk("   dst: X%u\n", insn->op.str.gpr.dst);
+    if (insn->op.str.flag.isv == 0) {
+        if (insn->op.str.gpr.src == 31) {
+            printk("   dst: SP\n");
+        } else {
+            printk("   dst: X%u\n", insn->op.str.gpr.src);
+        }
     }
     printk("    va: 0x%016llx\n", insn->op.str.va);
     printk("   ipa: 0x%016llx\n", insn->op.str.ipa);

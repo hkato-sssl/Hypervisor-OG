@@ -47,11 +47,11 @@ struct insn_ldr_str {
     } gpr;
 
     struct {
-        uint8_t     isv:1;
-        uint8_t     wreg:1;
-        uint8_t     sign:1;
-        uint8_t     post:1;
-        uint8_t     pre:1;
+        uint8_t     isv:1;      /* ESR_ELx.ISS.ISV */
+        uint8_t     wreg:1;     /* 0: 64-bit, 1: 32-bit */
+        uint8_t     sign:1;     /* Sign-extention */
+        uint8_t     post:1;     /* Post-index */
+        uint8_t     pre:1;      /* Pre-index */
     } flag;
 };
 

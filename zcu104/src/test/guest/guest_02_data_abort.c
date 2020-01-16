@@ -23,7 +23,7 @@ int test_no;
 
 errno_t guest_02_data_abort(const struct insn *insn, void *arg)
 {
-    printk("#%d\n", ++test_no);
+    printk("#%d: pc=%p\n", ++test_no, insn->vpc->regs[VPC_PC]);
     insn_print(insn);
     vpc_update_pc(insn->vpc);
 

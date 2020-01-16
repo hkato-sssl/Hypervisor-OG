@@ -106,6 +106,9 @@ static errno_t parse_aarch64_ldr(struct insn *insn, uint32_t code)
     insn->op.ldr.gpr.src = (uint8_t)BF_EXTRACT(code, 9, 5);
     insn->op.ldr.offset = aarch64_op_offset(code);
     insn->op.ldr.size = aarch64_op_size(code);
+    if ((insn->op.ldr.size < 8) && (insn->op.ldr.flag.sign == 0)) {
+        insn->op.ldr.flag.wreg = 1;
+    }
 
     return SUCCESS;
 }
@@ -116,6 +119,9 @@ static errno_t parse_aarch64_str(struct insn *insn, uint32_t code)
     insn->op.str.gpr.dst = (uint8_t)BF_EXTRACT(code, 9, 5);
     insn->op.str.offset = aarch64_op_offset(code);
     insn->op.str.size = aarch64_op_size(code);
+    if (insn->op.ldr.size < 8) {
+        insn->op.ldr.flag.wreg = 1;
+    }
 
     return SUCCESS;
 }

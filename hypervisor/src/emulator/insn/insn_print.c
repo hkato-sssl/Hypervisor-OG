@@ -59,7 +59,7 @@ static void print_ldr(const struct insn *insn)
             printk("   dst: X%u\n", insn->op.ldr.gpr.dst);
         }
     }
-    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, wb=%u\n", insn->op.ldr.flag.isv, insn->op.ldr.flag.wreg, insn->op.ldr.flag.sign, insn->op.ldr.flag.post, insn->op.ldr.flag.wb);
+    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, pre=%u\n", insn->op.ldr.flag.isv, insn->op.ldr.flag.wreg, insn->op.ldr.flag.sign, insn->op.ldr.flag.post, insn->op.ldr.flag.pre);
     printk("\n");
 }
 
@@ -92,7 +92,7 @@ static void print_str(const struct insn *insn)
         printk("offset: 0x%016llx(%lld)\n", insn->op.str.offset, insn->op.str.offset);
     }
     printk("  size: %u\n", insn->op.str.size);
-    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, wb=%u\n", insn->op.str.flag.isv, insn->op.str.flag.wreg, insn->op.str.flag.sign, insn->op.str.flag.post, insn->op.str.flag.wb);
+    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, pre=%u\n", insn->op.str.flag.isv, insn->op.str.flag.wreg, insn->op.str.flag.sign, insn->op.str.flag.post, insn->op.str.flag.pre);
     printk("\n");
 }
 

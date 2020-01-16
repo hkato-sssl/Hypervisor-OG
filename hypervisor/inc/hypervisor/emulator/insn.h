@@ -51,7 +51,7 @@ struct insn_ldr_str {
         uint8_t     wreg:1;
         uint8_t     sign:1;
         uint8_t     post:1;
-        uint8_t     wb:1;
+        uint8_t     pre:1;
     } flag;
 };
 

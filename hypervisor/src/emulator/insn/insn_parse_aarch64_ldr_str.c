@@ -16,13 +16,14 @@
 /* defines */
 
 #define OP_LDR_POST         0x38400400
-#define OP_LDRS_POST        0x38800400
-#define OP_LDRS_POST_W      0x38c00400
-#define OP_LDR_WB           0x38400c00
-#define OP_LDRS_WB          0x38800000
-#define OP_LDRS_WB_W        0x38800c00
+#define OP_LDR_PRE          0x38400c00
+#define OP_LDRSX_POST_W     0x38c00400
+#define OP_LDRSX_POST       0x38800400
+#define OP_LDRSX_PRE_W      0x38c00c00
+#define OP_LDRSX_PRE        0x38800c00
+
 #define OP_STR_POST         0x38000400
-#define OP_STR_WB           0x38000c00
+#define OP_STR_PRE          0x38000c00
 
 /* types */
 
@@ -129,42 +130,52 @@ static errno_t parse_aarch64(struct insn *insn, uint32_t code)
     esr = insn->vpc->regs[VPC_ESR_EL2];
     if ((esr & ISS_DATA_ABORT_WnR) == 0) {
         insn->type = INSN_TYPE_LDR;
-        if (d == OP_LDR_POST) {
+        switch (d) {
+        case OP_LDR_POST:
             insn->op.ldr.flag.post = 1;
             ret = parse_aarch64_ldr(insn, code);
-        } else if (d == OP_LDRS_POST) {
-            insn->op.ldr.flag.sign = 1;
-            insn->op.ldr.flag.post = 1;
+            break;
+        case OP_LDR_PRE:
+            insn->op.ldr.flag.pre = 1;
             ret = parse_aarch64_ldr(insn, code);
-        } else if (d == OP_LDRS_POST_W) {
+            break;
+        case OP_LDRSX_POST_W:
             insn->op.ldr.flag.wreg = 1;
             insn->op.ldr.flag.sign = 1;
             insn->op.ldr.flag.post = 1;
             ret = parse_aarch64_ldr(insn, code);
-        } else if (d == OP_LDR_WB) {
-            insn->op.ldr.flag.wb = 1;
-            ret = parse_aarch64_ldr(insn, code);
-        } else if (d == OP_LDRS_WB) {
+            break;
+        case OP_LDRSX_POST:
             insn->op.ldr.flag.sign = 1;
-            insn->op.ldr.flag.wb = 1;
+            insn->op.ldr.flag.post = 1;
             ret = parse_aarch64_ldr(insn, code);
-        } else if (d == OP_LDRS_WB_W) {
+            break;
+        case OP_LDRSX_PRE_W:
             insn->op.ldr.flag.wreg = 1;
             insn->op.ldr.flag.sign = 1;
-            insn->op.ldr.flag.wb = 1;
+            insn->op.ldr.flag.pre = 1;
             ret = parse_aarch64_ldr(insn, code);
-        } else {
+            break;
+        case OP_LDRSX_PRE:
+            insn->op.ldr.flag.sign = 1;
+            insn->op.ldr.flag.pre = 1;
+            ret = parse_aarch64_ldr(insn, code);
+            break;
+        default:
             ret = -ENOTSUP;
         }
     } else {
         insn->type = INSN_TYPE_STR;
-        if (d == OP_STR_POST) {
+        switch (d) {
+        case OP_STR_POST:
             insn->op.str.flag.post = 1;
             ret = parse_aarch64_str(insn, code);
-        } else if (d == OP_STR_WB) {
-            insn->op.str.flag.wb = 1;
+            break;
+        case OP_STR_PRE:
+            insn->op.str.flag.pre = 1;
             ret = parse_aarch64_str(insn, code);
-        } else {
+            break;
+        default:
             ret = -ENOTSUP;
         }
     }

@@ -44,17 +44,29 @@ static void probe_max_priority(struct gic400 *gic)
     gic->priority.shift_ct = ct;
 }
 
-static void init_cpu_interface(struct gic400 *gic)
+static void probe_cpu_interface(struct gic400 *gic)
+{
+    probe_max_priority(gic);
+}
+
+static void probe_virtual_interface_control(struct gic400 *gic)
 {
     uint32_t d;
 
-    probe_max_priority(gic);
+    d = gic400_read_virtif_control(gic, GICH_VTR);
+
+    gic->nr_list_registers = (uint16_t)((d & BITS(5, 0)) + 1);
+}
+
+static void init_cpu_interface(struct gic400 *gic)
+{
+    uint32_t d;
 
     /* initialize registers */
 
     gic400_write_cpuif(gic, GICC_PMR, 0);
     gic400_write_cpuif(gic, GICC_BPR, 0);
-    if (gic->config.boolean.priority_drop) {
+    if (gic->config.boolean.priority_drop || gic->config.boolean.virtualization) {
         d = BIT(9) | BIT(0);
     } else {
         d = BIT(0);
@@ -106,6 +118,10 @@ static errno_t init(struct gic400 *gic, const struct gic400_configuration *confi
         memset(gic, 0, sizeof(*gic));
         gic->config = *config;
         spin_lock_init(&(gic->lock));
+        probe_cpu_interface(gic);
+        if (config->boolean.virtualization) {
+            probe_virtual_interface_control(gic);
+        }
     }
 
     /* initialize devices */
@@ -130,7 +146,15 @@ static errno_t validate_parameters(struct gic400 *gic, const struct gic400_confi
         if (cpu_no() == 0) {
             /* conditions for a primary processor */
             if ((config != NULL) && (config->base.distributor != NULL) && (config->base.cpuif != NULL)) {
-                ret = SUCCESS;
+                if (config->boolean.virtualization) {
+                    if (config->base.virtif_control != NULL) {
+                        ret = SUCCESS;
+                    } else {
+                        ret = -EINVAL;
+                    }
+                } else {
+                    ret = SUCCESS;
+                }
             } else {
                 ret = -EINVAL;
             }

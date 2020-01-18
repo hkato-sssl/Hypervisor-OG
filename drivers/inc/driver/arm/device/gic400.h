@@ -62,42 +62,43 @@
 #define GICC_IIDR           0x00fc
 #define GICC_DIR            0x1000
 
-#define GICC_HCR            0x00040000
-#define GICC_VTR            0x00040004
-#define GICC_VMCR           0x00040008
-#define GICC_MISR           0x00040010
-#define GICC_EISR0          0x00040020
-#define GICC_ELSR0          0x00040030
+/* virtual interface cotrol */
 
-#define GICH_APR0           0x000400f0
-#define GICH_LR(n)          (0x00040100 + (n) * 4)
+#define GICH_HCR            0x0000
+#define GICH_VTR            0x0004
+#define GICH_VMCR           0x0008
+#define GICH_MISR           0x0010
+#define GICH_EISR0          0x0020
+#define GICH_ELSR0          0x0030
+#define GICH_APR0           0x00f0
+#define GICH_LR(n)          (0x0100 + (n) * 4)
 
-#define GICH_HCR_ALIAS(n)   (0x00050000 + (n) * 0x0200)
-#define GICH_VTR_ALIAS(n)   (0x00050004 + (n) * 0x0200)
-#define GICH_VMCR_ALIAS(n)  (0x00050008 + (n) * 0x0200)
-#define GICH_MISR_ALIAS(n)  (0x00050010 + (n) * 0x0200)
-#define GICH_EISR0_ALIAS(n) (0x00050020 + (n) * 0x0200)
-#define GICH_ELSR0_ALIAS(n) (0x00050030 + (n) * 0x0200)
-#define GICH_APR0_ALIAS(n)  (0x000500f0 + (n) * 0x0200)
-#define GICH_LR0_ALIAS(n)   (0x00050100 + (n) * 0x0200)
-#define GICH_LR1_ALIAS(n)   (0x00050104 + (n) * 0x0200)
-#define GICH_LR2_ALIAS(n)   (0x00050108 + (n) * 0x0200)
-#define GICH_LR3_ALIAS(n)   (0x0005010c + (n) * 0x0200)
+#define GICH_HCR_ALIAS(n)   (0x0000 + (n) * 0x0200)
+#define GICH_VTR_ALIAS(n)   (0x0004 + (n) * 0x0200)
+#define GICH_VMCR_ALIAS(n)  (0x0008 + (n) * 0x0200)
+#define GICH_MISR_ALIAS(n)  (0x0010 + (n) * 0x0200)
+#define GICH_EISR0_ALIAS(n) (0x0020 + (n) * 0x0200)
+#define GICH_ELSR0_ALIAS(n) (0x0030 + (n) * 0x0200)
+#define GICH_APR0_ALIAS(n)  (0x00f0 + (n) * 0x0200)
+#define GICH_LR0_ALIAS(n)   (0x0100 + (n) * 0x0200)
+#define GICH_LR1_ALIAS(n)   (0x0104 + (n) * 0x0200)
+#define GICH_LR2_ALIAS(n)   (0x0108 + (n) * 0x0200)
+#define GICH_LR3_ALIAS(n)   (0x010c + (n) * 0x0200)
 
-#define GICV_CTLR           0x00060000
-#define GICV_PMR            0x00060004
-#define GICV_BPR            0x00060008
-#define GICV_IAR            0x0006000c
-#define GICV_EOIR           0x00060010
-#define GICV_RPR            0x00060014
-#define GICV_HPPIR          0x00060018
-#define GICV_ABPR           0x0006001c
-#define GICV_AIAR           0x00060020
-#define GICV_AEOIR          0x00060024
-#define GICV_AHPPIR         0x00060028
-#define GICV_APR0           0x000600d0
-#define GICV_IIDR           0x000600fc
-#define GICV_DIR            0x00070000
+#define GICV_CTLR           0x0000
+#define GICV_PMR            0x0004
+#define GICV_BPR            0x0008
+#define GICV_IAR            0x000c
+#define GICV_EOIR           0x0010
+#define GICV_RPR            0x0014
+#define GICV_HPPIR          0x0018
+#define GICV_ABPR           0x001c
+#define GICV_AIAR           0x0020
+#define GICV_AEOIR          0x0024
+#define GICV_AHPPIR         0x0028
+#define GICV_APR0           0x00d0
+#define GICV_IIDR           0x00fc
+#define GICV_DIR            0x1000
 
 #ifndef ASSEMBLY
 

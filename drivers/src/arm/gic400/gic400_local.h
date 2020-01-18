@@ -72,6 +72,20 @@ static inline uint32_t gic400_read_distributor(const struct gic400 *gic, uintptr
     return d;
 }
 
+static inline void gic400_write_virtif_control(const struct gic400 *gic, uintptr_t reg, uint32_t d)
+{
+    REG_WRITE32(gic->config.base.virtif_control, reg, d);
+}
+
+static inline uint32_t gic400_read_virtif_control(const struct gic400 *gic, uintptr_t reg)
+{
+    uint32_t d;
+
+    d = REG_READ32(gic->config.base.virtif_control, reg);
+
+    return d;
+}
+
 #ifdef __cplusplus
 }
 #endif

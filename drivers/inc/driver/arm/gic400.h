@@ -35,12 +35,14 @@ extern "C" {
 struct gic400_base_register {
     void    *distributor;
     void    *cpuif;
+    void    *virtif_control;
 };
 
 struct gic400_configuration {
     struct gic400_base_register base;
     struct {
         bool    priority_drop;
+        bool    virtualization;
     } boolean;
 };
 
@@ -54,6 +56,7 @@ struct gic400 {
         uint8_t         shift_ct;
     } priority;
     uint16_t            nr_interrupts;
+    uint16_t            nr_list_registers;
 };
 
 struct gic400_interrupt_configuration {

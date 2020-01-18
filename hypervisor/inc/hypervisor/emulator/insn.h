@@ -76,6 +76,11 @@ struct insn {
 errno_t insn_parse_aarch64_ldr_str(struct insn *insn, struct vpc *vpc);
 errno_t insn_parse_aarch64_hvc(struct insn *insn, struct vpc *vpc);
 uint64_t insn_str_src_value(const struct insn *insn);
+errno_t insn_emulate_ldr(const struct insn *insn, uint64_t d);
+errno_t insn_emulate_str(const struct insn *insn);
+errno_t insn_emulate_indexed_addressing(const struct insn *insn);
+
+/* for debugging */
 
 void insn_print(const struct insn *insn);
 

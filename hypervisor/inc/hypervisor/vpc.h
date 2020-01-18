@@ -100,9 +100,6 @@ errno_t vpc_update_pc(struct vpc *vpc);
 errno_t vpc_va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va);
 errno_t vpc_read_instruction(const struct vpc *vpc, uint32_t *code, uint64_t va);
 
-void vpc_emulate_ldr(const struct insn *insn, uint64_t d);
-void vpc_emulate_post_operation(const struct insn *insn);
-
 bool vpc_is_aarch64(const struct vpc *vpc);
 bool vpc_is_aarch32(const struct vpc *vpc);
 bool vpc_is_aarch32a(const struct vpc *vpc);

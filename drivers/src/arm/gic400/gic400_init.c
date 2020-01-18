@@ -46,13 +46,20 @@ static void probe_max_priority(struct gic400 *gic)
 
 static void init_cpu_interface(struct gic400 *gic)
 {
+    uint32_t d;
+
     probe_max_priority(gic);
 
     /* initialize registers */
 
     gic400_write_cpuif(gic, GICC_PMR, 0);
     gic400_write_cpuif(gic, GICC_BPR, 0);
-    gic400_write_cpuif(gic, GICC_CTLR, 1);
+    if (gic->config.boolean.priority_drop) {
+        d = BIT(9) | BIT(0);
+    } else {
+        d = BIT(0);
+    }
+    gic400_write_cpuif(gic, GICC_CTLR, d);
 }
 
 static void init_distributor(struct gic400 *gic)
@@ -119,21 +126,19 @@ static errno_t validate_parameters(struct gic400 *gic, const struct gic400_confi
 {
     errno_t ret;
 
-    if ((gic != NULL) && (config != NULL)) {
+    if (gic != NULL) {
         if (cpu_no() == 0) {
             /* conditions for a primary processor */
-            if ((config->base.distributor != NULL) && (config->base.cpuif != NULL)) {
+            if ((config != NULL) && (config->base.distributor != NULL) && (config->base.cpuif != NULL)) {
                 ret = SUCCESS;
             } else {
                 ret = -EINVAL;
             }
-        } else {
+        } else if (config == NULL) {
             /* conditions for secondary processors */
-            if (config->base.cpuif != NULL) {
-                ret = SUCCESS;
-            } else {
-                ret = -EINVAL;
-            }
+            ret = SUCCESS;
+        } else {
+            ret = -EINVAL;
         }
     } else {
         ret = -EINVAL;

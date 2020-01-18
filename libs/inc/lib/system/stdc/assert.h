@@ -19,6 +19,7 @@ extern "C" {
 
 /* includes */
 
+#include <stddef.h>
 #include "lib/system/assert.h"
 
 /* defines */
@@ -26,7 +27,7 @@ extern "C" {
 #ifdef  NDEBUG
 #define assert(exp)
 #else
-#define assert(exp) do { if (! (exp)) system_assert(__func__, __LINE__); } while (0)
+#define assert(exp) do { if (! (exp)) system_assert(__FILE__, __LINE__, #exp); } while (0)
 #endif
 
 /* types */

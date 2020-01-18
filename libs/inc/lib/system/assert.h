@@ -21,7 +21,7 @@ extern "C" {
 
 /* defines */
 
-#define SYSTEM_ASSERT(exp) do { if (! (exp)) system_assert(__func__, __LINE__); } while (0)
+#define SYSTEM_ASSERT(exp) do { if (! (exp)) system_assert(__FILE__, __LINE__, #exp); } while (0)
 
 /* types */
 
@@ -29,8 +29,8 @@ extern "C" {
 
 /* inline functions */
 
-void system_assert(const char *func, uint32_t line);
-void system_alert(const char *func, uint32_t line, const char *message);
+void system_assert(const char *file, uint32_t line, const char *message);
+void system_error(const char *file, uint32_t line, const char *message);
 
 #ifdef __cplusplus
 }

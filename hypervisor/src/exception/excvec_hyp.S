@@ -11,21 +11,25 @@
 #include "hypervisor/thread.h"
 #include "hypervisor/vpc_register.h"
 
+#define VECTOR          (0b - excvec_hyp)
+
         .extern         hyp_exception_handler
 
-        .macro          exc_entry_sp0, vector
+        .macro          exc_entry_sp0
+0:
         dsb             sy
         sub             sp, sp, #(NR_EXC_REGS * 8)
         stp             x0, x1, [sp, #(EXC_X0 * 8)]
         mrs             x0, SP_EL0
         stp             x0, lr, [sp, #(EXC_SP * 8)]
-        mov             x0, #\vector
+        mov             x0, #VECTOR
         mrs             x1, ESR_EL2
         stp             x0, x1, [sp, #(EXC_VECTOR * 8)]
         b               store_rest_registers
         .endm
 
-        .macro          exc_entry_spx, vector
+        .macro          exc_entry_spx
+0:
         dsb             sy
         msr             TPIDR_EL0, x2
         mrs             x2, TPIDR_EL2
@@ -33,7 +37,7 @@
         stp             x0, x1,  [x2, #-((NR_EXC_REGS - EXC_X0) * 8)]
         mov             x0, sp
         stp             lr, x0,  [x2, #-((NR_EXC_REGS - EXC_LR) * 8)]
-        mov             x0, #\vector
+        mov             x0, #VECTOR
         mrs             x1, ESR_EL2
         stp             x0, x1,  [x2, #-((NR_EXC_REGS - EXC_VECTOR) * 8)]!
         mov             sp, x2
@@ -41,11 +45,12 @@
         b               store_rest_registers
         .endm
 
-        .macro          hyp_exc_entry, vector
+        .macro          hyp_exc_entry
+0:
         dsb             sy
         stp             x0, x1, [sp, #-16]!
         mrs             x0, TPIDR_EL2
-        mov             x1, #\vector
+        mov             x1, #VECTOR
         str             x1, [x0, #(TLS_EXCEPTION_VECTOR * 8)]
         ldr             x1, [x0, #(TLS_CURRENT_VPC_REGS * 8)]
         b               store_vpc_registers
@@ -62,19 +67,19 @@ excvec_hyp:
 
         /* Synchronous */
         .org            0x0000
-        exc_entry_sp0   0x0000
+        exc_entry_sp0
 
         /* IRQ */
         .org            0x0080
-        exc_entry_sp0   0x0080
+        exc_entry_sp0
 
         /* FIQ */
         .org            0x0100
-        exc_entry_sp0   0x0100
+        exc_entry_sp0
 
         /* SError */
         .org            0x0180
-        exc_entry_sp0   0x0180
+        exc_entry_sp0
 
         /*
          * current EL with SPx
@@ -82,19 +87,19 @@ excvec_hyp:
 
         /* Synchronous */
         .org            0x0200
-        exc_entry_spx   0x0200
+        exc_entry_spx
 
         /* IRQ */
         .org            0x0280
-        exc_entry_spx   0x0280
+        exc_entry_spx
 
         /* FIQ */
         .org            0x0300
-        exc_entry_spx   0x0300
+        exc_entry_spx
 
         /* SError */
         .org            0x0380
-        exc_entry_spx   0x0380
+        exc_entry_spx
 
         /*
          * lower EL using AArch64
@@ -102,19 +107,19 @@ excvec_hyp:
 
         /* Synchronous */
         .org            0x0400
-        hyp_exc_entry   0x0400
+        hyp_exc_entry
 
         /* IRQ */
         .org            0x0480
-        hyp_exc_entry   0x0480
+        hyp_exc_entry
 
         /* FIQ */
         .org            0x0500
-        hyp_exc_entry   0x0500
+        hyp_exc_entry
 
         /* SError */
         .org            0x0580
-        hyp_exc_entry   0x0580
+        hyp_exc_entry
 
         /*
          * lower EL using AArch32
@@ -122,19 +127,19 @@ excvec_hyp:
 
         /* Synchronous */
         .org            0x0600
-        hyp_exc_entry   0x0600
+        hyp_exc_entry
 
         /* IRQ */
         .org            0x0680
-        hyp_exc_entry   0x0680
+        hyp_exc_entry
 
         /* FIQ */
         .org            0x0700
-        hyp_exc_entry   0x0700
+        hyp_exc_entry
 
         /* SError */
         .org            0x0780
-        hyp_exc_entry   0x0780
+        hyp_exc_entry
 
         .balign         32
 store_rest_registers:

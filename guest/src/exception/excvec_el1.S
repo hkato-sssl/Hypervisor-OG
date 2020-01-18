@@ -9,36 +9,42 @@
 #include "lib/bit.h"
 #include "driver/aarch64/exception.h"
 
+#define VECTOR          (0b - excvec_el1)
+
         .extern         exception_handler_el1
 
-        .macro          exc_entry_sp0, vector
+        .macro          exc_entry_sp0
+0:
         dsb             sy
         stp             x0, x1,  [sp, #-((NR_EXC_REGS - EXC_X0) * 8)]
         mrs             x0, SP_EL0
         stp             lr, x0,  [sp, #-((NR_EXC_REGS - EXC_LR) * 8)]
-        mov             x0, #\vector
+        mov             x0, #VECTOR
         mrs             x1, ESR_EL1
         stp             x0, x1,  [sp, #-((NR_EXC_REGS - EXC_VECTOR) * 8)]!
         b               store_rest_registers
         .endm
 
         .macro          exc_entry_spx, vector
+0:
         dsb             sy
         msr             TPIDR_EL0, x2
         mrs             x2, TPIDR_EL1
         stp             x0, x1,  [x2, #-((NR_EXC_REGS - EXC_X0) * 8)]
         mov             x0, sp
         stp             lr, x0,  [x2, #-((NR_EXC_REGS - EXC_LR) * 8)]
-        mov             x0, #\vector
+        mov             x0, #VECTOR
         mrs             x1, ESR_EL1
         stp             x0, x1,  [sp, #-((NR_EXC_REGS - EXC_VECTOR) * 8)]!
         b               store_rest_registers
         .endm
 
         .macro          intr_entry, vector
+0:
+        dsb             sy
         msr             SPSel, #0
         stp             x0, x1, [sp, #-16]!
-        mov             x0, #\vector
+        mov             x0, #VECTOR
         b               interrupt_operation
         .endm
 
@@ -53,19 +59,19 @@ excvec_el1:
 
         /* Synchronous */
         .org            0x0000
-        exc_entry_sp0   0x0000
+        exc_entry_sp0
 
         /* IRQ */
         .org            0x0080
-        intr_entry      0x0080
+        intr_entry
 
         /* FIQ */
         .org            0x0100
-        intr_entry      0x0100
+        intr_entry
 
         /* SError */
         .org            0x0180
-        exc_entry_sp0   0x0180
+        exc_entry_sp0
 
         /*
          * current EL with SPx
@@ -73,19 +79,19 @@ excvec_el1:
 
         /* Synchronous */
         .org            0x0200
-        exc_entry_spx   0x0200
+        exc_entry_spx
 
         /* IRQ */
         .org            0x0280
-        exc_entry_spx   0x0280
+        exc_entry_spx
 
         /* FIQ */
         .org            0x0300
-        exc_entry_spx   0x0300
+        exc_entry_spx
 
         /* SError */
         .org            0x0380
-        exc_entry_spx   0x0380
+        exc_entry_spx
 
         /*
          * lower EL using AArch64
@@ -93,19 +99,19 @@ excvec_el1:
 
         /* Synchronous */
         .org            0x0400
-        exc_entry_spx   0x0400
+        exc_entry_spx
 
         /* IRQ */
         .org            0x0480
-        exc_entry_spx   0x0480
+        exc_entry_spx
 
         /* FIQ */
         .org            0x0500
-        exc_entry_spx   0x0500
+        exc_entry_spx
 
         /* SError */
         .org            0x0580
-        exc_entry_spx   0x0580
+        exc_entry_spx
 
         /*
          * lower EL using AArch32
@@ -113,19 +119,19 @@ excvec_el1:
 
         /* Synchronous */
         .org            0x0600
-        exc_entry_spx   0x0600
+        exc_entry_spx
 
         /* IRQ */
         .org            0x0680
-        exc_entry_spx   0x0680
+        exc_entry_spx
 
         /* FIQ */
         .org            0x0700
-        exc_entry_spx   0x0700
+        exc_entry_spx
 
         /* SError */
         .org            0x0780
-        exc_entry_spx   0x0780
+        exc_entry_spx
 
         .balign         32
 store_rest_registers:

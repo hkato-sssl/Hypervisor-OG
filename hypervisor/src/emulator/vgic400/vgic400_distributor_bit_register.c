@@ -34,6 +34,7 @@ static uint64_t irq_no(uintptr_t reg, uintptr_t base)
 
 static errno_t read_bit_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
+    errno_t ret;
     uint64_t d;
     uint64_t mask;
     uint64_t no;
@@ -43,13 +44,14 @@ static errno_t read_bit_register_w(struct vgic400 *vgic, const struct insn *insn
     mask = vgic->active.irq[no / 32];
     d &= mask;
 
-    vpc_emulate_ldr(insn, d);
+    ret = insn_emulate_ldr(insn, d);
 
-    return SUCCESS;
+    return ret;
 }
 
 static errno_t write_bit_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
+    errno_t ret;
     uint64_t d;
     uint64_t mask;
     uint64_t no;
@@ -60,7 +62,9 @@ static errno_t write_bit_register_w(struct vgic400 *vgic, const struct insn *ins
     d &= mask;
     VGIC400_WRITE32(insn->op.str.ipa, d);
 
-    return SUCCESS;
+    ret = insn_emulate_str(insn);
+
+    return ret;
 }
 
 errno_t vgic400_distributor_bit_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)

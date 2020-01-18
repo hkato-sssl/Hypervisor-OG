@@ -29,9 +29,10 @@ errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct insn *insn)
 
     if (is_aligned_word_access(insn)) {
         if (insn->type == INSN_TYPE_LDR) {
-            vpc_emulate_ldr(insn, 1);
+            ret = insn_emulate_ldr(insn, 1);
+        } else {
+            ret = insn_emulate_str(insn);
         }
-        ret = SUCCESS;
     } else {
         ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
     }

@@ -30,6 +30,7 @@ static uint32_t irq_no(uintptr_t reg)
 
 static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
+    errno_t ret;
     uint64_t d;
     uintptr_t no;
 
@@ -43,13 +44,14 @@ static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *i
     } else {
         d = 0;
     }
-    vpc_emulate_ldr(insn, d);
+    ret = insn_emulate_ldr(insn, d);
 
-    return SUCCESS;
+    return ret;
 }
 
 static errno_t read_itargetsr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
+    errno_t ret;
     uint32_t no;
     uint64_t d;
     uint64_t mask;
@@ -63,13 +65,14 @@ static errno_t read_itargetsr_w(const struct vgic400 *vgic, const struct insn *i
 
     d = vgic400_p2v_cpu_map_w(d, insn->vpc->vm);
 
-    vpc_emulate_ldr(insn, d);
+    ret = insn_emulate_ldr(insn, d);
 
-    return SUCCESS;
+    return ret;
 }
 
 static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
+    errno_t ret;
     uint64_t d;
     uintptr_t no;
 
@@ -83,11 +86,14 @@ static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *
         gic400_unlock(vgic->gic);
     }
 
-    return SUCCESS;
+    ret = insn_emulate_str(insn);
+
+    return ret;
 }
 
 static errno_t write_itargetsr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
+    errno_t ret;
     uint32_t no;
     uint64_t d;
     uint64_t d0;
@@ -105,7 +111,9 @@ static errno_t write_itargetsr_w(const struct vgic400 *vgic, const struct insn *
     VGIC400_WRITE32(insn->op.str.ipa, d);
     gic400_unlock(vgic->gic);
 
-    return SUCCESS;
+    ret = insn_emulate_str(insn);
+
+    return ret;
 }
 
 errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)

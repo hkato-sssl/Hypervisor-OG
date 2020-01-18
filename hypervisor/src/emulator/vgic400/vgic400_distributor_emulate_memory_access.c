@@ -98,10 +98,6 @@ static errno_t emulate_memory_insn(const struct insn *insn, struct vgic400 *vgic
         ret = vgic400_distributor_error(insn, ERR_MSG_OOR);
     }
 
-    if (ret == SUCCESS) {
-        ret = vpc_update_pc(insn->vpc);
-    }
-
     return ret;
 }
 

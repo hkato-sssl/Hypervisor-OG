@@ -24,6 +24,7 @@
 
 static errno_t read_typer_w(struct vgic400 *vgic, const struct insn *insn)
 {
+    errno_t ret;
     uint64_t d;
     uint64_t nr_cpus;
 
@@ -31,9 +32,9 @@ static errno_t read_typer_w(struct vgic400 *vgic, const struct insn *insn)
     nr_cpus = insn->vpc->vm->nr_procs;
     d = (d & ~(uint32_t)BITS(7, 5)) | ((nr_cpus - 1) << 5);
 
-    vpc_emulate_ldr(insn, d);
+    ret = insn_emulate_ldr(insn, d);
 
-    return SUCCESS;
+    return ret;
 }
 
 errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct insn *insn)
@@ -46,7 +47,7 @@ errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct insn *insn)
         if (insn->type == INSN_TYPE_LDR) {
             ret = read_typer_w(vgic, insn);
         } else {
-            ret = SUCCESS;
+            ret = insn_emulate_str(insn);
         }
     } else {
         ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);

@@ -24,6 +24,7 @@
 
 static errno_t write_sgir(struct vgic400 *vgic, const struct insn *insn)
 {
+    errno_t ret;
     uint64_t d;
     uint64_t irq;
     uint64_t v_target_list;
@@ -40,7 +41,9 @@ static errno_t write_sgir(struct vgic400 *vgic, const struct insn *insn)
         }
     }
 
-    return SUCCESS;
+    ret = insn_emulate_str(insn);
+
+    return ret;
 }
 
 errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn)
@@ -51,8 +54,7 @@ errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn)
         if (insn->type == INSN_TYPE_STR) {
             ret = write_sgir(vgic, insn);
         } else {
-            vpc_emulate_ldr(insn, 0);
-            ret = SUCCESS;
+            ret = insn_emulate_ldr(insn, 0);
         }
     } else {
         ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);

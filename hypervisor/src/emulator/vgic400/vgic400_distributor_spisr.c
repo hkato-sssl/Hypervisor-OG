@@ -24,6 +24,7 @@
 
 static errno_t read_spisr_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
+    errno_t ret;
     uint32_t d;
     uint32_t idx;
     uint32_t mask;
@@ -33,9 +34,9 @@ static errno_t read_spisr_w(struct vgic400 *vgic, const struct insn *insn, uintp
     d = VGIC400_READ32(insn->op.ldr.ipa);
     d &= mask;
 
-    vpc_emulate_ldr(insn, d);
+    ret = insn_emulate_ldr(insn, d);
 
-    return SUCCESS;
+    return ret;
 }
 
 errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
@@ -52,7 +53,7 @@ errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn,
         }
     } else {
         if (is_aligned_word_access(insn)) {
-            ret = SUCCESS;
+            ret = insn_emulate_str(insn);
         } else {
             ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }

@@ -35,6 +35,7 @@ static uint64_t irq_no(uintptr_t reg, uintptr_t base)
 
 static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
+    errno_t ret;
     uint64_t d;
     uint64_t no;
 
@@ -47,13 +48,14 @@ static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *ins
         d = 0;
     }
 
-    vpc_emulate_ldr(insn, d);
+    ret = insn_emulate_ldr(insn, d);
 
-    return SUCCESS;
+    return ret;
 }
 
 static errno_t read_byte_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
+    errno_t ret;
     uint64_t d;
     uint64_t no;
     uint64_t mask;
@@ -66,13 +68,14 @@ static errno_t read_byte_register_w(struct vgic400 *vgic, const struct insn *ins
     mask = vgic400_quad_byte_mask(vgic, no);
     d &= mask;
 
-    vpc_emulate_ldr(insn, d);
+    ret = insn_emulate_ldr(insn, d);
 
-    return SUCCESS;
+    return ret;
 }
 
 static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
+    errno_t ret;
     uint64_t d;
     uint64_t no;
 
@@ -84,11 +87,14 @@ static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *in
         gic400_unlock(vgic->gic);
     }
 
-    return SUCCESS;
+    ret = insn_emulate_str(insn);
+
+    return ret;
 }
 
 static errno_t write_byte_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
+    errno_t ret;
     uint64_t d;
     uint64_t d0;
     uint64_t mask;
@@ -105,7 +111,9 @@ static errno_t write_byte_register_w(struct vgic400 *vgic, const struct insn *in
     VGIC400_WRITE32(insn->op.str.ipa, d);
     gic400_unlock(vgic->gic);
 
-    return SUCCESS;
+    ret = insn_emulate_str(insn);
+
+    return ret;
 }
 
 errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)

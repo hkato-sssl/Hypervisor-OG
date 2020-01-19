@@ -34,13 +34,13 @@ static errno_t configure(struct vgic400 *vgic, const struct vgic400_configuratio
     vgic->owner = config->owner;
     vgic->gic = config->gic;
 
-    vgic->active.irq[0] = 0xffff00ff;
+    vgic->target.irq[0] = 0xffff00ff;
     ret = SUCCESS;
     for (i = 0; i < config->irq.num; ++i) {
         no = config->irq.array[i];
         if ((no >= 32) && (no < NR_GIC400_INTERRUPTS)) {
             bit = 1 << (no & 31);
-            vgic->active.irq[no / 32] |= bit;
+            vgic->target.irq[no / 32] |= bit;
         } else {
             ret = -EINVAL;
             break;

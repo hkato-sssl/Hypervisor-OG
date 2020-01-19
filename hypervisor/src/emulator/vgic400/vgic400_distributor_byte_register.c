@@ -40,7 +40,7 @@ static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *ins
     uint64_t no;
 
     no = irq_no(reg, base);
-    if (is_active_irq(vgic, no)) {
+    if (is_target_irq(vgic, no)) {
         gic400_lock(vgic->gic);
         d = VGIC400_READ8(insn->op.ldr.ipa);
         gic400_unlock(vgic->gic);
@@ -81,7 +81,7 @@ static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *in
 
     d = insn_str_src_value(insn);
     no = irq_no(reg, base);
-    if (is_active_irq(vgic, no)) {
+    if (is_target_irq(vgic, no)) {
         gic400_lock(vgic->gic);
         VGIC400_WRITE8(insn->op.str.ipa, d);
         gic400_unlock(vgic->gic);

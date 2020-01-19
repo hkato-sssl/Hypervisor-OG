@@ -95,6 +95,7 @@ void vpc_store_ctx_system_register(uint64_t *regs);
 
 errno_t vpc_configure(struct vpc *vpc, const struct vpc_configuration *config);
 errno_t vpc_emulate_exception(struct vpc *vpc);
+errno_t vpc_emulate_gic400_irq(struct vpc *vpc);
 errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc);
 errno_t vpc_update_pc(struct vpc *vpc);
 errno_t vpc_va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va);

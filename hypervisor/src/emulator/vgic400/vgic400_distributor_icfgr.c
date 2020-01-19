@@ -36,7 +36,7 @@ static uint64_t byte_mask(const struct vgic400 *vgic, uintptr_t reg)
     };
 
     no = (uint32_t)(reg - GICD_ICFGR(0)) * 4;   /* interrupt No. in LSB */
-    mask = vgic->active.irq[no / 32];
+    mask = vgic->target.irq[no / 32];
     mask = (mask >> (no % 32)) & 0x0f;
     mask = table[mask];
 

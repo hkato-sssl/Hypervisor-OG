@@ -40,7 +40,7 @@ uint32_t vgic400_quad_byte_mask(struct vgic400 *vgic, uint32_t irq)
 {
     uint32_t mask;
 
-    mask = vgic->active.irq[irq / 32];
+    mask = vgic->target.irq[irq / 32];
     mask = (mask >> (irq & 0x1f)) & 0x0f;
     mask = table[mask];
 

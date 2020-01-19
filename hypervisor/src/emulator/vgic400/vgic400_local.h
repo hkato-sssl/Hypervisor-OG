@@ -45,13 +45,13 @@ extern "C" {
 
 /* inline functions */
 
-static inline bool is_active_irq(const struct vgic400 *vgic, uint16_t irq)
+static inline bool is_target_irq(const struct vgic400 *vgic, uint16_t irq)
 {
     uint32_t bit;
 
     bit = 1 << (irq & 31);
 
-    return ((vgic->active.irq[irq / 32] & bit) != 0) ? true : false;
+    return ((vgic->target.irq[irq / 32] & bit) != 0) ? true : false;
 }
 
 static inline bool is_aligned_word_access(const struct insn *insn)

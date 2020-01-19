@@ -44,7 +44,7 @@ static errno_t call_emulator(struct vpc *vpc, vpc_exception_emulator_t func)
     if (func != NULL) {
         ret = (*func)(vpc);
     } else {
-        ret = -ENOSYS;
+        ret = -ENOTSUP;
     }
 
     return ret;

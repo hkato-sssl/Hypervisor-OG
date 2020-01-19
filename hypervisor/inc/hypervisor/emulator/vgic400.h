@@ -25,9 +25,12 @@ extern "C" {
 
 /* defines */
 
+#define NR_GIC400_STATUS_MAPS   ((NR_GIC400_INTERRUPTS + 31) / 32)
+
 /* types */
 
 struct vm;
+struct vpc;
 struct insn;
 struct gic400;
 
@@ -36,8 +39,8 @@ struct vgic400 {
     struct gic400   *gic;
 
     struct {
-        uint32_t    irq[(NR_GIC400_INTERRUPTS + 31) / 32];
-    } active;
+        uint32_t    irq[NR_GIC400_STATUS_MAPS];
+    } target;
 };
 
 struct vgic400_configuration {
@@ -53,19 +56,20 @@ struct vgic400_configuration {
 
 /* inline functions */
 
-static inline bool vgic400_is_active_irq(struct vgic400 *vgic, uint16_t irq)
+static inline bool vgic400_is_target_irq(struct vgic400 *vgic, uint16_t irq)
 {
     uint32_t bit;
 
     bit = 1 << (irq & 31);
     
-    return ((vgic->active.irq[irq / 32] & bit) != 0) ? true : false;
+    return ((vgic->target.irq[irq / 32] & bit) != 0) ? true : false;
 }
 
 /* functions */
 
 errno_t vgic400_configure(struct vgic400 *vgic, const struct vgic400_configuration *config);
 errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
+errno_t vgic400_emulate_irq(struct vgic400 *vgic, struct vpc *vpc);
 
 #ifdef __cplusplus
 }

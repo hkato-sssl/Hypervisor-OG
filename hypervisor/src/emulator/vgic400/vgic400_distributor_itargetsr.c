@@ -35,7 +35,7 @@ static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *i
     uintptr_t no;
 
     no = irq_no(reg);
-    if (is_active_irq(vgic, no)) {
+    if (is_target_irq(vgic, no)) {
         gic400_lock(vgic->gic);
         d = VGIC400_READ8(insn->op.ldr.ipa);
         gic400_unlock(vgic->gic);
@@ -78,7 +78,7 @@ static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *
 
     d = insn_str_src_value(insn);
     no = irq_no(reg);
-    if (is_active_irq(vgic, no)) {
+    if (is_target_irq(vgic, no)) {
         d = vgic400_v2p_cpu_map_b(d, insn->vpc->vm);
 
         gic400_lock(vgic->gic);

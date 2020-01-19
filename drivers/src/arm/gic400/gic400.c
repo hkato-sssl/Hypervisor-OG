@@ -98,14 +98,18 @@ uint32_t gic400_ack(struct gic400 *gic)
     return iar;
 }
 
-void gic400_eoi(struct gic400 *gic, uint32_t iar)
+errno_t gic400_eoi(struct gic400 *gic, uint32_t iar)
 {
     gic400_write_cpuif(gic, GICC_EOIR, iar);
+
+    return SUCCESS;
 }
 
-void gic400_deactivate(struct gic400 *gic, uint32_t iar)
+errno_t gic400_deactivate(struct gic400 *gic, uint32_t iar)
 {
     gic400_write_cpuif(gic, GICC_DIR, iar);
+
+    return SUCCESS;
 }
 
 errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no)

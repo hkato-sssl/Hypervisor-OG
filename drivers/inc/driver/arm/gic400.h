@@ -25,10 +25,13 @@ extern "C" {
 
 /* defines */
 
-#define NR_GIC400_SGIS          16
-#define NR_GIC400_PPIS          16
-#define NR_GIC400_SPIS          480
-#define NR_GIC400_INTERRUPTS    (NR_GIC400_SGIS + NR_GIC400_PPIS + NR_GIC400_SPIS)
+#define NR_GIC400_SGIS                  16
+#define NR_GIC400_PPIS                  16
+#define NR_GIC400_SPIS                  480
+#define NR_GIC400_INTERRUPTS            (NR_GIC400_SGIS + NR_GIC400_PPIS + NR_GIC400_SPIS)
+
+#define GIC400_SPURIOUS_INTERRUPT       1023
+#define GIC400_MAINTENANCE_INTERRUPT    25
 
 /* types */
 

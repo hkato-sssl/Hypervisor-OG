@@ -6,8 +6,10 @@
 
 #include "config/system.h"
 #include <stdint.h>
+#include "lib/aarch64.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
+#include "driver/arm/gic400.h"
 
 /* defines */
 
@@ -32,10 +34,17 @@ int main(void)
     return 0;
 }
 
-void init_hw(void) { return ; }
+__attribute__ ((weak)) void init_hw(void) { return ; }
+
 void launch_system(void)
 {
+    uint64_t d;
+
     printk("<%s>\n", __func__);
-    *(volatile uint32_t *)0xb0010000 = 0;
-    printk("Done\n");
+
+    for (d = 1; d != 0; d <<= 1) {
+        printk("cls(%p)=%u\n", d, aarch64_cls(d));
+        printk("clz(%p)=%u\n", d, aarch64_clz(d));
+        printk("\n");
+    }
 }

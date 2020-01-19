@@ -9,8 +9,9 @@
 #include <stdio.h>
 #include "lib/system.h"
 #include "lib/system/printk.h"
-#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
+#include "driver/arm/device/gic400.h"
 #include "gic400_local.h"
 
 /* defines */

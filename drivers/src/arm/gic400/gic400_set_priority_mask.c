@@ -9,6 +9,7 @@
 #include "lib/system/errno.h"
 #include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
 #include "gic400_local.h"
 
 /* defines */

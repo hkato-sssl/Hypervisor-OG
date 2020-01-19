@@ -9,6 +9,7 @@
 #include "lib/system/printk.h"
 #include "driver/system/cpu.h"
 #include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
 #include "driver/arm/device/gic400.h"
 #include "gic400_local.h"
 

@@ -35,14 +35,12 @@ extern "C" {
 struct gic400_base_register {
     void    *distributor;
     void    *cpuif;
-    void    *virtif_control;
 };
 
 struct gic400_configuration {
     struct gic400_base_register base;
     struct {
         bool    priority_drop;
-        bool    virtualization;
     } boolean;
 };
 
@@ -56,7 +54,6 @@ struct gic400 {
         uint8_t         shift_ct;
     } priority;
     uint16_t            nr_interrupts;
-    uint16_t            nr_list_registers;
 };
 
 struct gic400_interrupt_configuration {
@@ -68,30 +65,7 @@ struct gic400_interrupt_configuration {
     } flag;
 };
 
-struct gic400_virtual_interrupt {
-    uint8_t             priority;
-    uint16_t            physical_id;
-    uint16_t            virtual_id;
-};
-
 /* variables */
-
-/* inline functions */
-
-static inline void *gic400_distributor_register_base(const struct gic400 *gic)
-{
-    return gic->config.base.distributor;
-}
-
-static inline void gic400_lock(struct gic400 *gic)
-{
-    spin_lock(&(gic->lock));
-}
-
-static inline void gic400_unlock(struct gic400 *gic)
-{
-    spin_unlock(&(gic->lock));
-}
 
 /* functions */
 
@@ -107,10 +81,6 @@ errno_t gic400_set_priority_mask(struct gic400 *gic, uint32_t priority);
 errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_disable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config);
-
-/* for virtualization */
-
-errno_t gic400_inject_virtual_interrupt(struct gic400 *gic, const struct gic400_virtual_interrupt *vintr);
 
 /* for debugging */
 

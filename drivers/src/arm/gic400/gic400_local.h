@@ -34,58 +34,6 @@ extern "C" {
 
 errno_t gic400_distributor_write_bit(const struct gic400 *gic, uint16_t bit_no, uintptr_t reg0);
 
-static inline void gic400_write_cpuif(const struct gic400 *gic, uintptr_t reg, uint32_t d)
-{
-    REG_WRITE32(gic->config.base.cpuif, reg, d);
-}
-
-static inline void gic400_write_sync_cpuif(const struct gic400 *gic, uintptr_t reg, uint32_t d)
-{
-    REG_WRITE32_SYNC(gic->config.base.cpuif, reg, d);
-}
-
-static inline uint32_t gic400_read_cpuif(const struct gic400 *gic, uintptr_t reg)
-{
-    uint32_t d;
-
-    d = REG_READ32(gic->config.base.cpuif, reg);
-
-    return d;
-}
-
-static inline void gic400_write_distributor(const struct gic400 *gic, uintptr_t reg, uint32_t d)
-{
-    REG_WRITE32(gic->config.base.distributor, reg, d);
-}
-
-static inline void gic400_write_sync_distributor(const struct gic400 *gic, uintptr_t reg, uint32_t d)
-{
-    REG_WRITE32_SYNC(gic->config.base.distributor, reg, d);
-}
-
-static inline uint32_t gic400_read_distributor(const struct gic400 *gic, uintptr_t reg)
-{
-    uint32_t d;
-
-    d = REG_READ32(gic->config.base.distributor, reg);
-
-    return d;
-}
-
-static inline void gic400_write_virtif_control(const struct gic400 *gic, uintptr_t reg, uint32_t d)
-{
-    REG_WRITE32(gic->config.base.virtif_control, reg, d);
-}
-
-static inline uint32_t gic400_read_virtif_control(const struct gic400 *gic, uintptr_t reg)
-{
-    uint32_t d;
-
-    d = REG_READ32(gic->config.base.virtif_control, reg);
-
-    return d;
-}
-
 #ifdef __cplusplus
 }
 #endif

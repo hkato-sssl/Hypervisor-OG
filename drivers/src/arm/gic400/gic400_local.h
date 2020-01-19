@@ -32,6 +32,16 @@
 extern "C" {
 #endif
 
+static inline void gic400_lock(struct gic400 *gic)
+{
+    spin_lock(&(gic->lock));
+}
+
+static inline void gic400_unlock(struct gic400 *gic)
+{
+    spin_unlock(&(gic->lock));
+}
+
 errno_t gic400_distributor_write_bit(const struct gic400 *gic, uint16_t bit_no, uintptr_t reg0);
 
 static inline void gic400_write_cpuif(const struct gic400 *gic, uintptr_t reg, uint32_t d)

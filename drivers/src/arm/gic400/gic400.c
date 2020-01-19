@@ -204,11 +204,11 @@ static errno_t configure_interrupt(struct gic400 *gic, uint16_t intr_no, const s
     uint32_t lock;
 
     lock = cpu_lock_interrupts();
-    spin_lock(&(gic->lock));
+    gic400_lock(gic);
 
     ret = configure(gic, intr_no, config);
 
-    spin_unlock(&(gic->lock));
+    gic400_unlock(gic);
     cpu_unlock_interrupts(lock);
 
     return ret;

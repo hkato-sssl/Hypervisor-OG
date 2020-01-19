@@ -68,7 +68,7 @@ struct gic400_interrupt_configuration {
     } flag;
 };
 
-struct gic400_virq {
+struct gic400_virtual_interrupt {
     uint8_t             priority;
     uint16_t            physical_id;
     uint16_t            virtual_id;
@@ -100,7 +100,7 @@ errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, const s
 
 /* for virtualization */
 
-errno_t gic400_inject_virq(struct gic400 *gic, const struct gic400_virq *virq);
+errno_t gic400_inject_virtual_interrupt(struct gic400 *gic, const struct gic400_virtual_interrupt *vintr);
 
 /* for debugging */
 

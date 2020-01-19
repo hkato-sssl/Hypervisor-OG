@@ -28,7 +28,7 @@ extern "C" {
 
 /* defines */
 
-#define VM_MAX_NR_PROCS             8
+#define VM_MAX_NR_PROCESSORS    8
 
 /* types */
 
@@ -49,8 +49,8 @@ struct vm {
     void                            *owner;
     uint8_t                         nr_procs;
     struct {
-        uint8_t                     virtual[VM_MAX_NR_PROCS];
-        uint8_t                     physical[VM_MAX_NR_PROCS];
+        uint8_t                     virtual[VM_MAX_NR_PROCESSORS];
+        uint8_t                     physical[VM_MAX_NR_PROCESSORS];
     } proc_map;
     struct vpc                      *vpcs;
     struct aarch64_stage2           *stage2;

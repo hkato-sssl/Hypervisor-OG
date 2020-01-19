@@ -48,6 +48,7 @@ static errno_t configure(struct vm *vm, const struct vm_configuration *config)
 
     memset(vm, 0, sizeof(*vm));
     spin_lock_init(&(vm->lock));
+    vm->owner = config->owner;
     vm->nr_procs = config->nr_procs;
     vm->vpcs = config->vpcs.addr;
     vm->stage2 = config->stage2;

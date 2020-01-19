@@ -46,6 +46,7 @@ struct vm_region_trap {
 
 struct vm {
     spin_lock_t                     lock;
+    void                            *owner;
     uint8_t                         nr_procs;
     struct {
         uint8_t                     virtual[VM_MAX_NR_PROCS];
@@ -67,6 +68,7 @@ struct vm {
 
 struct vm_configuration {
     /* resources */
+    void                            *owner;
     uint8_t                         nr_procs;
     struct {
         struct vpc                  *addr;

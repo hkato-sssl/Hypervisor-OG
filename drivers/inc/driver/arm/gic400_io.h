@@ -41,6 +41,11 @@ static inline void gic400_unlock(struct gic400 *gic)
     spin_unlock(&(gic->lock));
 }
 
+static inline void *gic400_distributor_register_base(const struct gic400 *gic)
+{
+    return gic->config.base.distributor;
+}
+
 static inline void gic400_write_cpuif(const struct gic400 *gic, uintptr_t reg, uint32_t d)
 {
     REG_WRITE32(gic->config.base.cpuif, reg, d);

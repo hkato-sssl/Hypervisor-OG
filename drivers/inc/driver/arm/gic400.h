@@ -83,6 +83,16 @@ static inline void *gic400_distributor_register_base(const struct gic400 *gic)
     return gic->config.base.distributor;
 }
 
+static inline void gic400_lock(struct gic400 *gic)
+{
+    spin_lock(&(gic->lock));
+}
+
+static inline void gic400_unlock(struct gic400 *gic)
+{
+    spin_unlock(&(gic->lock));
+}
+
 /* functions */
 
 errno_t gic400_init(struct gic400 *gic, const struct gic400_configuration *config);

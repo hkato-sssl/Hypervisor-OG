@@ -32,6 +32,12 @@ extern "C" {
 
 #define GIC400_SPURIOUS_INTERRUPT       1023
 #define GIC400_MAINTENANCE_INTERRUPT    25
+#define GIC400_HYPERVISOR_TIMER         26
+#define GIC400_VIRTUAL_TIMER            27
+#define GIC400_LEGACY_FIQ               28
+#define GIC400_SECURE_PHYSICAL_TIMER    29
+#define GIC400_NS_PHYSICAL_TIMER        30
+#define GIC400_LEGACY_IRQ               31
 
 /* types */
 

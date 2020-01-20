@@ -24,11 +24,6 @@
 
 /* functions */
 
-static errno_t emulate_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar) 
-{
-    return -ENOTSUP;
-}
-
 static void maintenance_misr_eoi_sgi(struct vgic400 *vgic, uint32_t no)
 {
 }
@@ -85,10 +80,10 @@ errno_t vgic400_emulate_irq_exception(struct vgic400 *vgic, struct vpc *vpc)
         } else if (no == GIC400_HYPERVISOR_TIMER) {
             ret = -ENOTSUP;
         } else if (no < 16) {
-            ret = emulate_sgi(vgic, vpc, iar);
+            ret = vgic400_inject_sgi(vgic, vpc, iar);
         } else if (no < NR_GIC400_INTERRUPTS) {
             /* PPI or SPI */
-            ret = vgic400_inject_interrupt(vgic, no);
+            ret = vgic400_inject_interrupt(vgic, vpc, no);
         } else {
             ret = -EINVAL;
             break;

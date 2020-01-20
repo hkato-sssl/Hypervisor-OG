@@ -45,7 +45,10 @@ struct vgic400 {
         uint32_t    irq[NR_VGIC400_STATUS_MAPS];
     } target;
 
-    uint8_t         sgi_priority[MAX_NR_VM_PROCESSORS][NR_GIC400_SGIS];
+    struct {
+        uint8_t     priority[MAX_NR_VM_PROCESSORS][NR_GIC400_SGIS];
+        uint32_t    iar[MAX_NR_VM_PROCESSORS];
+    } sgi;
 
     struct {
         uint32_t    ppi[MAX_NR_VM_PROCESSORS][NR_GIC400_PPIS];
@@ -78,8 +81,8 @@ errno_t vgic400_configure(struct vgic400 *vgic, const struct vgic400_configurati
 errno_t vgic400_configure_interrupt(struct vgic400 *vgic, const struct vgic400_interrupt_configuration *config);
 errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
 errno_t vgic400_emulate_irq_exception(struct vgic400 *vgic, struct vpc *vpc);
-errno_t vgic400_inject_interrupt(struct vgic400 *vgic, uint32_t no);
-errno_t vgic400_inject_sgi(struct vgic400 *vgic, uint32_t no);
+errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t no);
+errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);
 
 #ifdef __cplusplus
 }

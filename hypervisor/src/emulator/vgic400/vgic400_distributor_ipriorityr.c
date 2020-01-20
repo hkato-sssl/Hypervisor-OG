@@ -37,7 +37,7 @@ static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn, ui
 
     if (no < 16) {
         proc_no = insn->vpc->proc_no;
-        vgic->sgi_priority[proc_no][no] = priority;
+        vgic->sgi.priority[proc_no][no] = priority;
     } else if (no < 32) {
         proc_no = insn->vpc->proc_no;
         no -= 16;

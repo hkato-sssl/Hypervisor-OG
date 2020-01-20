@@ -40,13 +40,13 @@ static int list_register(struct vgic400 *vgic)
     return no;
 }
 
-static errno_t inject_interrupt(struct vgic400 *vgic, uint32_t no, int idx)
+static errno_t inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t no, int idx)
 {
     errno_t ret;
     uint32_t d;
 
     if (no < 32) {
-        d = vgic->template.ppi[no - 15];
+        d = vgic->template.ppi[vpc->proc_no][no - 16];
     } else {
         d = vgic->template.spi[no - 32];
     }
@@ -71,7 +71,7 @@ errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t
         gic400_lock(vgic->gic);
         idx = list_register(vgic);
         if (idx >= 0) {
-            ret = inject_interrupt(vgic, no, idx);
+            ret = inject_interrupt(vgic, vpc, no, idx);
         } else {
             ret = -EBUSY;
         }

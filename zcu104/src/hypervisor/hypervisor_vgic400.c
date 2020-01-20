@@ -1,5 +1,5 @@
 /*
- * hypervisor/hypervisor_init_vgic400.c
+ * hypervisor/hypervisor_vgic400.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -26,6 +26,15 @@ static struct vgic400 vgic;
 static struct vm_region_trap trap;
 
 /* functions */
+
+errno_t hypervisor_emulate_vgic400_irq(struct vpc *vpc)
+{
+    errno_t ret;
+
+    ret = vgic400_emulate_irq(&vgic, vpc);
+
+    return ret;
+}
 
 static errno_t register_trap(struct vm *vm)
 {

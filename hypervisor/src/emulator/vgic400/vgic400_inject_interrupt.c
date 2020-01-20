@@ -23,37 +23,21 @@
 
 /* functions */
 
-static int list_register(struct vgic400 *vgic)
-{
-    int no;
-    uint32_t d;
-    uint32_t ct;
-
-    d = gic400_read_virtif_control(vgic, GICH_ELSR0);
-    ct = (uint32_t)aarch64_clz(d);
-    if (ct < 32) {
-        no = 31 - (int)ct;
-    } else {
-        no = -1;
-    }
-
-    return no;
-}
-
-static errno_t inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t no, int idx)
+static errno_t inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar, int list_no)
 {
     errno_t ret;
     uint32_t d;
 
-    if (no < 32) {
-        d = vgic->template.ppi[vpc->proc_no][no - 16];
+    if (iar < 32) {
+        d = vgic->ppi[vpc->proc_no].template[iar - 16];
     } else {
-        d = vgic->template.spi[no - 32];
+        d = vgic->spi.template[iar - 32];
     }
 
     if (d != 0) {
-        vgic->list[idx] = d;
-        gic400_write_virtif_control(vgic, GICH_LR(idx), d);
+        gic400_write_virtif_control(vgic, GICH_LR(list_no), d);
+        vgic->list[vpc->proc_no].lr[list_no] = d;
+        vgic->list[vpc->proc_no].iar[list_no] = iar;
         ret = SUCCESS;
     } else {
         ret = -EPERM;
@@ -62,20 +46,18 @@ static errno_t inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t 
     return ret;
 }
 
-errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t no)
+errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar)
 {
     errno_t ret;
     int idx;
 
-    if ((no > 15) && (no < NR_GIC400_INTERRUPTS)) {
-        gic400_lock(vgic->gic);
-        idx = list_register(vgic);
+    if ((iar > 15) && (iar < NR_GIC400_INTERRUPTS)) {
+        idx = vgic400_list_register(vgic);
         if (idx >= 0) {
-            ret = inject_interrupt(vgic, vpc, no, idx);
+            ret = inject_interrupt(vgic, vpc, iar, idx);
         } else {
             ret = -EBUSY;
         }
-        gic400_unlock(vgic->gic);
     } else {
         ret = -EINVAL;
     }

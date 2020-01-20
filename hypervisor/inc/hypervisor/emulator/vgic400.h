@@ -46,16 +46,21 @@ struct vgic400 {
     } target;
 
     struct {
-        uint8_t     priority[MAX_NR_VM_PROCESSORS][NR_GIC400_SGIS];
-        uint32_t    iar[MAX_NR_VM_PROCESSORS];
-    } sgi;
+        uint8_t     priority[NR_GIC400_SGIS];
+    } sgi[MAX_NR_VM_PROCESSORS];
 
     struct {
-        uint32_t    ppi[MAX_NR_VM_PROCESSORS][NR_GIC400_PPIS];
-        uint32_t    spi[NR_GIC400_SPIS];
-    } template;
+        uint32_t    template[NR_GIC400_PPIS];
+    } ppi[MAX_NR_VM_PROCESSORS];
 
-    uint32_t        list[MAX_NR_VGIC400_LIST_REGISTERS];
+    struct {
+        uint32_t    template[NR_GIC400_SPIS];
+    } spi;
+
+    struct {
+        uint32_t    lr[MAX_NR_VGIC400_LIST_REGISTERS];
+        uint32_t    iar[MAX_NR_VGIC400_LIST_REGISTERS];
+    } list[MAX_NR_VM_PROCESSORS];
 };
 
 struct vgic400_configuration {
@@ -78,10 +83,10 @@ struct vgic400_interrupt_configuration {
 /* functions */
 
 errno_t vgic400_configure(struct vgic400 *vgic, const struct vgic400_configuration *config);
-errno_t vgic400_configure_interrupt(struct vgic400 *vgic, const struct vgic400_interrupt_configuration *config);
+errno_t vgic400_configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const struct vgic400_interrupt_configuration *config);
 errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
 errno_t vgic400_emulate_irq_exception(struct vgic400 *vgic, struct vpc *vpc);
-errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t no);
+errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);
 errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);
 
 #ifdef __cplusplus

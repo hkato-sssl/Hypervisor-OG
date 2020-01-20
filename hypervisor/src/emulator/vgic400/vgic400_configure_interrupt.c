@@ -20,7 +20,7 @@
 
 /* functions */
 
-static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_interrupt_configuration *config)
+static errno_t configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const struct vgic400_interrupt_configuration *config)
 {
     uint32_t i;
     uint32_t d;
@@ -37,10 +37,10 @@ static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_in
 
     if (config->virtual_id < 32) {
         for (i = 0; i < MAX_NR_VM_PROCESSORS; ++i) {
-            vgic->template.ppi[i][config->virtual_id - 16] = d;
+            vgic->ppi[vpc->proc_no].template[config->virtual_id - 16] = d;
         }
     } else {
-        vgic->template.spi[config->virtual_id - 32] = d;
+        vgic->spi.template[config->virtual_id - 32] = d;
     }
 
     return SUCCESS;
@@ -72,12 +72,12 @@ static bool is_valid_configuration(const struct vgic400_interrupt_configuration 
     return valid;
 }
 
-errno_t vgic400_configure_interrupt(struct vgic400 *vgic, const struct vgic400_interrupt_configuration *config)
+errno_t vgic400_configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const struct vgic400_interrupt_configuration *config)
 {
     errno_t ret;
 
     if (is_valid_configuration(config)) {
-        ret = configure_interrupt(vgic, config);
+        ret = configure_interrupt(vgic, vpc, config);
     } else {
         ret = -EINVAL;
     }

@@ -37,16 +37,16 @@ static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn, ui
 
     if (no < 16) {
         proc_no = insn->vpc->proc_no;
-        vgic->sgi.priority[proc_no][no] = priority;
+        vgic->sgi[proc_no].priority[no] = priority;
     } else if (no < 32) {
-        proc_no = insn->vpc->proc_no;
         no -= 16;
-        d = vgic->template.ppi[proc_no][no];
-        vgic->template.ppi[proc_no][no] = update_priority_field(d, priority);
+        proc_no = insn->vpc->proc_no;
+        d = vgic->ppi[proc_no].template[no];
+        vgic->ppi[proc_no].template[no] = update_priority_field(d, priority);
     } else {
         no -= 32;
-        d = vgic->template.spi[no];
-        vgic->template.spi[no] = update_priority_field(d, priority);
+        d = vgic->spi.template[no];
+        vgic->spi.template[no] = update_priority_field(d, priority);
     }
 
     return SUCCESS;

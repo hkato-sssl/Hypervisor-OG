@@ -9,6 +9,7 @@
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"

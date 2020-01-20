@@ -6,6 +6,8 @@
 
 #include <stdint.h>
 #include "lib/system/errno.h"
+#include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
 #include "driver/arm/device/gic400.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"

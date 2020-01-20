@@ -9,6 +9,7 @@
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
 #include "driver/arm/device/gic400.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
@@ -55,7 +56,7 @@ static errno_t emulate_memory_insn(const struct insn *insn, struct vgic400 *vgic
     } else if ((0x0380 <= reg) && (reg <= 0x03bf)) {    /* GICD_ICACTIVERn */
         ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ICACTIVER(0));
     } else if ((0x0400 <= reg) && (reg <= 0x05ff)) {    /* GICD_IPRIORITYRn */
-        ret = vgic400_distributor_byte_register(vgic, insn, reg, GICD_IPRIORITYR(0));
+        ret = vgic400_distributor_ipriorityr(vgic, insn, reg);
     } else if ((0x0800 <= reg) && (reg <= 0x09ff)) {    /* GICD_ITARGETSRn */
         ret = vgic400_distributor_itargetsr(vgic, insn, reg);
     } else if ((0x0c00 <= reg) && (reg <= 0x0c7f)) {    /* GICD_ICFGRn */

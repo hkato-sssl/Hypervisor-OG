@@ -9,9 +9,13 @@
 #include <string.h>
 #include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
+#include "driver/arm/device/gic400.h"
+#include "driver/system/cpu.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "vgic400_local.h"
 
 /* defines */
 
@@ -23,29 +27,46 @@
 
 /* functions */
 
+static errno_t configure_gic400(struct gic400 *gic)
+{
+    uint32_t d;
+
+    d = gic400_read_cpuif(gic, GICC_CTLR);
+    d |= BIT(9);    /* GICC_CTLR.EOImodeNS */
+    gic400_write_cpuif(gic, GICC_CTLR, d);
+
+    return SUCCESS;
+}
+
+static errno_t configure_secondary(struct vgic400 *vgic)
+{
+    errno_t ret;
+
+    ret = configure_gic400(vgic->gic);
+
+    return ret;
+}
+
 static errno_t configure(struct vgic400 *vgic, const struct vgic400_configuration *config)
 {
     errno_t ret;
-    uint16_t i;
-    uint16_t no;
-    uint32_t bit;
+    uint32_t d;
 
     memset(vgic, 0, sizeof(*vgic));
     vgic->owner = config->owner;
     vgic->gic = config->gic;
+    vgic->reg_base = config->reg_base;
 
-    vgic->target.irq[0] = 0xffff00ff;
-    ret = SUCCESS;
-    for (i = 0; i < config->irq.num; ++i) {
-        no = config->irq.array[i];
-        if ((no >= 32) && (no < NR_GIC400_INTERRUPTS)) {
-            bit = 1 << (no & 31);
-            vgic->target.irq[no / 32] |= bit;
-        } else {
-            ret = -EINVAL;
-            break;
-        }
-    }
+    /* probe # of List Register */
+
+    d = gic400_read_virtif_control(vgic, GICH_VTR);
+    vgic->nr_list_registers = BF_EXTRACT(d, 5, 0) + 1;
+
+    /* initialize the target map */
+
+    vgic->target.irq[0] = 0x0000000f;
+
+    ret = configure_gic400(vgic->gic);
 
     return ret;
 }
@@ -54,10 +75,18 @@ errno_t vgic400_configure(struct vgic400 *vgic, const struct vgic400_configurati
 {
     errno_t ret;
 
-    if ((vgic != NULL) && (config != NULL)) {
-        ret = configure(vgic, config);
+    if (cpu_no() == 0) {
+        if ((vgic != NULL) && (config != NULL)) {
+            ret = configure(vgic, config);
+        } else {
+            ret = -EINVAL;
+        }
     } else {
-        ret = -EINVAL;
+        if ((vgic != NULL) && (config == NULL)) {
+            ret = configure_secondary(vgic);
+        } else {
+            ret = -EINVAL;
+        }
     }
 
     return ret;

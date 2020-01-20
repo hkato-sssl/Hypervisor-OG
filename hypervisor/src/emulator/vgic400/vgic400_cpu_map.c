@@ -25,7 +25,7 @@ static uint64_t translate_cpu_map_b(uint64_t src, const uint8_t *table)
     uint64_t d;
 
     d = 0;
-    for (i = 0; i < VM_MAX_NR_PROCESSORS; ++i) {
+    for (i = 0; i < MAX_NR_VM_PROCESSORS; ++i) {
         if ((src & BIT(i)) != 0) {
             d |= BIT(table[i]);
         }

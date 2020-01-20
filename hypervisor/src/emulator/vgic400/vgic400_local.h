@@ -45,6 +45,20 @@ extern "C" {
 
 /* inline functions */
 
+static inline void gic400_write_virtif_control(struct vgic400 *vgic, uint32_t reg, uint32_t d)
+{
+    REG_WRITE32(vgic->reg_base, reg, d);
+}
+
+static inline uint32_t gic400_read_virtif_control(struct vgic400 *vgic, uint32_t reg)
+{
+    uint32_t d;
+
+    d = REG_READ32(vgic->reg_base, reg);
+
+    return d;
+}
+
 static inline bool is_target_irq(const struct vgic400 *vgic, uint16_t irq)
 {
     uint32_t bit;
@@ -75,6 +89,7 @@ errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct ins
 errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
 errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
 errno_t vgic400_distributor_igroupr(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn);

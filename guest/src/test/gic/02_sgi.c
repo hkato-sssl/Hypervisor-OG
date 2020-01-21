@@ -59,7 +59,7 @@ static void init_interrupt(void)
 
     memset(&config, 0, sizeof(config));
     config.targets = 1;
-    config.priority = 1;
+    config.priority = 8;
     config.flag.edge = 1;
 
     for (i = 0; i < 32; ++i) {

@@ -24,21 +24,17 @@
 
 /* functions */
 
-static void maintenance_misr_eoi_sgi(struct vgic400 *vgic, uint32_t no)
-{
-}
-
-static void maintenance_misr_eoi(struct vgic400 *vgic)
+static void maintenance_misr_eoi(struct vgic400 *vgic, struct vpc *vpc)
 {
     uint32_t d;
     uint32_t no;
+    uint32_t *iar;
 
+    iar = vgic->iar[vpc->proc_no];
     d = gic400_read_virtif_control(vgic, GICH_EISR0);
     while (d != 0) {
         no = 31 - (uint32_t)aarch64_clz(d);
-        if (no < 16) {
-            maintenance_misr_eoi_sgi(vgic, no);
-        }
+        gic400_deactivate(vgic->gic, iar[no]);
         d ^= BIT(no);
     }
 }
@@ -51,7 +47,7 @@ static errno_t maintenance_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint
     d = gic400_read_virtif_control(vgic, GICH_MISR);
 
     if ((d & BIT(0)) != 0) {    /* EOI */
-        maintenance_misr_eoi(vgic);
+        maintenance_misr_eoi(vgic, vpc);
     }
 
     ret = gic400_deactivate(vgic->gic, iar);

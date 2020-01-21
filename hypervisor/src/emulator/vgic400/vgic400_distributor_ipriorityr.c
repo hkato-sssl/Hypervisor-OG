@@ -21,32 +21,25 @@
 
 /* functions */
 
-static uint32_t update_priority_field(uint32_t src, uint32_t priority)
+static void update_priority_field(uint32_t *target, uint8_t priority)
 {
-    uint32_t d;
-
-    d = (src & ~(uint32_t)BITS(27, 23)) | (priority << 20);
-
-    return d;
+    *target = (*target & ~(uint32_t)BITS(27, 20)) | ((uint32_t)priority << 20);
 }
 
 static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn, uintptr_t no, uint8_t priority)
 {
-    uint32_t proc_no;
-    uint32_t d;
+    uint32_t *p;
 
-    if (no < 16) {
-        proc_no = insn->vpc->proc_no;
-        vgic->sgi[proc_no].priority[no] = priority;
-    } else if (no < 32) {
-        no -= 16;
-        proc_no = insn->vpc->proc_no;
-        d = vgic->ppi[proc_no].template[no];
-        vgic->ppi[proc_no].template[no] = update_priority_field(d, priority);
-    } else {
-        no -= 32;
-        d = vgic->spi.template[no];
-        vgic->spi.template[no] = update_priority_field(d, priority);
+    if (is_target_irq(vgic, no)) {
+        if (no < 16) {
+            vgic->sgi[insn->vpc->proc_no].priority[no] = priority;
+        } else if (no < 32) {
+            p = &(vgic->ppi[insn->vpc->proc_no].template[no - 16]);
+            update_priority_field(p, priority);
+        } else {
+            p = &(vgic->spi.template[no - 32]);
+            update_priority_field(p, priority);
+        }
     }
 
     return SUCCESS;
@@ -84,7 +77,7 @@ errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic, const struct insn *
     uint32_t no;
 
     ret = vgic400_distributor_byte_register(vgic, insn, reg, GICD_IPRIORITYR(0));
-    if ((insn->type == INSN_TYPE_STR) && (ret == SUCCESS)) {
+    if ((ret == SUCCESS) && (insn->type == INSN_TYPE_STR)) {
         no = (reg - GICD_IPRIORITYR(0)) / 4;
         if (insn->op.str.size == 1) {
             ret = update_priority_b(vgic, insn, no);

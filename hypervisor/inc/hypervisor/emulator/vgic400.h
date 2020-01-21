@@ -57,16 +57,17 @@ struct vgic400 {
         uint32_t    template[NR_GIC400_SPIS];
     } spi;
 
-    struct {
-        uint32_t    lr[MAX_NR_VGIC400_LIST_REGISTERS];
-        uint32_t    iar[MAX_NR_VGIC400_LIST_REGISTERS];
-    } list[MAX_NR_VM_PROCESSORS];
+    uint32_t    lr[MAX_NR_VM_PROCESSORS][MAX_NR_VGIC400_LIST_REGISTERS];
+    uint32_t    iar[MAX_NR_VM_PROCESSORS][MAX_NR_VGIC400_LIST_REGISTERS];
 };
 
 struct vgic400_configuration {
     struct vm       *owner;
     struct gic400   *gic;
     void            *reg_base;
+    struct {
+        bool        enable_cpuif;   /* enable virtualization of cpu interface */
+    } boolean;
 };
 
 struct vgic400_interrupt_configuration {

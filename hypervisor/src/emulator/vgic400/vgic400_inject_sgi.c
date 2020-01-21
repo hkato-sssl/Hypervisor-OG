@@ -39,8 +39,8 @@ static errno_t inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar, i
     d |= id;                                            /* Interrupt ID */
 
     gic400_write_virtif_control(vgic, GICH_LR(list_no), d);
-    vgic->list[vpc->proc_no].lr[list_no] = d;
-    vgic->list[vpc->proc_no].iar[list_no] = iar;
+    vgic->lr[vpc->proc_no][list_no] = d;
+    vgic->iar[vpc->proc_no][list_no] = iar;
 
     return SUCCESS;
 }
@@ -49,11 +49,18 @@ errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar)
 {
     errno_t ret;
     int idx;
+    uint32_t id;
 
-
-    idx = vgic400_list_register(vgic);
-    if (idx >= 0) {
-        ret = inject_sgi(vgic, vpc, iar, idx);
+    id = BF_EXTRACT(iar, 9, 0);
+    if (id < 16) {
+        idx = vgic400_list_register(vgic);
+        if (idx >= 0) {
+            ret = inject_sgi(vgic, vpc, iar, idx);
+        } else {
+            ret = -EBUSY;
+        }
+    } else {
+        ret = -EINVAL;
     }
 
     return ret;

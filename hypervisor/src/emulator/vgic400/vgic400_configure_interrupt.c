@@ -22,7 +22,6 @@
 
 static errno_t configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const struct vgic400_interrupt_configuration *config)
 {
-    uint32_t i;
     uint32_t d;
 
     d = 1 << 28;        /* State = pending */
@@ -36,9 +35,7 @@ static errno_t configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const 
     d |= (uint32_t)(config->virtual_id);
 
     if (config->virtual_id < 32) {
-        for (i = 0; i < MAX_NR_VM_PROCESSORS; ++i) {
-            vgic->ppi[vpc->proc_no].template[config->virtual_id - 16] = d;
-        }
+        vgic->ppi[vpc->proc_no].template[config->virtual_id - 16] = d;
     } else {
         vgic->spi.template[config->virtual_id - 32] = d;
     }
@@ -50,7 +47,7 @@ static bool is_valid_id(uint16_t id)
 {
     bool valid;
 
-    if ((id != GIC400_MAINTENANCE_INTERRUPT) && (id != GIC400_HYPERVISOR_TIMER) && (id < NR_GIC400_INTERRUPTS)) {
+    if ((id != GIC400_MAINTENANCE_INTERRUPT) && (id != GIC400_HYPERVISOR_TIMER) && (id >= 16) && (id < NR_GIC400_INTERRUPTS)) {
         valid = true;
     } else {
         valid = false;

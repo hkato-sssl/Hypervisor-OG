@@ -36,8 +36,8 @@ static errno_t inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t 
 
     if (d != 0) {
         gic400_write_virtif_control(vgic, GICH_LR(list_no), d);
-        vgic->list[vpc->proc_no].lr[list_no] = d;
-        vgic->list[vpc->proc_no].iar[list_no] = iar;
+        vgic->lr[vpc->proc_no][list_no] = d;
+        vgic->iar[vpc->proc_no][list_no] = iar;
         ret = SUCCESS;
     } else {
         ret = -EPERM;

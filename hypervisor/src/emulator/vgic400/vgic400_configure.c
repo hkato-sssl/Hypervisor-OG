@@ -64,7 +64,18 @@ static errno_t configure(struct vgic400 *vgic, const struct vgic400_configuratio
 
     /* initialize the target map */
 
-    vgic->target.irq[0] = 0x0000000f;
+    /*   ID  Assign      Source            
+     *   31  guest       Legacy IRQ signal              
+     *   30  guest       Non-secure Physical timer 
+     *   29  N/A         Secure physical timer
+     *   28  guest       Legacy FIQ signal
+     *   27  guest       Virtual timer
+     *   26  hypervisor  Hypervisor timer
+     *   25  hypervisor  Virtual maintenance interrupt
+     * 24-16 guest       Undefined
+     */
+
+    vgic->target.irq[0] = 0x0000d90f;
 
     ret = configure_gic400(vgic->gic);
 

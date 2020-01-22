@@ -47,6 +47,15 @@ static inline uint64_t aarch64_clz(uint64_t d)
     return ct;
 }
 
+static inline uint64_t aarch64_rbit(uint64_t d)
+{
+    uint64_t result;
+
+    __asm volatile ("rbit %0, %1" : "=r"(result) : "r"(d));
+
+    return result;
+}
+
 #ifdef __cplusplus
 }
 #endif

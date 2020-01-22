@@ -9,7 +9,7 @@
 
 /* defines */
 
-#define IS_IN_RANGE(trap, addr)   (((trap)->ipa.addr <= (addr)) && ((addr) < ((trap)->ipa.addr + (trap)->ipa.size)))
+#define IS_IN_RANGE(trap, addr)   (((trap)->pa <= (addr)) && ((addr) < ((trap)->pa + (trap)->size)))
 
 /* types */
 

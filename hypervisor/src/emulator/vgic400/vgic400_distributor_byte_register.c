@@ -43,7 +43,7 @@ static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *ins
     no = irq_no(reg, base);
     if (is_target_irq(vgic, no)) {
         gic400_lock(vgic->gic);
-        d = VGIC400_READ8(insn->op.ldr.ipa);
+        d = VGIC400_READ8(insn->op.ldr.pa);
         gic400_unlock(vgic->gic);
     } else {
         d = 0;
@@ -62,7 +62,7 @@ static errno_t read_byte_register_w(struct vgic400 *vgic, const struct insn *ins
     uint64_t mask;
 
     gic400_lock(vgic->gic);
-    d = VGIC400_READ32(insn->op.ldr.ipa);
+    d = VGIC400_READ32(insn->op.ldr.pa);
     gic400_unlock(vgic->gic);
 
     no = irq_no(reg, base);
@@ -84,7 +84,7 @@ static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *in
     no = irq_no(reg, base);
     if (is_target_irq(vgic, no)) {
         gic400_lock(vgic->gic);
-        VGIC400_WRITE8(insn->op.str.ipa, d);
+        VGIC400_WRITE8(insn->op.str.pa, d);
         gic400_unlock(vgic->gic);
     }
 
@@ -107,9 +107,9 @@ static errno_t write_byte_register_w(struct vgic400 *vgic, const struct insn *in
     d &= mask;
 
     gic400_lock(vgic->gic);
-    d0 = VGIC400_READ32(insn->op.str.ipa);
+    d0 = VGIC400_READ32(insn->op.str.pa);
     d |= d0 & ~mask;
-    VGIC400_WRITE32(insn->op.str.ipa, d);
+    VGIC400_WRITE32(insn->op.str.pa, d);
     gic400_unlock(vgic->gic);
 
     ret = insn_emulate_str(insn);

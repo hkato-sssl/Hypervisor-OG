@@ -5,6 +5,7 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 #include "lib/system.h"
 #include "lib/system/errno.h"
@@ -29,12 +30,21 @@ static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *region)
     memset(&attr, 0, sizeof(attr));
 
     attr.xn = 1;
-    attr.af = 0;
+    attr.af = 1;
     attr.sh = STAGE2_SH_ISH;
-    attr.s2ap = STAGE2_S2AP_RW;
     attr.memattr = STAGE2_MEMATTR_DEVICE_GRE;
 
-    ret = aarch64_stage2_map(vm->stage2, (void *)region->ipa.addr, (void *)region->ipa.addr, region->ipa.size, &attr);
+    if (region->condition.read) {
+        if (region->condition.write) {
+            attr.s2ap = STAGE2_S2AP_NONE;
+        } else {
+            attr.s2ap = STAGE2_S2AP_WO;
+        }
+    } else {
+        attr.s2ap = STAGE2_S2AP_RO;
+    }
+
+    ret = aarch64_stage2_map(vm->stage2, (void *)region->ipa, (void *)region->pa, region->size, &attr);
 
     return ret;
 }
@@ -74,6 +84,19 @@ static errno_t register_region_trap(struct vm *vm, struct vm_region_trap *region
     return ret;
 }
 
+static bool is_valid_condition(const struct vm_region_trap *region)
+{
+    bool valid;
+
+    if (region->condition.read || region->condition.write) {
+        valid = true;
+    } else {
+        valid = false;
+    }
+
+    return valid;
+}
+
 static bool is_valid_parameter(const struct vm *vm, const struct vm_region_trap *region)
 {
     bool valid;
@@ -81,8 +104,8 @@ static bool is_valid_parameter(const struct vm *vm, const struct vm_region_trap 
 
     ret = system_validate_stack_region(region, sizeof(*region));
     if (ret != SUCCESS) {
-        if ((vm != NULL) && (region != NULL) &&
-            (region->ipa.size > 0) && ((region->ipa.size % 4096) == 0)) {
+        if (is_valid_condition(region) &&
+            (region->size > 0) && ((region->size % 4096) == 0)) {
             valid = true;
         } else {
             valid = false;

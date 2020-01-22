@@ -37,7 +37,7 @@ enum insn_operand_type {
 
 struct insn_ldr_str {
     uint64_t        va;
-    uint64_t        ipa;
+    uint64_t        pa;
     uint64_t        offset;
     uint8_t         size;
 

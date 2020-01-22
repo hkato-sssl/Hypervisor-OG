@@ -33,7 +33,7 @@ static void print_ldr(const struct insn *insn)
 {
     printk("<INSN_TYPE_LDR>\n");
     printk("    va: 0x%016llx\n", insn->op.ldr.va);
-    printk("   ipa: 0x%016llx\n", insn->op.ldr.ipa);
+    printk("    pa: 0x%016llx\n", insn->op.ldr.pa);
     if (insn->op.str.flag.isv == 0) {
         printk("offset: 0x%016llx(%lld)\n", insn->op.ldr.offset, insn->op.ldr.offset);
     }
@@ -67,7 +67,7 @@ static void print_str(const struct insn *insn)
 {
     printk("<INSN_TYPE_STR>\n");
     printk("    va: 0x%016llx\n", insn->op.str.va);
-    printk("   ipa: 0x%016llx\n", insn->op.str.ipa);
+    printk("    pa: 0x%016llx\n", insn->op.str.pa);
     if (insn->op.str.flag.isv == 0) {
         printk("offset: 0x%016llx(%lld)\n", insn->op.str.offset, insn->op.str.offset);
     }

@@ -26,7 +26,7 @@ static errno_t call_emulator(struct vpc *vpc, struct insn *insn)
     errno_t ret;
     struct vm_region_trap *trap;
 
-    trap = vm_search_region_trap(vpc->vm, insn->op.ldr.ipa);
+    trap = vm_search_region_trap(vpc->vm, insn->op.ldr.pa);
     if (trap != NULL) {
         ret = (*(trap->emulator.handler))(insn, trap->emulator.arg);
     } else {

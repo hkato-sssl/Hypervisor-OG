@@ -37,7 +37,7 @@ static errno_t write_sgir(struct vgic400 *vgic, const struct insn *insn)
         p_target_list = vgic400_v2p_cpu_map_b(v_target_list, insn->vpc->vm);
         if (p_target_list != 0) {
             d = (d & ~(uint32_t)BITS(23, 16)) | (p_target_list << 16);
-            VGIC400_WRITE32(insn->op.str.ipa, d);
+            VGIC400_WRITE32(insn->op.str.pa, d);
         }
     }
 

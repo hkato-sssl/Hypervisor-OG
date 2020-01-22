@@ -39,7 +39,7 @@ static errno_t read_bit_register_w(struct vgic400 *vgic, const struct insn *insn
     uint64_t mask;
     uint64_t no;
 
-    d = VGIC400_READ32(insn->op.ldr.ipa);
+    d = VGIC400_READ32(insn->op.ldr.pa);
     no = irq_no(reg, base);
     mask = vgic->target.irq[no / 32];
     d &= mask;
@@ -60,7 +60,7 @@ static errno_t write_bit_register_w(struct vgic400 *vgic, const struct insn *ins
     no = irq_no(reg, base);
     mask = vgic->target.irq[no / 32];
     d &= mask;
-    VGIC400_WRITE32(insn->op.str.ipa, d);
+    VGIC400_WRITE32(insn->op.str.pa, d);
 
     ret = insn_emulate_str(insn);
 

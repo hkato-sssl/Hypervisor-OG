@@ -28,7 +28,7 @@ static errno_t read_typer_w(struct vgic400 *vgic, const struct insn *insn)
     uint64_t d;
     uint64_t nr_cpus;
 
-    d = VGIC400_READ32(insn->op.ldr.ipa);
+    d = VGIC400_READ32(insn->op.ldr.pa);
     nr_cpus = insn->vpc->vm->nr_procs;
     d = (d & ~(uint32_t)BITS(7, 5)) | ((nr_cpus - 1) << 5);
 

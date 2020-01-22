@@ -67,7 +67,7 @@ static errno_t read_icfgr_w(const struct vgic400 *vgic, const struct insn *insn,
 
     mask = word_mask(vgic, reg);
     gic400_lock(vgic->gic);
-    d = VGIC400_READ32(insn->op.ldr.ipa);
+    d = VGIC400_READ32(insn->op.ldr.pa);
     gic400_unlock(vgic->gic);
     d &= mask;
 
@@ -88,9 +88,9 @@ static errno_t write_icfgr_w(const struct vgic400 *vgic, const struct insn *insn
     d &= mask;
 
     gic400_lock(vgic->gic);
-    d0 = VGIC400_READ32(insn->op.str.ipa);
+    d0 = VGIC400_READ32(insn->op.str.pa);
     d |= (d0 & ~mask);
-    VGIC400_WRITE32(insn->op.str.ipa, d);
+    VGIC400_WRITE32(insn->op.str.pa, d);
     gic400_unlock(vgic->gic);
 
     ret = insn_emulate_str(insn);

@@ -38,8 +38,12 @@ struct insn;
 struct vgic400 {
     struct vm       *owner;
     struct gic400   *gic;
-    void            *reg_base;
+    struct {
+        void        *virtif_control;
+        void        *virtual_cpuif;
+    } base;
     uint32_t        nr_list_registers;
+    uint32_t        priority_mask;
 
     struct {
         uint32_t    irq[NR_VGIC400_STATUS_MAPS];
@@ -64,7 +68,10 @@ struct vgic400 {
 struct vgic400_configuration {
     struct vm       *owner;
     struct gic400   *gic;
-    void            *reg_base;
+    struct {
+        void            *virtif_control;
+        void            *virtual_cpuif;
+    } base;
     struct {
         bool        enable_cpuif;   /* enable virtualization of cpu interface */
     } boolean;
@@ -86,6 +93,7 @@ struct vgic400_interrupt_configuration {
 errno_t vgic400_configure(struct vgic400 *vgic, const struct vgic400_configuration *config);
 errno_t vgic400_configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const struct vgic400_interrupt_configuration *config);
 errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
+errno_t vgic400_cpuif_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
 errno_t vgic400_emulate_irq_exception(struct vgic400 *vgic, struct vpc *vpc);
 errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);
 errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);

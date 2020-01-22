@@ -6,13 +6,10 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
 #include "driver/arm/device/gic400.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
@@ -34,7 +31,7 @@ static errno_t emulate_memory_insn(const struct insn *insn, struct vgic400 *vgic
     uintptr_t reg;
 
     base = (uintptr_t)gic400_distributor_register_base(vgic->gic);
-    reg = (insn->op.ldr.ipa - base);
+    reg = (insn->op.ldr.pa - base);
     if (reg == 0x0000) {    /* GICD_CTLR */
         ret = vgic400_distributor_ctlr(vgic, insn);
     } else if (reg == 0x0004) { /* GICD_TYPER */
@@ -106,7 +103,7 @@ errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struc
 {
     errno_t ret;
 
-    if (((insn->type == INSN_TYPE_LDR) || (insn->type == INSN_TYPE_STR)) && (vgic != NULL)) {
+    if ((insn->type == INSN_TYPE_LDR) || (insn->type == INSN_TYPE_STR)) {
         ret = emulate_memory_insn(insn, vgic);
     } else {
         ret = -EINVAL;

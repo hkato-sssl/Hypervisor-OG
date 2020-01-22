@@ -47,14 +47,28 @@ extern "C" {
 
 static inline void gic400_write_virtif_control(struct vgic400 *vgic, uint32_t reg, uint32_t d)
 {
-    REG_WRITE32(vgic->reg_base, reg, d);
+    REG_WRITE32(vgic->base.virtif_control, reg, d);
 }
 
 static inline uint32_t gic400_read_virtif_control(struct vgic400 *vgic, uint32_t reg)
 {
     uint32_t d;
 
-    d = REG_READ32(vgic->reg_base, reg);
+    d = REG_READ32(vgic->base.virtif_control, reg);
+
+    return d;
+}
+
+static inline void gic400_write_virtual_cpuif(struct vgic400 *vgic, uint32_t reg, uint32_t d)
+{
+    REG_WRITE32(vgic->base.virtual_cpuif, reg, d);
+}
+
+static inline uint32_t gic400_read_virtual_cpuif(struct vgic400 *vgic, uint32_t reg)
+{
+    uint32_t d;
+
+    d = REG_READ32(vgic->base.virtual_cpuif, reg);
 
     return d;
 }
@@ -72,7 +86,7 @@ static inline bool is_aligned_word_access(const struct insn *insn)
 {
     bool ret;
 
-    if (IS_ALIGNED(insn->op.ldr.ipa, 4) && (insn->op.ldr.size == 4)) {
+    if (IS_ALIGNED(insn->op.ldr.pa, 4) && (insn->op.ldr.size == 4)) {
         ret = true;
     } else {
         ret = false;
@@ -94,6 +108,9 @@ errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct insn *i
 errno_t vgic400_distributor_igroupr(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+
+errno_t vgic400_cpuif_write_pmr(struct vgic400 *vgic, const struct insn *insn);
+errno_t vgic400_cpuif_write_word_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
 
 uint32_t vgic400_quad_byte_mask(const struct vgic400 *vgic, uint32_t irq);
 uint64_t vgic400_p2v_cpu_map_b(uint64_t src, const struct vm *vm);

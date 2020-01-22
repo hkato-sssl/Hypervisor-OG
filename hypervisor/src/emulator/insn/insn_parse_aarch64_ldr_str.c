@@ -231,16 +231,16 @@ static errno_t parse(struct insn *insn, struct vpc *vpc)
 {
     errno_t ret;
     uint64_t va;
-    uint64_t ipa;
+    uint64_t pa;
 
     memset(insn, 0, sizeof(*insn));
     insn->vpc = vpc;
 
     va = vpc->regs[VPC_FAR_EL2];
-    ipa = (vpc->regs[VPC_HPFAR_EL2] << 8) | (va & BITS(11, 0));
+    pa = (vpc->regs[VPC_HPFAR_EL2] << 8) | (va & BITS(11, 0));
 
     insn->op.ldr.va = va;
-    insn->op.ldr.ipa = ipa;
+    insn->op.ldr.pa = pa;
 
     if ((vpc->regs[VPC_ESR_EL2] & ISS_DATA_ABORT_ISV) == 0) {
         ret = parse_instruction(insn, vpc);
@@ -260,8 +260,8 @@ static bool is_emulatable(const struct vpc *vpc)
     esr = vpc->regs[VPC_ESR_EL2];
     if ((esr & (ISS_DATA_ABORT_EA | ISS_DATA_ABORT_CM | ISS_DATA_ABORT_S1PTW)) == 0) {
         dfsc = EXTRACT_ISS_DATA_ABORT_DFSC(esr);
-        if ((dfsc >= 9) && (dfsc <= 11)) {
-            /* Access flag fault */
+        if ((dfsc >= 13) && (dfsc <= 15)) {
+            /* Permission fault */
             ret = true;
         } else {
             ret = false;

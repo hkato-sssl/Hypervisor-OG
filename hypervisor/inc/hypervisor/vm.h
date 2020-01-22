@@ -21,6 +21,7 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
 #include "driver/aarch64/stage2.h"
@@ -35,9 +36,12 @@ extern "C" {
 struct vm_region_trap {
     struct vm_region_trap   *next;
     struct {
-        uint64_t            addr;
-        size_t              size;
-    } ipa;
+        bool                read;
+        bool                write;
+    } condition;
+    uint64_t                ipa;
+    uint64_t                pa;
+    size_t                  size;
     struct {
         void                *arg;
         vpc_emulator_t      handler;

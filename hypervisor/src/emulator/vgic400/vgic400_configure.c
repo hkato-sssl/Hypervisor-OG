@@ -55,7 +55,9 @@ static errno_t configure(struct vgic400 *vgic, const struct vgic400_configuratio
     memset(vgic, 0, sizeof(*vgic));
     vgic->owner = config->owner;
     vgic->gic = config->gic;
-    vgic->reg_base = config->reg_base;
+    vgic->base.virtif_control = config->base.virtif_control;
+    vgic->base.virtual_cpuif = config->base.virtual_cpuif;
+    vgic->priority_mask = gic400_priority_mask(vgic->gic);
 
     /* probe # of List Register */
 

@@ -31,7 +31,7 @@ static errno_t read_spisr_w(struct vgic400 *vgic, const struct insn *insn, uintp
 
     idx = (reg - GICD_SPISR(0)) / 4 + 1;
     mask = vgic->target.irq[idx];
-    d = VGIC400_READ32(insn->op.ldr.ipa);
+    d = VGIC400_READ32(insn->op.ldr.pa);
     d &= mask;
 
     ret = insn_emulate_ldr(insn, d);

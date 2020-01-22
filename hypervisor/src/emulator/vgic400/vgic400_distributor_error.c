@@ -25,7 +25,7 @@ errno_t vgic400_distributor_error(const struct insn *insn, const char *msg)
 {
     printk("VGIC400-D: %s\n", msg);
     printk("           type = <%s>\n", (insn->type == INSN_TYPE_LDR) ? "LDR" : "STR");
-    printk("           addr = %p\n", insn->op.ldr.ipa);
+    printk("           addr = %p\n", insn->op.ldr.pa);
     printk("           size = %u\n", insn->op.ldr.size);
 
     return -EPERM;

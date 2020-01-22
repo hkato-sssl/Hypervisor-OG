@@ -39,7 +39,7 @@ static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *i
     no = irq_no(reg);
     if (is_target_irq(vgic, no)) {
         gic400_lock(vgic->gic);
-        d = VGIC400_READ8(insn->op.ldr.ipa);
+        d = VGIC400_READ8(insn->op.ldr.pa);
         gic400_unlock(vgic->gic);
 
         d = vgic400_p2v_cpu_map_b(d, insn->vpc->vm);
@@ -61,7 +61,7 @@ static errno_t read_itargetsr_w(const struct vgic400 *vgic, const struct insn *i
     no = irq_no(reg);
     mask = vgic400_quad_byte_mask(vgic, no);
     gic400_lock(vgic->gic);
-    d = VGIC400_READ32(insn->op.ldr.ipa);
+    d = VGIC400_READ32(insn->op.ldr.pa);
     gic400_unlock(vgic->gic);
     d &= mask;
 
@@ -84,7 +84,7 @@ static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *
         d = vgic400_v2p_cpu_map_b(d, insn->vpc->vm);
 
         gic400_lock(vgic->gic);
-        VGIC400_WRITE8(insn->op.str.ipa, d);
+        VGIC400_WRITE8(insn->op.str.pa, d);
         gic400_unlock(vgic->gic);
     }
 
@@ -108,9 +108,9 @@ static errno_t write_itargetsr_w(const struct vgic400 *vgic, const struct insn *
     d = vgic400_v2p_cpu_map_w(d, insn->vpc->vm);
 
     gic400_lock(vgic->gic);
-    d0 = VGIC400_READ32(insn->op.str.ipa);
+    d0 = VGIC400_READ32(insn->op.str.pa);
     d |= d0 & ~mask;
-    VGIC400_WRITE32(insn->op.str.ipa, d);
+    VGIC400_WRITE32(insn->op.str.pa, d);
     gic400_unlock(vgic->gic);
 
     ret = insn_emulate_str(insn);

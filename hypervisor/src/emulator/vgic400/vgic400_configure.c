@@ -77,7 +77,7 @@ static errno_t configure(struct vgic400 *vgic, const struct vgic400_configuratio
      * 24-16 guest       Undefined
      */
 
-    vgic->target.irq[0] = 0x0000d90f;
+    vgic->target.irq[0] = 0xd90000ff;
 
     ret = configure_gic400(vgic->gic);
 

@@ -41,6 +41,16 @@ static inline void gic400_unlock(struct gic400 *gic)
     spin_unlock(&(gic->lock));
 }
 
+static inline uint8_t gic400_priority_mask(const struct gic400 *gic)
+{
+    return (0xff << gic->priority.shift_ct);
+}
+
+static inline void *gic400_cpuif_register_base(const struct gic400 *gic)
+{
+    return gic->config.base.cpuif;
+}
+
 static inline void *gic400_distributor_register_base(const struct gic400 *gic)
 {
     return gic->config.base.distributor;

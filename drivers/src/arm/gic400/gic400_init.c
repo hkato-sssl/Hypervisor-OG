@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "lib/bit.h"
+#include "lib/aarch64.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
 #include "lib/system/spin_lock.h"
@@ -30,18 +31,14 @@
 static void probe_max_priority(struct gic400 *gic)
 {
     uint8_t ct;
-    uint8_t d;
+    uint64_t d;
 
     gic400_write_cpuif(gic, GICC_PMR, 0xff);
-    d = (uint8_t)gic400_read_cpuif(gic, GICC_PMR);
+    d = gic400_read_cpuif(gic, GICC_PMR);
+    d = aarch64_rbit(d);
+    ct = (uint8_t)aarch64_clz(d);
 
-    ct = 0;
-    while ((d & BIT(0)) == 0) {
-        ++ct;
-        d >>= 1;
-    }
-
-    gic->priority.max = d;
+    gic->priority.max = 0xff >> ct;
     gic->priority.shift_ct = ct;
 }
 

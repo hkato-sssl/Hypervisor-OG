@@ -23,7 +23,8 @@
 
 extern struct gic400 gic;
 static struct vgic400 vgic;
-static struct vm_region_trap trap;
+static struct vm_region_trap trap_c;
+static struct vm_region_trap trap_d;
 
 /* functions */
 
@@ -31,37 +32,41 @@ errno_t hypervisor_emulate_vgic400_irq(struct vpc *vpc)
 {
     errno_t ret;
 
-    ret = vgic400_emulate_irq(&vgic, vpc);
+    ret = vgic400_emulate_irq_exception(&vgic, vpc);
 
     return ret;
 }
 
-static errno_t register_trap(struct vm *vm)
+static errno_t register_trap_cpuif(struct vm *vm)
 {
     errno_t ret;
 
-    memset(&trap, 0, sizeof(trap));
-    trap.ipa.addr = CONFIG_GICD_BASE;
-    trap.ipa.size = 4096;
-    trap.emulator.arg = &vgic;
-    trap.emulator.handler = (vpc_emulator_t)vgic400_distributor_emulate_memory_access;
-    ret = vm_register_region_trap(vm, &trap);
+    memset(&trap_c, 0, sizeof(trap_c));
+    trap_c.condition.read = false;
+    trap_c.condition.write = true;
+    trap_c.ipa = CONFIG_GICC_BASE;
+    trap_c.pa = CONFIG_GICV_BASE;
+    trap_c.size = 4096;
+    trap_c.emulator.arg = &vgic;
+    trap_c.emulator.handler = (vpc_emulator_t)vgic400_cpuif_emulate_memory_access;
+    ret = vm_register_region_trap(vm, &trap_c);
 
     return ret;
 }
 
-static errno_t map_cpuif(struct vm *vm)
+static errno_t register_trap_distributor(struct vm *vm)
 {
     errno_t ret;
-    struct aarch64_stage2_attr attr;
 
-    memset(&attr, 0, sizeof(attr));
-    attr.xn = 1;
-    attr.af = 1;
-    attr.sh = STAGE2_SH_OSH;
-    attr.s2ap = STAGE2_S2AP_RW;
-    attr.memattr = STAGE2_MEMATTR_DEVICE_GRE;
-    ret = aarch64_stage2_map(vm->stage2, (void *)CONFIG_GICC_BASE, (void *)CONFIG_GICV_BASE, 4096, &attr);
+    memset(&trap_d, 0, sizeof(trap_d));
+    trap_d.condition.read = true;
+    trap_d.condition.write = true;
+    trap_d.ipa = CONFIG_GICD_BASE;
+    trap_d.pa = CONFIG_GICD_BASE;
+    trap_d.size = 4096;
+    trap_d.emulator.arg = &vgic;
+    trap_d.emulator.handler = (vpc_emulator_t)vgic400_distributor_emulate_memory_access;
+    ret = vm_register_region_trap(vm, &trap_d);
 
     return ret;
 }
@@ -74,8 +79,8 @@ static errno_t configure(struct vm *vm)
     memset(&config, 0, sizeof(config));
     config.owner = vm;
     config.gic = &gic;
-    config.irq.num = 0;
-    config.irq.array = NULL;
+    config.base.virtif_control = (void *)CONFIG_GICH_BASE;
+    config.base.virtual_cpuif = (void *)CONFIG_GICV_BASE;
     ret = vgic400_configure(&vgic, &config);
 
     return ret;
@@ -88,11 +93,11 @@ errno_t hypervisor_init_vgic400(struct vm *vm)
     ret = configure(vm);
 
     if (ret == SUCCESS) {
-        ret = map_cpuif(vm);
+        ret = register_trap_cpuif(vm);
     }
 
     if (ret == SUCCESS) {
-        ret = register_trap(vm);
+        ret = register_trap_distributor(vm);
     }
 
     return ret;

@@ -78,8 +78,9 @@ static errno_t init_trap(void)
     errno_t ret;
 
     memset(&trap, 0, sizeof(trap));
-    trap.ipa.addr = TRAP_START;
-    trap.ipa.size = TRAP_SIZE;
+    trap.ipa = TRAP_START;
+    trap.pa = TRAP_START;
+    trap.size = TRAP_SIZE;
     trap.emulator.arg = NULL;
     trap.emulator.handler = emulator_02;
     ret = vm_register_region_trap(&vm, &trap);

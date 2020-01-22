@@ -106,8 +106,9 @@ static errno_t init_trap(uint64_t args[])
     printk("%s> start=%p, size=%p\n", __func__, args[0], args[1]);
 
     memset(&trap, 0, sizeof(trap));
-    trap.ipa.addr = args[0];
-    trap.ipa.size = args[1];
+    trap.ipa = args[0];
+    trap.pa = args[0];
+    trap.size = args[1];
     trap.emulator.arg = NULL;
     trap.emulator.handler = guest_02_data_abort;
     ret = vm_register_region_trap(&vm, &trap);

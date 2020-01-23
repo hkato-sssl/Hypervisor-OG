@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "driver/aarch64/system_register.h"
+#include "driver/arm/gic400.h"
 #include "hypervisor/thread.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
@@ -48,7 +49,7 @@ static errno_t setup_aarch64(struct vpc *vpc)
      *    M[4:0] = 0x05 - AArch64 EL1h
      */
     vpc->regs[VPC_SPSR_EL2] = PSTATE_D | PSTATE_A | PSTATE_I | PSTATE_F | 0x05;
-    vpc->regs[VPC_HCR_EL2] = HCR_RW | HCR_VM;
+    vpc->regs[VPC_HCR_EL2] = HCR_RW | HCR_IMO | HCR_VM;
 
     ret = init_system_register(vpc);
 
@@ -64,7 +65,7 @@ static errno_t setup_aarch32(struct vpc *vpc)
      *    M[4:0] = 0x13 - AArch32 Supervisor mode
      */
     vpc->regs[VPC_SPSR_EL2] = PSTATE_I | PSTATE_F | 0x13;
-    vpc->regs[VPC_HCR_EL2] = HCR_VM;
+    vpc->regs[VPC_HCR_EL2] = HCR_IMO | HCR_VM;
 
     ret = init_system_register(vpc);
 
@@ -96,6 +97,12 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
     vpc->boolean.launched = true;
     vpc_load_ctx_system_register(vpc->regs);
     vpc_load_ctx_fpu(vpc->regs);
+
+    {
+    extern struct gic400 gic;
+    gic400_set_priority_mask(&gic, 0xff);
+    }
+
     ret = vpc_switch_to_el1(vpc->regs);
 
     return ret;

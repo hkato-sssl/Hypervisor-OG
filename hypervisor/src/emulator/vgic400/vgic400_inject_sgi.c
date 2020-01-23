@@ -38,6 +38,7 @@ static errno_t inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar, i
     d |= src << 10;                                     /* virtual CPUID */
     d |= id;                                            /* Interrupt ID */
 
+printk("%s> LR=0x%8x\n", __func__, d);
     gic400_write_virtif_control(vgic, GICH_LR(list_no), d);
     vgic->lr[vpc->proc_no][list_no] = d;
     vgic->iar[vpc->proc_no][list_no] = iar;
@@ -51,12 +52,16 @@ errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar)
     int idx;
     uint32_t id;
 
+printk("%s#%u\n", __func__, __LINE__);
     id = BF_EXTRACT(iar, 9, 0);
     if (id < 16) {
         idx = vgic400_list_register(vgic);
         if (idx >= 0) {
             ret = inject_sgi(vgic, vpc, iar, idx);
         } else {
+gic400_dump_ns_cpuif(vgic->gic);
+gic400_dump_ns_distributor(vgic->gic);
+gic400_dump_virtif_control(vgic);
             ret = -EBUSY;
         }
     } else {

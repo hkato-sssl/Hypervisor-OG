@@ -28,8 +28,8 @@ int vgic400_list_register(struct vgic400 *vgic)
 
     d = gic400_read_virtif_control(vgic, GICH_ELSR0);
     ct = (uint32_t)aarch64_clz(d);
-    if (ct < 32) {
-        no = 31 - (int)ct;
+    if (ct < 64) {
+        no = 63 - (int)ct;
     } else {
         no = -1;
     }

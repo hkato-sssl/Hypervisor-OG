@@ -21,7 +21,7 @@
         sub             sp, sp, #(NR_EXC_REGS * 8)
         stp             x0, x1, [sp, #(EXC_X0 * 8)]
         mrs             x0, SP_EL0
-        stp             x0, lr, [sp, #(EXC_SP * 8)]
+        stp             lr, x0, [sp, #(EXC_LR * 8)]
         mov             x0, #VECTOR
         mrs             x1, ESR_EL2
         stp             x0, x1, [sp, #(EXC_VECTOR * 8)]

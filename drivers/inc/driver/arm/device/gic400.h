@@ -60,7 +60,12 @@
 #define GICC_APR0           0x00d0
 #define GICC_NSAPR0         0x00e0
 #define GICC_IIDR           0x00fc
+
+#ifdef XILINX_MPSOC
+#define GICC_DIR            0x10000
+#else
 #define GICC_DIR            0x1000
+#endif
 
 /* virtual interface cotrol */
 

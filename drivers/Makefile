@@ -20,6 +20,8 @@ INCS := inc
 include $(MAKE_PATH)/project-env.mk
 include $(MAKE_PATH)/command.mk
 
+CFLAGS += -DXILINX_MPSOC
+
 # Depending on the target you want to build,
 # uncomment either of the following two sentences.
 #TARGET ?= $(notdir $(PROJ_HOME)).elf	# an executable

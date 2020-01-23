@@ -9,6 +9,7 @@
 #include <string.h>
 #include "lib/bit.h"
 #include "lib/system/errno.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/system_register/tcr_elx.h"
 #include "driver/aarch64/mmu.h"
@@ -88,6 +89,10 @@ static errno_t init_map(void)
 
     if (ret == SUCCESS) {
 	    ret = map((void*)CONFIG_GICC_BASE, (void*)(CONFIG_GICC_BASE + 4096), &attr);
+    }
+
+    if (ret == SUCCESS) {
+	    ret = map((void*)(CONFIG_GICC_BASE + GICC_DIR), (void*)(CONFIG_GICC_BASE + GICC_DIR + 4096), &attr);
     }
 
     if (ret == SUCCESS) {

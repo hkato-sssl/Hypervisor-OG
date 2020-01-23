@@ -100,6 +100,10 @@ errno_t hypervisor_init_vgic400(struct vm *vm)
         ret = register_trap_distributor(vm);
     }
 
+    if (ret == SUCCESS) {
+        ret = vgic400_activate(&vgic);
+    }
+
     return ret;
 }
 

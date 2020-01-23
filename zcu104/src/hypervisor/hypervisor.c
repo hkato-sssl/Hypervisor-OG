@@ -40,10 +40,10 @@ void hypervisor(void)
 {
     void *sp;
 
-    void test_guest_02(void *, void *);
+    void test_guest_03(void *, void *);
 
     init_exception();
     sp = main_stack_top();
-    thread_launch((void *)test_guest_02, sp, args);
+    thread_launch((void *)test_guest_03, sp, args);
 }
 

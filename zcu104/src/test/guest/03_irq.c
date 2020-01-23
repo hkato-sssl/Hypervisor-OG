@@ -13,6 +13,7 @@
 #include "lib/system/printk.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/stage2.h"
+#include "driver/arm/gic400.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/emulator/insn.h"
@@ -38,6 +39,7 @@ errno_t hyp_test_stage2_init(void);
 errno_t hypervisor_init_vgic400(struct vm *vm);
 errno_t guest_02_data_abort(const struct insn *insn, void *arg);
 errno_t hypervisor_emulate_vgic400_irq(struct vpc *vpc);
+static errno_t emulate_hvc(struct vpc *vpc);
 
 /* variables */
 
@@ -48,9 +50,20 @@ static struct vm_region_trap trap;
 static const struct vpc_exception_ops ops = {
     .irq = hypervisor_emulate_vgic400_irq,
     .aarch64.data_abort = vpc_emulate_aarch64_data_abort,
+    .aarch64.hvc = emulate_hvc,
 };
 
 /* functions */
+
+static errno_t emulate_hvc(struct vpc *vpc)
+{
+    extern struct gic400 gic;
+    gic400_dump_ns_cpuif(&gic);
+    gic400_dump_ns_distributor(&gic);
+    for (;;);
+
+    return SUCCESS;
+}
 
 static errno_t init_stage2_mapping(void)
 {

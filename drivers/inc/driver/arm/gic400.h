@@ -57,7 +57,7 @@ typedef intptr_t (*gic400_handler_t)(void *arg, uint32_t iar);
 
 struct gic400 {
     spin_lock_t         lock;
-    struct gic400_configuration config;
+    struct gic400_configuration configuration;
     struct {
         uint8_t         max;
         uint8_t         shift_ct;

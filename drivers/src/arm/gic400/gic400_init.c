@@ -55,7 +55,7 @@ static void init_cpu_interface(struct gic400 *gic)
 
     gic400_write_cpuif(gic, GICC_PMR, 0);
     gic400_write_cpuif(gic, GICC_BPR, 0);
-    if (gic->config.boolean.priority_drop) {
+    if (gic->configuration.boolean.priority_drop) {
         d = BIT(9) | BIT(0);
     } else {
         d = BIT(0);
@@ -105,7 +105,7 @@ static errno_t init(struct gic400 *gic, const struct gic400_configuration *confi
 
     if (cpu_no() == 0) {
         memset(gic, 0, sizeof(*gic));
-        gic->config = *config;
+        gic->configuration = *config;
         spin_lock_init(&(gic->lock));
         probe_cpu_interface(gic);
     }

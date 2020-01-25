@@ -28,10 +28,15 @@ void init_hw(void)
     errno_t ret;
     struct gic400_configuration config;
 
-    memset(&config, 0, sizeof(config));
-    config.base.distributor = (void *)CONFIG_GICD_BASE;
-    config.base.cpuif = (void *)CONFIG_GICC_BASE;
-    ret = gic400_init(&gic, &config);
+    if (cpu_no() == 0) {
+        memset(&config, 0, sizeof(config));
+        config.base.distributor = (void *)CONFIG_GICD_BASE;
+        config.base.cpuif = (void *)CONFIG_GICC_BASE;
+        ret = gic400_init(&gic, &config);
+    } else {
+        ret = gic400_init(&gic, NULL);
+    }
+
     if (ret != SUCCESS) {
         printk("gic400_configure() -> %d", ret);
     }

@@ -39,7 +39,7 @@ errno_t aarch64_mmu_enable(struct aarch64_mmu *mmu)
 
     if (mmu != NULL) {
         d = aarch64_read_sctlr();
-        if ((mmu->base.active == false) && ((d & SCTLR_M) == 0)) {
+        if ((d & SCTLR_M) == 0) {
             ret = mmu_enable(mmu);
         } else {
             ret = -EBUSY;

@@ -68,8 +68,6 @@ static errno_t mmu_set_translation_table_el01(struct aarch64_mmu  *mmu)
 
     mmu_set_ttbr0(mmu);
 
-    mmu->base.active = true;
-
     aarch64_unlock_interrupts(lock);
 
     return SUCCESS;
@@ -89,8 +87,6 @@ static errno_t mmu_set_translation_table_el23(struct aarch64_mmu  *mmu)
         aarch64_write_mair_el3(mmu->mair);
     }
     mmu_set_ttbr0(mmu);
-
-    mmu->base.active = true;
 
     aarch64_unlock_interrupts(lock);
 
@@ -141,7 +137,7 @@ static errno_t validate_parameters(struct aarch64_mmu  *mmu)
 {
     errno_t ret;
 
-    if ((mmu != NULL) && (! mmu->base.active) && (mmu->base.addr != NULL)) {
+    if ((mmu != NULL) && (mmu->base.addr != NULL)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;

@@ -138,7 +138,6 @@ static errno_t mmu_init(struct aarch64_mmu *mmu, const struct aarch64_mmu_config
 
     memset(mmu, 0, sizeof(*mmu));
 
-    mmu->base.active = false;
     mmu->base.type = config->base.type;
     mmu->base.granule = config->base.granule;
     mmu->base.pool = config->base.pool;

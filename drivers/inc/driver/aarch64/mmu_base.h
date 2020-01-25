@@ -89,7 +89,6 @@ struct aarch64_mmu_ops {
 };
 
 struct aarch64_mmu_base {
-    bool                            active;
     enum aarch64_mmu_type           type;
     enum aarch64_mmu_granule        granule;
     uint8_t                         start_level;

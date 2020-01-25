@@ -136,7 +136,6 @@ static errno_t stage2_init(struct aarch64_stage2 *stage2, const struct aarch64_s
 
     memset(stage2, 0, sizeof(*stage2));
 
-    stage2->base.active = false;
     stage2->base.type = config->base.type;
     stage2->base.granule = config->base.granule;
     stage2->base.ops = &stage2_ops;

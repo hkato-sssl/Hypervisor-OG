@@ -10,6 +10,7 @@
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "driver/arm/gic400.h"
+#include "driver/system/cpu.h"
 
 /* defines */
 

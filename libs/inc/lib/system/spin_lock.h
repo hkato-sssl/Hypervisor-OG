@@ -19,23 +19,15 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
+#include "lib/aarch64/spin_lock.h"
 
 /* defines */
 
 /* types */
 
-typedef uint32_t spin_lock_t;
-
 /* variables */
 
 /* functions */
-
-errno_t spin_lock_init(spin_lock_t *lock);
-errno_t spin_trylock(spin_lock_t *lock);
-void spin_lock(spin_lock_t *lock);
-void spin_unlock(spin_lock_t *lock);
 
 errno_t system_spin_lock_init(spin_lock_t *lock);
 void system_spin_lock(void);

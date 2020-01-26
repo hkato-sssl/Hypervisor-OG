@@ -33,6 +33,10 @@ extern "C" {
 
 /* functions */
 
+errno_t vpc_switch_to_el1(uint64_t *regs);
+
+/* inline functions */
+
 static inline bool is_aarch64(const struct vpc *vpc)
 {
     /* test M[4] */

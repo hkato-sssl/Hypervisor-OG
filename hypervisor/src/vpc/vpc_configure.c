@@ -32,6 +32,7 @@ static errno_t configure(struct vpc *vpc, const struct vpc_configuration *config
     vpc->vm = config->vm;
     vpc->regs = config->regs;
     vpc->proc_no = config->proc_no;
+    vpc->hook = config->hook;
     vpc->exception.ops = config->exception.ops;
 
     return SUCCESS;

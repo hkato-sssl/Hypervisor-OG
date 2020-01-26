@@ -26,7 +26,7 @@ extern "C" {
 
 /* types */
 
-typedef uint32_t __attribute__((aligned(32))) spin_lock_t;
+typedef volatile uint32_t spin_lock_t;
 
 /* variables */
 

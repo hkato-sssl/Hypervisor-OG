@@ -10,7 +10,7 @@
         .global         hypervisor_start
 
         .extern         hypervisor
-        .extern         thread_launch
+        .extern         thread_start
         .extern         excvec_hyp
 
         .section        ".text.hypervisor_start", "ax", %progbits
@@ -19,29 +19,23 @@
 hypervisor_start:
         /* disable interrupts */
 
-        msr             DAIFSet, #(DAIF_I | DAIF_F)
-
-        /* reset SP */
-
-        bl              kernel_stack_top
-        msr             SPSel, #1
-        mov             sp, x0
+        msr             DAIFSet, #(DAIF_A | DAIF_I | DAIF_F)
 
         /* initialize an exception vector */
 
         adr             x0, excvec_hyp
+        dsb             sy
+        isb
         msr             VBAR_EL2, x0
         isb
 
-        /* launch a thread */
+        /* call the entry function */
 
         bl              main_stack_top
         mov             x1, x0
-        adr             x0, hypervisor
         mov             x2, xzr
-        bl              thread_launch
-
-        svc             #0
+        adr             x0, hypervisor
+        b               thread_start
 
         .end
 

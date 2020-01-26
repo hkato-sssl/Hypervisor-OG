@@ -9,12 +9,9 @@
 
 /* includes */
 
-/* defines */
+#include "driver/xilinx/device/mpsoc.h"
 
-#define REG_UART0           0xff000000
-#define REG_UART1           0xff010000
-#define	REG_GIC400_CPUIF    0xf9020000
-#define	REG_GIC400_DIST     0xf9010000
+/* defines */
 
 #endif /* DRIVER_XILINX_MPSOC_H */
 

@@ -42,8 +42,12 @@ extern "C" {
 /* functions */
 
 errno_t thread_launch(void *entry, void *sp, void *arg);
+errno_t thread_launch_at(uint32_t processor_no, void *entry, void *sp, void *arg);
+void thread_start(void *entry, void *sp, void *arg);
+
 uint64_t thread_read_tls(uint32_t index);
 void thread_write_tls(uint32_t index, uint64_t d);
+volatile void thread_exit(void);
 
 #ifdef __cplusplus
 }

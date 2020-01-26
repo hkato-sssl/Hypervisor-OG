@@ -1,5 +1,5 @@
 /*
- * thread/thread_launch.S
+ * thread/thread_start.S
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -8,22 +8,22 @@
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/thread.h"
 
-        .global         thread_launch
+        .global         thread_start
 
         .extern         kernel_stack_top
 
-        .section        ".text.thread_launch", "ax", %progbits
-        .type           thread_launch, %function
+        .section        ".text.thread_start", "ax", %progbits
+        .type           thread_start, %function
         .balign         4
         /*
-         * errno_t thread_launch(void *entry, void *sp, void *arg)
+         * errno_t thread_start(void *entry, void *sp, void *arg)
          */
-thread_launch:
+thread_start:
         /*
          * initialize proessor status
          */
 
-        msr             DAIFSet, #(DAIF_I | DAIF_F)
+        msr             DAIFSet, #(DAIF_A | DAIF_I | DAIF_F)
         clrex
 
         /*
@@ -50,6 +50,8 @@ thread_launch:
         mrs             x1, TPIDR_EL2
         str             x0, [x1, #(TLS_EXCEPTION_SP * 8)]
         ldp             x1, x0, [sp], #16
+
+        msr             DAIFClr, DAIF_A
         blr             x1
 
         svc             #0

@@ -19,7 +19,12 @@
          * errno_t thread_launch(void *entry, void *sp, void *arg)
          */
 thread_launch:
+        /*
+         * initialize proessor status
+         */
+
         msr             DAIFSet, #(DAIF_I | DAIF_F)
+        clrex
 
         /*
          * initialize SP, and allocate TLS

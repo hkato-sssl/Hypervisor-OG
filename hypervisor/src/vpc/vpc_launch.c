@@ -1,5 +1,5 @@
 /*
- * vpc/vpc.c
+ * vpc/vpc_launch.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -8,10 +8,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "driver/aarch64/system_register.h"
-#include "driver/arm/gic400.h"
 #include "hypervisor/thread.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
+#include "vpc_local.h"
 
 /* defines */
 
@@ -20,8 +20,6 @@
 /* types */
 
 /* prototypes */
-
-errno_t vpc_switch_to_el1(uint64_t *regs);
 
 /* variables */
 
@@ -98,12 +96,10 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
     vpc_load_ctx_system_register(vpc->regs);
     vpc_load_ctx_fpu(vpc->regs);
 
-    {
-    extern struct gic400 gic;
-    gic400_set_priority_mask(&gic, 0xff);
+    ret = vm_init_local_context(vpc->vm);
+    if (ret == SUCCESS) {
+        ret = vpc_switch_to_el1(vpc->regs);
     }
-
-    ret = vpc_switch_to_el1(vpc->regs);
 
     return ret;
 }
@@ -129,19 +125,6 @@ errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
         ret = launch(vpc, boot);
     } else {
         ret = -EBUSY;
-    }
-
-    return ret;
-}
-
-errno_t vpc_resume(struct vpc *vpc)
-{
-    errno_t ret;
-
-    if ((vpc != NULL) && (vpc->boolean.launched)) {
-        ret = vpc_switch_to_el1(vpc->regs);
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

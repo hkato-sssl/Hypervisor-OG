@@ -83,9 +83,9 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
     vpc->regs[VPC_VTCR_EL2] = aarch64_stage2_vtcr_el2(vm->stage2);
 
     if (boot->arch == VPC_ARCH_AARCH64) {
-	setup_aarch64(vpc);
+	    setup_aarch64(vpc);
     } else {
-	setup_aarch32(vpc);
+	    setup_aarch32(vpc);
     }
 
     thread_write_tls(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
@@ -96,8 +96,12 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
     vpc_load_ctx_system_register(vpc->regs);
     vpc_load_ctx_fpu(vpc->regs);
 
-    ret = vm_init_local_context(vpc->vm);
-    if (ret == SUCCESS) {
+    if (vpc->hook.launch != NULL) {
+        ret = (*(vpc->hook.launch))(vpc);
+        if (ret == SUCCESS) {
+            ret = vpc_switch_to_el1(vpc->regs);
+        }
+    } else {
         ret = vpc_switch_to_el1(vpc->regs);
     }
 

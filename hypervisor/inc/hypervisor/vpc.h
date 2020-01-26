@@ -51,6 +51,11 @@ struct vpc_exception_ops {
     } aarch64;
 };
 
+struct vpc_hook {
+    errno_t     (*launch)(struct vpc *);
+    errno_t     (*resume)(struct vpc *);
+};
+
 struct vpc {
     spin_lock_t     lock;
     struct vm       *vm;
@@ -61,6 +66,8 @@ struct vpc {
         bool        launched;
     } boolean;
 
+    struct vpc_hook hook;
+
     struct {
         const struct vpc_exception_ops  *ops;
     } exception;
@@ -70,6 +77,7 @@ struct vpc_configuration {
     struct vm       *vm;
     uint64_t        *regs;
     uint8_t         proc_no;    // processor No.
+    struct vpc_hook hook;
     struct {
         const struct vpc_exception_ops  *ops;
     } exception;

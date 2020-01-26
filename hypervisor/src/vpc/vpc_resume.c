@@ -28,7 +28,14 @@ errno_t vpc_resume(struct vpc *vpc)
     assert(vpc != NULL);
 
     if (vpc->boolean.launched) {
-        ret = vpc_switch_to_el1(vpc->regs);
+        if (vpc->hook.resume != NULL) {
+            ret = (*(vpc->hook.resume))(vpc);
+            if (ret == SUCCESS) {
+                ret = vpc_switch_to_el1(vpc->regs);
+            }
+        } else {
+            ret = vpc_switch_to_el1(vpc->regs);
+        }
     } else {
         ret = -EINVAL;
     }

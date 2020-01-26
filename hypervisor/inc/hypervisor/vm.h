@@ -30,8 +30,11 @@ extern "C" {
 /* defines */
 
 #define MAX_NR_VM_PROCESSORS    8
+#define VM_NO_ASSIGN            0xff
 
 /* types */
+
+struct vgic;
 
 struct vm_region_trap {
     struct vm_region_trap   *next;
@@ -56,14 +59,14 @@ struct vm {
         uint8_t                     virtual[MAX_NR_VM_PROCESSORS];
         uint8_t                     physical[MAX_NR_VM_PROCESSORS];
     } proc_map;
-    struct vpc                      *vpcs;
+    struct vpc                      *vpcs[MAX_NR_VM_PROCESSORS];
     struct aarch64_stage2           *stage2;
     struct {
         bool                        launched;
     } boolean;
-    struct vpc_boot_configuration   boot;
 
     struct {
+        struct vgic                 *vgic;
         struct {
             struct vm_region_trap   *memory_region;
         } trap;
@@ -74,21 +77,18 @@ struct vm_configuration {
     /* resources */
     void                            *owner;
     uint8_t                         nr_procs;
-    struct {
-        struct vpc                  *addr;
-        size_t                      size;
-    } vpcs;
+    struct vpc                      *vpcs[MAX_NR_VM_PROCESSORS];
     struct {
         uint64_t                    *addr;
         size_t                      size;
-    } regs;
+    } regs[MAX_NR_VM_PROCESSORS];
     struct aarch64_stage2           *stage2;
-    struct vpc_boot_configuration   boot;
     struct {
         struct {
             const struct vpc_exception_ops  *ops;
         } exception;
     } vpc;
+    struct vgic                     *vgic;
 };
 
 /* variables */
@@ -96,13 +96,26 @@ struct vm_configuration {
 /* functions */
 
 errno_t vm_configure(struct vm *vm, const struct vm_configuration *config);
-errno_t vm_launch(struct vm *vm);
+errno_t vm_launch(struct vm *vm, const struct vpc_boot_configuration *boot);
+errno_t vm_init_local_context(struct vm *vm);
 struct vpc *vm_vpc(const struct vm *vm, uint32_t index);
 uint8_t vm_virtual_proc_no(struct vm *vm, uint8_t physical_no);
 uint8_t vm_physical_proc_no(struct vm *vm, uint8_t virtual_no);
 
 errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *trap);
 struct vm_region_trap *vm_search_region_trap(const struct vm *vm, uintptr_t addr);
+
+/* inline functions */
+
+static inline void vm_lock(struct vm *vm)
+{
+    spin_lock(&(vm->lock));
+}
+
+static inline void vm_unlock(struct vm *vm)
+{
+    spin_unlock(&(vm->lock));
+}
 
 #ifdef __cplusplus
 }

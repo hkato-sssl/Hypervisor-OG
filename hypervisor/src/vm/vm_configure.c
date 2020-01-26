@@ -31,10 +31,15 @@ static errno_t configure_vpcs(struct vm *vm, const struct vm_configuration *conf
     vpc_config.vm = vm;
     vpc_config.exception.ops = config->vpc.exception.ops;
     for (i = 0; i < config->nr_procs; ++i) {
-        vpc_config.regs = config->regs.addr + (i * NR_VPC_REGS);
-        vpc_config.proc_no = (uint8_t)i;
-        ret = vpc_configure(vm_vpc(vm, i), &vpc_config);
-        if (ret != SUCCESS) {
+        if (config->regs[i].size >= (NR_VPC_REGS * sizeof(uint64_t))) {
+            vpc_config.regs = config->regs[i].addr;
+            vpc_config.proc_no = (uint8_t)i;
+            ret = vpc_configure(vm_vpc(vm, i), &vpc_config);
+            if (ret != SUCCESS) {
+                break;
+            }
+        } else {
+            ret = -EINVAL;
             break;
         }
     }
@@ -45,15 +50,20 @@ static errno_t configure_vpcs(struct vm *vm, const struct vm_configuration *conf
 static errno_t configure(struct vm *vm, const struct vm_configuration *config)
 {
     errno_t ret;
+    int i;
 
     memset(vm, 0, sizeof(*vm));
+    memset(&(vm->proc_map), VM_NO_ASSIGN, sizeof(vm->proc_map));
     spin_lock_init(&(vm->lock));
     vm->owner = config->owner;
     vm->nr_procs = config->nr_procs;
-    vm->vpcs = config->vpcs.addr;
+
+    for (i = 0; i < vm->nr_procs; ++i) {
+        vm->vpcs[i] = config->vpcs[i];
+    }
+
     vm->stage2 = config->stage2;
     vm->boolean.launched = false;
-    vm->boot = config->boot;
 
     ret = configure_vpcs(vm, config);
 
@@ -65,8 +75,7 @@ static bool is_valid_parameter(struct vm *vm, const struct vm_configuration *con
     bool valid;
 
     if ((vm != NULL) && (config != NULL) && (config->nr_procs > 0) && (config->nr_procs <= MAX_NR_VM_PROCESSORS) && (config->stage2 != NULL) &&
-        ((config->vpcs.addr != NULL) && ((sizeof(struct vpc) * config->nr_procs) == config->vpcs.size)) &&
-        ((config->regs.addr != NULL) && ((sizeof(uint64_t) * NR_VPC_REGS) == config->regs.size))) {
+        (config->vpcs != NULL)) {
         valid = true;
     } else {
         valid = false;

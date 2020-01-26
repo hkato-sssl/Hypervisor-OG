@@ -20,13 +20,17 @@
 
 /* functions */
 
-struct vpc *vm_vpc(const struct vm *vm, uint32_t index)
+struct vpc *vm_vpc(const struct vm *vm, uint32_t no)
 {
     struct vpc *p;
 
-    assert((vm != NULL) && (vm->vpcs != NULL) && (vm->nr_procs > index));
+    assert((vm != NULL) && (vm->vpcs != NULL));
 
-    p = vm->vpcs + index;
+    if (no < vm->nr_procs) {
+        p = vm->vpcs[no];
+    } else {
+        p = NULL;
+    }
 
     return p;
 }

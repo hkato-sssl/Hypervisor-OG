@@ -4,6 +4,7 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "config/system.h"
 #include <stdint.h>
 #include <string.h>
 #include "lib/system/errno.h"
@@ -31,7 +32,7 @@ static void wakeup_secondary_processors(void)
     errno_t ret;
     void _start(void);
 
-    for (i = 1; i < NR_CPUS; ++i) {
+    for (i = 1; i < CONFIG_NR_CPUS; ++i) {
         ret = aarch64_psci_cpu_on(i, _start, 0);
         if (ret != SUCCESS) {
             printk("aarch64_psci_cpu_on(%d) -> %d\n", i, ret);

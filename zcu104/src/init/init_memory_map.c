@@ -33,7 +33,7 @@ extern char __stack_end[];
 
 static char memory_block_region[CONFIG_NR_MMU_MEMORY_BLOCKS][4096] __attribute__ ((aligned(4096)));
 
-static struct aarch64_mmu_block_pool pool;
+struct aarch64_mmu_block_pool sys_pool;
 struct aarch64_mmu sys_mmu;
 
 /* functions */
@@ -117,7 +117,7 @@ static errno_t init_pool(void)
     config.block_sz = 4096;
     config.block_region.addr = memory_block_region;
     config.block_region.size = sizeof(memory_block_region);
-    ret = aarch64_mmu_block_pool_init(&pool, &config);
+    ret = aarch64_mmu_block_pool_init(&sys_pool, &config);
 
     return ret;
 }
@@ -133,7 +133,7 @@ static errno_t init_mmu(void)
     memset(&config, 0, sizeof(config));
     config.base.type = AARCH64_MMU_EL2;
     config.base.granule = AARCH64_MMU_4KB_GRANULE;
-    config.base.pool = &pool;
+    config.base.pool = &sys_pool;
     config.asid = 1;
     config.mair = HYP_MMU_ATTRS;
     config.tcr.el23.ps = pa_range;

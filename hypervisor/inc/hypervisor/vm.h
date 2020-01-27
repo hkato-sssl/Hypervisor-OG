@@ -88,6 +88,7 @@ errno_t vm_init_local_context(struct vm *vm);
 struct vpc *vm_vpc(const struct vm *vm, uint32_t index);
 uint8_t vm_virtual_proc_no(struct vm *vm, uint8_t physical_no);
 uint8_t vm_physical_proc_no(struct vm *vm, uint8_t virtual_no);
+errno_t vm_map_proc_no(struct vm *vm, const struct vpc *vpc);
 
 errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *trap);
 struct vm_region_trap *vm_search_region_trap(const struct vm *vm, uintptr_t addr);

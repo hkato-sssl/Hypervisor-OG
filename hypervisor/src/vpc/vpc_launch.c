@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/thread.h"
@@ -74,7 +75,6 @@ static errno_t setup_aarch32(struct vpc *vpc)
 static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
-    uint8_t phys_no;
     struct vm *vm;
 
     vpc->regs[VPC_PC] = boot->pc;
@@ -89,12 +89,6 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
     } else {
 	    setup_aarch32(vpc);
     }
-
-    phys_no = (uint8_t)aarch64_cpu_no();
-    vm_lock(vpc->vm);
-    vm->proc_map.virtual[phys_no] = vpc->proc_no;
-    vm->proc_map.physical[vpc->proc_no] = phys_no;
-    vm_unlock(vpc->vm);
 
     thread_write_tls(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
     thread_write_tls(TLS_CURRENT_VPC, (uint64_t)vpc);
@@ -133,10 +127,17 @@ errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
 
-    if ((vpc != NULL) && (boot != NULL) && is_valid_arch(boot->arch) && (! vpc->boolean.launched)) {
-        ret = launch(vpc, boot);
-    } else {
+    assert((vpc != NULL) && (boot != NULL));
+
+    if (vpc->boolean.launched) {
         ret = -EBUSY;
+    } else if (! is_valid_arch(boot->arch)) {
+        ret = -EINVAL;
+    } else {
+        ret = vm_map_proc_no(vpc->vm, vpc);
+        if (ret == SUCCESS) {
+            ret = launch(vpc, boot);
+        }
     }
 
     return ret;

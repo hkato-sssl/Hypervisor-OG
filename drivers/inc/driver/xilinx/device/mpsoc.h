@@ -11,7 +11,7 @@
 
 /* defines */
 
-#define NR_CPUS             4
+#define NR_SOC_CPUS         4
 #define GIC400D_BASE        0xf9010000
 #define GIC400C_BASE        0xf9020000
 #define GIC400H_BASE        0xf9040000

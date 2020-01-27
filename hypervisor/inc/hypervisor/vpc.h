@@ -37,7 +37,7 @@ struct insn;
 
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
 typedef errno_t (*vpc_emulator_t)(const struct insn *insn, void *arg);
-typedef errno_t (*vpc_exception_emulator_t)(struct vpc *);
+typedef errno_t (*vpc_exception_emulator_t)(struct vpc *, void *arg);
 
 struct vpc_exception_ops {
     vpc_exception_emulator_t        irq;
@@ -66,20 +66,23 @@ struct vpc {
         bool        launched;
     } boolean;
 
-    struct vpc_hook hook;
+    const struct vpc_hook               *hook;
 
     struct {
         const struct vpc_exception_ops  *ops;
+        void                            *arg;
     } exception;
 };
 
 struct vpc_configuration {
     struct vm       *vm;
     uint64_t        *regs;
-    uint8_t         proc_no;    // processor No.
-    struct vpc_hook hook;
+    uint8_t         proc_no;
+
+    const struct vpc_hook               *hook;
     struct {
         const struct vpc_exception_ops  *ops;
+        void                            *arg;
     } exception;
 };
 
@@ -101,7 +104,7 @@ void vpc_store_ctx_fpu(uint64_t *regs);
 void vpc_load_ctx_system_register(uint64_t *regs);
 void vpc_store_ctx_system_register(uint64_t *regs);
 
-errno_t vpc_configure(struct vpc *vpc, const struct vpc_configuration *config);
+errno_t vpc_initialize(struct vpc *vpc, const struct vpc_configuration *config);
 errno_t vpc_emulate_exception(struct vpc *vpc);
 errno_t vpc_emulate_gic400_irq(struct vpc *vpc);
 errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc);

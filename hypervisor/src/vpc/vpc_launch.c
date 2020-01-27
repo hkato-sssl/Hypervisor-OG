@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/thread.h"
 #include "hypervisor/vm.h"
@@ -73,6 +74,7 @@ static errno_t setup_aarch32(struct vpc *vpc)
 static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
+    uint8_t phys_no;
     struct vm *vm;
 
     vpc->regs[VPC_PC] = boot->pc;
@@ -88,6 +90,12 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
 	    setup_aarch32(vpc);
     }
 
+    phys_no = (uint8_t)aarch64_cpu_no();
+    vm_lock(vpc->vm);
+    vm->proc_map.virtual[phys_no] = vpc->proc_no;
+    vm->proc_map.physical[vpc->proc_no] = phys_no;
+    vm_unlock(vpc->vm);
+
     thread_write_tls(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
     thread_write_tls(TLS_CURRENT_VPC, (uint64_t)vpc);
     thread_write_tls(TLS_CURRENT_VM, (uint64_t)(vpc->vm));
@@ -96,8 +104,8 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
     vpc_load_ctx_system_register(vpc->regs);
     vpc_load_ctx_fpu(vpc->regs);
 
-    if (vpc->hook.launch != NULL) {
-        ret = (*(vpc->hook.launch))(vpc);
+    if ((vpc->hook != NULL) && (vpc->hook->launch != NULL)) {
+        ret = (*(vpc->hook->launch))(vpc);
         if (ret == SUCCESS) {
             ret = vpc_switch_to_el1(vpc->regs);
         }

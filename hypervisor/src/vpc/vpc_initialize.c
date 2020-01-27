@@ -1,5 +1,5 @@
 /*
- * vpc/vpc_configure.c
+ * vpc/vpc_initialize.c
  *
  * (C) 2019 Hidekazu Kato
  *
@@ -24,7 +24,7 @@
 
 /* functions */
 
-static errno_t configure(struct vpc *vpc, const struct vpc_configuration *config)
+static errno_t initialize(struct vpc *vpc, const struct vpc_configuration *config)
 {
     memset(vpc, 0, sizeof(struct vpc));
     memset(config->regs, 0, (sizeof(uint64_t) * NR_VPC_REGS));
@@ -34,6 +34,7 @@ static errno_t configure(struct vpc *vpc, const struct vpc_configuration *config
     vpc->proc_no = config->proc_no;
     vpc->hook = config->hook;
     vpc->exception.ops = config->exception.ops;
+    vpc->exception.arg = config->exception.arg;
 
     return SUCCESS;
 }
@@ -51,12 +52,12 @@ static bool is_valid_parameter(struct vpc *vpc, const struct vpc_configuration *
     return ret;
 }
 
-errno_t vpc_configure(struct vpc *vpc, const struct vpc_configuration *config)
+errno_t vpc_initialize(struct vpc *vpc, const struct vpc_configuration *config)
 {
     errno_t ret;
 
     if (is_valid_parameter(vpc, config)) {
-        ret = configure(vpc, config);
+        ret = initialize(vpc, config);
     } else {
         ret = -EINVAL;
     }

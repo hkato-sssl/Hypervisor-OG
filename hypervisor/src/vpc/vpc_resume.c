@@ -28,8 +28,8 @@ errno_t vpc_resume(struct vpc *vpc)
     assert(vpc != NULL);
 
     if (vpc->boolean.launched) {
-        if (vpc->hook.resume != NULL) {
-            ret = (*(vpc->hook.resume))(vpc);
+        if ((vpc->hook != NULL) && (vpc->hook->resume != NULL)) {
+            ret = (*(vpc->hook->resume))(vpc);
             if (ret == SUCCESS) {
                 ret = vpc_switch_to_el1(vpc->regs);
             }

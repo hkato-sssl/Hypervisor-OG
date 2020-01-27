@@ -25,7 +25,7 @@
 
 /* functions */
 
-static void maintenance_misr_eoi(struct vgic400 *vgic, struct vpc *vpc)
+static void maintenance_misr_eoi(struct vpc *vpc, struct vgic400 *vgic)
 {
     uint32_t d;
     uint32_t no;
@@ -41,7 +41,7 @@ static void maintenance_misr_eoi(struct vgic400 *vgic, struct vpc *vpc)
     }
 }
 
-static errno_t maintenance_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar)
+static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
     uint32_t d;
@@ -49,7 +49,7 @@ static errno_t maintenance_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint
     d = gic400_read_virtif_control(vgic, GICH_MISR);
 
     if ((d & BIT(0)) != 0) {    /* EOI */
-        maintenance_misr_eoi(vgic, vpc);
+        maintenance_misr_eoi(vpc, vgic);
         d = gic400_read_virtif_control(vgic, GICH_MISR);
     }
 
@@ -58,14 +58,14 @@ static errno_t maintenance_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint
     return ret;
 }
 
-static errno_t accept_irq(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar)
+static errno_t accept_irq(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
     uint32_t no;
 
     no = BF_EXTRACT(iar, 9, 0);
     if (no == GIC400_MAINTENANCE_INTERRUPT) {
-        ret = maintenance_interrupt(vgic, vpc, iar);
+        ret = maintenance_interrupt(vpc, vgic, iar);
     } else if (no == GIC400_HYPERVISOR_TIMER) {
         ret = -ENOTSUP;
     } else if (no < 16) {
@@ -80,7 +80,7 @@ static errno_t accept_irq(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar)
     return ret;
 }
 
-errno_t vgic400_emulate_irq_exception(struct vgic400 *vgic, struct vpc *vpc)
+errno_t vgic400_emulate_irq_exception(struct vpc *vpc, struct vgic400 *vgic)
 {
     errno_t ret;
     uint32_t iar;
@@ -89,7 +89,7 @@ errno_t vgic400_emulate_irq_exception(struct vgic400 *vgic, struct vpc *vpc)
     iar = gic400_ack(vgic->gic);
     while (iar != GIC400_SPURIOUS_INTERRUPT) {
         gic400_eoi(vgic->gic, iar);
-        ret = accept_irq(vgic, vpc, iar);
+        ret = accept_irq(vpc, vgic, iar);
         if (ret != SUCCESS) {
             break;
         }

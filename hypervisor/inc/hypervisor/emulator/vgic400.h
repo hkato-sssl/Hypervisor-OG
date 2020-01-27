@@ -36,7 +36,7 @@ struct vpc;
 struct insn;
 
 struct vgic400 {
-    struct vm       *owner;
+    struct vm       *vm;
     struct gic400   *gic;
     struct {
         void        *virtif_control;
@@ -63,17 +63,22 @@ struct vgic400 {
 
     uint32_t    lr[MAX_NR_VM_PROCESSORS][MAX_NR_VGIC400_LIST_REGISTERS];
     uint32_t    iar[MAX_NR_VM_PROCESSORS][MAX_NR_VGIC400_LIST_REGISTERS];
+
+    struct {
+        struct vm_region_trap   distributor;
+        struct vm_region_trap   cpuif;
+    } trap;
 };
 
 struct vgic400_configuration {
-    struct vm       *owner;
+    struct vm       *vm;
     struct gic400   *gic;
     struct {
-        void            *virtif_control;
-        void            *virtual_cpuif;
+        void        *virtif_control;
+        void        *virtual_cpuif;
     } base;
     struct {
-        bool        enable_cpuif;   /* enable virtualization of cpu interface */
+        bool        trap_cpuif;
     } boolean;
 };
 
@@ -90,14 +95,15 @@ struct vgic400_interrupt_configuration {
 
 /* functions */
 
-errno_t vgic400_configure(struct vgic400 *vgic, const struct vgic400_configuration *config);
+errno_t vgic400_initialize(struct vgic400 *vgic, const struct vgic400_configuration *config);
 errno_t vgic400_configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const struct vgic400_interrupt_configuration *config);
 errno_t vgic400_activate(struct vgic400 *vgic);
 errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
 errno_t vgic400_cpuif_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
-errno_t vgic400_emulate_irq_exception(struct vgic400 *vgic, struct vpc *vpc);
 errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);
 errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);
+
+errno_t vgic400_emulate_irq_exception(struct vpc *vpc, struct vgic400 *vgic);
 
 /* for debugging */
 

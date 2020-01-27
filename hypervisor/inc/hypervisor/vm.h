@@ -34,8 +34,6 @@ extern "C" {
 
 /* types */
 
-struct vgic;
-
 struct vm_region_trap {
     struct vm_region_trap   *next;
     struct {
@@ -66,7 +64,6 @@ struct vm {
     } boolean;
 
     struct {
-        struct vgic                 *vgic;
         struct {
             struct vm_region_trap   *memory_region;
         } trap;
@@ -77,25 +74,15 @@ struct vm_configuration {
     /* resources */
     void                            *owner;
     uint8_t                         nr_procs;
-    struct vpc                      *vpcs[MAX_NR_VM_PROCESSORS];
-    struct {
-        uint64_t                    *addr;
-        size_t                      size;
-    } regs[MAX_NR_VM_PROCESSORS];
     struct aarch64_stage2           *stage2;
-    struct {
-        struct {
-            const struct vpc_exception_ops  *ops;
-        } exception;
-    } vpc;
-    struct vgic                     *vgic;
 };
 
 /* variables */
 
 /* functions */
 
-errno_t vm_configure(struct vm *vm, const struct vm_configuration *config);
+errno_t vm_initialize(struct vm *vm, const struct vm_configuration *config);
+errno_t vm_register_vpc(struct vm *vm, struct vpc *vpc);
 errno_t vm_launch(struct vm *vm, const struct vpc_boot_configuration *boot);
 errno_t vm_init_local_context(struct vm *vm);
 struct vpc *vm_vpc(const struct vm *vm, uint32_t index);

@@ -31,7 +31,7 @@ static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *region)
 
     attr.xn = 1;
     attr.af = 1;
-    attr.sh = STAGE2_SH_ISH;
+    attr.sh = STAGE2_SH_OSH;
     attr.memattr = STAGE2_MEMATTR_DEVICE_GRE;
 
     if (region->condition.read) {

@@ -19,6 +19,9 @@ extern "C" {
 
 /* includes */
 
+#include <stdint.h>
+#include "lib/system/errno.h"
+
 /* defines */
 
 /* types */
@@ -31,11 +34,15 @@ uint64_t aarch64_at_s1e0r(uint64_t va);
 uint64_t aarch64_at_s1e0w(uint64_t va);
 uint64_t aarch64_at_s1e1r(uint64_t va);
 uint64_t aarch64_at_s1e1w(uint64_t va);
+uint64_t aarch64_at_s1e2r(uint64_t va);
+uint64_t aarch64_at_s1e2w(uint64_t va);
 
 uint64_t aarch64_at_s12e0r(uint64_t va);
 uint64_t aarch64_at_s12e0w(uint64_t va);
 uint64_t aarch64_at_s12e1r(uint64_t va);
 uint64_t aarch64_at_s12e1w(uint64_t va);
+
+errno_t aarch64_va_to_pa_el2(uint64_t *pa, uint64_t va);
 
 #ifdef __cplusplus
 }

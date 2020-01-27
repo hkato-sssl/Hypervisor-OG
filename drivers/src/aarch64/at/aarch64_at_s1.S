@@ -1,5 +1,5 @@
 /*
- * aatch64/aarch64_at_s1.S
+ * aatch64/at/aarch64_at_s1.S
  *
  * (C) 2020 Hidekazu Kato
  */

@@ -51,7 +51,7 @@ static errno_t register_trap_cpuif(struct vgic400 *vgic)
     errno_t ret;
     struct vm_region_trap *trap;
 
-    trap = &(vgic->trap.distributor);
+    trap = &(vgic->trap.cpuif);
     trap->condition.read = false;
     trap->condition.write = true;
     trap->ipa = (uint64_t)gic400_cpuif_register_base(vgic->gic);

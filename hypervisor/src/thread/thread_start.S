@@ -5,6 +5,7 @@
  */
 
 #include "lib/asm.h"
+#include "lib/bit.h"
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/thread.h"
 
@@ -31,9 +32,10 @@ thread_start:
          */
 
         msr             SPSel, #0
-        sub             sp, x1, #TLS_SIZE
-        mov             x1, sp
+        sub             x1, x1, #TLS_SIZE
+        bic             x1, x1, #BITS(3, 0)
         msr             TPIDR_EL2, x1
+        mov             sp, x1
 
         /*
          * initialize TLS

@@ -31,7 +31,7 @@ static errno_t emulate_memory_insn(const struct insn *insn, struct vgic400 *vgic
     uintptr_t reg;
 
     base = (uintptr_t)vgic->base.virtual_cpuif;
-    reg = (insn->op.ldr.pa - base);
+    reg = (insn->op.str.pa - base);
     if (reg == GICC_PMR) {
         ret = vgic400_cpuif_write_pmr(vgic, insn);
     } else {

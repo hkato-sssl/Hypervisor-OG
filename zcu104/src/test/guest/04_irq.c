@@ -25,12 +25,17 @@
 #define UART_PA     0xff000000
 #define UART_SIZE   4096
 
+#define RAM_START   0x20000000
+#define RAM_SIZE    0x01000000
+
 /* types */
 
 /* prototypes */
 
 errno_t guest_02_data_abort(const struct insn *insn, void *arg);
 static errno_t emulate_hvc(struct vpc *vpc);
+static errno_t hook_launch(struct vpc *vpc);
+static errno_t hook_resume(struct vpc *vpc);
 
 /* variables */
 
@@ -50,6 +55,11 @@ static const struct vpc_exception_ops ops = {
 
 /* functions */
 
+static struct vpc_hook hook = {
+    .launch = hook_launch,
+    .resume = hook_resume
+};
+
 static errno_t emulate_hvc(struct vpc *vpc)
 {
     gic400_dump_ns_cpuif(&sys_gic);
@@ -57,6 +67,23 @@ static errno_t emulate_hvc(struct vpc *vpc)
     for (;;);
 
     return SUCCESS;
+}
+
+static errno_t hook_launch(struct vpc *vpc)
+{
+    errno_t ret;
+
+    ret = gic400_set_priority_mask(mpsoc.vgic400.gic, 0xff);
+    if (ret == SUCCESS) {
+        ret = vgic400_activate(&(mpsoc.vgic400));
+    }
+
+    return ret;
+}
+
+static errno_t hook_resume(struct vpc *vpc)
+{
+    return gic400_set_priority_mask(mpsoc.vgic400.gic, 0xff);
 }
 
 static void map_device(void)
@@ -85,7 +112,7 @@ static void init_vpc(void)
 
     memset(&config, 0, sizeof(config));
     config.vm = &(mpsoc.soc.vm);
-    config.hook = NULL;
+    config.hook = &hook;
     config.exception.ops = &ops;
     config.exception.arg = &(mpsoc.vgic400);
     for (i = 0; i < NR_CPUS; ++i) {
@@ -121,16 +148,22 @@ static void init_mpsoc(void)
     config.stage2.pool = &sys_pool;
     config.stage2.level1_table = table;
     config.gic = &sys_gic;
+    config.ram.ipa = RAM_START;
+    config.ram.pa = RAM_START;
+    config.ram.size = RAM_SIZE;
     ret = xilinx_mpsoc_initialize(&mpsoc, &config);
+    printk("xilinx_mpsoc_initialize() -> %d\n", ret);
     if (ret == SUCCESS) {
         init_vpc();
     }
 }
 
-void test_guest_04(void)
+void *test_guest_04(void)
 {
     init_mpsoc();
 
     printk("Done\n");
+
+    return &mpsoc;
 }
 

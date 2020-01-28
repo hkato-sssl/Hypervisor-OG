@@ -57,7 +57,7 @@ static errno_t register_trap_cpuif(struct vgic400 *vgic)
     trap->ipa = (uint64_t)gic400_cpuif_register_base(vgic->gic);
     trap->pa = (uint64_t)vgic->base.virtual_cpuif;
     trap->size = 4096;
-    trap->emulator.arg = &vgic;
+    trap->emulator.arg = vgic;
     trap->emulator.handler = (vpc_emulator_t)vgic400_cpuif_emulate_memory_access;
     ret = vm_register_region_trap(vgic->vm, trap);
 
@@ -75,7 +75,7 @@ static errno_t register_trap_distributor(struct vgic400 *vgic, const struct vgic
     trap->ipa = (uint64_t)gic400_distributor_register_base(vgic->gic);
     trap->pa = trap->ipa;
     trap->size = 4096;
-    trap->emulator.arg = &vgic;
+    trap->emulator.arg = vgic;
     trap->emulator.handler = (vpc_emulator_t)vgic400_distributor_emulate_memory_access;
     ret = vm_register_region_trap(vgic->vm, trap);
     if (ret == SUCCESS) {

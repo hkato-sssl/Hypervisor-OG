@@ -119,7 +119,7 @@ static errno_t initialize(struct vgic400 *vgic, const struct vgic400_configurati
      * 24-16 guest       Undefined
      */
 
-    vgic->target.irq[0] = 0xd90000ff;
+    vgic->target.irq[0] = 0xd900ffff;
 
     ret = register_trap_distributor(vgic, config);
 

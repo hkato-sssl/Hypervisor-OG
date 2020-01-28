@@ -49,6 +49,7 @@ void init_hw(void)
         memset(&config, 0, sizeof(config));
         config.base.distributor = (void *)GIC400D_BASE;
         config.base.cpuif = (void *)GIC400C_BASE;
+        config.boolean.priority_drop = true;
         ret = gic400_init(&sys_gic, &config);
     } else {
         ret = gic400_init(&sys_gic, NULL);

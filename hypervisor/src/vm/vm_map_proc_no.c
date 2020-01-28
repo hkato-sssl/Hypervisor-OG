@@ -42,7 +42,7 @@ errno_t vm_map_proc_no(struct vm *vm, const struct vpc *vpc)
 
     assert((vm != NULL) && (vpc != NULL));
 
-    if ((vm->nr_procs < vpc->proc_no) && (vm->vpcs[vpc->proc_no] == vpc)) {
+    if ((vpc->proc_no < vm->nr_procs) && (vm->vpcs[vpc->proc_no] == vpc)) {
         ret = map_proc_no(vm, vpc);
     } else {
         ret = -EINVAL;

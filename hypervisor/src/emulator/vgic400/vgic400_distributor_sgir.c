@@ -32,7 +32,7 @@ static errno_t write_sgir(struct vgic400 *vgic, const struct insn *insn)
 
     d = insn_str_src_value(insn);
     irq = d & BITS(3, 0);
-    if (irq < 8) {
+    if (irq < 16) {
         v_target_list = BF_EXTRACT(d, 23, 16);
         p_target_list = vgic400_v2p_cpu_map_b(v_target_list, insn->vpc->vm);
         if (p_target_list != 0) {

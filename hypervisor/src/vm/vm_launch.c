@@ -46,7 +46,7 @@ errno_t vm_launch(struct vm *vm, const struct vpc_boot_configuration *boot)
         ret = launch(vm, boot);
     } else {
         vm_unlock(vm);
-        ret = -EINVAL;
+        ret = -EBUSY;
     }
 
     return ret;

@@ -78,7 +78,7 @@ errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic, const struct insn *
 
     ret = vgic400_distributor_byte_register(vgic, insn, reg, GICD_IPRIORITYR(0));
     if ((ret == SUCCESS) && (insn->type == INSN_TYPE_STR)) {
-        no = (reg - GICD_IPRIORITYR(0)) / 4;
+        no = reg - GICD_IPRIORITYR(0);
         if (insn->op.str.size == 1) {
             ret = update_priority_b(vgic, insn, no);
         } else {

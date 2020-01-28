@@ -13,6 +13,8 @@
 
 #define SUCCESS         0
 
+#if defined(ASSEMBLY) || (! defined(HYPERVISOR))
+
 #define E2BIG           10      /* Argument list too long. */
 #define EACCES          11      /* Permission denied. */
 #define EADDRINUSE      12      /* Address in use. */
@@ -95,6 +97,8 @@
 #define EWOULDBLOCK     EAGAIN  /* Operation would block (may be the same value as [EAGAIN]). */
 #define EXDEV           88      /* Cross-device link. */
 
+#endif
+
 #ifndef ASSEMBLY
 
 #ifdef __cplusplus
@@ -107,6 +111,92 @@ extern "C" {
 
 /* defines */
 
+#ifdef HYPERVISOR
+
+#define E2BIG           system_errno(10, __FILE__, __LINE__)
+#define EACCES          system_errno(11, __FILE__, __LINE__)
+#define EADDRINUSE      system_errno(12, __FILE__, __LINE__)
+#define EADDRNOTAVAIL   system_errno(13, __FILE__, __LINE__)
+#define EAFNOSUPPORT    system_errno(14, __FILE__, __LINE__)
+#define EAGAIN          system_errno(15, __FILE__, __LINE__)
+#define EALREADY        system_errno(16, __FILE__, __LINE__)
+#define EBADF           system_errno(17, __FILE__, __LINE__)
+#define EBADMSG         system_errno(18, __FILE__, __LINE__)
+#define EBUSY           system_errno(19, __FILE__, __LINE__)
+#define ECANCELED       system_errno(20, __FILE__, __LINE__)
+#define ECHILD          system_errno(21, __FILE__, __LINE__)
+#define ECONNABORTED    system_errno(22, __FILE__, __LINE__)
+#define ECONNREFUSED    system_errno(23, __FILE__, __LINE__)
+#define ECONNRESET      system_errno(24, __FILE__, __LINE__)
+#define EDEADLK         system_errno(25, __FILE__, __LINE__)
+#define EDESTADDRREQ    system_errno(26, __FILE__, __LINE__)
+#define EDOM            system_errno(27, __FILE__, __LINE__)
+#define EDQUOT          system_errno(28, __FILE__, __LINE__)
+#define EEXIST          system_errno(29, __FILE__, __LINE__)
+#define EFAULT          system_errno(30, __FILE__, __LINE__)
+#define EFBIG           system_errno(31, __FILE__, __LINE__)
+#define EHOSTUNREACH    system_errno(32, __FILE__, __LINE__)
+#define EIDRM           system_errno(33, __FILE__, __LINE__)
+#define EILSEQ          system_errno(34, __FILE__, __LINE__)
+#define EINPROGRESS     system_errno(35, __FILE__, __LINE__)
+#define EINTR           system_errno(36, __FILE__, __LINE__)
+#define EINVAL          system_errno(37, __FILE__, __LINE__)
+#define EIO             system_errno(38, __FILE__, __LINE__)
+#define EISCONN         system_errno(39, __FILE__, __LINE__)
+#define EISDIR          system_errno(40, __FILE__, __LINE__)
+#define ELOOP           system_errno(41, __FILE__, __LINE__)
+#define EMFILE          system_errno(42, __FILE__, __LINE__)
+#define EMLINK          system_errno(43, __FILE__, __LINE__)
+#define EMSGSIZE        system_errno(44, __FILE__, __LINE__)
+#define EMULTIHOP       system_errno(45, __FILE__, __LINE__)
+#define ENAMETOOLONG    system_errno(46, __FILE__, __LINE__)
+#define ENETDOWN        system_errno(47, __FILE__, __LINE__)
+#define ENETRESET       system_errno(48, __FILE__, __LINE__)
+#define ENETUNREACH     system_errno(49, __FILE__, __LINE__)
+#define ENFILE          system_errno(50, __FILE__, __LINE__)
+#define ENOBUFS         system_errno(51, __FILE__, __LINE__)
+#define ENODATA         system_errno(52, __FILE__, __LINE__)
+#define ENODEV          system_errno(53, __FILE__, __LINE__)
+#define ENOENT          system_errno(54, __FILE__, __LINE__)
+#define ENOEXEC         system_errno(55, __FILE__, __LINE__)
+#define ENOLCK          system_errno(56, __FILE__, __LINE__)
+#define ENOLINK         system_errno(57, __FILE__, __LINE__)
+#define ENOMEM          system_errno(58, __FILE__, __LINE__)
+#define ENOMSG          system_errno(59, __FILE__, __LINE__)
+#define ENOPROTOOPT     system_errno(60, __FILE__, __LINE__)
+#define ENOSPC          system_errno(61, __FILE__, __LINE__)
+#define ENOSR           system_errno(62, __FILE__, __LINE__)
+#define ENOSTR          system_errno(63, __FILE__, __LINE__)
+#define ENOSYS          system_errno(64, __FILE__, __LINE__)
+#define ENOTCONN        system_errno(65, __FILE__, __LINE__)
+#define ENOTDIR         system_errno(66, __FILE__, __LINE__)
+#define ENOTEMPTY       system_errno(67, __FILE__, __LINE__)
+#define ENOTRECOVERABLE system_errno(68, __FILE__, __LINE__)
+#define ENOTSOCK        system_errno(69, __FILE__, __LINE__)
+#define ENOTSUP         system_errno(70, __FILE__, __LINE__)
+#define ENOTTY          system_errno(71, __FILE__, __LINE__)
+#define ENXIO           system_errno(72, __FILE__, __LINE__)
+#define EOPNOTSUPP      system_errno(70, __FILE__, __LINE__)
+#define EOVERFLOW       system_errno(73, __FILE__, __LINE__)
+#define EOWNERDEAD      system_errno(74, __FILE__, __LINE__)
+#define EPERM           system_errno(75, __FILE__, __LINE__)
+#define EPIPE           system_errno(76, __FILE__, __LINE__)
+#define EPROTO          system_errno(77, __FILE__, __LINE__)
+#define EPROTONOSUPPORT system_errno(78, __FILE__, __LINE__)
+#define EPROTOTYPE      system_errno(79, __FILE__, __LINE__)
+#define ERANGE          system_errno(80, __FILE__, __LINE__)
+#define EROFS           system_errno(81, __FILE__, __LINE__)
+#define ESPIPE          system_errno(82, __FILE__, __LINE__)
+#define ESRCH           system_errno(83, __FILE__, __LINE__)
+#define ESTALE          system_errno(84, __FILE__, __LINE__)
+#define ETIME           system_errno(85, __FILE__, __LINE__)
+#define ETIMEDOUT       system_errno(86, __FILE__, __LINE__)
+#define ETXTBSY         system_errno(87, __FILE__, __LINE__)
+#define EWOULDBLOCK     system_errno(15, __FILE__, __LINE__)
+#define EXDEV           system_errno(88, __FILE__, __LINE__)
+
+#endif
+
 /* types */
 
 typedef int32_t errno_t;
@@ -114,6 +204,8 @@ typedef int32_t errno_t;
 /* variables */
 
 /* functions */
+
+errno_t system_errno(errno_t code, const char *file, unsigned long line);
 
 #ifdef __cplusplus
 }

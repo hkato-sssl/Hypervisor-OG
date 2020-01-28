@@ -51,20 +51,20 @@ static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *region)
 
 static errno_t append_region_trap(struct vm_region_trap *head, struct vm_region_trap *region)
 {
-    errno_t ret;
+    bool done;
     struct vm_region_trap *p;
 
-    ret = -EINVAL;
+    done = false;
     for (p = head; p != region; p = p->next) {
         if (p->next == NULL) {
             p->next = region;
             region->next = NULL;
-            ret = SUCCESS;
+            done = true;
             break;
         }
     }
 
-    return ret;
+    return (done ? SUCCESS : -EINVAL);
 }
 
 static errno_t register_region_trap(struct vm *vm, struct vm_region_trap *region)

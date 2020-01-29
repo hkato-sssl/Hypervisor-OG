@@ -62,6 +62,7 @@ struct xilinx_mpsoc_configuration {
 /* functions */
 
 errno_t xilinx_mpsoc_initialize(struct xilinx_mpsoc *soc, const struct xilinx_mpsoc_configuration *config);
+errno_t xilinx_mpsoc_initialize_vpc(struct xilinx_mpsoc *soc, struct vpc *vpc, const struct vpc_configuration *config);
 
 #ifdef __cplusplus
 }

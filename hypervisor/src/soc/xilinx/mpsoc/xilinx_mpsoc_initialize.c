@@ -1,5 +1,5 @@
 /*
- * hypervisor/soc/xilinx/mpsoc/xilinx_mpsoc_initialize.c
+ * soc/xilinx/mpsoc/xilinx_mpsoc_initialize.c
  *
  * (C) 2020 Hidekazu Kato
  */

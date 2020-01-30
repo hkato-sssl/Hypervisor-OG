@@ -33,9 +33,6 @@
 /* prototypes */
 
 errno_t guest_02_data_abort(const struct insn *insn, void *arg);
-static errno_t emulate_hvc(struct vpc *vpc);
-static errno_t hook_launch(struct vpc *vpc);
-static errno_t hook_resume(struct vpc *vpc);
 
 /* variables */
 
@@ -47,18 +44,9 @@ static DESC_XILINX_MPSOC_STAGE2_LEVEL1_TABLE(table);
 static struct xilinx_mpsoc mpsoc;
 static struct vpc vpcs[NR_CPUS];
 static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
-static const struct vpc_exception_ops ops = {
-    .irq = (vpc_exception_emulator_t)vgic400_emulate_irq_exception,
-    .aarch64.data_abort = (vpc_exception_emulator_t)vpc_emulate_aarch64_data_abort,
-    .aarch64.hvc = (vpc_exception_emulator_t)emulate_hvc,
-};
+static struct vpc_exception_ops ops;
 
 /* functions */
-
-static struct vpc_hook hook = {
-    .launch = hook_launch,
-    .resume = hook_resume
-};
 
 static errno_t emulate_hvc(struct vpc *vpc)
 {
@@ -67,23 +55,6 @@ static errno_t emulate_hvc(struct vpc *vpc)
     for (;;);
 
     return SUCCESS;
-}
-
-static errno_t hook_launch(struct vpc *vpc)
-{
-    errno_t ret;
-
-    ret = gic400_set_priority_mask(mpsoc.vgic400.gic, 0xff);
-    if (ret == SUCCESS) {
-        ret = vgic400_activate(&(mpsoc.vgic400));
-    }
-
-    return ret;
-}
-
-static errno_t hook_resume(struct vpc *vpc)
-{
-    return gic400_set_priority_mask(mpsoc.vgic400.gic, 0xff);
 }
 
 static void map_device(void)
@@ -110,23 +81,20 @@ static void init_vpc(void)
     struct vpc *vpc;
     struct vpc_configuration config;
 
+    ops = *xilinx_mpsoc_default_vpc_exception_ops();
+    ops.aarch64.hvc = emulate_hvc;
+
     memset(&config, 0, sizeof(config));
     config.vm = &(mpsoc.soc.vm);
-    config.hook = &hook;
+    config.hook = xilinx_mpsoc_default_vpc_hook();
     config.exception.ops = &ops;
-    config.exception.arg = &(mpsoc.vgic400);
+
     for (i = 0; i < NR_CPUS; ++i) {
         vpc = &(vpcs[i]);
         config.regs = regs[i];
         config.proc_no = (uint8_t)i;
-        ret = vpc_initialize(vpc, &config);
+        ret = xilinx_mpsoc_initialize_vpc(&mpsoc, vpc, &config);
         if (ret == SUCCESS) {
-            ret = vm_register_vpc(&(mpsoc.soc.vm), vpc);
-            if (ret != SUCCESS) {
-                printk("vm_register_vpc() -> %d\n", ret);
-                break;
-            }
-        } else {
             printk("vpc_initialize(%d) -> %d\n", i, ret);
             break;
         }

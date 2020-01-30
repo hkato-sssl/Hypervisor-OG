@@ -46,7 +46,7 @@ void hypervisor(void)
 {
     printk("CPU#%u\n", cpu_no());
 
-    if (cpu_no() == 0) {
+    if (cpu_no() == 3) {
         test();
     }
 

@@ -40,6 +40,8 @@ struct soc {
 
 /* functions */
 
+errno_t soc_initialize_vpc(struct soc *soc, struct vpc *vpc, const struct vpc_configuration *config);
+
 /* inline functions */
 
 static inline void soc_lock(struct soc *soc)

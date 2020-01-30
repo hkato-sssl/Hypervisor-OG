@@ -37,7 +37,7 @@ struct insn;
 
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
 typedef errno_t (*vpc_emulator_t)(const struct insn *insn, void *arg);
-typedef errno_t (*vpc_exception_emulator_t)(struct vpc *, void *arg);
+typedef errno_t (*vpc_exception_emulator_t)(struct vpc *);
 
 struct vpc_exception_ops {
     vpc_exception_emulator_t        irq;
@@ -52,15 +52,22 @@ struct vpc_exception_ops {
 };
 
 struct vpc_hook {
-    errno_t     (*launch)(struct vpc *);
-    errno_t     (*resume)(struct vpc *);
+    struct {
+        errno_t     (*launch)(struct vpc *);
+        errno_t     (*resume)(struct vpc *);
+    } previous;
+
+    struct {
+        errno_t     (*launch)(struct vpc *);
+        errno_t     (*resume)(struct vpc *);
+    } post;
 };
 
 struct vpc {
     spin_lock_t     lock;
     struct vm       *vm;
     uint64_t        *regs;
-    uint8_t         proc_no;    // processor No.
+    uint8_t         proc_no;
 
     struct {
         bool        launched;
@@ -70,7 +77,6 @@ struct vpc {
 
     struct {
         const struct vpc_exception_ops  *ops;
-        void                            *arg;
     } exception;
 };
 
@@ -82,7 +88,6 @@ struct vpc_configuration {
     const struct vpc_hook               *hook;
     struct {
         const struct vpc_exception_ops  *ops;
-        void                            *arg;
     } exception;
 };
 

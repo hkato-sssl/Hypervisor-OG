@@ -34,7 +34,6 @@ static errno_t initialize(struct vpc *vpc, const struct vpc_configuration *confi
     vpc->proc_no = config->proc_no;
     vpc->hook = config->hook;
     vpc->exception.ops = config->exception.ops;
-    vpc->exception.arg = config->exception.arg;
 
     return SUCCESS;
 }

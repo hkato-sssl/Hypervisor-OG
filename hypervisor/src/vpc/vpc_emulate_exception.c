@@ -42,7 +42,7 @@ static errno_t call_emulator(struct vpc *vpc, vpc_exception_emulator_t func)
     errno_t ret;
 
     if (func != NULL) {
-        ret = (*func)(vpc, vpc->exception.arg);
+        ret = (*func)(vpc);
     } else {
         ret = -ENOTSUP;
     }

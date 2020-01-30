@@ -32,8 +32,6 @@
 
 /* prototypes */
 
-errno_t guest_02_data_abort(const struct insn *insn, void *arg);
-
 /* variables */
 
 extern struct gic400 sys_gic;

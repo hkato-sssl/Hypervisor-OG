@@ -107,7 +107,7 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
     thread_write_tls(TLS_CURRENT_VPC, (uint64_t)vpc);
     thread_write_tls(TLS_CURRENT_VM, (uint64_t)(vpc->vm));
 
-    vpc->boolean.launched = true;
+    vpc->status = VPC_STATUS_RUNNING;
     vpc_load_ctx_system_register(vpc->regs);
     vpc_load_ctx_fpu(vpc->regs);
 
@@ -138,6 +138,27 @@ static errno_t call_previous_hook(struct vpc *vpc, const struct vpc_boot_configu
     return ret;
 }
 
+static errno_t validate_status(const struct vpc *vpc)
+{
+    errno_t ret;
+
+    switch (vpc->status) {
+    case VPC_STATUS_DOWN:
+    case VPC_STATUS_WAKEUP:
+        ret = SUCCESS;
+        break;
+    case VPC_STATUS_RUNNING:
+        ret = -EBUSY;
+        break;
+    case VPC_STATUS_WAITING:
+    default:
+        ret = -EINVAL;
+        break;
+    }
+
+    return ret;
+}
+
 static bool is_valid_arch(enum vpc_arch arch)
 {
     bool valid;
@@ -157,14 +178,15 @@ errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 
     assert((vpc != NULL) && (boot != NULL));
 
-    if (vpc->boolean.launched) {
-        ret = -EBUSY;
-    } else if (! is_valid_arch(boot->arch)) {
-        ret = -EINVAL;
-    } else {
-        ret = vm_map_proc_no(vpc->vm, vpc);
-        if (ret == SUCCESS) {
-            ret = call_previous_hook(vpc, boot);
+    ret = validate_status(vpc);
+    if (ret == SUCCESS) {
+        if (! is_valid_arch(boot->arch)) {
+            ret = -EINVAL;
+        } else {
+            ret = vm_map_proc_no(vpc->vm, vpc);
+            if (ret == SUCCESS) {
+                ret = call_previous_hook(vpc, boot);
+            }
         }
     }
 

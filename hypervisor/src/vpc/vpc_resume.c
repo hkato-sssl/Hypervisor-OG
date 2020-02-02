@@ -71,7 +71,7 @@ errno_t vpc_resume(struct vpc *vpc)
 
     assert(vpc != NULL);
 
-    if (vpc->boolean.launched) {
+    if (vpc->status == VPC_STATUS_RUNNING) {
         ret = call_previous_hook(vpc);
     } else {
         ret = -EPERM;

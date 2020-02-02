@@ -36,6 +36,13 @@ struct vpc;
 struct insn;
 
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
+enum vpc_status {
+    VPC_STATUS_DOWN,
+    VPC_STATUS_WAITING,
+    VPC_STATUS_WAKEUP,
+    VPC_STATUS_RUNNING
+};
+
 typedef errno_t (*vpc_emulator_t)(const struct insn *insn, void *arg);
 typedef errno_t (*vpc_exception_emulator_t)(struct vpc *);
 
@@ -68,10 +75,7 @@ struct vpc {
     struct vm       *vm;
     uint64_t        *regs;
     uint8_t         proc_no;
-
-    struct {
-        bool        launched;
-    } boolean;
+    enum vpc_status status;
 
     const struct vpc_hook               *hook;
 

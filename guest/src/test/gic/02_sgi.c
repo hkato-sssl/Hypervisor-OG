@@ -85,6 +85,10 @@ void test_gic_02(void)
     printk("<%s>\n", __func__);
 
     init_interrupt();
+
+    gic400_dump_ns_cpuif(&gic);
+    gic400_dump_ns_distributor(&gic);
+
     for (i = 0; i < 32; ++i) {
         assert_sgi(i);
     }

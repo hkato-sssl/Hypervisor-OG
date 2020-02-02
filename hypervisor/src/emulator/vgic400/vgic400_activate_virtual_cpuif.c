@@ -1,5 +1,5 @@
 /*
- * emulator/vgic400/vgic400_activate.c
+ * emulator/vgic400/vgic400_activate_virtual_cpuif.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -40,7 +40,7 @@ static errno_t configure_interrupt(struct vgic400 *vgic)
     return ret;
 }
 
-errno_t vgic400_activate(struct vgic400 *vgic)
+errno_t vgic400_activate_virtual_cpuif(struct vgic400 *vgic)
 {
     errno_t ret;
     uint32_t d;

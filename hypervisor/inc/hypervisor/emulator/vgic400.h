@@ -97,7 +97,7 @@ struct vgic400_interrupt_configuration {
 
 errno_t vgic400_initialize(struct vgic400 *vgic, const struct vgic400_configuration *config);
 errno_t vgic400_configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const struct vgic400_interrupt_configuration *config);
-errno_t vgic400_activate(struct vgic400 *vgic);
+errno_t vgic400_activate_virtual_cpuif(struct vgic400 *vgic);
 errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
 errno_t vgic400_cpuif_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
 errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);

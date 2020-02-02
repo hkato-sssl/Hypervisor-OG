@@ -5,8 +5,10 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "lib/system/errno.h"
 #include "driver/aarch64/at.h"
+#include "driver/system/cpu.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "vpc_local.h"
@@ -42,11 +44,26 @@ static errno_t va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va)
     return ret;
 }
 
+static bool is_valid_vpc(const struct vpc *vpc)
+{
+    bool valid;
+    uint8_t physical_no;
+
+    physical_no = cpu_no();
+    if (vpc->vm->proc_map.virtual[physical_no] == vpc->proc_no) {
+        valid = true;
+    } else {
+        valid = false;
+    }
+
+    return valid;
+}
+
 errno_t vpc_va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va)
 {
     errno_t ret;
 
-    if (vpc->vm->boolean.launched) {
+    if (is_valid_vpc(vpc)) {
         ret = va_to_pa_r(vpc, pa, va);
     } else {
         ret = -EPERM;

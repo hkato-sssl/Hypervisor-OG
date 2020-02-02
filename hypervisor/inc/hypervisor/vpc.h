@@ -103,6 +103,7 @@ struct vpc_boot_configuration {
 
 errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot);
 errno_t vpc_resume(struct vpc *vpc);
+errno_t vpc_event_loop(struct vpc *vpc);
 
 void vpc_load_ctx_fpu(uint64_t *regs);
 void vpc_store_ctx_fpu(uint64_t *regs);

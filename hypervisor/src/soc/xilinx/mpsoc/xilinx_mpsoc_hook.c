@@ -8,6 +8,7 @@
 #include "lib/system/errno.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
+#include "hypervisor/emulator/vgic400.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 #include "mpsoc_local.h"
 
@@ -29,7 +30,7 @@ errno_t xilinx_mpsoc_previous_launch_hook(struct vpc *vpc)
     chip = vpc->vm->owner;
     ret = gic400_set_priority_mask(chip->vgic400.gic, 0xff);
     if (ret == SUCCESS) {
-        ret = vgic400_activate(&(chip->vgic400));
+        ret = vgic400_activate_virtual_cpuif(&(chip->vgic400));
     }
 
     return ret;

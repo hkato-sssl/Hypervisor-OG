@@ -28,7 +28,6 @@ static errno_t initialize(struct vm *vm, const struct vm_configuration *config)
     vm->owner = config->owner;
     vm->nr_procs = config->nr_procs;
     vm->stage2 = config->stage2;
-    vm->boolean.launched = false;
 
     return SUCCESS;
 }

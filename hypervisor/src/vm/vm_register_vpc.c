@@ -37,8 +37,6 @@ errno_t vm_register_vpc(struct vm *vm, struct vpc *vpc)
     vm_lock(vm);
     if (vpc->proc_no >= vm->nr_procs) {
         ret = -EINVAL;
-    } else if (vm->boolean.launched) {
-        ret = -EBUSY;
     } else if (vm->vpcs[vpc->proc_no] != NULL) {
         ret = -EEXIST;
     } else {

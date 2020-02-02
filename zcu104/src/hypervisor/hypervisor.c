@@ -33,13 +33,8 @@ static void test(void)
     boot.arch = VPC_ARCH_AARCH64;
     boot.pc = 0x20000000;
     boot.sp = 0;
-    ret = vm_launch(&(chip->soc.vm), &boot);
-    while (ret == SUCCESS) {
-        ret = vpc_emulate_exception(chip->soc.vm.vpcs[0]);
-        if (ret == SUCCESS) {
-            ret = vpc_resume(chip->soc.vm.vpcs[0]);
-        }
-    }
+    ret = vm_launch(&(chip->soc.vm), 0, &boot);
+    printk("vm_launch() -> %d\n", ret);
 }
 
 void hypervisor(void)

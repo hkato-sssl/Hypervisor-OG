@@ -12,7 +12,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "lib/bit.h"
+#include "lib/system/memio.h"
+#include "lib/system/spin_lock.h"
 #include "driver/aarch64/system_register/esr_el2_iss.h"
+#include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 
 /* defines */
@@ -34,8 +37,31 @@ extern "C" {
 /* functions */
 
 errno_t vpc_switch_to_el1(uint64_t *regs);
+void vpc_set_boot_parameters(struct vpc *vpc, const struct vpc_boot_configuration *boot);
 
 /* inline functions */
+
+static inline void vpc_lock(struct vpc *vpc)
+{
+    spin_lock(&(vpc->lock));
+}
+
+static inline void vpc_unlock(struct vpc *vpc)
+{
+    spin_unlock(&(vpc->lock));
+}
+
+static inline void vpc_set_status(struct vpc *vpc, enum vpc_status status)
+{
+    memory_barrier();
+    vpc->status = status;
+    memory_barrier();
+}
+
+static inline enum vpc_status vpc_watch_status(const struct vpc *vpc)
+{
+    return ((volatile const struct vpc *)vpc)->status;
+}
 
 static inline bool is_aarch64(const struct vpc *vpc)
 {
@@ -69,6 +95,19 @@ static inline bool is_el0(const struct vpc *vpc)
 static inline bool is_el1(const struct vpc *vpc)
 {
     return (! is_el0(vpc));
+}
+
+static inline bool is_valid_vpc(const struct vpc *vpc)
+{
+    bool valid;
+
+    if ((vpc->vm != NULL) && (vpc->vm->nr_procs < vpc->proc_no) && (vpc->vm->vpcs[vpc->proc_no] == vpc)) {
+        valid = true;
+    } else {
+        valid = false;
+    }
+
+    return valid;
 }
 
 #ifdef __cplusplus

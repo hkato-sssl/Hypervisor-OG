@@ -18,10 +18,10 @@
 /* variables */
 
 static const struct vpc_hook hook = {
-    .previous.launch = xilinx_mpsoc_previous_launch_hook,
-    .previous.resume = NULL,
-    .post.launch = NULL,
-    .post.resume = NULL
+    .launch.previous = xilinx_mpsoc_previous_launch_hook,
+    .launch.post = NULL,
+    .resume.previous = NULL,
+    .resume.post = NULL,
 };
 
 /* functions */

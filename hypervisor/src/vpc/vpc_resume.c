@@ -21,12 +21,25 @@
 
 /* functions */
 
+static errno_t call_previous_hook(struct vpc *vpc)
+{
+    errno_t ret;
+
+    if ((vpc->hook != NULL) && (vpc->hook->resume.previous != NULL)) {
+        ret = (*(vpc->hook->resume.previous))(vpc);
+    } else {
+        ret = SUCCESS;
+    }
+
+    return ret;
+}
+
 static errno_t call_post_hook(struct vpc *vpc)
 {
     errno_t ret;
 
-    if ((vpc->hook != NULL) && (vpc->hook->post.resume != NULL)) {
-        ret = (*(vpc->hook->post.resume))(vpc);
+    if ((vpc->hook != NULL) && (vpc->hook->resume.post != NULL)) {
+        ret = (*(vpc->hook->resume.post))(vpc);
     } else {
         ret = SUCCESS;
     }
@@ -37,29 +50,15 @@ static errno_t call_post_hook(struct vpc *vpc)
 static errno_t resume(struct vpc *vpc)
 {
     errno_t ret;
+    errno_t post;
 
-    ret = vpc_switch_to_el1(vpc->regs);
+    ret = call_previous_hook(vpc);
     if (ret == SUCCESS) {
-        ret = call_post_hook(vpc);
-    } else {
-        /* In this case, ignore the return value. */
-        call_post_hook(vpc);
-    }
-
-    return ret;
-}
-
-static errno_t call_previous_hook(struct vpc *vpc)
-{
-    errno_t ret;
-
-    if ((vpc->hook != NULL) && (vpc->hook->previous.resume != NULL)) {
-        ret = (*(vpc->hook->previous.resume))(vpc);
-        if (ret == SUCCESS) {
-            ret = resume(vpc);
+        ret = vpc_switch_to_el1(vpc->regs);
+        post = call_post_hook(vpc);
+        if ((ret == SUCCESS) && (post != SUCCESS)) {
+            ret = post;
         }
-    } else {
-        ret = resume(vpc);
     }
 
     return ret;
@@ -68,11 +67,13 @@ static errno_t call_previous_hook(struct vpc *vpc)
 errno_t vpc_resume(struct vpc *vpc)
 {
     errno_t ret;
+    enum vpc_status status;
 
     assert(vpc != NULL);
 
-    if (vpc->status == VPC_STATUS_RUNNING) {
-        ret = call_previous_hook(vpc);
+    status = vpc_watch_status(vpc);
+    if (status == VPC_STATUS_RUN) {
+        ret = resume(vpc);
     } else {
         ret = -EPERM;
     }

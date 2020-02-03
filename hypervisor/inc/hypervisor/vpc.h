@@ -38,9 +38,9 @@ struct insn;
 enum vpc_arch { VPC_ARCH_AARCH32, VPC_ARCH_AARCH64 };
 enum vpc_status {
     VPC_STATUS_DOWN,
-    VPC_STATUS_WAITING,
+    VPC_STATUS_WAIT,
     VPC_STATUS_WAKEUP,
-    VPC_STATUS_RUNNING
+    VPC_STATUS_RUN
 };
 
 typedef errno_t (*vpc_emulator_t)(const struct insn *insn, void *arg);
@@ -60,14 +60,14 @@ struct vpc_exception_ops {
 
 struct vpc_hook {
     struct {
-        errno_t     (*launch)(struct vpc *);
-        errno_t     (*resume)(struct vpc *);
-    } previous;
+        errno_t     (*previous)(struct vpc *);
+        errno_t     (*post)(struct vpc *);
+    } launch;
 
     struct {
-        errno_t     (*launch)(struct vpc *);
-        errno_t     (*resume)(struct vpc *);
-    } post;
+        errno_t     (*previous)(struct vpc *);
+        errno_t     (*post)(struct vpc *);
+    } resume;
 };
 
 struct vpc {
@@ -98,7 +98,7 @@ struct vpc_configuration {
 struct vpc_boot_configuration {
     enum vpc_arch   arch;
     uint64_t        pc;
-    uint64_t        sp;
+    uint64_t        arg;
 };
 
 /* variables */
@@ -108,6 +108,8 @@ struct vpc_boot_configuration {
 errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot);
 errno_t vpc_resume(struct vpc *vpc);
 errno_t vpc_event_loop(struct vpc *vpc);
+errno_t vpc_wait_request(struct vpc *vpc);
+errno_t vpc_wakeup_processor(struct vpc *vpc, const struct vpc_boot_configuration *boot);
 
 void vpc_load_ctx_fpu(uint64_t *regs);
 void vpc_store_ctx_fpu(uint64_t *regs);

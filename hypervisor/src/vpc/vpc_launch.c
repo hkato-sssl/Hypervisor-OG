@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
+#include "driver/arm.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/thread.h"
@@ -27,20 +28,7 @@
 
 /* functions */
 
-static errno_t call_post_hook(struct vpc *vpc)
-{
-    errno_t ret;
-
-    if ((vpc->hook != NULL) && (vpc->hook->post.launch != NULL)) {
-        ret = (*(vpc->hook->post.launch))(vpc);
-    } else {
-        ret = SUCCESS;
-    }
-
-    return ret;
-}
-
-static errno_t init_system_register(struct vpc *vpc)
+static void initialize_el1(struct vpc *vpc)
 {
     uint64_t d;
 
@@ -49,38 +37,57 @@ static errno_t init_system_register(struct vpc *vpc)
     d = aarch64_read_midr_el1();
     vpc->regs[VPC_VPIDR_EL2] = d;
     vpc->regs[VPC_VMPIDR_EL2] = BIT(31) | vpc->proc_no;
-
-    return SUCCESS;
 }
 
-static errno_t setup_aarch64(struct vpc *vpc)
+static errno_t switch_to_guest_context(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
+    struct vm *vm;
 
-    /* SPSR:
-     *    D, A, I, F = 1
-     *    M[4:0] = 0x05 - AArch64 EL1h
-     */
-    vpc->regs[VPC_SPSR_EL2] = PSTATE_D | PSTATE_A | PSTATE_I | PSTATE_F | 0x05;
-    vpc->regs[VPC_HCR_EL2] = HCR_RW | HCR_IMO | HCR_VM;
+    if (boot != NULL) {
+        vpc_set_boot_parameters(vpc, boot);
+    }
+    initialize_el1(vpc);
 
-    ret = init_system_register(vpc);
+    vm = vpc->vm;
+    vpc->regs[VPC_VTTBR_EL2] = aarch64_stage2_vttbr_el2(vm->stage2);
+    vpc->regs[VPC_VTCR_EL2] = aarch64_stage2_vtcr_el2(vm->stage2);
+
+    thread_write_tls(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
+    thread_write_tls(TLS_CURRENT_VPC, (uint64_t)vpc);
+    thread_write_tls(TLS_CURRENT_VM, (uint64_t)(vpc->vm));
+
+    vpc_load_ctx_system_register(vpc->regs);
+    vpc_load_ctx_fpu(vpc->regs);
+    vpc_set_status(vpc, VPC_STATUS_RUN);
+
+    ret = vpc_switch_to_el1(vpc->regs);
 
     return ret;
 }
 
-static errno_t setup_aarch32(struct vpc *vpc)
+static errno_t call_previous_hook(struct vpc *vpc)
 {
     errno_t ret;
 
-    /* SPSR:
-     *    I, F = 1 - IRQ and FIQ are masked
-     *    M[4:0] = 0x13 - AArch32 Supervisor mode
-     */
-    vpc->regs[VPC_SPSR_EL2] = PSTATE_I | PSTATE_F | 0x13;
-    vpc->regs[VPC_HCR_EL2] = HCR_IMO | HCR_VM;
+    if ((vpc->hook != NULL) && (vpc->hook->launch.previous != NULL)) {
+        ret = (*(vpc->hook->launch.previous))(vpc);
+    } else {
+        ret = SUCCESS;
+    }
 
-    ret = init_system_register(vpc);
+    return ret;
+}
+
+static errno_t call_post_hook(struct vpc *vpc)
+{
+    errno_t ret;
+
+    if ((vpc->hook != NULL) && (vpc->hook->launch.post != NULL)) {
+        ret = (*(vpc->hook->launch.post))(vpc);
+    } else {
+        ret = SUCCESS;
+    }
 
     return ret;
 }
@@ -88,105 +95,66 @@ static errno_t setup_aarch32(struct vpc *vpc)
 static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
-    struct vm *vm;
+    errno_t post;
 
-    vpc->regs[VPC_PC] = boot->pc;
-    vpc->regs[VPC_SP_EL1] = boot->sp;
-
-    vm = vpc->vm;
-    vpc->regs[VPC_VTTBR_EL2] = aarch64_stage2_vttbr_el2(vm->stage2);
-    vpc->regs[VPC_VTCR_EL2] = aarch64_stage2_vtcr_el2(vm->stage2);
-
-    if (boot->arch == VPC_ARCH_AARCH64) {
-	    setup_aarch64(vpc);
-    } else {
-	    setup_aarch32(vpc);
-    }
-
-    thread_write_tls(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
-    thread_write_tls(TLS_CURRENT_VPC, (uint64_t)vpc);
-    thread_write_tls(TLS_CURRENT_VM, (uint64_t)(vpc->vm));
-
-    vpc->status = VPC_STATUS_RUNNING;
-    vpc_load_ctx_system_register(vpc->regs);
-    vpc_load_ctx_fpu(vpc->regs);
-
-    ret = vpc_switch_to_el1(vpc->regs);
+    ret = call_previous_hook(vpc);
     if (ret == SUCCESS) {
-        ret = call_post_hook(vpc);
-    } else {
-        /* In this case, ignore the return value. */
-        call_post_hook(vpc);
+        ret = switch_to_guest_context(vpc, boot);
+        post = call_post_hook(vpc);
+        if ((ret == SUCCESS) && (post != SUCCESS)) {
+            ret = post;
+        }
     }
 
     return ret;
 }
 
-static errno_t call_previous_hook(struct vpc *vpc, const struct vpc_boot_configuration *boot)
+static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
+    enum vpc_status status;
 
-    if ((vpc->hook != NULL) && (vpc->hook->previous.launch != NULL)) {
-        ret = (*(vpc->hook->previous.launch))(vpc);
-        if (ret == SUCCESS) {
-            ret = launch(vpc, boot);
+    if (is_valid_vpc(vpc)) {
+        status = vpc_watch_status(vpc);
+        switch (status) {
+        case VPC_STATUS_DOWN:
+            if ((boot != NULL) && (boot->arch != VPC_ARCH_AARCH64)) {
+                ret = SUCCESS;
+            } else {
+                ret = -EINVAL;
+            }
+            break;
+        case VPC_STATUS_WAKEUP:
+            if (boot == NULL) {
+                ret = SUCCESS;
+            } else {
+                ret = -EINVAL;
+            }
+            break;
+        case VPC_STATUS_RUN:
+            ret = -EBUSY;
+            break;
+        default:
+            ret = -EPERM;
         }
     } else {
-        ret = launch(vpc, boot);
+        ret = -EPERM;
     }
 
     return ret;
-}
-
-static errno_t validate_status(const struct vpc *vpc)
-{
-    errno_t ret;
-
-    switch (vpc->status) {
-    case VPC_STATUS_DOWN:
-    case VPC_STATUS_WAKEUP:
-        ret = SUCCESS;
-        break;
-    case VPC_STATUS_RUNNING:
-        ret = -EBUSY;
-        break;
-    case VPC_STATUS_WAITING:
-    default:
-        ret = -EINVAL;
-        break;
-    }
-
-    return ret;
-}
-
-static bool is_valid_arch(enum vpc_arch arch)
-{
-    bool valid;
-
-    if ((arch == VPC_ARCH_AARCH64) || (arch == VPC_ARCH_AARCH32)) {
-        valid = true;
-    } else {
-        valid = false;
-    }
-
-    return valid;
 }
 
 errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
 
-    assert((vpc != NULL) && (boot != NULL));
+    assert(vpc != NULL);
 
-    ret = validate_status(vpc);
+    ret = validate_parameters(vpc, boot);
     if (ret == SUCCESS) {
-        if (! is_valid_arch(boot->arch)) {
-            ret = -EINVAL;
-        } else {
-            ret = vm_map_proc_no(vpc->vm, vpc);
-            if (ret == SUCCESS) {
-                ret = call_previous_hook(vpc, boot);
-            }
+        ret = vm_map_proc_no(vpc->vm, vpc);
+        if (ret == SUCCESS) {
+            ret = launch(vpc, boot);
         }
     }
 

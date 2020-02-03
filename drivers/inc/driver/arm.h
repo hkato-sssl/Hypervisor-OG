@@ -95,6 +95,16 @@ static inline void arm_unlock_interrupts(uint32_t lock)
     aarch64_unlock_interrupts(lock);
 }
 
+static inline void arm_wfe(void)
+{
+    __asm volatile ("wfe" ::: "memory");
+}
+
+static inline void arm_wfi(void)
+{
+    __asm volatile ("wfi" ::: "memory");
+}
+
 #ifdef __cplusplus
 }
 #endif

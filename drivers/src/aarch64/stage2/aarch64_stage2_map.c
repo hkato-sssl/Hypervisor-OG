@@ -32,7 +32,7 @@ static bool is_valid_address(const struct aarch64_stage2 *stage2, void *ipa, voi
     return valid;
 }
 
-static errno_t validate_parameter(const struct aarch64_stage2 *stage2, void *ipa, void *pa)
+static errno_t validate_parameters(const struct aarch64_stage2 *stage2, void *ipa, void *pa)
 {
     errno_t ret;
 
@@ -50,7 +50,7 @@ errno_t aarch64_stage2_map(struct aarch64_stage2 *stage2, void *ipa, void *pa, s
 {
     errno_t ret;
 
-    ret = validate_parameter(stage2, ipa, pa);
+    ret = validate_parameters(stage2, ipa, pa);
     if (ret == SUCCESS) {
         ret = aarch64_mmu_map_4KB_granule(&(stage2->base), ipa, pa, sz, attr);
     }

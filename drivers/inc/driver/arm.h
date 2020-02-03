@@ -105,6 +105,11 @@ static inline void arm_wfi(void)
     __asm volatile ("wfi" ::: "memory");
 }
 
+static inline void arm_sev(void)
+{
+    __asm volatile ("sev" ::: "memory");
+}
+
 #ifdef __cplusplus
 }
 #endif

@@ -44,7 +44,7 @@ static errno_t va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va)
     return ret;
 }
 
-static bool is_valid_vpc(const struct vpc *vpc)
+static bool is_translatable_vpc(const struct vpc *vpc)
 {
     bool valid;
     uint8_t physical_no;
@@ -63,7 +63,7 @@ errno_t vpc_va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va)
 {
     errno_t ret;
 
-    if (is_valid_vpc(vpc)) {
+    if (is_translatable_vpc(vpc)) {
         ret = va_to_pa_r(vpc, pa, va);
     } else {
         ret = -EPERM;

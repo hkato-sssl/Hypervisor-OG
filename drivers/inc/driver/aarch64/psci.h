@@ -9,17 +9,7 @@
 
 /* includes */
 
-/* defines */
-
-#ifndef ASSEMBLY
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* includes */
-
-#include <stdint.h>
+#include "driver/arm/psci_error.h"
 
 /* defines */
 
@@ -41,6 +31,18 @@ extern "C" {
 #define PSCI_SMC64_PSCI_SET_SUSPEND_MODE    0x8400000f
 #define PSCI_SMC64_PSCI_STAT_RESIDENCY      0xc4000010
 #define PSCI_SMC64_PSCI_STAT_COUNT          0xc4000011
+
+#ifndef ASSEMBLY
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* includes */
+
+#include <stdint.h>
+
+/* defines */
 
 /* types */
 

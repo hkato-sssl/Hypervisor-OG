@@ -152,10 +152,7 @@ errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 
     ret = validate_parameters(vpc, boot);
     if (ret == SUCCESS) {
-        ret = vm_map_proc_no(vpc->vm, vpc);
-        if (ret == SUCCESS) {
-            ret = launch(vpc, boot);
-        }
+        ret = launch(vpc, boot);
     }
 
     return ret;

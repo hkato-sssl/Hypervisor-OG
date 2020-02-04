@@ -19,10 +19,10 @@
 
 /* functions */
 
-static uint64_t translate_cpu_map_b(uint64_t src, const uint8_t *table)
+static uint64_t translate_cpu_map_b(uint64_t src, const uint16_t *table)
 {
     int i;
-    uint8_t no;
+    uint16_t no;
     uint64_t d;
 
     d = 0;
@@ -38,7 +38,7 @@ static uint64_t translate_cpu_map_b(uint64_t src, const uint8_t *table)
     return d;
 }
 
-static uint64_t translate_cpu_map_w(uint64_t src, const uint8_t *table)
+static uint64_t translate_cpu_map_w(uint64_t src, const uint16_t *table)
 {
     uint64_t d;
     uint64_t d0, d1, d2, d3;

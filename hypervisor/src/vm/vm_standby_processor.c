@@ -34,7 +34,7 @@ static errno_t standby_processor(struct vm *vm, struct vpc *vpc)
     return ret;
 }
 
-errno_t vm_standby_processor(struct vm *vm, uint8_t proc_no)
+errno_t vm_standby_processor(struct vm *vm, uint16_t proc_no)
 {
     errno_t ret;
 

@@ -30,7 +30,7 @@ extern "C" {
 /* defines */
 
 #define MAX_NR_VM_PROCESSORS    8
-#define VM_NO_ASSIGN            0xff
+#define VM_NO_ASSIGN            0xffff
 
 /* types */
 
@@ -52,10 +52,10 @@ struct vm_region_trap {
 struct vm {
     spin_lock_t                     lock;
     void                            *owner;
-    uint8_t                         nr_procs;
+    uint16_t                        nr_procs;
     struct {
-        uint8_t                     virtual[MAX_NR_VM_PROCESSORS];
-        uint8_t                     physical[MAX_NR_VM_PROCESSORS];
+        uint16_t                    virtual[MAX_NR_VM_PROCESSORS];
+        uint16_t                    physical[MAX_NR_VM_PROCESSORS];
     } proc_map;
     struct vpc                      *vpcs[MAX_NR_VM_PROCESSORS];
     struct aarch64_stage2           *stage2;
@@ -82,7 +82,7 @@ struct vm {
 struct vm_configuration {
     /* resources */
     void                            *owner;
-    uint8_t                         nr_procs;
+    uint16_t                        nr_procs;
     struct aarch64_stage2           *stage2;
 };
 
@@ -92,14 +92,12 @@ struct vm_configuration {
 
 errno_t vm_initialize(struct vm *vm, const struct vm_configuration *config);
 errno_t vm_register_vpc(struct vm *vm, struct vpc *vpc);
-errno_t vm_launch(struct vm *vm, uint8_t vpc_no, const struct vpc_boot_configuration *boot);
-errno_t vm_standby_processor(struct vm *vm, uint8_t vpc_no);
+errno_t vm_launch(struct vm *vm, uint16_t vpc_no, const struct vpc_boot_configuration *boot);
+errno_t vm_standby_processor(struct vm *vm, uint16_t vpc_no);
 errno_t vm_init_local_context(struct vm *vm);
-struct vpc *vm_vpc(const struct vm *vm, uint16_t proc_no);
 struct vpc *vm_aquire_vpc(struct vm *vm, uint16_t proc_no);
-uint8_t vm_virtual_proc_no(struct vm *vm, uint8_t physical_no);
-uint8_t vm_physical_proc_no(struct vm *vm, uint8_t virtual_no);
-errno_t vm_map_proc_no(struct vm *vm, const struct vpc *vpc);
+uint16_t vm_virtual_proc_no(struct vm *vm, uint16_t physical_no);
+uint16_t vm_physical_proc_no(struct vm *vm, uint16_t virtual_no);
 
 errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *trap);
 struct vm_region_trap *vm_search_region_trap(const struct vm *vm, uintptr_t addr);

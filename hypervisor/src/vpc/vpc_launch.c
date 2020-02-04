@@ -118,7 +118,7 @@ static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_
         status = vpc_watch_status(vpc);
         switch (status) {
         case VPC_STATUS_DOWN:
-            if ((boot != NULL) && (boot->arch != VPC_ARCH_AARCH64)) {
+            if ((boot != NULL) && (boot->arch == VPC_ARCH_AARCH64)) {
                 ret = SUCCESS;
             } else {
                 ret = -EINVAL;

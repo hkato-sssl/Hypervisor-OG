@@ -101,7 +101,7 @@ static inline bool is_valid_vpc(const struct vpc *vpc)
 {
     bool valid;
 
-    if ((vpc->vm != NULL) && (vpc->vm->nr_procs < vpc->proc_no) && (vpc->vm->vpcs[vpc->proc_no] == vpc)) {
+    if ((vpc->vm != NULL) && (vpc->proc_no < vpc->vm->nr_procs) && (vpc->vm->vpcs[vpc->proc_no] == vpc)) {
         valid = true;
     } else {
         valid = false;

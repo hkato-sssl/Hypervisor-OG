@@ -32,7 +32,7 @@ static void test(void)
     memset(&boot, 0, sizeof(boot));
     boot.arch = VPC_ARCH_AARCH64;
     boot.pc = 0x20000000;
-    boot.sp = 0;
+    boot.arg = 0;
     ret = vm_launch(&(chip->soc.vm), 0, &boot);
     printk("vm_launch() -> %d\n", ret);
 }

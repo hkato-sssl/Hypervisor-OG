@@ -64,7 +64,19 @@ struct vm {
         struct {
             struct vm_region_trap   *memory_region;
         } trap;
+        struct {
+            struct {
+                const struct psci_ops   *ops;
+            } aarch64;
+            struct {
+                const struct psci_ops   *ops;
+            } aarch32;
+            struct {
+                uint8_t     report_unknown_function:1;
+            } flag;
+        } psci;
     } emulator;
+
 };
 
 struct vm_configuration {
@@ -81,8 +93,10 @@ struct vm_configuration {
 errno_t vm_initialize(struct vm *vm, const struct vm_configuration *config);
 errno_t vm_register_vpc(struct vm *vm, struct vpc *vpc);
 errno_t vm_launch(struct vm *vm, uint8_t vpc_no, const struct vpc_boot_configuration *boot);
+errno_t vm_standby_processor(struct vm *vm, uint8_t vpc_no);
 errno_t vm_init_local_context(struct vm *vm);
-struct vpc *vm_vpc(const struct vm *vm, uint32_t index);
+struct vpc *vm_vpc(const struct vm *vm, uint16_t proc_no);
+struct vpc *vm_aquire_vpc(struct vm *vm, uint16_t proc_no);
 uint8_t vm_virtual_proc_no(struct vm *vm, uint8_t physical_no);
 uint8_t vm_physical_proc_no(struct vm *vm, uint8_t virtual_no);
 errno_t vm_map_proc_no(struct vm *vm, const struct vpc *vpc);

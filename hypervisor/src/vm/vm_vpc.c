@@ -6,7 +6,6 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <assert.h>
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
 
@@ -20,17 +19,16 @@
 
 /* functions */
 
-struct vpc *vm_vpc(const struct vm *vm, uint32_t no)
+struct vpc *vm_vpc(const struct vm *vm, uint16_t vpc_no)
 {
     struct vpc *p;
 
-    assert((vm != NULL) && (vm->vpcs != NULL));
-
-    if (no < vm->nr_procs) {
-        p = vm->vpcs[no];
+    if (vpc_no < vm->nr_procs) {
+        p = vm->vpcs[vpc_no];
     } else {
         p = NULL;
     }
 
     return p;
 }
+

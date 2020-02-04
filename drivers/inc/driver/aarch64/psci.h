@@ -31,6 +31,7 @@ extern "C" {
 
 /* functions */
 
+int32_t aarch64_psci_cpu_off(void);
 int32_t aarch64_psci_cpu_on(uint64_t target, void *entry, uintptr_t context);
 
 #ifdef __cplusplus

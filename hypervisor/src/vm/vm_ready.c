@@ -1,5 +1,5 @@
 /*
- * vm/vm_standby_processor.c
+ * vm/vm_ready.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -19,7 +19,7 @@
 
 /* functions */
 
-static errno_t standby_processor(struct vm *vm, struct vpc *vpc)
+static errno_t ready(struct vm *vm, struct vpc *vpc)
 {
     errno_t ret;
 
@@ -34,7 +34,7 @@ static errno_t standby_processor(struct vm *vm, struct vpc *vpc)
     return ret;
 }
 
-errno_t vm_standby_processor(struct vm *vm, uint16_t proc_no)
+errno_t vm_ready(struct vm *vm, uint16_t proc_no)
 {
     errno_t ret;
 
@@ -43,7 +43,7 @@ errno_t vm_standby_processor(struct vm *vm, uint16_t proc_no)
     if (proc_no >= vm->nr_procs) {
         vpc = vm_aquire_vpc(vm, proc_no);
         if (vpc != NULL) {
-            ret = standby_processor(vm, vpc);
+            ret = ready(vm, vpc);
         } else {
             ret = -EPERM;
         }

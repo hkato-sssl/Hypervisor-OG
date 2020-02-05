@@ -3,8 +3,8 @@
  *
  * (C) 2020 Hidekazu Kato
  *
- * CAUTION:
- * 本APIはvpc_launch()から呼び出される事を前提とした実装である。
+ * NOTE:
+ * 本APIはvm_ready()から呼び出される事を前提とした実装である。
  */
 
 #include <stdint.h>

@@ -146,8 +146,6 @@ static errno_t stage2_init(struct aarch64_stage2 *stage2, const struct aarch64_s
     stage2->pa_mask = BITS(63, stage2->pa_width);
     stage2->vtcr_el2 = generate_vtcr_el2(config);
 
-
-
     if (config->first_table != NULL) {
         stage2->base.addr = config->first_table;
         ret = SUCCESS;

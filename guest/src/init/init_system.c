@@ -16,6 +16,7 @@
 #include "lib/log.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
+#include "driver/system/cpu.h"
 #include "driver/xilinx/mpsoc/ps_uart.h"
 #include "driver/xilinx/mpsoc/device/ps_uart.h"
 
@@ -128,12 +129,16 @@ errno_t init_system(void)
 {
     errno_t ret;
 
-    ret = init_printk();
-    if (ret == SUCCESS) {
+    if (cpu_no() == 0) {
+        ret = init_printk();
+        if (ret == SUCCESS) {
+    	    ret = init_exception();
+        }
+        if (ret == SUCCESS) {
+            ret = system_register_spin_lock(&system_lock);
+        }
+    } else {
     	ret = init_exception();
-    }
-    if (ret == SUCCESS) {
-        ret = system_register_spin_lock(&system_lock);
     }
 
     return ret;

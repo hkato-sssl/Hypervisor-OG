@@ -13,6 +13,7 @@
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/system_register/tcr_elx.h"
 #include "driver/aarch64/mmu.h"
+#include "driver/system/cpu.h"
 #include "system/mmu.h"
 
 /* defines */
@@ -145,12 +146,16 @@ errno_t init_memory_map(void)
 {
     errno_t ret;
 
-    ret = init_mmu();
-    if (ret == SUCCESS) {
-        ret = init_map();
+    if (cpu_no() == 0) {
+        ret = init_mmu();
         if (ret == SUCCESS) {
-            ret = aarch64_mmu_enable(&sys_mmu);
+            ret = init_map();
+            if (ret == SUCCESS) {
+                ret = aarch64_mmu_enable(&sys_mmu);
+            }
         }
+    } else {
+        ret = aarch64_mmu_enable(&sys_mmu);
     }
 
     return ret;

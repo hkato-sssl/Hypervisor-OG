@@ -34,6 +34,10 @@ _start:
         msr             SPSel, #0
         mov             sp, x0
 
+        mrs             x0, MPIDR_EL1
+        and             x0, x0, #0xff
+        cbnz            x0, call_main
+
         // check parameters of .bss region
 
         adrl            x0, __bss_start
@@ -55,7 +59,7 @@ _start:
         bne             0b
 
         // call main()
-
+call_main:
         mov             x0, xzr                 // argc = 0
         mov             x1, xzr                 // argv = NULL
         bl              main

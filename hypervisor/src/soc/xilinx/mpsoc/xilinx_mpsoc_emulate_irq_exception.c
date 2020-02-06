@@ -25,7 +25,7 @@ errno_t xilinx_mpsoc_emulate_irq_exception(struct vpc *vpc)
     errno_t ret;
     struct xilinx_mpsoc *chip;
 
-    chip = vpc->vm->owner;
+    chip = vpc->vm->soc->chip;
     ret = vgic400_emulate_irq_exception(vpc, &(chip->vgic400));
 
     return ret;

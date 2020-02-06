@@ -6,9 +6,10 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <assert.h>
+#include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/arm.h"
+#include "hypervisor/soc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "vpc_local.h"
@@ -36,10 +37,12 @@ static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_
 {
     errno_t ret;
 
-    if ((vpc->vm->nr_procs >= vpc->proc_no) || (vpc->vm->vpcs[vpc->proc_no] != vpc)) {
-        ret = -EPERM;
-    } else if (boot->arch != VPC_ARCH_AARCH64) {
+    if ((vpc->vm->nr_procs >= vpc->proc_no) || (boot->arch != VPC_ARCH_AARCH64) || (! IS_ALIGNED(boot->pc, 4))) {
         ret = -EINVAL;
+    } else if (vpc->vm->vpcs[vpc->proc_no] != vpc) {
+        ret = -EPERM;
+    } else if (! soc_test_executable_region(vpc->vm->soc, boot->pc)) {
+        ret = -ENOMEM;
     } else {
         ret = SUCCESS;
     }
@@ -51,8 +54,6 @@ errno_t vpc_wakeup_processor(struct vpc *vpc, const struct vpc_boot_configuratio
 {
     errno_t ret;
     enum vpc_status status;
-
-    assert((vpc != NULL) && (boot != NULL));
 
     ret = validate_parameters(vpc, boot);
     if (ret == SUCCESS) {

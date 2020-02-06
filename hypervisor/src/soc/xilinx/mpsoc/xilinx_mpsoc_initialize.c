@@ -6,11 +6,11 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <assert.h>
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
 #include "driver/arm/gic400.h"
 #include "driver/aarch64/stage2.h"
+#include "hypervisor/soc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/vgic400.h"
@@ -23,6 +23,8 @@
 /* prototypes */
 
 /* variables */
+
+extern const struct soc_ops xilinx_mpsoc_ops;
 
 /* functions */
 
@@ -42,8 +44,7 @@ static errno_t map_ram_region(struct xilinx_mpsoc *chip, const struct xilinx_mps
     return ret;
 }
 
-
-static errno_t initialize_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     struct vgic400_configuration config;
@@ -62,18 +63,18 @@ static errno_t initialize_vgic400(struct xilinx_mpsoc *chip, const struct xilinx
     return ret;
 }
 
-static errno_t initialize_vm(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t init_vm(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     struct vm_configuration config;
 
     memset(&config, 0, sizeof(config));
-    config.owner = chip;
+    config.soc = &(chip->soc);
     config.nr_procs = chip_config->nr_procs;
     config.stage2 = &(chip->soc.stage2);
     ret = vm_initialize(&(chip->soc.vm), &config);
     if (ret == SUCCESS) {
-        ret = initialize_vgic400(chip, chip_config);
+        ret = init_vgic400(chip, chip_config);
     }
 
     return ret;
@@ -97,7 +98,37 @@ static errno_t init_stage2(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_
     config.first_table = chip_config->stage2.level1_table;
     ret = aarch64_stage2_init(&(chip->soc.stage2), &config);
     if (ret == SUCCESS) {
-        ret = initialize_vm(chip, chip_config);
+        ret = init_vm(chip, chip_config);
+    }
+
+    return ret;
+}
+
+static errno_t init_xilinx_mpsoc(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+{
+    errno_t ret;
+
+    chip->ram.ipa = chip_config->ram.ipa;
+    chip->ram.size = chip_config->ram.size;
+
+    ret = init_stage2(chip, chip_config);
+
+    return ret;
+}
+
+static errno_t init_soc(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+{
+    errno_t ret;
+    struct soc_configuration config;
+
+    memset(&config, 0, sizeof(config));
+    config.chip = chip;
+    config.ops = &xilinx_mpsoc_ops;
+    config.nr_procs = chip_config->nr_procs;
+
+    ret = soc_initialize(&(chip->soc), &config);
+    if (ret == SUCCESS) {
+        ret = init_xilinx_mpsoc(chip, chip_config);
     }
 
     return ret;
@@ -108,8 +139,8 @@ errno_t xilinx_mpsoc_initialize(struct xilinx_mpsoc *chip, const struct xilinx_m
     errno_t ret;
 
     if ((chip != NULL) && (config != NULL)) {
-        spin_lock_init(&(chip->soc.lock));
-        ret = init_stage2(chip, config);
+        memset(chip, 0, sizeof(*chip));
+        ret = init_soc(chip, config);
     } else {
         ret = -EINVAL;
     }

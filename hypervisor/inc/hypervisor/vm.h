@@ -34,6 +34,8 @@ extern "C" {
 
 /* types */
 
+struct soc;
+
 struct vm_region_trap {
     struct vm_region_trap   *next;
     struct {
@@ -51,7 +53,7 @@ struct vm_region_trap {
 
 struct vm {
     spin_lock_t                     lock;
-    void                            *owner;
+    struct soc                      *soc;
     uint16_t                        nr_procs;
     struct {
         uint16_t                    virtual[MAX_NR_VM_PROCESSORS];
@@ -76,14 +78,12 @@ struct vm {
             } flag;
         } psci;
     } emulator;
-
 };
 
 struct vm_configuration {
-    /* resources */
-    void                            *owner;
-    uint16_t                        nr_procs;
-    struct aarch64_stage2           *stage2;
+    struct soc              *soc;
+    uint16_t                nr_procs;
+    struct aarch64_stage2   *stage2;
 };
 
 /* variables */
@@ -93,6 +93,7 @@ struct vm_configuration {
 errno_t vm_initialize(struct vm *vm, const struct vm_configuration *config);
 errno_t vm_register_vpc(struct vm *vm, struct vpc *vpc);
 errno_t vm_launch(struct vm *vm, uint16_t vpc_no, const struct vpc_boot_configuration *boot);
+errno_t vm_wakeup(struct vm *vm, uint16_t vpc_no, const struct vpc_boot_configuration *boot);
 errno_t vm_ready(struct vm *vm, uint16_t vpc_no);
 errno_t vm_init_local_context(struct vm *vm);
 struct vpc *vm_aquire_vpc(struct vm *vm, uint16_t proc_no);

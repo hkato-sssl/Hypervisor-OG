@@ -27,7 +27,7 @@ errno_t xilinx_mpsoc_previous_launch_hook(struct vpc *vpc)
     errno_t ret;
     struct xilinx_mpsoc *chip;
 
-    chip = vpc->vm->owner;
+    chip = vpc->vm->soc->chip;
     ret = gic400_set_priority_mask(chip->vgic400.gic, 0xff);
     if (ret == SUCCESS) {
         ret = vgic400_activate_virtual_cpuif(&(chip->vgic400));

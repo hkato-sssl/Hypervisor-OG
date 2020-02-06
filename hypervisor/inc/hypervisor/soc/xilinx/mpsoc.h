@@ -35,8 +35,12 @@ extern "C" {
 
 struct xilinx_mpsoc {
     struct soc      soc;
-
     struct vgic400  vgic400;
+
+    struct {
+        uintptr_t   ipa;
+        size_t      size;
+    } ram;
 };
 
 struct xilinx_mpsoc_configuration {

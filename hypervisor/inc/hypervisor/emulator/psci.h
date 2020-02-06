@@ -54,6 +54,7 @@ struct psci_ops {
 /* functions */
 
 errno_t psci_emulate_aarch64_request(struct vpc *vpc);
+errno_t psci_set_error(struct vpc *vpc, int64_t error);
 
 #ifdef __cplusplus
 }

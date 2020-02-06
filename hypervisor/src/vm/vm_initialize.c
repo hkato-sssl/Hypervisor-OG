@@ -25,7 +25,7 @@ static errno_t initialize(struct vm *vm, const struct vm_configuration *config)
     memset(vm, 0, sizeof(*vm));
     memset(&(vm->proc_map), VM_NO_ASSIGN, sizeof(vm->proc_map));
     spin_lock_init(&(vm->lock));
-    vm->owner = config->owner;
+    vm->soc = config->soc;
     vm->nr_procs = config->nr_procs;
     vm->stage2 = config->stage2;
 

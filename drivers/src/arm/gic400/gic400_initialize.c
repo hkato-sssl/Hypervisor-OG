@@ -1,5 +1,5 @@
 /*
- * arm/gic400_init.c
+ * arm/gic400_initialize.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -47,7 +47,7 @@ static void probe_cpu_interface(struct gic400 *gic)
     probe_max_priority(gic);
 }
 
-static void init_cpu_interface(struct gic400 *gic)
+static void initialize_cpu_interface(struct gic400 *gic)
 {
     uint32_t d;
 
@@ -63,7 +63,7 @@ static void init_cpu_interface(struct gic400 *gic)
     gic400_write_cpuif(gic, GICC_CTLR, d);
 }
 
-static void init_distributor(struct gic400 *gic)
+static void initialize_distributor(struct gic400 *gic)
 {
     uint32_t i;
     uint32_t d;
@@ -86,7 +86,7 @@ static void init_distributor(struct gic400 *gic)
     gic400_write_distributor(gic, GICD_CTLR, BITS(1, 0));
 }
 
-static void init_banked_distributor(struct gic400 *gic)
+static void initialize_banked_distributor(struct gic400 *gic)
 {
     gic400_write_distributor(gic, GICD_ICENABLER(0), ~(uint32_t)0);
     gic400_write_distributor(gic, GICD_ICPENDR(0), ~(uint32_t)0);
@@ -95,7 +95,7 @@ static void init_banked_distributor(struct gic400 *gic)
     gic400_write_distributor(gic, GICD_IGROUPR(0), 0);
 }
 
-static errno_t init(struct gic400 *gic, const struct gic400_configuration *config)
+static errno_t initialize(struct gic400 *gic, const struct gic400_configuration *config)
 {
     uint32_t lock;
 
@@ -111,12 +111,12 @@ static errno_t init(struct gic400 *gic, const struct gic400_configuration *confi
     }
 
     /* initialize devices */
-    init_cpu_interface(gic);
+    initialize_cpu_interface(gic);
 
     if (cpu_no() == 0) {
-        init_distributor(gic);
+        initialize_distributor(gic);
     } else {
-        init_banked_distributor(gic);
+        initialize_banked_distributor(gic);
     }
 
     cpu_unlock_interrupts(lock);
@@ -149,13 +149,13 @@ static errno_t validate_parameters(struct gic400 *gic, const struct gic400_confi
     return ret;
 }
 
-errno_t gic400_init(struct gic400 *gic, const struct gic400_configuration *config)
+errno_t gic400_initialize(struct gic400 *gic, const struct gic400_configuration *config)
 {
     errno_t ret;
 
     ret = validate_parameters(gic, config);
     if (ret == SUCCESS) {
-        ret = init(gic, config);
+        ret = initialize(gic, config);
     }
 
     return ret;

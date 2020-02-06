@@ -78,7 +78,7 @@ struct gic400_interrupt_configuration {
 
 /* functions */
 
-errno_t gic400_init(struct gic400 *gic, const struct gic400_configuration *config);
+errno_t gic400_initialize(struct gic400 *gic, const struct gic400_configuration *config);
 uint32_t gic400_ack(struct gic400 *gic);
 errno_t gic400_eoi(struct gic400 *gic, uint32_t iar);
 errno_t gic400_deactivate(struct gic400 *gic, uint32_t iar);

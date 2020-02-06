@@ -41,7 +41,7 @@ static errno_t init(void)
     memset(&config, 0, sizeof(config));
     config.base.distributor = (void *)GIC400_DIST_BASE;
     config.base.cpuif = (void *)GIC400_CPUIF_BASE;
-    ret = gic400_init(&gic, &config);
+    ret = gic400_initialize(&gic, &config);
     printk("gic400_init() -> %d\n", ret);
 
     return ret;

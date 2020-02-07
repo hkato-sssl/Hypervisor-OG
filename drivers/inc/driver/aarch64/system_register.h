@@ -33,6 +33,16 @@
 #define PSTATE_F            BIT(6)
 #define PSTATE_SP           BIT(0)
 
+/* SPSR */
+
+#define SPSR_M_EL3h         0x0d
+#define SPSR_M_EL3t         0x0c
+#define SPSR_M_EL2h         0x09
+#define SPSR_M_EL2t         0x08
+#define SPSR_M_EL1h         0x05
+#define SPSR_M_EL1t         0x04
+#define SPSR_M_EL0t         0x00
+
 /* DAIFset/DAIFclr */
 
 #define DAIF_D              BIT(3)

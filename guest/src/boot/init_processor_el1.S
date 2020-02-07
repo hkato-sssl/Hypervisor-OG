@@ -7,6 +7,9 @@
 #include "config/system.h"
 #include "lib/asm.h"
 #include "driver/aarch64/system_register.h"
+#include "driver/aarch64/system_register/hcr_el2.h"
+
+#define INITIAL_SPSR    (PSTATE_D | PSTATE_A | PSTATE_I | PSTATE_F | SPSR_M_EL1h)
 
         .global         init_processor_el1
 
@@ -17,18 +20,8 @@
         .balign         4
 
 init_processor_el1:
-        mov             x28, lr         // save LR
-
         msr             DAIFset, #DAIF_ALL
-        adr             x0, initial_exception_vector
-        dsb             sy
-        isb
-        msr             VBAR_EL1, x0
-        isb
-
-        msr             SPSel, #1
-        mov             x0, xzr
-        mov             sp, x0
+        mov             x28, lr             /* save LR */
 
         // initialize SCTLR_EL1
 
@@ -42,6 +35,59 @@ init_processor_el1:
         isb
         msr             SCTLR_EL1, x3
         isb
+
+        // check the current exception level
+
+        mrs             x0, CurrentEL
+
+        /* if the processor is in EL0 or EL3, loop forever */
+        cbz             w0, .
+        cmp             w0, #CURRENT_EL3
+        beq             .
+
+        cmp             w0, #CURRENT_EL1
+        beq             el1
+
+        // switch to EL1 from EL2
+
+        mrs             x0, SCTLR_EL2
+        mov             x1, #(SCTLR_I | SCTLR_C)
+        bic             x0, x0, x1
+        dsb             sy
+        isb
+        msr             SCTLR_EL2, x0
+        isb
+
+        bl              aarch64_icache_invd_all
+        bl              aarch64_dcache_invd_all
+
+        mov             x1, #INITIAL_SPSR
+        adr             x2, el1
+        msr             SPSR_EL2, x1
+        msr             ELR_EL2, x2
+
+        mov             x0, #HCR_EL2_RW
+        msr             HCR_EL2, x0
+        msr             HSTR_EL2, xzr
+        msr             HACR_EL2, xzr
+        msr             CPTR_EL2, xzr
+        msr             CNTVOFF_EL2, xzr
+        mrs             x0, MIDR_EL1
+        msr             VPIDR_EL2, x0
+        mrs             x0, MPIDR_EL1
+        msr             VMPIDR_EL2, x0
+
+        eret
+el1:
+        adr             x0, initial_exception_vector
+        dsb             sy
+        isb
+        msr             VBAR_EL1, x0
+        isb
+
+        msr             SPSel, #1
+        mov             x0, xzr
+        mov             sp, x0
 
         // initialize and enable I-$
 

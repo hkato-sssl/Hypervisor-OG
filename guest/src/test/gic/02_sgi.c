@@ -16,6 +16,7 @@
 #include "lib/system/printk.h"
 #include "driver/arm/gic400.h"
 #include "driver/aarch64.h"
+#include "driver/system/cpu.h"
 
 /* defines */
 
@@ -45,7 +46,7 @@ static void assert_sgi(uint32_t no)
 {
     errno_t ret;
 
-    ret = gic400_assert_sgi(&gic, 1, no);
+    ret = gic400_assert_sgi(&gic, (1 << cpu_no()), no);
     printk("gic400_assert_sgi(%u) -> %d\n", no, ret);
 }
 

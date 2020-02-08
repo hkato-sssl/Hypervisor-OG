@@ -26,10 +26,12 @@ errno_t system_register_spin_lock(spin_lock_t *lock)
 {
     errno_t ret;
 
-    ret = system_validate_stack_region((void *)lock, sizeof(*lock));
-    if (ret != SUCCESS) {
+    if (system_test_valid_stack_region((void *)lock, sizeof(*lock))) {
         spin_lock_init(lock);
         system_lock = lock;
+        ret = SUCCESS;
+    } else {
+        ret = -EFAULT;
     }
 
     return ret;

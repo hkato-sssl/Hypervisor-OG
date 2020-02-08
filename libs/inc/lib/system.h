@@ -21,6 +21,7 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
 
@@ -33,7 +34,7 @@ extern "C" {
 errno_t system_register_spin_lock(spin_lock_t *lock);
 void system_spin_lock(void);
 void system_spin_unlock(void);
-errno_t system_validate_stack_region(const void *addr, size_t size);
+bool system_test_valid_stack_region(const void *addr, size_t size);
 
 void udelay(uint32_t usec);
 

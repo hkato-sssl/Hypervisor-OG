@@ -1,12 +1,12 @@
 /*
- * system/system_validate_stack_region.c
+ * system/system_test_valid_stack_region.c
  *
  * (C) 2019 Hidekazu Kato
  */
 
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/errno.h"
+#include <stdbool.h>
 #include "lib/system.h"
 
 /* defines */
@@ -22,17 +22,17 @@ extern char __stack_end[];
 
 /* functions */
 
-errno_t system_validate_stack_region(const void *addr, size_t size)
+bool system_test_valid_stack_region(const void *addr, size_t size)
 {
-    errno_t ret;
+    bool test;
 
     if (((uintptr_t)__stack_start <= (uintptr_t)addr) &&
         (((uintptr_t)addr + size) <= (uintptr_t)__stack_end)) {
-        ret = SUCCESS;
+        test = true;
     } else {
-        ret = -EINVAL;
+        test = false;
     }
 
-    return ret;
+    return test;
 }
 

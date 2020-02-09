@@ -118,17 +118,19 @@ static bool is_unmapped_contiguous_region(const uint64_t *desc)
     return ret;
 }
 
-static bool is_valid_parameter(void *va, void *pa, size_t sz)
+static errno_t validate_parameters(void *va, void *pa, size_t sz)
 {
-    bool valid;
+    errno_t ret;
 
-    if (IS_ALIGNED(va, sz) && IS_ALIGNED(pa, sz)) {
-        valid = true;
+    if (! IS_ALIGNED(va, sz)) {
+        ret = -EFAULT;
+    } else if (! IS_ALIGNED(pa, sz)) {
+        ret = -EFAULT;
     } else {
-        valid = false;
+        ret = SUCCESS;
     }
 
-    return valid;
+    return ret;
 }
 
 errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr, uint32_t level)
@@ -138,7 +140,8 @@ errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va
     uint64_t desc;
     int i;
 
-    if (is_valid_parameter(va, pa, sz)) {
+    ret = validate_parameters(va, pa, sz);
+    if (ret == SUCCESS) {
         p = desc_addr(mmu, va, attr, level);
         if (is_unmapped_contiguous_region(p)) {
             if (level == 3) {
@@ -154,8 +157,6 @@ errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va
         } else {
             ret = -EINVAL;
         }
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;
@@ -167,7 +168,8 @@ errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, vo
     uint64_t *p;
     uint64_t desc;
 
-    if (is_valid_parameter(va, pa, sz)) {
+    ret = validate_parameters(va, pa, sz);
+    if (ret == SUCCESS) {
         p = desc_addr(mmu, va, attr, level);
         if ((p != NULL) && ((*p & BITS(1,0)) == 0)) {
             if (level == 3) {
@@ -180,8 +182,6 @@ errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, vo
         } else {
             ret = -EINVAL;
         }
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

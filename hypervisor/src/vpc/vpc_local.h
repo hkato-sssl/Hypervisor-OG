@@ -97,17 +97,21 @@ static inline bool is_el1(const struct vpc *vpc)
     return (! is_el0(vpc));
 }
 
-static inline bool is_valid_vpc(const struct vpc *vpc)
+static inline errno_t validate_vpc(const struct vpc *vpc)
 {
-    bool valid;
+    errno_t ret;
 
-    if ((vpc->vm != NULL) && (vpc->proc_no < vpc->vm->nr_procs) && (vpc->vm->vpcs[vpc->proc_no] == vpc)) {
-        valid = true;
+    if (vpc->vm == NULL) {
+        ret = -EINVAL;
+    } else if (vpc->proc_no >= vpc->vm->nr_procs) {
+        ret = -EINVAL;
+    } else if (vpc->vm->vpcs[vpc->proc_no] != vpc) {
+        ret = -EINVAL;
     } else {
-        valid = false;
+        ret = SUCCESS;
     }
 
-    return valid;
+    return ret;
 }
 
 #ifdef __cplusplus

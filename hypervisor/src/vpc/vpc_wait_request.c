@@ -43,15 +43,14 @@ errno_t vpc_wait_request(struct vpc *vpc)
     errno_t ret;
     enum vpc_status status;
 
-    if (is_valid_vpc(vpc)) {
+    ret = validate_vpc(vpc);
+    if (ret == SUCCESS) {
         status = vpc_watch_status(vpc);
         if (status == VPC_STATUS_DOWN) {
             ret = wait_request(vpc);
         } else {
             ret = -EPERM;
         }
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

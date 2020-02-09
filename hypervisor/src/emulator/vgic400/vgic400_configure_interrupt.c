@@ -45,38 +45,39 @@ static errno_t configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const 
 
 static bool is_valid_id(uint16_t id)
 {
-    bool valid;
+    bool ret;
 
     if ((id != GIC400_MAINTENANCE_INTERRUPT) && (id != GIC400_HYPERVISOR_TIMER) && (id >= 16) && (id < NR_GIC400_INTERRUPTS)) {
-        valid = true;
+        ret = true;
     } else {
-        valid = false;
+        ret = false;
     }
 
-    return valid;
+    return ret;
 }
 
-static bool is_valid_configuration(const struct vgic400_interrupt_configuration *config)
+static errno_t validate_configuration(const struct vgic400_interrupt_configuration *config)
 {
-    bool valid;
+    errno_t ret;
 
-    if (is_valid_id(config->virtual_id) && is_valid_id(config->physical_id)) {
-        valid = true;
+    if (! is_valid_id(config->virtual_id)) {
+        ret = -EINVAL;
+    } else if (! is_valid_id(config->physical_id)) {
+        ret = -EINVAL;
     } else {
-        valid = false;
+        ret = SUCCESS;
     }
 
-    return valid;
+    return ret;
 }
 
 errno_t vgic400_configure_interrupt(struct vgic400 *vgic, struct vpc *vpc, const struct vgic400_interrupt_configuration *config)
 {
     errno_t ret;
 
-    if (is_valid_configuration(config)) {
+    ret = validate_configuration(config);
+    if (ret == SUCCESS) {
         ret = configure_interrupt(vgic, vpc, config);
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

@@ -114,14 +114,17 @@ static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_
     errno_t ret;
     enum vpc_status status;
 
-    if (is_valid_vpc(vpc)) {
+    ret = validate_vpc(vpc);
+    if (ret == SUCCESS) {
         status = vpc_watch_status(vpc);
         switch (status) {
         case VPC_STATUS_DOWN:
-            if ((boot != NULL) && (boot->arch == VPC_ARCH_AARCH64)) {
-                ret = SUCCESS;
-            } else {
+            if (boot == NULL) {
                 ret = -EINVAL;
+            } else if (boot->arch != VPC_ARCH_AARCH64) {
+                ret = -EINVAL;
+            } else {
+                ret = SUCCESS;
             }
             break;
         case VPC_STATUS_WAKEUP:
@@ -137,8 +140,6 @@ static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_
         default:
             ret = -EPERM;
         }
-    } else {
-        ret = -EPERM;
     }
 
     return ret;

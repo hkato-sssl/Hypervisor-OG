@@ -21,15 +21,15 @@
 
 static bool is_valid_address(const struct aarch64_stage2 *stage2, void *ipa, void *pa)
 {
-    bool valid;
+    bool ret;
 
     if ((((uintptr_t)ipa & stage2->pa_mask) == 0) && (((uintptr_t)pa & stage2->pa_mask) == 0)) {
-        valid = true;
+        ret = true;
     } else {
-        valid = false;
+        ret = false;
     }
 
-    return valid;
+    return ret;
 }
 
 static errno_t validate_parameters(const struct aarch64_stage2 *stage2, void *ipa, void *pa)
@@ -37,10 +37,14 @@ static errno_t validate_parameters(const struct aarch64_stage2 *stage2, void *ip
     errno_t ret;
 
     /* Support 4KB granule only */
-    if ((stage2->base.type == AARCH64_MMU_STAGE2) && (stage2->base.granule == AARCH64_MMU_4KB_GRANULE) && is_valid_address(stage2, ipa, pa)) {
-        ret = SUCCESS;
-    } else {
+    if (stage2->base.type != AARCH64_MMU_STAGE2) {
         ret = -EINVAL;
+    } else if (stage2->base.granule != AARCH64_MMU_4KB_GRANULE) {
+        ret = -EINVAL;
+    } else if (! is_valid_address(stage2, ipa, pa)) {
+        ret = -EFAULT;
+    } else {
+        ret = SUCCESS;
     }
 
     return ret;

@@ -75,56 +75,64 @@ static uint64_t generate_vtcr_el2(const struct aarch64_stage2_configuration *con
 
 static bool is_valid_pa_range(const struct aarch64_stage2_configuration *config)
 {
-    bool valid;
+    bool ret;
     uint64_t pa_range;
 
     pa_range = aarch64_read_id_aa64mmfr0_el1() & BITS(3, 0);
-    valid = (config->pa_range <= pa_range) ? true : false;
+    ret = (config->pa_range <= pa_range) ? true : false;
 
-    return valid;
+    return ret;
 }
 
 static bool is_valid_start_level(const struct aarch64_stage2_configuration *config)
 {
-    bool valid;
+    bool ret;
 
     switch (config->base.granule) {
     case AARCH64_MMU_4KB_GRANULE:
         if (config->first_table == NULL) {
             if (config->start_level == 0) {
-                valid = true;
+                ret = true;
             } else {
-                valid = false;
+                ret = false;
             }
         } else if (IS_ALIGNED(config->first_table, MEM_4KB)) {
             if (config->start_level < 3) {
-                valid = true;
+                ret = true;
             } else {
-                valid = false;
+                ret = false;
             }
         } else {
-            valid = false;
+            ret = false;
         }
         break;
     default:
-        valid = false;
+        ret = false;
     }
 
-    return valid;
+    return ret;
 }
 
 static errno_t validate_parameters(struct aarch64_stage2 *stage2, const struct aarch64_stage2_configuration *config)
 {
     errno_t ret;
 
-    if ((stage2 != NULL) && (config != NULL) && (config->base.pool != NULL) && (config->base.pool->block_sz == MMU_BLOCK_SZ)) {
-        if ((config->base.type == AARCH64_MMU_STAGE2) && is_valid_pa_range(config) && is_valid_start_level(config)) {
-            ret = SUCCESS;
-        } else {
-            ret = -EINVAL;
-        }
-    } else {
+    if (stage2 == NULL) {
+        ret = -EFAULT;
+    } else if (config == NULL) {
+        ret = -EFAULT;
+    } else if (config->base.pool == NULL) {
+        ret = -EFAULT;
+    } else if (config->base.pool->block_sz != MMU_BLOCK_SZ) {
         ret = -EINVAL;
+    } else if (config->base.type != AARCH64_MMU_STAGE2) {
+        ret = -EINVAL;
+    } else if (! is_valid_pa_range(config)) {
+        ret = -EFAULT;
+    } else if (! is_valid_start_level(config)) {
+        ret = -EINVAL;
+    } else {
+        ret = SUCCESS;
     }
 
     return ret;

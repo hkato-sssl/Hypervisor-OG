@@ -86,48 +86,49 @@ static errno_t register_region_trap(struct vm *vm, struct vm_region_trap *region
 
 static bool is_valid_condition(const struct vm_region_trap *region)
 {
-    bool valid;
+    bool ret;
 
     if (region->condition.read || region->condition.write) {
-        valid = true;
+        ret = true;
     } else {
-        valid = false;
+        ret = false;
     }
 
-    return valid;
+    return ret;
 }
 
-static bool is_valid_parameter(const struct vm *vm, const struct vm_region_trap *region)
+static errno_t validate_parameters(const struct vm *vm, const struct vm_region_trap *region)
 {
-    bool valid;
     errno_t ret;
 
     ret = system_validate_stack_region(region, sizeof(*region));
     if (ret != SUCCESS) {
-        if (is_valid_condition(region) &&
-            (region->size > 0) && ((region->size % 4096) == 0)) {
-            valid = true;
+        if (! is_valid_condition(region)) {
+            ret = -EINVAL;
+        } else if (region->size == 0) {
+            ret = -EINVAL;
+        } else if (! IS_ALIGNED(region->size, 4096)) {
+            ret = -EINVAL;
         } else {
-            valid = false;
+            ret = SUCCESS;
         }
     } else {
-        valid = false;
+        ret = -EINVAL;
     }
 
-    return valid;
+    return ret;
 }
 
 errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *region)
 {
     errno_t ret;
 
-    if (is_valid_parameter(vm, region)) {
+    ret = validate_parameters(vm, region);
+    if (ret == SUCCESS) {
         ret = register_region_trap(vm, region);
         if (ret == SUCCESS) {
             ret = map_region_trap(vm, region);
         }
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

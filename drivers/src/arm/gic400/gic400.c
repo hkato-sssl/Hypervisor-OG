@@ -26,11 +26,11 @@
 
 /* functions */
 
-static bool is_valid_parameter(const struct gic400 *gic,  uint16_t intr_no)
+static bool is_valid_interrupt_no(const struct gic400 *gic,  uint16_t intr_no)
 {
     bool ret;
 
-    if ((gic != NULL) && (intr_no < gic->nr_interrupts)) {
+    if (intr_no < gic->nr_interrupts) {
         ret = true;
     } else {
         ret = false;
@@ -61,7 +61,7 @@ errno_t gic400_write_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg
 {
     errno_t ret;
 
-    if (is_valid_parameter(gic, bit_no)) {
+    if (is_valid_interrupt_no(gic, bit_no)) {
         ret = write_dist_bit(gic, bit_no, reg0);
     } else {
         ret = -EINVAL;
@@ -219,14 +219,20 @@ static errno_t configure_interrupt(struct gic400 *gic, uint16_t intr_no, const s
     return ret;
 }
 
-static bool is_valid_configuration(const struct gic400 *gic, const struct gic400_interrupt_configuration *config)
+static errno_t validate_parameters(const struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)
 {
-    bool ret;
+    errno_t ret;
 
-    if ((config != NULL) && (config->targets != 0) && (config->priority <= gic->priority.max)) {
-        ret = true;
+    if (! is_valid_interrupt_no(gic, intr_no)) {
+        ret = -EINVAL;
+    } else if (config == NULL) {
+        ret = -EINVAL;
+    } else if (config->targets == 0) {
+        ret = -EINVAL;
+    } else if (config->priority > gic->priority.max) {
+        ret = -EINVAL;
     } else {
-        ret = false;
+        ret = SUCCESS;
     }
 
     return ret;
@@ -236,10 +242,9 @@ errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, const s
 {
     errno_t ret;
 
-    if (is_valid_parameter(gic, intr_no) && is_valid_configuration(gic, config)) {
+    ret = validate_parameters(gic, intr_no, config);
+    if (ret == SUCCESS) {
         ret = configure_interrupt(gic, intr_no, config);
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

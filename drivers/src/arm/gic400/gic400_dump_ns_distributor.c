@@ -94,7 +94,7 @@ static void dump_array(const struct gic400 *gic, const struct reg_type2 list[])
     int n;
     uint32_t d;
     uint32_t reg;
-    static char buff[32];
+    char buff[32];
 
     for (i = 0; list[i].name != NULL; ++i) {
         reg = list[i].reg;

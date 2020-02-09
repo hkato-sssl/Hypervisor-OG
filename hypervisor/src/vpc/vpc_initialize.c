@@ -38,14 +38,24 @@ static errno_t initialize(struct vpc *vpc, const struct vpc_configuration *confi
     return SUCCESS;
 }
 
-static bool is_valid_parameter(struct vpc *vpc, const struct vpc_configuration *config)
+static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_configuration *config)
 {
-    bool ret;
+    errno_t ret;
 
-    if ((vpc != NULL) && (config != NULL) && (config->vm != NULL) && (config->regs != NULL) && IS_ALIGNED(vpc->regs, 32) && (config->exception.ops != NULL)) {
-        ret = true;
+    if (vpc == NULL) {
+        ret = -EINVAL;
+    } else if (config == NULL) {
+        ret = -EINVAL;
+    } else if (config->vm == NULL) {
+        ret = -EINVAL;
+    } else if (config->regs == NULL) {
+        ret = -EINVAL;
+    } else if (! IS_ALIGNED(vpc->regs, 32)) {
+        ret = -EINVAL;
+    } else if (config->exception.ops == NULL) {
+        ret = -EINVAL;
     } else {
-        ret = false;
+        ret = SUCCESS;
     }
 
     return ret;
@@ -55,10 +65,9 @@ errno_t vpc_initialize(struct vpc *vpc, const struct vpc_configuration *config)
 {
     errno_t ret;
 
-    if (is_valid_parameter(vpc, config)) {
+    ret = validate_parameters(vpc, config);
+    if (ret == SUCCESS) {
         ret = initialize(vpc, config);
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

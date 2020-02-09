@@ -100,33 +100,38 @@ static uint64_t create_tcr_el23(const struct aarch64_mmu_configuration *config)
 
 static bool is_valid_type(const struct aarch64_mmu_configuration *config)
 {
-    bool valid;
+    bool ret;
 
     if ((config->base.type == AARCH64_MMU_EL0) ||
         (config->base.type == AARCH64_MMU_EL1) ||
         (config->base.type == AARCH64_MMU_EL2) ||
         (config->base.type == AARCH64_MMU_EL3)) {
-        valid = true;
+        ret = true;
     } else {
-        valid = false;
+        ret = false;
     }
 
-    return valid;
+    return ret;
 }
 
 static errno_t validate_parameters(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config)
 {
     errno_t ret;
 
-    if ((mmu != NULL) && (config != NULL) && (config->base.pool != NULL) && (config->base.pool->block_sz == MMU_BLOCK_SZ)) {
-        if (is_valid_type(config) && (config->base.granule == AARCH64_MMU_4KB_GRANULE)) {
-            ret = SUCCESS;
-        } else {
-            ret = -EINVAL;
-        }
-
-    } else {
+    if (mmu == NULL) {
+        ret = -EFAULT;
+    } else if (config == NULL) {
+        ret = -EFAULT;
+    } else if (config->base.pool == NULL) {
+        ret = -EFAULT;
+    } else if (config->base.pool->block_sz != MMU_BLOCK_SZ) {
         ret = -EINVAL;
+    } else if (! is_valid_type(config)) {
+        ret = -EINVAL;
+    } else if (config->base.granule != AARCH64_MMU_4KB_GRANULE) {
+        ret = -EINVAL;
+    } else {
+        ret = SUCCESS;
     }
 
     return ret;

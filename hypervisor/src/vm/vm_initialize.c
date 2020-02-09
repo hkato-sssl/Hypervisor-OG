@@ -32,27 +32,34 @@ static errno_t initialize(struct vm *vm, const struct vm_configuration *config)
     return SUCCESS;
 }
 
-static bool is_valid_parameter(struct vm *vm, const struct vm_configuration *config)
+static errno_t validate_parameters(const struct vm *vm, const struct vm_configuration *config)
 {
-    bool valid;
+    errno_t ret;
 
-    if ((vm != NULL) && (config != NULL) && (config->nr_procs > 0) && (config->nr_procs <= MAX_NR_VM_PROCESSORS) && (config->stage2 != NULL)) {
-        valid = true;
+    if (vm == NULL) {
+        ret = -EINVAL;
+    } else if (config == NULL) {
+        ret = -EINVAL;
+    } else if (config->nr_procs == 0) {
+        ret = -EINVAL;
+    } else if (config->nr_procs >= MAX_NR_VM_PROCESSORS) {
+        ret = -EINVAL;
+    } else if (config->stage2 == NULL) {
+        ret = -EINVAL;
     } else {
-        valid = false;
+        ret = SUCCESS;
     }
 
-    return valid;
+    return ret;
 }
 
 errno_t vm_initialize(struct vm *vm, const struct vm_configuration *config)
 {
     errno_t ret;
 
-    if (is_valid_parameter(vm, config)) {
+    ret = validate_parameters(vm, config);
+    if (ret == SUCCESS) {
         ret = initialize(vm, config);
-    } else {
-        ret = -EINVAL;
     }
 
     return ret;

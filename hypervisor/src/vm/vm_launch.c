@@ -23,24 +23,24 @@ static errno_t validate_parameters(struct vm *vm, const uint16_t vpc_no, const s
 {
     errno_t ret;
 
-    if (vpc_no < vm->nr_procs) {
-        if (vm->vpcs[vpc_no] != NULL) {
-            if (vpc_no == 0) {
-                if (boot != NULL) {
-                    ret = SUCCESS;
-                } else {
-                    ret = -EINVAL;
-                }
-            } else {
-                ret = SUCCESS;
-            }
+    if (vpc_no >= vm->nr_procs) {
+        ret = -EINVAL;
+    } else if (vm->vpcs[vpc_no] == NULL) {
+        ret = -ENODEV;
+    } else if (vpc_no == 0) {
+        if (boot == NULL) {
+            ret = -EINVAL;
         } else {
-            ret = -ENODEV;
+            ret = SUCCESS;
         }
     } else {
-        ret = -EINVAL;
+        if (boot != NULL) {
+            ret = -EINVAL;
+        } else {
+            ret = SUCCESS;
+        }
     }
-
+        
     return ret;
 }
 

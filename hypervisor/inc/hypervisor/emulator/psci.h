@@ -28,7 +28,7 @@ extern "C" {
 
 /* types */
 
-struct psci_ops {
+struct psci_emulator_ops {
     vpc_exception_emulator_t    psci_version;
     vpc_exception_emulator_t    cpu_suspend;
     vpc_exception_emulator_t    cpu_off;
@@ -53,8 +53,11 @@ struct psci_ops {
 
 /* functions */
 
-errno_t psci_emulate_aarch64(struct vpc *vpc);
+errno_t psci_call_emulator_ops(struct vpc *vpc, const struct psci_emulator_ops *ops);
+errno_t psci_call_aarch64_emulator_ops(struct vpc *vpc, const struct psci_emulator_ops *ops);
+errno_t psci_call_aarch32_emulator_ops(struct vpc *vpc, const struct psci_emulator_ops *ops);
 errno_t psci_set_error(struct vpc *vpc, int64_t error);
+errno_t psci_error_unknown_function(struct vpc *vpc);
 
 #ifdef __cplusplus
 }

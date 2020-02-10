@@ -1,5 +1,5 @@
 /*
- * emulator/psci/psci_simple_cpu_on.c
+ * emulator/psci/simple/simple_psci_cpu_on.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -30,7 +30,7 @@
 
 /* functions */
 
-static errno_t cpu_on(struct vpc *vpc, uint64_t target, uint64_t addr)
+static errno_t cpu_on(struct vpc *vpc, uint16_t target, uint64_t addr)
 {
     errno_t ret;
     struct vpc_boot_configuration boot;
@@ -40,17 +40,21 @@ static errno_t cpu_on(struct vpc *vpc, uint64_t target, uint64_t addr)
     boot.pc = addr;
     boot.arg = vpc->regs[VPC_X3];
 
-    ret = vpc_wakeup_processor(vpc, &boot);
-    if (ret == -EBUSY) {
+    ret = vm_wakeup(vpc->vm, target, &boot);
+    if (ret == SUCCESS) {
+        ret = psci_set_error(vpc, PSCI_SUCCESS);
+    } else if (ret == -EBUSY) {
         ret = psci_set_error(vpc, PSCI_ERROR_ALREADY_ON);
     } else if (ret == -EINVAL) {
         ret = psci_set_error(vpc, PSCI_ERROR_INVALID_PARAMETERS);
+    } else {
+        ret = psci_set_error(vpc, PSCI_ERROR_INTERNAL_FAILURE);
     }
 
     return ret;
 }
 
-errno_t psci_simple_cpu_on(struct vpc *vpc)
+errno_t simple_psci_cpu_on(struct vpc *vpc)
 {
     errno_t ret;
     uint64_t target;
@@ -63,7 +67,7 @@ errno_t psci_simple_cpu_on(struct vpc *vpc)
     target = vpc->regs[VPC_X1];
     addr = vpc->regs[VPC_X2];
 
-    if ((target >= vpc->vm->nr_procs) || (target != vpc->proc_no)) {
+    if (target >= vpc->vm->nr_procs) {
         ret = psci_set_error(vpc, PSCI_ERROR_INVALID_PARAMETERS);
     } else if ((! IS_ALIGNED(addr, 4)) || (! soc_test_executable_region(vpc->vm->soc, addr))) {
         ret = psci_set_error(vpc, PSCI_ERROR_INVALID_ADDRESS);

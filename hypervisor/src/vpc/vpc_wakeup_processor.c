@@ -37,12 +37,16 @@ static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_
 {
     errno_t ret;
 
-    if ((vpc->vm->nr_procs >= vpc->proc_no) || (boot->arch != VPC_ARCH_AARCH64) || (! IS_ALIGNED(boot->pc, 4))) {
+    if (vpc->vm->nr_procs <= vpc->proc_no) {
         ret = -EINVAL;
+    } else if (boot->arch != VPC_ARCH_AARCH64) {
+        ret = -EINVAL;
+    } else if (! IS_ALIGNED(boot->pc, 4)) {
+        ret = -EFAULT;
     } else if (vpc->vm->vpcs[vpc->proc_no] != vpc) {
         ret = -EPERM;
     } else if (! soc_test_executable_region(vpc->vm->soc, boot->pc)) {
-        ret = -ENOMEM;
+        ret = -EFAULT;
     } else {
         ret = SUCCESS;
     }

@@ -21,6 +21,7 @@
 static const struct vpc_exception_ops ops = {
     .irq = xilinx_mpsoc_emulate_irq_exception,
     .aarch64.data_abort = vpc_emulate_aarch64_data_abort,
+    .aarch64.smc = xilinx_mpsoc_emulate_psci,
 };
 
 /* functions */

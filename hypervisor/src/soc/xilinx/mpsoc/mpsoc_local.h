@@ -34,6 +34,7 @@ extern "C" {
 
 errno_t xilinx_mpsoc_previous_launch_hook(struct vpc *vpc);
 errno_t xilinx_mpsoc_emulate_irq_exception(struct vpc *vpc);
+errno_t xilinx_mpsoc_emulate_psci(struct vpc *vpc);
 bool xilinx_mpsoc_test_executable_region(void *chip, uintptr_t addr);
 
 #ifdef __cplusplus

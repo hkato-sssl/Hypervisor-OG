@@ -66,17 +66,6 @@ struct vm {
         struct {
             struct vm_region_trap   *memory_region;
         } trap;
-        struct {
-            struct {
-                const struct psci_ops   *ops;
-            } aarch64;
-            struct {
-                const struct psci_ops   *ops;
-            } aarch32;
-            struct {
-                uint8_t     report_unknown_function:1;
-            } flag;
-        } psci;
     } emulator;
 };
 

@@ -11,6 +11,7 @@
 #include "driver/arm.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
+#include "driver/aarch64/system_register/hcr_el2.h"
 #include "hypervisor/thread.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
@@ -52,6 +53,7 @@ static errno_t switch_to_guest_context(struct vpc *vpc, const struct vpc_boot_co
     vm = vpc->vm;
     vpc->regs[VPC_VTTBR_EL2] = aarch64_stage2_vttbr_el2(vm->stage2);
     vpc->regs[VPC_VTCR_EL2] = aarch64_stage2_vtcr_el2(vm->stage2);
+    vpc->regs[VPC_HCR_EL2] |= HCR_EL2_TSC;
 
     thread_write_tls(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);
     thread_write_tls(TLS_CURRENT_VPC, (uint64_t)vpc);

@@ -40,7 +40,7 @@ errno_t vm_ready(struct vm *vm, uint16_t proc_no)
 
     struct vpc *vpc;
 
-    if (proc_no >= vm->nr_procs) {
+    if (proc_no < vm->nr_procs) {
         vpc = vm_aquire_vpc(vm, proc_no);
         if (vpc != NULL) {
             ret = ready(vm, vpc);

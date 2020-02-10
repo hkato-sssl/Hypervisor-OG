@@ -101,19 +101,16 @@ static errno_t validate_parameters(const struct vm *vm, const struct vm_region_t
 {
     errno_t ret;
 
-    ret = system_validate_stack_region(region, sizeof(*region));
-    if (ret != SUCCESS) {
-        if (! is_valid_condition(region)) {
-            ret = -EINVAL;
-        } else if (region->size == 0) {
-            ret = -EINVAL;
-        } else if (! IS_ALIGNED(region->size, 4096)) {
-            ret = -EINVAL;
-        } else {
-            ret = SUCCESS;
-        }
-    } else {
+    if (system_test_valid_stack_region(region, sizeof(*region))) {
+        ret = -EFAULT;
+    } else if (! is_valid_condition(region)) {
         ret = -EINVAL;
+    } else if (region->size == 0) {
+        ret = -EINVAL;
+    } else if (! IS_ALIGNED(region->size, 4096)) {
+        ret = -EINVAL;
+    } else {
+        ret = SUCCESS;
     }
 
     return ret;

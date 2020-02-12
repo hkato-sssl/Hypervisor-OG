@@ -96,7 +96,7 @@ static errno_t init_stage2(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_
     config.orgn = STAGE2_RGN_NORMAL_WBWA;
     config.irgn = STAGE2_RGN_NORMAL_WBWA;
     config.first_table = chip_config->stage2.level1_table;
-    ret = aarch64_stage2_init(&(chip->soc.stage2), &config);
+    ret = aarch64_stage2_initialize(&(chip->soc.stage2), &config);
     if (ret == SUCCESS) {
         ret = init_vm(chip, chip_config);
     }

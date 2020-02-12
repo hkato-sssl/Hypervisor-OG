@@ -73,12 +73,14 @@ static errno_t init_map(void)
     }
 
     if (ret == SUCCESS) {
-        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
+        attr.sh = MMU_ATTR_SH_OSH;
+        attr.attrindx = EL1_MMU_DEVICE_nGnRE;
         ret = map((void*)CONFIG_GICD_BASE, (void*)(CONFIG_GICD_BASE + 4096), &attr);
     }
 
     if (ret == SUCCESS) {
-        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
+        attr.sh = MMU_ATTR_SH_NSH;
+        attr.attrindx = EL1_MMU_DEVICE_nGnRE;
         ret = map((void*)CONFIG_GICC_BASE, (void*)(CONFIG_GICC_BASE + 4096), &attr);
     }
 
@@ -87,12 +89,15 @@ static errno_t init_map(void)
     }
 
     if (ret == SUCCESS) {
-        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
+        attr.sh = MMU_ATTR_SH_OSH;
+        attr.attrindx = EL1_MMU_DEVICE_nGnRE;
         ret = map((void*)0xff000000, (void*)0xff001000, &attr);
     }
 
 #ifdef CONFIG_REGION_TRAP
     if (ret == SUCCESS) {
+        attr.sh = MMU_ATTR_SH_OSH;
+        attr.attrindx = EL1_MMU_DEVICE_nGnRE;
         ret = aarch64_mmu_map(&sys_mmu, (void *)CONFIG_REGION_TRAP, (void *)CONFIG_REGION_TRAP_PA, CONFIG_REGION_TRAP_SIZE, &attr);
     }
 #endif

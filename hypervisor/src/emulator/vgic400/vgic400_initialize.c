@@ -37,7 +37,7 @@ static errno_t map_cpuif(struct vgic400 *vgic)
     attr.xn = 1;
     attr.af = 1;
     attr.sh = STAGE2_SH_NSH;
-    attr.memattr = STAGE2_MEMATTR_DEVICE_GRE;
+    attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRE;
     attr.s2ap = STAGE2_S2AP_RW;
 
     addr = gic400_cpuif_register_base(vgic->gic);

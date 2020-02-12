@@ -78,16 +78,20 @@ static errno_t init_map(void)
     }
 
     if (ret == SUCCESS) {
-	    attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+        attr.sh = MMU_ATTR_SH_OSH;
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRE;
 	    ret = map((void*)0xa0001000, (void*)0xa0002000, &attr);
     }
 
     if (ret == SUCCESS) {
-	    attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+        attr.sh = MMU_ATTR_SH_OSH;
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRE;
 	    ret = map((void*)CONFIG_GICD_BASE, (void*)(CONFIG_GICD_BASE + 4096), &attr);
     }
 
     if (ret == SUCCESS) {
+        attr.sh = MMU_ATTR_SH_NSH;
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRE;
 	    ret = map((void*)CONFIG_GICC_BASE, (void*)(CONFIG_GICC_BASE + 4096), &attr);
     }
 
@@ -96,12 +100,14 @@ static errno_t init_map(void)
     }
 
     if (ret == SUCCESS) {
-	    attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+        attr.sh = MMU_ATTR_SH_NSH;
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRE;
 	    ret = map((void*)CONFIG_GICH_BASE, (void*)(CONFIG_GICH_BASE + 4096), &attr);
     }
 
     if (ret == SUCCESS) {
-	    attr.attrindx = HYP_MMU_DEVICE_nGnRnE;
+        attr.sh = MMU_ATTR_SH_NSH;
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRE;
 	    ret = map((void*)CONFIG_GICV_BASE, (void*)(CONFIG_GICV_BASE + 4096), &attr);
     }
 

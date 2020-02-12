@@ -1,5 +1,5 @@
 /*
- * aarch64/stage2/aarch64_stage2_init.c
+ * aarch64/stage2/aarch64_stage2_initialize.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -138,7 +138,7 @@ static errno_t validate_parameters(struct aarch64_stage2 *stage2, const struct a
     return ret;
 }
 
-static errno_t stage2_init(struct aarch64_stage2 *stage2, const struct aarch64_stage2_configuration *config)
+static errno_t stage2_initialize(struct aarch64_stage2 *stage2, const struct aarch64_stage2_configuration *config)
 {
     errno_t ret;
 
@@ -169,13 +169,13 @@ static errno_t stage2_init(struct aarch64_stage2 *stage2, const struct aarch64_s
     return ret;
 }
 
-errno_t aarch64_stage2_init(struct aarch64_stage2 *stage2, const struct aarch64_stage2_configuration *config)
+errno_t aarch64_stage2_initialize(struct aarch64_stage2 *stage2, const struct aarch64_stage2_configuration *config)
 {
     errno_t ret;
 
     ret = validate_parameters(stage2, config);
     if (ret == SUCCESS) {
-        ret = stage2_init(stage2, config);
+        ret = stage2_initialize(stage2, config);
     }
 
     return ret;

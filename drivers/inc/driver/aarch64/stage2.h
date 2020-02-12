@@ -128,7 +128,7 @@ struct aarch64_stage2_configuration {
 
 /* functions */
 
-errno_t aarch64_stage2_init(struct aarch64_stage2 *stage2, const struct aarch64_stage2_configuration *config);
+errno_t aarch64_stage2_initialize(struct aarch64_stage2 *stage2, const struct aarch64_stage2_configuration *config);
 errno_t aarch64_stage2_map(struct aarch64_stage2 *stage2, void *ipa, void *pa, size_t sz, const struct aarch64_stage2_attr *attr);
 
 /* for debugging */

@@ -147,7 +147,7 @@ struct aarch64_mmu_configuration {
 
 /* functions */
 
-errno_t aarch64_mmu_init(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config);
+errno_t aarch64_mmu_initialize(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config);
 errno_t aarch64_mmu_disable(void);
 errno_t aarch64_mmu_enable(struct aarch64_mmu *mmu);
 

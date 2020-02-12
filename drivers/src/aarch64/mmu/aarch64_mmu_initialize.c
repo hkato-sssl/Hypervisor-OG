@@ -1,5 +1,5 @@
 /*
- * aarch64/mmu/aarch64_mmu_init.c
+ * aarch64/mmu/aarch64_mmu_initialize.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -137,7 +137,7 @@ static errno_t validate_parameters(struct aarch64_mmu *mmu, const struct aarch64
     return ret;
 }
 
-static errno_t mmu_init(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config)
+static errno_t mmu_initialize(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config)
 {
     errno_t ret;
 
@@ -168,13 +168,13 @@ static errno_t mmu_init(struct aarch64_mmu *mmu, const struct aarch64_mmu_config
     return ret;
 }
 
-errno_t aarch64_mmu_init(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config)
+errno_t aarch64_mmu_initialize(struct aarch64_mmu *mmu, const struct aarch64_mmu_configuration *config)
 {
     errno_t ret;
 
     ret = validate_parameters(mmu, config);
     if (ret == SUCCESS) {
-        ret = mmu_init(mmu, config);
+        ret = mmu_initialize(mmu, config);
     }
 
     return ret;

@@ -107,7 +107,7 @@ struct aarch64_mmu_base_configuration {
 
 /* functions */
 
-errno_t aarch64_mmu_block_pool_init(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config);
+errno_t aarch64_mmu_block_pool_initialize(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config);
 void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);
 errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block, size_t block_sz);
 

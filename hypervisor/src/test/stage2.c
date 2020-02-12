@@ -59,7 +59,7 @@ errno_t hyp_test_stage2_init(void)
 
     ret = init_pool();
     if (ret == SUCCESS) {
-        ret = aarch64_stage2_init(&hyp_test_stage2, &config);
+        ret = aarch64_stage2_initialize(&hyp_test_stage2, &config);
     }
 
     return ret;

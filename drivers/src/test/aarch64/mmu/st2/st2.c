@@ -63,7 +63,7 @@ static errno_t init(void)
 
     ret = init_pool();
     if (ret == SUCCESS) {
-        ret = aarch64_stage2_init(&test_st2_mmu, &config);
+        ret = aarch64_stage2_initialize(&test_st2_mmu, &config);
     }
 
     return ret;

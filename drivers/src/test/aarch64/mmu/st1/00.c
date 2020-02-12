@@ -67,8 +67,8 @@ static errno_t init_pool(void)
     config.block_sz = 4096;
     config.block_region.addr = block_pool_region;
     config.block_region.size = sizeof(block_pool_region);
-    ret = aarch64_mmu_block_pool_init(&pool, &config);
-    printk("aarch64_mmu_block_pool_init() -> %d\n", ret);
+    ret = aarch64_mmu_block_pool_initialize(&pool, &config);
+    printk("aarch64_mmu_block_pool_initialize() -> %d\n", ret);
 
     return ret;
 }
@@ -98,8 +98,8 @@ static errno_t init(void)
     config.tcr.el23.irgn0 = TCR_RGN_WBWA;
     config.tcr.el23.t0sz = 16;
 
-    ret = aarch64_mmu_init(&mmu, &config);
-    printk("aarch64_mmu_init() -> %d\n", ret);
+    ret = aarch64_mmu_initialize(&mmu, &config);
+    printk("aarch64_mmu_initialize() -> %d\n", ret);
 
     return ret;
 }

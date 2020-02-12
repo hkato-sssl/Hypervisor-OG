@@ -90,7 +90,7 @@ static errno_t init_pool(void)
     config.block_sz = 4096;
     config.block_region.addr = memory_block_region;
     config.block_region.size = sizeof(memory_block_region);
-    ret = aarch64_mmu_block_pool_init(&pool, &config);
+    ret = aarch64_mmu_block_pool_initialize(&pool, &config);
 
     return ret;
 }
@@ -138,7 +138,7 @@ static errno_t init_mmu(void)
 
     ret = init_pool();
     if (ret == SUCCESS) {
-        ret = aarch64_mmu_init(&test_mmu, &config);
+        ret = aarch64_mmu_initialize(&test_mmu, &config);
     }
 
     return ret;

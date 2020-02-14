@@ -17,6 +17,7 @@
          * PoC まで実行する必要がある。
          */
 aarch64_mmu_write_descriptor:
+		dsb				sy
         str             x1, [x0]
         dsb             ish
         dc              cvac, x0

@@ -1,0 +1,7 @@
+ATS, Bit[6]
+NSATTR, bit[5]
+NSSTATE, bit[4]
+IND, bit[3]
+PNU, bit[2]
+WNR, bit[1] 
+Nested, bit[0] 

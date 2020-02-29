@@ -1,0 +1,2 @@
+Addr, bits[63:12]
+NDX, bits[7:0] 

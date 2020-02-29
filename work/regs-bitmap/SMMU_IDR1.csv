@@ -1,0 +1,9 @@
+PAGESIZE, bit[31]
+NUMPAGENDXB, bits[30:28]
+HAFDBS, bits[25:24]
+NUMS2CB[7:0], bits[23:16]
+SMCD, bit[15]
+Bit[14] Reserved.
+SSDTP, bits[13:12]
+NUMSSDNDXB[3:0], bits[11:8]
+NUMCB, bits[7:0]

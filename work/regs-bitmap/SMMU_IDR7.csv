@@ -1,0 +1,2 @@
+MAJOR, bits[7:4]
+MINOR, bits[3:0]

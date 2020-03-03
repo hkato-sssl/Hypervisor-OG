@@ -1,0 +1,11 @@
+IRPTNDX[7:0], bits[31:24]
+WACFG, bits[23:22]
+RACFG, bits[21:20]
+BSU, bits[19:18]
+TYPE, bits[17:16]
+MemAttr, bits[15:12]
+FB, bit[11] 
+HYPC, bit[10], when HYPC is available
+E2HC, bit[10], when E2HC is available
+BPSHCFG, bits[9:8]
+VMID, bits[7:0]

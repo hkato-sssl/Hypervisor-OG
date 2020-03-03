@@ -1,0 +1,3 @@
+IRPTNDX[7:0], bits[31:24]
+TYPE, bits[17:16]
+VMID, bits[7:0]

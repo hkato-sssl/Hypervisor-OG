@@ -1,0 +1,11 @@
+NSCFG1, bit[30]
+SEP, bits[17:15]
+NSCFG0, bit[14]
+HD, bit[11], SMMUv2 only
+HA, bit[10], SMMUv2 only
+HAD1, bit[9], SMMUv2 only
+HAD0, bit[8], SMMUv2 only
+TBI1, bit[6] 
+TBI0, bit[5]
+AS, bit[4]
+PASize, bits[2:0]

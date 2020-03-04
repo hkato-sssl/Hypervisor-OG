@@ -79,8 +79,10 @@ def parse_bit_field(f):
     return ret
 
 def pick_up(ln):
-    ln = ln.split(',')
+    ln = ln.strip(' ').split(',')
     l = len(ln)
+
+    ln[0] = re.sub(r'\[\d:0\]', '', ln[0])
     
     if l == 1:
         ret = [ln[0]]

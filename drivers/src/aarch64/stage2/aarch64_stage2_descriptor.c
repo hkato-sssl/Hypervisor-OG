@@ -36,6 +36,9 @@ static uint64_t block_page_descriptor(void *pa, const struct aarch64_stage2_attr
     desc |= (uint64_t)attr->s2ap << 6;
     desc |= (uint64_t)attr->memattr << 2;
 
+    desc |= (uint64_t)attr->smmu.wacfg << 62;
+    desc |= (uint64_t)attr->smmu.racfg << 60;
+
     return desc;
 }
 

@@ -85,6 +85,14 @@ extern "C" {
 #define STAGE2_MEMATTR_NORMAL_WT        (STAGE2_MEMATTR_NORMAL_OWT | STAGE2_MEMATTR_NORMAL_IWT)
 #define STAGE2_MEMATTR_NORMAL_WB        (STAGE2_MEMATTR_NORMAL_OWB | STAGE2_MEMATTR_NORMAL_IWB)
 
+#define SMMU_WACFG_PREVIOUS             0   /* use value supplied from previous stage */
+#define SMMU_WACFG_WA                   2   /* Write-Allocate */
+#define SMMU_WACFG_NO_WA                3   /* No Write-Allocate */
+
+#define SMMU_RACFG_PREVIOUS             0   /* use value supplied from previous stage */
+#define SMMU_RACFG_RA                   2   /* Read-Allocate */
+#define SMMU_RACFG_NO_RA                3   /* No Read-Allocate */
+
 /* types */
 
 /* Attributes in descriptor for stage 2 translation */
@@ -93,12 +101,18 @@ struct aarch64_stage2_attr {
     /* attrinbutes in Block or Page descriptor */
 
     /* upper attributes */
-    uint8_t     xn:1;
+    uint8_t         xn:1;
     /* lower attributes */
-    uint8_t     af:1;
-    uint8_t     sh:2;
-    uint8_t     s2ap:2;
-    uint8_t     memattr:4;
+    uint8_t         af:1;
+    uint8_t         sh:2;
+    uint8_t         s2ap:2;
+    uint8_t         memattr:4;
+
+    /* SMMU attributes */
+    struct {
+        uint8_t     wacfg:2;
+        uint8_t     racfg:2;
+    } smmu;
 };
 
 struct aarch64_stage2 {

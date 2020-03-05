@@ -1,0 +1,9 @@
+HD, bit[22], SMMUv2 only
+HA, bit[21], SMMUv2 only
+PASize, bits[18:16]
+TG0, Bits[15:14]
+SH0, bits[13:12]
+ORGN0, bits[11:10]
+IRGN0, bits[9:8]
+SL0, bits[7:6] 
+T0SZ, bits[5:0]

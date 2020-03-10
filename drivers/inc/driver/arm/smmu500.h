@@ -85,8 +85,8 @@ struct smmu500 {
     uint16_t    nr_s2_context_banks;
 
     struct {
-        uint64_t    context[(MAX_NR_SMMU_CONTEXTS + 63) / 64];
-        uint64_t    context_bank[(MAX_NR_SMMU_CONTEXTS + 63) / 64];
+        uint32_t    contexts[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
+        uint32_t    context_banks[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
     } allocate;
 };
 

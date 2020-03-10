@@ -1,5 +1,5 @@
 /*
- * arm/smmu500/smmu500_allocate_context.c
+ * arm/smmu500/smmu500_allocate_context_banks.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -23,11 +23,11 @@
 
 /* functions */
 
-errno_t smmu500_allocate_context(uint8_t *id, struct smmu500 *smmu)
+errno_t smmu500_allocate_context_banks(uint8_t *id, struct smmu500 *smmu)
 {
     errno_t ret;
 
-    ret = smmu500_allocate(id, smmu, smmu->allocate.contexts, sizeof(smmu->allocate.contexts), smmu->nr_contexts);
+    ret = smmu500_allocate(id, smmu, smmu->allocate.context_banks, sizeof(smmu->allocate.context_banks), smmu->nr_context_banks);
 
     return ret;
 }

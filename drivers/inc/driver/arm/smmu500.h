@@ -81,12 +81,14 @@ struct smmu500 {
     uint32_t    nr_pages;
     uint32_t    page_size;          /* 4096 or 65536 */
 
-    uint16_t    nr_context_banks;
-    uint16_t    nr_s2_context_banks;
+    uint8_t     nr_contexts;
+    uint8_t     nr_context_banks;
+    uint8_t     nr_s2_context_banks;
 
     struct {
         uint32_t    contexts[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
         uint32_t    context_banks[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
+        uint32_t    s2_context_banks[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
     } allocate;
 };
 

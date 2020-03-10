@@ -21,8 +21,11 @@ extern "C" {
 
 #include <stdint.h>
 #include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 
 /* defines */
+
+#define MAX_NR_SMMU_CONTEXTS        128
 
 /* memory type */
 
@@ -70,6 +73,7 @@ struct aatch64_mmu_attr;
 struct aatch64_stage2;
 
 struct smmu500 {
+    spin_lock_t lock;
     uintptr_t   smmu_base;          /* also used as SMMU_GR0_BASE */
     uintptr_t   smmu_gr1_base;
     uintptr_t   smmu_cb_base;
@@ -79,22 +83,27 @@ struct smmu500 {
 
     uint16_t    nr_context_banks;
     uint16_t    nr_s2_context_banks;
+
+    struct {
+        uint64_t    context[(MAX_NR_SMMU_CONTEXTS + 63) / 64];
+        uint64_t    context_bank[(MAX_NR_SMMU_CONTEXTS + 63) / 64];
+    } allocate;
 };
 
-struct smmu_tranlation_configuration {
+struct smmu_s2_cb_translation_configuration {
     struct {
-        uint16_t        transient:1;
-        uint16_t        instruction:1;
-        uint16_t        unprivileged:1;
-        uint16_t        write_allocate:1;
-        uint16_t        read_allocate:1;
-        uint16_t        memory_attribute:1;
-        uint16_t        extended_id:1;
-        uint16_t        shareability:1;
+        uint16_t    transient:1;
+        uint16_t    instruction:1;
+        uint16_t    unprivileged:1;
+        uint16_t    write_allocate:1;
+        uint16_t    read_allocate:1;
+        uint16_t    memory_attribute:1;
+        uint16_t    extended_id:1;
+        uint16_t    shareability:1;
     } flag;
 
-    uint8_t             memory_attribute;
-    uint8_t             shareability;
+    uint8_t         memory_attribute;
+    uint8_t         shareability;
 };
 
 struct smmu500_configuration {
@@ -148,10 +157,7 @@ struct smmu500_s2_cb_attach_configuration {
     uint16_t                    vmid;
     struct smmu_stream          stream;
     const struct aarch64_stage2 *stage2;
-
-    struct smmu_s2_cb_sctlr     sctlr;
-    struct smmu_s2_cb_tcr       tcr;
-    struct smmu500_s2_cb_actlr  actlr;
+    struct smmu_s2_cb_translation_configuration translation;
 };
 
 /* variables */

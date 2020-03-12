@@ -34,6 +34,7 @@ extern "C" {
 /* functions */
 
 errno_t bitmap_search0(uint32_t *bit_no, const void *map, size_t map_size);
+errno_t bitmap_search_and_set(uint32_t *bit_no, void *map, size_t map_size);
 errno_t bitmap_set(void *map, size_t map_size, uint32_t bit_no);
 errno_t bitmap_clear(void *map, size_t map_size, uint32_t bit_no);
 

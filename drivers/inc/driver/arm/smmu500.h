@@ -26,7 +26,8 @@ extern "C" {
 
 /* defines */
 
-#define MAX_NR_SMMU_CONTEXTS        128
+#define MAX_NR_SMMU_STREAM_MAPS     128
+#define MAX_NR_SMMU_CONTEXT_BANKS   128
 
 /* memory type */
 
@@ -87,8 +88,9 @@ struct smmu500 {
     uint8_t     nr_s2_context_banks;    /* SMMU_IDR1.NUMS2CB */
 
     struct {
-        uint32_t    stream_maps[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
-        uint32_t    context_banks[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
+        uint8_t     stream_maps[MAX_NR_SMMU_STREAM_MAPS];
+        uint8_t     context_banks[MAX_NR_SMMU_CONTEXT_BANKS];
+        uint8_t     s2_context_banks[MAX_NR_SMMU_CONTEXT_BANKS];
     } allocate;
 };
 
@@ -169,7 +171,7 @@ struct smmu500_s2_cb_attach_configuration {
 errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configuration *config);
 errno_t smmu500_s2_cb_attach(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config);
 
-void smmu500_dump(const struct smmu500 *smmu);
+void smmu500_dump(struct smmu500 *smmu);
 
 #ifdef __cplusplus
 }

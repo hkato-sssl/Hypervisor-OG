@@ -21,6 +21,7 @@ extern "C" {
 
 #include <stdint.h>
 #include "lib/system/memio.h"
+#include "lib/system/spin_lock.h"
 
 /* defines */
 
@@ -29,6 +30,16 @@ extern "C" {
 /* variables */
 
 /* functions */
+
+static inline void smmu500_lock(struct smmu500 *smmu)
+{
+    spin_lock(&(smmu->lock));
+}
+
+static inline void smmu500_unlock(struct smmu500 *smmu)
+{
+    spin_unlock(&(smmu->lock));
+}
 
 static inline uint32_t smmu500_gr0_read32(const struct smmu500 *smmu, uint32_t regs)
 {
@@ -101,9 +112,10 @@ static inline void smmu500_cb_write64(const struct smmu500 *smmu, uint8_t cb, ui
     REG_WRITE64(base, regs, d);
 }
 
-errno_t smmu500_allocate(uint8_t *id, struct smmu500 *smmu, void *map, size_t map_size, uint32_t nr_bits);
-errno_t smmu500_allocate_stream_map(uint8_t *id, struct smmu500 *smmu);
-errno_t smmu500_allocate_context_bank(uint8_t *id, struct smmu500 *smmu);
+errno_t smmu500_allocate_stream_map(uint8_t *idx, struct smmu500 *smmu);
+errno_t smmu500_allocate_context_bank(uint8_t *idx, struct smmu500 *smmu);
+errno_t smmu500_allocate_s2_context_bank(uint8_t *idx, struct smmu500 *smmu);
+errno_t smmu500_free_context_bank(struct smmu500 *smmu, uint8_t idx);
 
 #ifdef __cplusplus
 }

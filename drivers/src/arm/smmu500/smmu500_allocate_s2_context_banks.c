@@ -1,5 +1,5 @@
 /*
- * arm/smmu500/smmu500_allocate_context_banks.c
+ * arm/smmu500/smmu500_allocate_s2_context_banks.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -43,12 +43,35 @@ static errno_t allocate(uint8_t *idx, struct smmu500 *smmu)
     return ret;
 }
 
-errno_t smmu500_allocate_context_banks(uint8_t *idx, struct smmu500 *smmu)
+static errno_t allocate_s2(uint8_t *idx, struct smmu500 *smmu)
+{
+    errno_t ret;
+    size_t sz;
+    uint32_t no;
+
+    sz = (smmu->nr_s2_context_banks + 7) / 8;
+    ret = bitmap_search_and_set(&no, smmu->allocate.context_banks, sz);
+    if ((ret == SUCCESS) && (no < smmu->nr_s2_context_banks)) {
+        *idx = (uint8_t)no;
+    } else {
+        ret = allocate(idx, smmu);
+    }
+
+    return ret;
+}
+
+errno_t smmu500_allocate_s2_context_banks(uint8_t *idx, struct smmu500 *smmu)
 {
     errno_t ret;
 
     smmu500_lock(smmu);
-    ret = allocate(idx, smmu);
+
+    if (smmu->nr_s2_context_banks > 0) {
+        ret = allocate_s2(idx, smmu);
+    } else {
+        ret = allocate(idx, smmu);
+    }
+
     smmu500_unlock(smmu);
 
     return ret;

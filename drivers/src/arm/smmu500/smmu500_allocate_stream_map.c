@@ -1,5 +1,5 @@
 /*
- * arm/smmu500/smmu500_allocate_s2_context_banks.c
+ * arm/smmu500/smmu500_allocate_stream_map.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -23,11 +23,11 @@
 
 /* functions */
 
-errno_t smmu500_allocate_s2_context_banks(uint8_t *id, struct smmu500 *smmu)
+errno_t smmu500_allocate_stream_map(uint8_t *id, struct smmu500 *smmu)
 {
     errno_t ret;
 
-    ret = smmu500_allocate(id, smmu, smmu->allocate.s2_context_banks, sizeof(smmu->allocate.s2_context_banks), smmu->nr_s2_context_banks);
+    ret = smmu500_allocate(id, smmu, smmu->allocate.stream_maps, sizeof(smmu->allocate.stream_maps), smmu->nr_stream_maps);
 
     return ret;
 }

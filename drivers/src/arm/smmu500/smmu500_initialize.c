@@ -11,6 +11,7 @@
 #include "driver/aarch64/mmu.h"
 #include "driver/arm/smmu500.h"
 #include "driver/arm/device/smmu500.h"
+#include "driver/arm/device/smmuv2/smmu_idr0.h"
 #include "driver/arm/device/smmuv2/smmu_idr1.h"
 #include "smmu500_local.h"
 
@@ -58,24 +59,27 @@ static errno_t map_register_region(const struct smmu500 *smmu, const struct smmu
 static void probe_device(struct smmu500 *smmu)
 {
     uint32_t d;
-    uint32_t idr1;
+    uint32_t id;
 
-    idr1 = smmu500_gr0_read32(smmu, SMMU_IDR1);
+    id = smmu500_gr0_read32(smmu, SMMU_IDR0);
+    smmu->nr_stream_maps = EXTRACT_SMMU_IDR0_NUMSMRG(id);
 
-    if ((idr1 & SMMU_IDR1_PAGESIZE) != 0) {
+    id = smmu500_gr0_read32(smmu, SMMU_IDR1);
+
+    if ((id & SMMU_IDR1_PAGESIZE) != 0) {
         smmu->page_size = 64 * 1024;
     } else {
         smmu->page_size = 4 * 1024;
     }
 
-    smmu->smmu_gr1_base = smmu->smmu_base + smmu->page_size;
-    smmu->smmu_cb_base = smmu->smmu_base + (smmu->page_size * smmu->nr_pages);
-
-    d = EXTRACT_SMMU_IDR1_NUMPAGENDXB(idr1);
+    d = EXTRACT_SMMU_IDR1_NUMPAGENDXB(id);
     smmu->nr_pages = 1 << (d + 1);
 
-    smmu->nr_context_banks = EXTRACT_SMMU_IDR1_NUMCB(idr1);
-    smmu->nr_s2_context_banks = EXTRACT_SMMU_IDR1_NUMS2CB(idr1);
+    smmu->nr_context_banks = EXTRACT_SMMU_IDR1_NUMCB(id);
+    smmu->nr_s2_context_banks = EXTRACT_SMMU_IDR1_NUMS2CB(id);
+
+    smmu->smmu_gr1_base = smmu->smmu_base + smmu->page_size;
+    smmu->smmu_cb_base = smmu->smmu_base + (smmu->page_size * smmu->nr_pages);
 }
 
 static errno_t initialize(struct smmu500 *smmu, const struct smmu500_configuration *config)

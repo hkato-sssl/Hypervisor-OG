@@ -30,7 +30,7 @@ extern "C" {
 
 /* functions */
 
-static inline uint32_t smmu500_gr0_read32(struct smmu500 *smmu, uint32_t regs)
+static inline uint32_t smmu500_gr0_read32(const struct smmu500 *smmu, uint32_t regs)
 {
     uint32_t d;
 
@@ -39,12 +39,12 @@ static inline uint32_t smmu500_gr0_read32(struct smmu500 *smmu, uint32_t regs)
     return d;
 }
 
-static inline void smmu500_gr0_write32(struct smmu500 *smmu, uint32_t regs, uint32_t d)
+static inline void smmu500_gr0_write32(const struct smmu500 *smmu, uint32_t regs, uint32_t d)
 {
     REG_WRITE32(smmu->smmu_base, regs, d);
 }
 
-static inline uint32_t smmu500_gr1_read32(struct smmu500 *smmu, uint32_t regs)
+static inline uint32_t smmu500_gr1_read32(const struct smmu500 *smmu, uint32_t regs)
 {
     uint32_t d;
 
@@ -53,17 +53,17 @@ static inline uint32_t smmu500_gr1_read32(struct smmu500 *smmu, uint32_t regs)
     return d;
 }
 
-static inline void smmu500_gr1_write32(struct smmu500 *smmu, uint32_t regs, uint32_t d)
+static inline void smmu500_gr1_write32(const struct smmu500 *smmu, uint32_t regs, uint32_t d)
 {
     REG_WRITE32(smmu->smmu_gr1_base, regs, d);
 }
 
-static inline uintptr_t smmu500_cb_base(struct smmu500 *smmu, uint8_t cb)
+static inline uintptr_t smmu500_cb_base(const struct smmu500 *smmu, uint8_t cb)
 {
     return (smmu->smmu_cb_base + (cb * smmu->page_size));
 }
 
-static inline uint32_t smmu500_cb_read32(struct smmu500 *smmu, uint8_t cb, uint32_t regs)
+static inline uint32_t smmu500_cb_read32(const struct smmu500 *smmu, uint8_t cb, uint32_t regs)
 {
     uint32_t d;
     uintptr_t base;
@@ -74,7 +74,7 @@ static inline uint32_t smmu500_cb_read32(struct smmu500 *smmu, uint8_t cb, uint3
     return d;
 }
 
-static inline void smmu500_cb_write32(struct smmu500 *smmu, uint8_t cb, uint32_t regs, uint32_t d)
+static inline void smmu500_cb_write32(const struct smmu500 *smmu, uint8_t cb, uint32_t regs, uint32_t d)
 {
     uintptr_t base;
 
@@ -82,7 +82,7 @@ static inline void smmu500_cb_write32(struct smmu500 *smmu, uint8_t cb, uint32_t
     REG_WRITE32(base, regs, d);
 }
 
-static inline uint32_t smmu500_cb_read64(struct smmu500 *smmu, uint8_t cb, uint32_t regs)
+static inline uint32_t smmu500_cb_read64(const struct smmu500 *smmu, uint8_t cb, uint32_t regs)
 {
     uint64_t d;
     uintptr_t base;
@@ -93,7 +93,7 @@ static inline uint32_t smmu500_cb_read64(struct smmu500 *smmu, uint8_t cb, uint3
     return d;
 }
 
-static inline void smmu500_cb_write64(struct smmu500 *smmu, uint8_t cb, uint32_t regs, uint64_t d)
+static inline void smmu500_cb_write64(const struct smmu500 *smmu, uint8_t cb, uint32_t regs, uint64_t d)
 {
     uintptr_t base;
 
@@ -102,9 +102,8 @@ static inline void smmu500_cb_write64(struct smmu500 *smmu, uint8_t cb, uint32_t
 }
 
 errno_t smmu500_allocate(uint8_t *id, struct smmu500 *smmu, void *map, size_t map_size, uint32_t nr_bits);
-errno_t smmu500_allocate_context(uint8_t *id, struct smmu500 *smmu);
+errno_t smmu500_allocate_stream_map(uint8_t *id, struct smmu500 *smmu);
 errno_t smmu500_allocate_context_bank(uint8_t *id, struct smmu500 *smmu);
-errno_t smmu500_allocate_s2_context_bank(uint8_t *id, struct smmu500 *smmu);
 
 #ifdef __cplusplus
 }

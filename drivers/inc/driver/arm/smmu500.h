@@ -22,6 +22,7 @@ extern "C" {
 #include <stdint.h>
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
+#include "lib/bit.h"
 
 /* defines */
 
@@ -74,21 +75,20 @@ struct aatch64_stage2;
 
 struct smmu500 {
     spin_lock_t lock;
-    uintptr_t   smmu_base;          /* also used as SMMU_GR0_BASE */
+    uintptr_t   smmu_base;              /* also used as SMMU_GR0_BASE */
     uintptr_t   smmu_gr1_base;
     uintptr_t   smmu_cb_base;
 
     uint32_t    nr_pages;
-    uint32_t    page_size;          /* 4096 or 65536 */
+    uint32_t    page_size;              /* 4096 or 65536 */
 
-    uint8_t     nr_contexts;
-    uint8_t     nr_context_banks;
-    uint8_t     nr_s2_context_banks;
+    uint8_t     nr_stream_maps;         /* SMMU_IDR0.SMRG */
+    uint8_t     nr_context_banks;       /* SMMU_IDR1.NUMCB */
+    uint8_t     nr_s2_context_banks;    /* SMMU_IDR1.NUMS2CB */
 
     struct {
-        uint32_t    contexts[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
+        uint32_t    stream_maps[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
         uint32_t    context_banks[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
-        uint32_t    s2_context_banks[ALIGN(MAX_NR_SMMU_CONTEXTS, 32)];
     } allocate;
 };
 
@@ -168,6 +168,8 @@ struct smmu500_s2_cb_attach_configuration {
 
 errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configuration *config);
 errno_t smmu500_s2_cb_attach(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config);
+
+void smmu500_dump(const struct smmu500 *smmu);
 
 #ifdef __cplusplus
 }

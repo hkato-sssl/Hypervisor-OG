@@ -27,7 +27,7 @@ errno_t smmu500_allocate_context_banks(uint8_t *id, struct smmu500 *smmu)
 {
     errno_t ret;
 
-    ret = smmu500_allocate(id, smmu, smmu->allocate.context_banks, sizeof(smmu->allocate.context_banks), smmu->nr_context_banks);
+    ret = smmu500_allocate(id, smmu, smmu->allocate.context_banks, sizeof(smmu->allocate.context_banks), (smmu->nr_context_banks - smmu->nr_s2_context_banks));
 
     return ret;
 }

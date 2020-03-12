@@ -105,9 +105,9 @@ static errno_t s2_cb_attach(uint8_t *id, struct smmu500 *smmu, const struct smmu
     errno_t ret;
     uint8_t s2;
 
-    ret = smmu500_allocate_s2_context_bank(&s2, smmu);
+    ret = smmu500_allocate_context_bank(&s2, smmu);
     if (ret == SUCCESS) {
-        ret = smmu500_allocate_context(id, smmu);
+        ret = smmu500_allocate_stream_map(id, smmu);
         if (ret == SUCCESS) {
             ret = configure_s2_context_bank(smmu, config, *id, s2);
         }

@@ -110,6 +110,8 @@ static errno_t attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smm
         ret = smmu500_allocate_stream_map(id, smmu);
         if (ret == SUCCESS) {
             ret = configure_s2_context_bank(smmu, config, *id, s2);
+        } else {
+            ret = smmu500_free_context_bank(smmu, s2);
         }
     }
 

@@ -90,8 +90,7 @@ struct smmu500 {
     struct {
         uint8_t     stream_maps[MAX_NR_SMMU_STREAM_MAPS];
         uint8_t     context_banks[MAX_NR_SMMU_CONTEXT_BANKS];
-        uint8_t     s2_context_banks[MAX_NR_SMMU_CONTEXT_BANKS];
-    } allocate;
+    } allocation;
 };
 
 struct smmu_s2_cb_translation_configuration {

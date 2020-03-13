@@ -19,7 +19,9 @@ extern "C" {
 
 /* includes */
 
-#include "lib/bitmap.h"
+#include <stddef.h>
+#include <stdint.h>
+#include "lib/system/errno.h"
 
 /* defines */
 
@@ -30,6 +32,8 @@ extern "C" {
 /* variables */
 
 /* functions */
+
+errno_t bitmap_search_zero(uint32_t *bit_no, const uint8_t *map, size_t map_size, uint32_t offset);
 
 #ifdef __cplusplus
 }

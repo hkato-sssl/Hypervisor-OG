@@ -1,5 +1,5 @@
 /*
- * arm/smmu500/smmu500_s2_cb_attach.c
+ * arm/smmu500/smmu500_attach_stage2.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -100,7 +100,7 @@ static errno_t configure_s2_context_bank(struct smmu500 *smmu, const struct smmu
     return ret;
 }
 
-static errno_t s2_cb_attach(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config)
+static errno_t attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config)
 {
     errno_t ret;
     uint8_t s2;
@@ -116,12 +116,12 @@ static errno_t s2_cb_attach(uint8_t *id, struct smmu500 *smmu, const struct smmu
     return ret;
 }
 
-errno_t smmu500_s2_cb_attach(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config)
+errno_t smmu500_attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config)
 {
     errno_t ret;
 
     if ((id != NULL) && (smmu != NULL) && (config != NULL)) {
-        ret = s2_cb_attach(id, smmu, config);
+        ret = attach_stage2(id, smmu, config);
     } else {
         ret = -EINVAL;
     }

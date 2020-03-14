@@ -83,12 +83,12 @@ struct smmu500 {
     uint32_t    nr_pages;
     uint32_t    page_size;              /* 4096 or 65536 */
 
-    uint8_t     nr_stream_maps;         /* SMMU_IDR0.SMRG */
+    uint8_t     nr_stream_matches;      /* SMMU_IDR0.SMRG */
     uint8_t     nr_context_banks;       /* SMMU_IDR1.NUMCB */
     uint8_t     nr_s2_context_banks;    /* SMMU_IDR1.NUMS2CB */
 
     struct {
-        uint8_t     stream_maps[MAX_NR_SMMU_STREAM_MAPS];
+        uint8_t     stream_matches[MAX_NR_SMMU_STREAM_MAPS];
         uint8_t     context_banks[MAX_NR_SMMU_CONTEXT_BANKS];
     } allocation;
 };
@@ -168,7 +168,8 @@ struct smmu500_s2_cb_attach_configuration {
 /* functions */
 
 errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configuration *config);
-errno_t smmu500_s2_cb_attach(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config);
+errno_t smmu500_attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config);
+errno_t smmu500_enable(struct smmu500 *smmu, uint8_t id);
 
 void smmu500_dump(struct smmu500 *smmu);
 

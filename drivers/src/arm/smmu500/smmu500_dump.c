@@ -135,13 +135,13 @@ static void dump_stream_regs(const char *name, uint8_t n, uintptr_t base, uint32
     }
 }
 
-static void dump_stream_maps(const struct smmu500 *smmu)
+static void dump_stream_matches(const struct smmu500 *smmu)
 {
     uint8_t i;
     uint32_t smr;
     uint32_t s2cr;
 
-    for (i = 0; i < smmu->nr_stream_maps; ++i) {
+    for (i = 0; i < smmu->nr_stream_matches; ++i) {
         smr = smmu500_gr0_read32(smmu, SMMU_SMR(i));
         s2cr = smmu500_gr0_read32(smmu, SMMU_S2CR(i));
         dump_stream_regs("SMMU_SMR", i, smmu->smmu_base, SMMU_SMR(i));
@@ -186,7 +186,7 @@ static void dump_smmu500(const struct smmu500 *smmu)
     printk("       smmu_cb_base: %p\n", smmu->smmu_cb_base);
     printk("           nr_pages: %u\n", smmu->nr_pages);
     printk("          page_size: %u\n", smmu->page_size);
-    printk("     nr_stream_maps: %u\n", smmu->nr_stream_maps);
+    printk("     nr_stream_matches: %u\n", smmu->nr_stream_matches);
     printk("   nr_context_banks: %u\n", smmu->nr_context_banks);
     printk("nr_s2_context_banks: %u\n", smmu->nr_s2_context_banks);
     printk("\n");
@@ -198,7 +198,7 @@ void smmu500_dump(struct smmu500 *smmu)
 
     dump_smmu500(smmu);
     dump_gr0(smmu);
-    dump_stream_maps(smmu);
+    dump_stream_matches(smmu);
 
     smmu500_unlock(smmu);
 }

@@ -62,7 +62,7 @@ static void probe_device(struct smmu500 *smmu)
     uint32_t id;
 
     id = smmu500_gr0_read32(smmu, SMMU_IDR0);
-    smmu->nr_stream_maps = EXTRACT_SMMU_IDR0_NUMSMRG(id);
+    smmu->nr_stream_matches = EXTRACT_SMMU_IDR0_NUMSMRG(id);
 
     id = smmu500_gr0_read32(smmu, SMMU_IDR1);
 

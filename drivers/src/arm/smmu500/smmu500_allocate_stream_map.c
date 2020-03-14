@@ -29,10 +29,10 @@ errno_t smmu500_allocate_stream_map(uint8_t *idx, struct smmu500 *smmu)
     uint32_t no;
     size_t sz;
 
-    sz = (smmu->nr_stream_maps + 7) / 8;
-    ret = bitmap_search_and_set(&no, smmu->allocation.stream_maps, sz, 0);
+    sz = (smmu->nr_stream_matches + 7) / 8;
+    ret = bitmap_search_and_set(&no, smmu->allocation.stream_matches, sz, 0);
     if (ret == SUCCESS) {
-        if (no < smmu->nr_stream_maps) {
+        if (no < smmu->nr_stream_matches) {
             *idx = (uint8_t)no;
         } else {
             ret = -ENOMEM;

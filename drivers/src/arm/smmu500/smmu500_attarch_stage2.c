@@ -111,7 +111,7 @@ static errno_t attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smm
         if (ret == SUCCESS) {
             ret = configure_s2_context_bank(smmu, config, *id, s2);
         } else {
-            ret = smmu500_free_context_bank(smmu, s2);
+            smmu500_free_context_bank(smmu, s2);
         }
     }
 
@@ -123,7 +123,9 @@ errno_t smmu500_attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct sm
     errno_t ret;
 
     if ((id != NULL) && (smmu != NULL) && (config != NULL)) {
+        smmu500_lock(smmu);
         ret = attach_stage2(id, smmu, config);
+        smmu500_unlock(smmu);
     } else {
         ret = -EINVAL;
     }

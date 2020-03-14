@@ -112,7 +112,7 @@ static inline void smmu500_cb_write64(const struct smmu500 *smmu, uint8_t cb, ui
     REG_WRITE64(base, regs, d);
 }
 
-errno_t smmu500_allocate_stream_map(uint8_t *idx, struct smmu500 *smmu);
+errno_t smmu500_allocate_stream_match_register(uint8_t *idx, struct smmu500 *smmu);
 errno_t smmu500_allocate_context_bank(uint8_t *idx, struct smmu500 *smmu);
 errno_t smmu500_allocate_s2_context_bank(uint8_t *idx, struct smmu500 *smmu);
 errno_t smmu500_free_context_bank(struct smmu500 *smmu, uint8_t idx);

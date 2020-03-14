@@ -1,5 +1,5 @@
 /*
- * arm/smmu500/smmu500_allocate_stream_map.c
+ * arm/smmu500/smmu500_allocate_stream_match_register.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -23,7 +23,7 @@
 
 /* functions */
 
-errno_t smmu500_allocate_stream_map(uint8_t *idx, struct smmu500 *smmu)
+errno_t smmu500_allocate_stream_match_register(uint8_t *idx, struct smmu500 *smmu)
 {
     errno_t ret;
     uint32_t no;

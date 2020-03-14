@@ -25,7 +25,7 @@
 
 /* functions */
 
-static errno_t assign_stream_to_context(struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config, uint8_t id, uint8_t s2)
+static errno_t assign_stream_to_context(struct smmu500 *smmu, const struct smmu500_attach_stage2_configuration *config, uint8_t id, uint8_t s2)
 {
     uint32_t d;
 
@@ -77,7 +77,7 @@ static errno_t assign_stream_to_context(struct smmu500 *smmu, const struct smmu5
     return SUCCESS;
 }
 
-static errno_t configure_s2_context_bank(struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config, uint8_t id, uint8_t s2)
+static errno_t configure_s2_context_bank(struct smmu500 *smmu, const struct smmu500_attach_stage2_configuration *config, uint8_t id, uint8_t s2)
 {
     errno_t ret;
     uint32_t d;
@@ -100,14 +100,14 @@ static errno_t configure_s2_context_bank(struct smmu500 *smmu, const struct smmu
     return ret;
 }
 
-static errno_t attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config)
+static errno_t attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_attach_stage2_configuration *config)
 {
     errno_t ret;
     uint8_t s2;
 
     ret = smmu500_allocate_context_bank(&s2, smmu);
     if (ret == SUCCESS) {
-        ret = smmu500_allocate_stream_map(id, smmu);
+        ret = smmu500_allocate_stream_match_register(id, smmu);
         if (ret == SUCCESS) {
             ret = configure_s2_context_bank(smmu, config, *id, s2);
         } else {
@@ -118,7 +118,7 @@ static errno_t attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smm
     return ret;
 }
 
-errno_t smmu500_attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config)
+errno_t smmu500_attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_attach_stage2_configuration *config)
 {
     errno_t ret;
 

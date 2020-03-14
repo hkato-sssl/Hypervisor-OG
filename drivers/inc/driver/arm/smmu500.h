@@ -156,8 +156,7 @@ struct smmu_stream {
     uint16_t    id;
 };
 
-struct smmu500_s2_cb_attach_configuration {
-    uint16_t                    vmid;
+struct smmu500_attach_stage2_configuration {
     struct smmu_stream          stream;
     const struct aarch64_stage2 *stage2;
     struct smmu_s2_cb_translation_configuration translation;
@@ -168,7 +167,7 @@ struct smmu500_s2_cb_attach_configuration {
 /* functions */
 
 errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configuration *config);
-errno_t smmu500_attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_s2_cb_attach_configuration *config);
+errno_t smmu500_attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_attach_stage2_configuration *config);
 errno_t smmu500_enable(struct smmu500 *smmu, uint8_t id);
 
 void smmu500_dump(struct smmu500 *smmu);

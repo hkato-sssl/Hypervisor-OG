@@ -31,7 +31,7 @@ static errno_t search0_offset(uint32_t *bit_no, const uint8_t *map, size_t map_s
     for (i = offset; i < map_size; ++i) {
         d = map[i];
         if (d != 0xff) {
-            *bit_no = aarch64_clz(aarch64_rbit(~d)) + (offset * 8);
+            *bit_no = aarch64_clz(aarch64_rbit(~d)) + (i * 8);
             ret = SUCCESS;
             break;
         }

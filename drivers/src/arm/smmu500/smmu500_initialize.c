@@ -13,6 +13,7 @@
 #include "driver/arm/device/smmu500.h"
 #include "driver/arm/device/smmuv2/smmu_idr0.h"
 #include "driver/arm/device/smmuv2/smmu_idr1.h"
+#include "driver/arm/device/smmuv2/smmu_idr2.h"
 #include "smmu500_local.h"
 
 /* defines */
@@ -61,8 +62,12 @@ static void probe_device(struct smmu500 *smmu)
     uint32_t d;
     uint32_t id;
 
+    /* probe SMMU_IDR0 */
+
     id = smmu500_gr0_read32(smmu, SMMU_IDR0);
     smmu->nr_stream_matches = EXTRACT_SMMU_IDR0_NUMSMRG(id);
+
+    /* probe SMMU_IDR1 */
 
     id = smmu500_gr0_read32(smmu, SMMU_IDR1);
 
@@ -80,6 +85,14 @@ static void probe_device(struct smmu500 *smmu)
 
     smmu->smmu_gr1_base = smmu->smmu_base + smmu->page_size;
     smmu->smmu_cb_base = smmu->smmu_base + (smmu->page_size * smmu->nr_pages);
+    /* probe SMMU_IDR2 */
+
+    id = smmu500_gr0_read32(smmu, SMMU_IDR2);
+    if ((id & SMMU_IDR2_VMID16S) == 0) {
+        smmu->vmid_size = 8;
+    } else {
+        smmu->vmid_size = 16;
+    }
 }
 
 static errno_t initialize(struct smmu500 *smmu, const struct smmu500_configuration *config)

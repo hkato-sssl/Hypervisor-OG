@@ -87,6 +87,8 @@ struct smmu500 {
     uint8_t     nr_context_banks;       /* SMMU_IDR1.NUMCB */
     uint8_t     nr_s2_context_banks;    /* SMMU_IDR1.NUMS2CB */
 
+    uint8_t     vmid_size;              /* 8 or 16 */
+
     struct {
         uint8_t     stream_matches[MAX_NR_SMMU_STREAM_MAPS];
         uint8_t     context_banks[MAX_NR_SMMU_CONTEXT_BANKS];
@@ -171,6 +173,7 @@ errno_t smmu500_attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct sm
 errno_t smmu500_enable(struct smmu500 *smmu, uint8_t id);
 
 void smmu500_dump(struct smmu500 *smmu);
+void smmu500_dump_stream_match(struct smmu500 *smmu, uint8_t no);
 
 #ifdef __cplusplus
 }

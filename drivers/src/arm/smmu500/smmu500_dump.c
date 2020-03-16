@@ -135,33 +135,39 @@ static void dump_stream_regs(const char *name, uint8_t n, uintptr_t base, uint32
     }
 }
 
+static void dump_stream_match(const struct smmu500 *smmu, uint8_t no, int level)
+{
+    uint32_t cb;
+    uint32_t s2cr;
+
+    dump_stream_regs("SMMU_SMR", no, smmu->smmu_base, SMMU_SMR(no));
+    dump_stream_regs("SMMU_S2CR", no, smmu->smmu_base, SMMU_S2CR(no));
+    dump_stream_regs("SMMU_CBAR", no, smmu->smmu_gr1_base, SMMU_CBAR(no));
+    dump_stream_regs("SMMU_CBA2R", no, smmu->smmu_gr1_base, SMMU_CBA2R(no));
+    dump_stream_regs("SMMU_CBFRSYNRA", no, smmu->smmu_gr1_base, SMMU_CBFRSYNRA(no));
+    if (level > 0) {
+        s2cr = smmu500_gr0_read32(smmu, SMMU_S2CR(no));
+        cb = BF_EXTRACT(s2cr, 7, 0);
+        switch (BF_EXTRACT(s2cr, 17, 16)) {
+        case 0:
+            dump_s2_cb(smmu, cb);
+            break;
+        case 1:
+            dump_s1_cb(smmu, cb);
+            break;
+        default:
+            /* no work */
+            break;
+        }
+    }
+}
+
 static void dump_stream_matches(const struct smmu500 *smmu)
 {
     uint8_t i;
-    uint32_t smr;
-    uint32_t s2cr;
 
     for (i = 0; i < smmu->nr_stream_matches; ++i) {
-        smr = smmu500_gr0_read32(smmu, SMMU_SMR(i));
-        s2cr = smmu500_gr0_read32(smmu, SMMU_S2CR(i));
-        dump_stream_regs("SMMU_SMR", i, smmu->smmu_base, SMMU_SMR(i));
-        dump_stream_regs("SMMU_S2CR", i, smmu->smmu_base, SMMU_S2CR(i));
-        dump_stream_regs("SMMU_CBAR", i, smmu->smmu_gr1_base, SMMU_CBAR(i));
-        dump_stream_regs("SMMU_CBA2R", i, smmu->smmu_gr1_base, SMMU_CBA2R(i));
-        dump_stream_regs("SMMU_CBFRSYNRA", i, smmu->smmu_gr1_base, SMMU_CBFRSYNRA(i));
-        if ((smr & BIT(31)) != 0) {
-            switch (BF_EXTRACT(s2cr, 17, 16)) {
-            case 0:
-                dump_s2_cb(smmu, i);
-                break;
-            case 1:
-                dump_s1_cb(smmu, i);
-                break;
-            default:
-                /* no work */
-                break;
-            }
-        }
+        dump_stream_match(smmu, i, 0);
     }
 }
 
@@ -186,6 +192,7 @@ static void dump_smmu500(const struct smmu500 *smmu)
     printk("       smmu_cb_base: %p\n", smmu->smmu_cb_base);
     printk("           nr_pages: %u\n", smmu->nr_pages);
     printk("          page_size: %u\n", smmu->page_size);
+    printk("          vmid_size: %u\n", smmu->vmid_size);
     printk("     nr_stream_matches: %u\n", smmu->nr_stream_matches);
     printk("   nr_context_banks: %u\n", smmu->nr_context_banks);
     printk("nr_s2_context_banks: %u\n", smmu->nr_s2_context_banks);
@@ -201,5 +208,14 @@ void smmu500_dump(struct smmu500 *smmu)
     dump_stream_matches(smmu);
 
     smmu500_unlock(smmu);
+}
+
+void smmu500_dump_stream_match(struct smmu500 *smmu, uint8_t no)
+{
+    if (no < smmu->nr_stream_matches) {
+        smmu500_lock(smmu);
+        dump_stream_match(smmu, no, 1);
+        smmu500_unlock(smmu);
+    }
 }
 

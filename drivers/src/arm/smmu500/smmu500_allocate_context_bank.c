@@ -28,6 +28,8 @@ static errno_t allocate_context_bank(uint8_t *idx, struct smmu500 *smmu, uint32_
     size_t sz;
     uint32_t no;
 
+    smmu500_lock(smmu);
+
     sz = ALIGN(smmu->nr_context_banks, 8);
     ret = bitmap_search_and_set(&no, smmu->allocation.context_banks, sz, start_bit);
     if (ret == SUCCESS) {
@@ -37,6 +39,8 @@ static errno_t allocate_context_bank(uint8_t *idx, struct smmu500 *smmu, uint32_
             ret = -ENOMEM;
         }
     }
+
+    smmu500_unlock(smmu);
 
     return ret;
 }

@@ -29,6 +29,8 @@ errno_t smmu500_allocate_stream_match_register(uint8_t *idx, struct smmu500 *smm
     uint32_t no;
     size_t sz;
 
+    smmu500_lock(smmu);
+
     sz = (smmu->nr_stream_matches + 7) / 8;
     ret = bitmap_search_and_set(&no, smmu->allocation.stream_matches, sz, 0);
     if (ret == SUCCESS) {
@@ -38,6 +40,8 @@ errno_t smmu500_allocate_stream_match_register(uint8_t *idx, struct smmu500 *smm
             ret = -ENOMEM;
         }
     }
+
+    smmu500_unlock(smmu);
 
     return ret;
 }

@@ -23,7 +23,7 @@
 
 /* functions */
 
-errno_t smmu500_allocate_stream_match_register(uint8_t *idx, struct smmu500 *smmu)
+errno_t smmu500_allocate_stream_match_register(struct smmu500 *smmu, uint8_t *id)
 {
     errno_t ret;
     uint32_t no;
@@ -35,7 +35,7 @@ errno_t smmu500_allocate_stream_match_register(uint8_t *idx, struct smmu500 *smm
     ret = bitmap_search_and_set(&no, smmu->allocation.stream_matches, sz, 0);
     if (ret == SUCCESS) {
         if (no < smmu->nr_stream_matches) {
-            *idx = (uint8_t)no;
+            *id = (uint8_t)no;
         } else {
             ret = -ENOMEM;
         }

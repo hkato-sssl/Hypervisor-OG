@@ -14,6 +14,7 @@
 #include "driver/arm/device/smmuv2/smmu_idr0.h"
 #include "driver/arm/device/smmuv2/smmu_idr1.h"
 #include "driver/arm/device/smmuv2/smmu_idr2.h"
+#include "driver/arm/device/smmuv2/smmu_cr0.h"
 #include "smmu500_local.h"
 
 /* defines */
@@ -25,6 +26,32 @@
 /* variables */
 
 /* functions */
+
+static errno_t initialize_device(struct smmu500 *smmu)
+{
+    uint32_t i;
+    uint32_t d;
+
+    smmu500_gr0_write32(smmu, SMMU_sCR0, 0);
+    smmu500_gr0_write32(smmu, SMMU_sGFAR, 0);
+    smmu500_gr0_write32(smmu, SMMU_sGFSR, ~(uint32_t)0);
+
+    /* clear SMMU_SMRn */
+    for (i = 0; i < smmu->nr_stream_matches; ++i) {
+        smmu500_gr0_write32(smmu, SMMU_SMR(i), 0);
+        smmu500_gr0_write32(smmu, SMMU_S2CR(i), 0);
+        smmu500_gr1_write32(smmu, SMMU_CBAR(i), 0);
+        smmu500_gr1_write32(smmu, SMMU_CBA2R(i), 0);
+        smmu500_gr1_write32(smmu, SMMU_CBFRSYNRA(i), 0);
+    }
+
+    /* enable SMMU */
+
+    d = SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GFRE;
+    smmu500_gr0_write32(smmu, SMMU_sCR0, d);
+
+    return SUCCESS;
+}
 
 static errno_t map(const struct smmu500 *smmu, const struct smmu500_configuration *config, uintptr_t offset, uint32_t nr_pages)
 {
@@ -85,6 +112,7 @@ static void probe_device(struct smmu500 *smmu)
 
     smmu->smmu_gr1_base = smmu->smmu_base + smmu->page_size;
     smmu->smmu_cb_base = smmu->smmu_base + (smmu->page_size * smmu->nr_pages);
+
     /* probe SMMU_IDR2 */
 
     id = smmu500_gr0_read32(smmu, SMMU_IDR2);
@@ -102,7 +130,10 @@ static errno_t initialize(struct smmu500 *smmu, const struct smmu500_configurati
     smmu->smmu_base = config->smmu_base;
     probe_device(smmu);
     ret = map_register_region(smmu, config);
-
+    if (ret == SUCCESS) {
+        ret = initialize_device(smmu);
+    }
+    
     return ret;
 }
 

@@ -112,10 +112,11 @@ static inline void smmu500_cb_write64(const struct smmu500 *smmu, uint8_t cb, ui
     REG_WRITE64(base, regs, d);
 }
 
-errno_t smmu500_allocate_stream_match_register(uint8_t *idx, struct smmu500 *smmu);
-errno_t smmu500_allocate_context_bank(uint8_t *idx, struct smmu500 *smmu);
-errno_t smmu500_allocate_s2_context_bank(uint8_t *idx, struct smmu500 *smmu);
-errno_t smmu500_free_context_bank(struct smmu500 *smmu, uint8_t idx);
+errno_t smmu500_allocate_stream_match_register(struct smmu500 *smmu, uint8_t *id);
+errno_t smmu500_allocate_context_bank(struct smmu500 *smmu, uint8_t *cb);
+errno_t smmu500_allocate_s2_context_bank(struct smmu500 *smmu, uint8_t *cb);
+errno_t smmu500_free_context_bank(struct smmu500 *smmu, uint8_t cb);
+errno_t smmu500_configure_context_bank_with_stage2(struct smmu500 *smmu, uint8_t cb, const struct aarch64_stage2 *stage2);
 
 #ifdef __cplusplus
 }

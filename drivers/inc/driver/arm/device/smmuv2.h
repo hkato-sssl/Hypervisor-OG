@@ -76,7 +76,7 @@
 #define SMMU_NSGPAR             0x580
 #define SMMU_NSGATSR            0x588
 #define SMMU_SMR(n)             (0x800 + (n) * 4)
-#define SMMU_S2CR(n)            (0xC00 * (n) * 4)
+#define SMMU_S2CR(n)            (0xC00 + (n) * 4)
 
 /* SMMU Global Register Space 1 */
 

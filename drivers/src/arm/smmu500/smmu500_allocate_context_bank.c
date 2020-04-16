@@ -22,7 +22,7 @@
 
 /* functions */
 
-static errno_t allocate_context_bank(uint8_t *idx, struct smmu500 *smmu, uint32_t start_bit)
+static errno_t allocate_context_bank(struct smmu500 *smmu, uint8_t *cb, uint32_t start_bit)
 {
     errno_t ret;
     size_t sz;
@@ -34,7 +34,7 @@ static errno_t allocate_context_bank(uint8_t *idx, struct smmu500 *smmu, uint32_
     ret = bitmap_search_and_set(&no, smmu->allocation.context_banks, sz, start_bit);
     if (ret == SUCCESS) {
         if (no < smmu->nr_context_banks) {
-            *idx = (uint8_t)no;
+            *cb = (uint8_t)no;
         } else {
             ret = -ENOMEM;
         }
@@ -45,20 +45,20 @@ static errno_t allocate_context_bank(uint8_t *idx, struct smmu500 *smmu, uint32_
     return ret;
 }
 
-errno_t smmu500_allocate_context_bank(uint8_t *idx, struct smmu500 *smmu)
+errno_t smmu500_allocate_context_bank(struct smmu500 *smmu, uint8_t *cb)
 {
     errno_t ret;
 
-    ret = allocate_context_bank(idx, smmu, smmu->nr_s2_context_banks);
+    ret = allocate_context_bank(smmu, cb, smmu->nr_s2_context_banks);
 
     return ret;
 }
 
-errno_t smmu500_allocate_s2_context_bank(uint8_t *idx, struct smmu500 *smmu)
+errno_t smmu500_allocate_s2_context_bank(struct smmu500 *smmu, uint8_t *cb)
 {
     errno_t ret;
 
-    ret = allocate_context_bank(idx, smmu, 0);
+    ret = allocate_context_bank(smmu, cb, 0);
 
     return ret;
 }

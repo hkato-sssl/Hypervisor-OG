@@ -71,8 +71,8 @@ extern "C" {
 /* types */
 
 struct aarch64_mmu;
-struct aatch64_mmu_attr;
-struct aatch64_stage2;
+struct aarch64_mmu_attr;
+struct aarch64_stage2;
 
 struct smmu500 {
     spin_lock_t lock;
@@ -158,22 +158,16 @@ struct smmu_stream {
     uint16_t    id;
 };
 
-struct smmu500_attach_stage2_configuration {
-    struct smmu_stream          stream;
-    const struct aarch64_stage2 *stage2;
-    struct smmu_s2_cb_translation_configuration translation;
-};
-
 /* variables */
 
 /* functions */
 
 errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configuration *config);
-errno_t smmu500_attach_stage2(uint8_t *id, struct smmu500 *smmu, const struct smmu500_attach_stage2_configuration *config);
+errno_t smmu500_create_context_bank_with_stage2(struct smmu500 *smmu, uint8_t *cb, const struct aarch64_stage2 *stage2);
 errno_t smmu500_enable(struct smmu500 *smmu, uint8_t id);
 
 void smmu500_dump(struct smmu500 *smmu);
-void smmu500_dump_stream_match(struct smmu500 *smmu, uint8_t no);
+void smmu500_dump_stream_match_register(struct smmu500 *smmu, uint8_t no);
 
 #ifdef __cplusplus
 }

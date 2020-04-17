@@ -31,6 +31,25 @@ static struct aarch64_stage2 stage2;
 
 /* functions */
 
+static errno_t map_stage2(void)
+{
+    errno_t ret;
+    struct aarch64_stage2_attr attr;
+
+    memset(&attr, 0, sizeof(attr));
+    attr.xn = 0;
+    attr.af = 1;
+    attr.sh = STAGE2_SH_OSH;
+    attr.s2ap = STAGE2_S2AP_RW;
+    attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
+    ret = aarch64_stage2_map(&stage2, (void *)0x40000000, (void *)0x50000000, 0x10000, &attr);
+    if (ret != SUCCESS) {
+        printk("aarch64_stage2_map() -> %d\n", ret);
+    }
+
+    return ret;
+}
+
 static errno_t init_stage2(void)
 {
     errno_t ret;
@@ -48,14 +67,15 @@ static errno_t init_stage2(void)
     config.irgn = STAGE2_RGN_NORMAL_WBWA;
     config.first_table = stage2_table;
     ret = aarch64_stage2_initialize(&stage2, &config);
+    if (ret == SUCCESS) {
+        ret = map_stage2();
+    }
 
     return ret;
 }
 
-
 static void init(struct smmu500 *smmu)
 {
-
     errno_t ret;
     struct smmu500_configuration config;
     struct aarch64_mmu_attr attr;
@@ -80,21 +100,30 @@ static void test_02(void)
 {
     errno_t ret;
     uint8_t id;
-    struct smmu500_attach_stage2_configuration config;
+    uint8_t cb;
+    struct smmu_translation_stream_configuration config;
 
-    memset(&config, 0, sizeof(config));
+    ret = smmu500_create_context_bank_with_stage2(&smmu, &cb, &stage2);
+    printk("smmu500_create_context_bank_with_stage2() -> %d, cb=%u\n", ret, cb);
 
-    config.stream.mask = 0xffff;
-    config.stream.id = 0x1234;
-    config.stage2 = &stage2;
-    config.translation.flag.write_allocate = 1;
-    config.translation.flag.read_allocate = 1;
-    config.translation.flag.extended_id = 1;
+    if (ret == SUCCESS) {
+        memset(&config, 0, sizeof(config));
+        config.stream.mask = 0x3fff;
+        config.stream.id = 0;
+        config.cbndx = cb;
+        ret = smmu500_create_translation_stream(&smmu, &id, &config);
+        printk("smmu500_create_translation_stream() -> %d, id=%u\n", ret, id);
+    }
 
-    ret = smmu500_attach_stage2(&id, &smmu, &config);
-    printk("smmu500_attach_stage2() -> %d, id=%u\n", ret, id);
+    if (ret == SUCCESS) {
+        ret = smmu500_enable(&smmu, id); 
+        printk("smmu500_enable() -> %d\n", ret);
+    }
 
     smmu500_dump(&smmu);
+    if (ret == SUCCESS) {
+        smmu500_dump_stream_match_register(&smmu, id);
+    }
 }
 
 void test_arm_smmu500_02(void)
@@ -108,5 +137,10 @@ void test_arm_smmu500_02(void)
     printk("init_stage2() -> %d\n", ret);
 
     test_02();
+}
+
+void test_arm_smmu500_02_dump(void)
+{
+    smmu500_dump(&smmu);
 }
 

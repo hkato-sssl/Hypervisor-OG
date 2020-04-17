@@ -46,6 +46,25 @@ extern "C" {
 #define SMMU_MT_NORMAL_WT           (SMMU_MT_NORMAL_OWT | SMMU_MT_NORMAL_IWT)
 #define SMMU_MT_NORMAL_WB           (SMMU_MT_NORMAL_OWB | SMMU_MT_NORMAL_IWB)
 
+/* transient allocate configuration */
+
+#define SMMU_TRANSIENTCFG_DEFAULT       0
+#define SMMU_TRANSIENTCFG_NON_TRANSIENT 2
+#define SMMU_TRANSIENTCFG_TRANSIENT     3
+
+/* instruction fetch attribute configuration */
+
+#define SMMU_INSTCFG_DEFAULT            0
+#define SMMU_INSTCFG_DATA               2
+#define SMMU_INSTCFG_INSTRUCTION        3
+
+/* privileged attribute configutaion */
+
+#define SMMU_PRIVCFG_DEFAULT            0
+#define SMMU_PRIVCFG_PRIVILEGED_NEVER   1
+#define SMMU_PRIVCFG_UNPRIVILEGED       2
+#define SMMU_PRIVCFG_PRIVILEGED         3
+
 /* allocate configuration */
 
 #define SMMU_WACFG_DEFAULT              0
@@ -67,6 +86,17 @@ extern "C" {
 #define SMMU_BSU_INNER_SHAREABLE        1
 #define SMMU_BSU_OUTER_SHAREABLE        2
 #define SMMU_BSU_FULL_SYSTEM            3
+
+/* secure configuration */
+
+#define SMMU_NSCFG_DEFAULT              0
+#define SMMU_NSCFG_SECURE               2
+#define SMMU_NSCFG_NON_SECURE           3
+
+/* memory attribute */
+
+#define SMMU_MTCFG_DEFAULT              0
+#define SMMU_MTCFG_MEMATTR              1
 
 /* types */
 
@@ -95,20 +125,29 @@ struct smmu500 {
     } allocation;
 };
 
-struct smmu_s2_cb_translation_configuration {
+struct smmu_stream {
+    uint16_t    mask;
+    uint16_t    id;
+};
+
+struct smmu_translation_stream_configuration {
+    struct smmu_stream  stream;
+
+    uint32_t    transientcfg:2;
+    uint32_t    instcfg:2;
+    uint32_t    privcfg:2;
+    uint32_t    wacfg:2;
+    uint32_t    racfg:2;
+    uint32_t    nscfg:2;
+    uint32_t    mtcfg:1;
+    uint32_t    shcfg:2;
+
     struct {
-        uint16_t    transient:1;
-        uint16_t    instruction:1;
-        uint16_t    unprivileged:1;
-        uint16_t    write_allocate:1;
-        uint16_t    read_allocate:1;
-        uint16_t    memory_attribute:1;
-        uint16_t    extended_id:1;
-        uint16_t    shareability:1;
+        uint8_t exidvalid:1;
     } flag;
 
-    uint8_t         memory_attribute;
-    uint8_t         shareability;
+    uint8_t     memattr;
+    uint8_t     cbndx;
 };
 
 struct smmu500_configuration {
@@ -153,18 +192,17 @@ struct smmu500_s2_cb_actlr {
     uint32_t    cmtlb:1;
 };
 
-struct smmu_stream {
-    uint16_t    mask;
-    uint16_t    id;
-};
-
 /* variables */
 
 /* functions */
 
 errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configuration *config);
 errno_t smmu500_create_context_bank_with_stage2(struct smmu500 *smmu, uint8_t *cb, const struct aarch64_stage2 *stage2);
+errno_t smmu500_create_translation_stream(struct smmu500 *smmu, uint8_t *id, const struct smmu_translation_stream_configuration *config);
 errno_t smmu500_enable(struct smmu500 *smmu, uint8_t id);
+errno_t smmu500_disable(struct smmu500 *smmu, uint8_t id);
+
+/* for debugging */
 
 void smmu500_dump(struct smmu500 *smmu);
 void smmu500_dump_stream_match_register(struct smmu500 *smmu, uint8_t no);

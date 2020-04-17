@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "driver/aarch64/stage2.h"
 #include "driver/arm/smmu500.h"

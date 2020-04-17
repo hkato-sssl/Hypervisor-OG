@@ -1,0 +1,52 @@
+static errno_t assign_stream_to_context(struct smmu500 *smmu, const struct smmu500_attach_stage2_configuration *config, uint8_t id, uint8_t s2)
+{
+    uint32_t d;
+
+    /* S2CRn */
+
+    d = SMMU_S2CR_TRANSLATION_TYPE(0);
+    if (config->translation.flag.transient) {
+        d |= SMMU_S2CR_TRANSLATION_TRANSIENTCFG(3); /* Transient */
+    }
+    if (config->translation.flag.instruction) {
+        d |= SMMU_S2CR_TRANSLATION_INSTCFG(3);  /* Instruction */
+    } else {
+        d |= SMMU_S2CR_TRANSLATION_INSTCFG(2);  /* Data */
+    }
+    if (config->translation.flag.unprivileged) {
+        d |= SMMU_S2CR_TRANSLATION_PRIVCFG(2);  /* Unprivileged */
+    } else {
+        d |= SMMU_S2CR_TRANSLATION_PRIVCFG(3);  /* Privileged */
+    }
+    if (config->translation.flag.write_allocate) {
+        d |= SMMU_S2CR_TRANSLATION_WACFG(2);    /* Write-Allocate */
+    } else {
+        d |= SMMU_S2CR_TRANSLATION_WACFG(3);    /* No Write-Allocate */
+    }
+    if (config->translation.flag.read_allocate) {
+        d |= SMMU_S2CR_TRANSLATION_RACFG(2);    /* Read-Allocate */
+    } else {
+        d |= SMMU_S2CR_TRANSLATION_RACFG(3);    /* No Read-Allocate */
+    }
+    if (config->translation.flag.memory_attribute) {
+        d |= SMMU_S2CR_TRANSLATION_MEMATTR(config->translation.memory_attribute)
+            | SMMU_S2CR_TRANSLATION_MTCFG;
+    }
+    if (config->translation.flag.extended_id) {
+        d |= SMMU_S2CR_TRANSLATION_EXIDVALID;
+    }
+    if (config->translation.flag.shareability) {
+        d |= SMMU_S2CR_TRANSLATION_SHCFG(config->translation.shareability);
+    }
+    d |= SMMU_S2CR_TRANSLATION_CBNDX(s2);
+    smmu500_gr0_write32(smmu, SMMU_S2CR(id), d);
+
+    /* SMRn */
+
+    d = ((config->stream.mask & BITS(14, 0)) << 16)
+        | (config->stream.id & BITS(14, 0));
+    smmu500_gr0_write32(smmu, SMMU_SMR(id), d);
+
+    return SUCCESS;
+}
+

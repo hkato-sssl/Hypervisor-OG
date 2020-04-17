@@ -1,5 +1,5 @@
 /*
- * drivers/src/arm/smmu500/smmu500_create_context_bank_with_stage2.c
+ * arm/smmu500/smmu500_create_context_bank_with_stage2.c
  *
  * (C) 2020 Hidekazu Kato
  */

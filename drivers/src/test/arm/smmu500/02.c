@@ -101,12 +101,15 @@ static void test_02(void)
     errno_t ret;
     uint8_t id;
     uint8_t cb;
-    struct smmu_translation_stream_configuration config;
+    struct smmu_context_bank_with_stage2_configuration config;
 
-    ret = smmu500_create_context_bank_with_stage2(&smmu, &cb, &stage2);
+    memset(&config, 0, sizeof(config));
+    config.stage2 = &stage2;
+    ret = smmu500_create_context_bank_with_stage2(&smmu, &cb, &config);
     printk("smmu500_create_context_bank_with_stage2() -> %d, cb=%u\n", ret, cb);
 
     if (ret == SUCCESS) {
+        struct smmu_translation_stream_configuration config;
         memset(&config, 0, sizeof(config));
         config.stream.mask = 0x3fff;
         config.stream.id = 0;

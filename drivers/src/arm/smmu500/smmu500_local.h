@@ -116,7 +116,7 @@ errno_t smmu500_allocate_stream_match_register(struct smmu500 *smmu, uint8_t *id
 errno_t smmu500_allocate_context_bank(struct smmu500 *smmu, uint8_t *cb);
 errno_t smmu500_allocate_s2_context_bank(struct smmu500 *smmu, uint8_t *cb);
 errno_t smmu500_free_context_bank(struct smmu500 *smmu, uint8_t cb);
-errno_t smmu500_configure_context_bank_with_stage2(struct smmu500 *smmu, uint8_t cb, const struct aarch64_stage2 *stage2);
+errno_t smmu500_configure_context_bank_with_stage2(struct smmu500 *smmu, uint8_t cb, const struct smmu_context_bank_with_stage2_configuration *config);
 errno_t smmu500_configure_translation_stream(struct smmu500 *smmu, uint8_t id, const struct smmu_translation_stream_configuration *config);
 
 #ifdef __cplusplus

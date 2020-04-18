@@ -116,6 +116,7 @@ struct smmu500 {
     uint8_t     nr_stream_matches;      /* SMMU_IDR0.SMRG */
     uint8_t     nr_context_banks;       /* SMMU_IDR1.NUMCB */
     uint8_t     nr_s2_context_banks;    /* SMMU_IDR1.NUMS2CB */
+    uint8_t     nr_context_fault_interrupts;
 
     uint8_t     vmid_size;              /* 8 or 16 */
 
@@ -123,6 +124,12 @@ struct smmu500 {
         uint8_t     stream_matches[MAX_NR_SMMU_STREAM_MAPS];
         uint8_t     context_banks[MAX_NR_SMMU_CONTEXT_BANKS];
     } allocation;
+};
+
+struct smmu500_configuration {
+    uintptr_t               smmu_base;
+    struct aarch64_mmu      *mmu;
+    struct aarch64_mmu_attr *mmu_attr;
 };
 
 struct smmu_stream {
@@ -150,46 +157,10 @@ struct smmu_translation_stream_configuration {
     uint8_t     cbndx;
 };
 
-struct smmu500_configuration {
-    uintptr_t               smmu_base;
-    struct aarch64_mmu      *mmu;
-    struct aarch64_mmu_attr *mmu_attr;
-};
-
-struct smmu_s2_cb_sctlr {
-    uint32_t    wacfg:2;
-    uint32_t    racfg:2;
-    uint32_t    shcfg:2;
-    uint32_t    fb:1;
-    uint32_t    memattr:4;
-    uint32_t    bsu:2;
-    uint32_t    ptw:1;
-    uint32_t    hupcf:1;
-    uint32_t    cfcfg:1;
-    uint32_t    cfie:1;
-    uint32_t    cfre:1;
-    uint32_t    e:1;
-    uint32_t    affd:1;
-    uint32_t    afe:1;
-    uint32_t    tre:1;
-    uint32_t    m:1;
-};
-
-struct smmu_s2_cb_tcr {
-    uint32_t    hd:1;
-    uint32_t    ha:1;
-    uint32_t    pasize:3;
-    uint32_t    tg0:2;
-    uint32_t    sh0:2;
-    uint32_t    orgn0:2;
-    uint32_t    irgn0:2;
-    uint32_t    sl0:2;
-    uint32_t    t0sz:6;
-};
-
-struct smmu500_s2_cb_actlr {
-    uint32_t    cpre:1;
-    uint32_t    cmtlb:1;
+struct smmu_context_bank_with_stage2_configuration {
+    struct aarch64_stage2   *stage2;
+    uint16_t    vmid;
+    uint8_t     interrupt_index;
 };
 
 /* variables */
@@ -197,7 +168,7 @@ struct smmu500_s2_cb_actlr {
 /* functions */
 
 errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configuration *config);
-errno_t smmu500_create_context_bank_with_stage2(struct smmu500 *smmu, uint8_t *cb, const struct aarch64_stage2 *stage2);
+errno_t smmu500_create_context_bank_with_stage2(struct smmu500 *smmu, uint8_t *cb, const struct smmu_context_bank_with_stage2_configuration *config);
 errno_t smmu500_create_translation_stream(struct smmu500 *smmu, uint8_t *id, const struct smmu_translation_stream_configuration *config);
 errno_t smmu500_enable(struct smmu500 *smmu, uint8_t id);
 errno_t smmu500_disable(struct smmu500 *smmu, uint8_t id);

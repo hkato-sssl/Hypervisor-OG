@@ -20,14 +20,14 @@
 
 /* functions */
 
-errno_t smmu500_create_context_bank_with_stage2(struct smmu500 *smmu, uint8_t *cb, const struct aarch64_stage2 *stage2)
+errno_t smmu500_create_context_bank_with_stage2(struct smmu500 *smmu, uint8_t *cb, const struct smmu_context_bank_with_stage2_configuration *config)
 {
     errno_t ret;
 
-    if ((smmu != NULL) && (cb != NULL) && (stage2 != NULL)) {
+    if ((smmu != NULL) && (cb != NULL) && (config != NULL)) {
         ret = smmu500_allocate_s2_context_bank(smmu, cb);
         if (ret == SUCCESS) {
-            ret = smmu500_configure_context_bank_with_stage2(smmu, *cb, stage2);
+            ret = smmu500_configure_context_bank_with_stage2(smmu, *cb, config);
         }
     } else {
         ret = -EINVAL;

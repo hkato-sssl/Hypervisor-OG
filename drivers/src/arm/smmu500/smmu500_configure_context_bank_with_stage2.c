@@ -80,9 +80,7 @@ errno_t smmu500_configure_context_bank_with_stage2(struct smmu500 *smmu, uint8_t
     errno_t ret;
 
     if (config->stage2 != NULL) {
-        if (smmu->nr_context_fault_interrupts == 1) {
-            ret = configure_context_bank_with_stage2(smmu, cb, config);
-        } else if (config->interrupt_index < smmu->nr_context_fault_interrupts) {
+        if (config->interrupt_index < smmu->nr_context_fault_interrupts) {
             ret = configure_context_bank_with_stage2(smmu, cb, config);
         } else {
             ret = -EINVAL;

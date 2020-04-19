@@ -187,15 +187,16 @@ static void dump_gr0(const struct smmu500 *smmu)
 static void dump_smmu500(const struct smmu500 *smmu)
 {
     printk("<SMMU-500>\n");
-    printk("          smmu_base: %p\n", smmu->smmu_base);
-    printk("      smmu_gr1_base: %p\n", smmu->smmu_gr1_base);
-    printk("       smmu_cb_base: %p\n", smmu->smmu_cb_base);
-    printk("           nr_pages: %u\n", smmu->nr_pages);
-    printk("          page_size: %u\n", smmu->page_size);
-    printk("          vmid_size: %u\n", smmu->vmid_size);
-    printk("     nr_stream_matches: %u\n", smmu->nr_stream_matches);
-    printk("   nr_context_banks: %u\n", smmu->nr_context_banks);
-    printk("nr_s2_context_banks: %u\n", smmu->nr_s2_context_banks);
+    printk("                  smmu_base: %p\n", smmu->smmu_base);
+    printk("              smmu_gr1_base: %p\n", smmu->smmu_gr1_base);
+    printk("               smmu_cb_base: %p\n", smmu->smmu_cb_base);
+    printk("                   nr_pages: %u\n", smmu->nr_pages);
+    printk("                  page_size: %u\n", smmu->page_size);
+    printk("                  vmid_size: %u\n", smmu->vmid_size);
+    printk("          nr_stream_matches: %u\n", smmu->nr_stream_matches);
+    printk("           nr_context_banks: %u\n", smmu->nr_context_banks);
+    printk("        nr_s2_context_banks: %u\n", smmu->nr_s2_context_banks);
+    printk("nr_context_fault_interrupts: %u\n", smmu->nr_context_fault_interrupts);
     printk("\n");
 }
 

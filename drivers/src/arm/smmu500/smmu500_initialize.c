@@ -93,6 +93,7 @@ static void probe_device(struct smmu500 *smmu)
 
     id = smmu500_gr0_read32(smmu, SMMU_IDR0);
     smmu->nr_stream_matches = EXTRACT_SMMU_IDR0_NUMSMRG(id);
+    smmu->nr_context_fault_interrupts = EXTRACT_SMMU_IDR0_NUMIRPT(id);
 
     /* probe SMMU_IDR1 */
 

@@ -135,18 +135,18 @@ static void dump_stream_regs(const char *name, uint8_t n, uintptr_t base, uint32
     }
 }
 
-static void dump_stream_match_register(const struct smmu500 *smmu, uint8_t no, int level)
+static void dump_stream_match_register(const struct smmu500 *smmu, uint8_t id, int level)
 {
     uint32_t cb;
     uint32_t s2cr;
 
-    dump_stream_regs("SMMU_SMR", no, smmu->smmu_base, SMMU_SMR(no));
-    dump_stream_regs("SMMU_S2CR", no, smmu->smmu_base, SMMU_S2CR(no));
-    dump_stream_regs("SMMU_CBAR", no, smmu->smmu_gr1_base, SMMU_CBAR(no));
-    dump_stream_regs("SMMU_CBA2R", no, smmu->smmu_gr1_base, SMMU_CBA2R(no));
-    dump_stream_regs("SMMU_CBFRSYNRA", no, smmu->smmu_gr1_base, SMMU_CBFRSYNRA(no));
+    dump_stream_regs("SMMU_SMR", id, smmu->smmu_base, SMMU_SMR(id));
+    dump_stream_regs("SMMU_S2CR", id, smmu->smmu_base, SMMU_S2CR(id));
+    dump_stream_regs("SMMU_CBAR", id, smmu->smmu_gr1_base, SMMU_CBAR(id));
+    dump_stream_regs("SMMU_CBA2R", id, smmu->smmu_gr1_base, SMMU_CBA2R(id));
+    dump_stream_regs("SMMU_CBFRSYNRA", id, smmu->smmu_gr1_base, SMMU_CBFRSYNRA(id));
     if (level > 0) {
-        s2cr = smmu500_gr0_read32(smmu, SMMU_S2CR(no));
+        s2cr = smmu500_gr0_read32(smmu, SMMU_S2CR(id));
         cb = BF_EXTRACT(s2cr, 7, 0);
         switch (BF_EXTRACT(s2cr, 17, 16)) {
         case 0:
@@ -210,11 +210,11 @@ void smmu500_dump(struct smmu500 *smmu)
     smmu500_unlock(smmu);
 }
 
-void smmu500_dump_stream_match_register(struct smmu500 *smmu, uint8_t no)
+void smmu500_dump_stream_match_register(struct smmu500 *smmu, uint8_t id)
 {
-    if (no < smmu->nr_stream_matches) {
+    if (id < smmu->nr_stream_matches) {
         smmu500_lock(smmu);
-        dump_stream_match_register(smmu, no, 1);
+        dump_stream_match_register(smmu, id, 1);
         smmu500_unlock(smmu);
     }
 }

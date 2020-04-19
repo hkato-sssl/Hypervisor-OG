@@ -176,7 +176,7 @@ errno_t smmu500_disable(struct smmu500 *smmu, uint8_t id);
 /* for debugging */
 
 void smmu500_dump(struct smmu500 *smmu);
-void smmu500_dump_stream_match_register(struct smmu500 *smmu, uint8_t no);
+void smmu500_dump_stream_match_register(struct smmu500 *smmu, uint8_t id);
 
 #ifdef __cplusplus
 }

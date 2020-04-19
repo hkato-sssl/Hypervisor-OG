@@ -105,6 +105,8 @@ static void test_02(void)
 
     memset(&config, 0, sizeof(config));
     config.stage2 = &stage2;
+    config.interrupt_index = 0;
+    config.vmid = 0;
     ret = smmu500_create_context_bank_with_stage2(&smmu, &cb, &config);
     printk("smmu500_create_context_bank_with_stage2() -> %d, cb=%u\n", ret, cb);
 
@@ -124,9 +126,7 @@ static void test_02(void)
     }
 
     smmu500_dump(&smmu);
-    if (ret == SUCCESS) {
-        smmu500_dump_stream_match_register(&smmu, id);
-    }
+    smmu500_dump_stream_match_register(&smmu, id);
 }
 
 void test_arm_smmu500_02(void)

@@ -80,7 +80,13 @@ static errno_t init_map(void)
     if (ret == SUCCESS) {
         attr.sh = MMU_ATTR_SH_OSH;
 	    attr.attrindx = HYP_MMU_DEVICE_nGnRE;
-	    ret = map((void*)0xa0001000, (void*)0xa0002000, &attr);
+	    ret = map((void*)0xa0001000, (void*)0xa0001000, &attr);
+    }
+
+    if (ret == SUCCESS) {
+        attr.sh = MMU_ATTR_SH_OSH;
+	    attr.attrindx = HYP_MMU_DEVICE_nGnRE;
+	    ret = map((void*)0xa0002000, (void*)0xa0002000, &attr);
     }
 
     if (ret == SUCCESS) {

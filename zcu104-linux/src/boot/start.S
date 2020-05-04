@@ -13,7 +13,7 @@
 
         .extern         init_processor_el2
         .extern         kernel_stack_top
-        .extern         main_stack_top
+        .extern         thread_stack_top
         .extern         main
 
         .global         _start
@@ -30,7 +30,7 @@ _start:
         msr             SPSel, #1
         mov             sp, x0
 
-        bl              main_stack_top
+        bl              thread_stack_top
         msr             SPSel, #0
         mov             sp, x0
 

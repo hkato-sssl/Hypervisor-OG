@@ -10,6 +10,7 @@
         .global         hypervisor_start
 
         .extern         hypervisor
+        .extern         thread_stack_top
         .extern         thread_start
         .extern         excvec_hyp
 
@@ -31,7 +32,7 @@ hypervisor_start:
 
         /* call the entry function */
 
-        bl              main_stack_top
+        bl              thread_stack_top
         mov             x1, x0
         mov             x2, xzr
         adr             x0, hypervisor

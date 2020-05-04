@@ -11,7 +11,7 @@
 
         .global         thread_start
 
-        .extern         kernel_stack_top
+        .extern         exc_stack_top
 
         .section        ".text.thread_start", "ax", %progbits
         .type           thread_start, %function

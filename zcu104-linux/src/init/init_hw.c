@@ -10,9 +10,12 @@
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "driver/arm/gic400.h"
+#include "driver/arm/smmu500.h"
+#include "driver/aarch64/mmu.h"
 #include "driver/aarch64/psci.h"
 #include "driver/xilinx/mpsoc.h"
 #include "driver/system/cpu.h"
+#include "hypervisor/mmu.h"
 
 /* defines */
 
@@ -22,7 +25,10 @@
 
 /* variables */
 
+extern struct aarch64_mmu sys_mmu;
+
 struct gic400 sys_gic;
+struct smmu500 sys_smmu;
 
 /* functions */
 
@@ -40,26 +46,79 @@ static void wakeup_secondary_processors(void)
     }
 }
 
-void init_hw(void)
+static errno_t init_smmu500(void)
+{
+    errno_t ret;
+    struct smmu500_configuration config;
+    struct aarch64_mmu_attr attr;
+
+    memset(&attr, 0, sizeof(attr));
+    attr.xn = 1;
+    attr.af = 1;
+    attr.sh = MMU_ATTR_SH_OSH;
+    attr.ap21 = MMU_ATTR_AP_RW;
+    attr.attrindx = HYP_MMU_DEVICE_nGnRE;
+
+    memset(&config, 0, sizeof(config));
+    config.smmu_base = 0xfd800000;
+    config.mmu = &sys_mmu;
+    config.mmu_attr = &attr;
+
+    ret = smmu500_initialize(&sys_smmu, &config);
+    if (ret != SUCCESS) {
+        printk("smmu500_initialize() -> %d\n", ret);
+    }
+
+    return ret;
+}
+
+static errno_t init_gic400(void)
 {
     errno_t ret;
     struct gic400_configuration config;
 
     if (cpu_no() == 0) {
         memset(&config, 0, sizeof(config));
-        config.base.distributor = (void *)GIC400D_BASE;
-        config.base.cpuif = (void *)GIC400C_BASE;
+        config.base.distributor = (void *)REG_GIC400D;
+        config.base.cpuif = (void *)REG_GIC400C;
         config.boolean.priority_drop = true;
         ret = gic400_initialize(&sys_gic, &config);
     } else {
         ret = gic400_initialize(&sys_gic, NULL);
     }
 
+    if (ret != SUCCESS) {
+        printk("gic400_initialize() -> %d\n", ret);
+    }
+
+    return ret;
+}
+
+static void init_primary_processor(void)
+{
+    errno_t ret;
+
+    ret = init_gic400();
+
     if (ret == SUCCESS) {
-        if (cpu_no() == 0) {
-            wakeup_secondary_processors();
-        }
+        ret = init_smmu500();
+    }
+
+    if (ret == SUCCESS) {
+        wakeup_secondary_processors();
+    }
+}
+
+static void init_secondary_processor(void)
+{
+    init_gic400();
+}
+
+void init_hw(void)
+{
+    if (cpu_no() == 0) {
+        init_primary_processor();
     } else {
-        printk("gic400_init() -> %d", ret);
+        init_secondary_processor();
     }
 }

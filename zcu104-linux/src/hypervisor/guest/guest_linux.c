@@ -1,5 +1,5 @@
 /*
- * hypervisor/linux_guest.c
+ * hypervisor/guest/guest_linux.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -9,8 +9,11 @@
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "driver/arm/gic400.h"
+#include "driver/arm/smmu500.h"
+#include "driver/aarch64/mmu.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
+#include "hypervisor/mmu.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 
 /* defines */
@@ -32,6 +35,8 @@
 /* variables */
 
 extern struct gic400 sys_gic;
+extern struct smmu500 sys_smmu;
+extern struct aarch64_mmu sys_mmu;
 extern struct aarch64_mmu_block_pool sys_pool;
 
 static DESC_XILINX_MPSOC_STAGE2_LEVEL1_TABLE(table);
@@ -47,9 +52,32 @@ static errno_t emulate_hvc(struct vpc *vpc)
 {
     gic400_dump_ns_cpuif(&sys_gic);
     gic400_dump_ns_distributor(&sys_gic);
-    for (;;);
 
-    return SUCCESS;
+    return -ENOSYS;
+}
+
+static void init_smmu(void)
+{
+    errno_t ret;
+    uint8_t id;
+    uint8_t cb;
+    struct smmu_context_bank_with_stage2_configuration config;
+
+    memset(&config, 0, sizeof(config));
+    config.stage2 = &(mpsoc.soc.stage2);
+    config.interrupt_index = 0;
+    config.vmid = GUEST_VMID;
+    ret = smmu500_create_context_bank_with_stage2(&sys_smmu, &cb, &config);
+    printk("smmu500_create_context_bank_with_stage2() -> %d, cb=%u\n", ret, cb);
+    if (ret == SUCCESS) {
+        struct smmu_translation_stream_configuration config;
+        memset(&config, 0, sizeof(config));
+        config.stream.mask = 0x3fff;
+        config.stream.id = 0;
+        config.cbndx = cb;
+        ret = smmu500_create_translation_stream(&sys_smmu, &id, &config);
+        printk("smmu500_create_translation_stream() -> %d, id=%u\n", ret, id);
+    }
 }
 
 static void map_device(void)
@@ -67,6 +95,8 @@ static void map_device(void)
     if (ret != SUCCESS) {
         printk("aarch64_stage2_map() -> %d\n", ret);
     }
+
+    init_smmu();
 }
 
 static void init_vpc(void)
@@ -111,7 +141,7 @@ static void init_mpsoc(void)
     config.stage2.pool = &sys_pool;
     config.stage2.level1_table = table;
     config.gic = &sys_gic;
-    config.ram.ipa = 0;
+    config.ram.ipa = RAM_START;
     config.ram.pa = RAM_START;
     config.ram.size = RAM_SIZE;
     ret = xilinx_mpsoc_initialize(&mpsoc, &config);
@@ -121,7 +151,7 @@ static void init_mpsoc(void)
     }
 }
 
-void *linux_guest(void)
+void *guest_linux(void)
 {
     init_mpsoc();
 

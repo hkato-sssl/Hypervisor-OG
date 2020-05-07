@@ -9,7 +9,7 @@
 
         .global         hypervisor_start
 
-        .extern         hypervisor
+        .extern         hypervisor_main
         .extern         thread_stack_top
         .extern         thread_start
         .extern         excvec_hyp
@@ -35,7 +35,7 @@ hypervisor_start:
         bl              thread_stack_top
         mov             x1, x0
         mov             x2, xzr
-        adr             x0, hypervisor
+        adr             x0, hypervisor_main
         b               thread_start
 
         .end

@@ -1,5 +1,5 @@
 /*
- * hypervisor.c
+ * hypervisor_main.c
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -12,6 +12,8 @@
 
 /* defines */
 
+#define BOOT_ADDR       0x28000000
+
 /* types */
 
 /* prototypes */
@@ -20,29 +22,31 @@
 
 /* functions */
 
-static void test(void)
+static void launch_guest(void)
 {
-    void *test_guest_04(void);
+    void *linux_guest(void);
 
     errno_t ret;
     struct xilinx_mpsoc *chip;
     struct vpc_boot_configuration boot;
 
-    chip = test_guest_04();
+    chip = linux_guest();
     memset(&boot, 0, sizeof(boot));
     boot.arch = VPC_ARCH_AARCH64;
-    boot.pc = 0x20000000;
+    boot.pc = BOOT_ADDR;
     boot.arg = 0;
     ret = vm_launch(&(chip->soc.vm), 0, &boot);
     printk("vm_launch() -> %d\n", ret);
+    vpc_dump(chip->soc.vm.vpcs[0], 0);
+    
 }
 
-void hypervisor(void)
+void hypervisor_main(void)
 {
     printk("CPU#%u\n", cpu_no());
 
-    if (cpu_no() == 3) {
-        test();
+    if (cpu_no() == 0) {
+        launch_guest();
     }
 
     for (;;);

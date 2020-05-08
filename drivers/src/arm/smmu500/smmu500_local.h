@@ -55,6 +55,11 @@ static inline void smmu500_gr0_write32(const struct smmu500 *smmu, uint32_t regs
     REG_WRITE32(smmu->smmu_base, regs, d);
 }
 
+static inline void smmu500_gr0_write32_sync(const struct smmu500 *smmu, uint32_t regs, uint32_t d)
+{
+    REG_WRITE32_SYNC(smmu->smmu_base, regs, d);
+}
+
 static inline uint32_t smmu500_gr1_read32(const struct smmu500 *smmu, uint32_t regs)
 {
     uint32_t d;

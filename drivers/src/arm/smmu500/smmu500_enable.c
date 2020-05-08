@@ -31,7 +31,7 @@ static errno_t enable(struct smmu500 *smmu, uint8_t id)
     d = smmu500_gr0_read32(smmu, SMMU_SMR(id));
     if ((d & BIT(31)) == 0) {
         d |= BIT(31);
-        smmu500_gr0_write32(smmu, SMMU_SMR(id), d);
+        smmu500_gr0_write32_sync(smmu, SMMU_SMR(id), d);
         ret = SUCCESS;
     } else {
         ret = -EBUSY;

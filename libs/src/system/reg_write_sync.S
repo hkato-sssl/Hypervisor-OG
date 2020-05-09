@@ -12,9 +12,9 @@
         .type           reg_write64_sync, %function
         .balign         4
 reg_write64_sync:
-        dmb             osh
+        dsb             sy
         str             x2, [x0, x1]
-        dmb             osh
+        dsb             sy
         ldr             x0, [x0, x1]
         dsb             nsh
         ret
@@ -23,9 +23,9 @@ reg_write64_sync:
         .type           reg_write32_sync, %function
         .balign         4
 reg_write32_sync:
-        dmb             osh
+        dsb             sy
         str             w2, [x0, x1]
-        dmb             osh
+        dsb             sy
         ldr             w0, [x0, x1]
         dsb             nsh
         ret
@@ -34,9 +34,9 @@ reg_write32_sync:
         .type           reg_write16_sync, %function
         .balign         4
 reg_write16_sync:
-        dmb             osh
+        dsb             sy
         strh            w2, [x0, x1]
-        dmb             osh
+        dsb             sy
         ldrh            w0, [x0, x1]
         dsb             nsh
         ret
@@ -45,9 +45,9 @@ reg_write16_sync:
         .type           reg_write8_sync, %function
         .balign         4
 reg_write8_sync:
-        dmb             osh
+        dsb             sy
         strb            w2, [x0, x1]
-        dmb             osh
+        dsb             sy
         ldrb            w0, [x0, x1]
         dsb             nsh
         ret

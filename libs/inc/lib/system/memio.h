@@ -46,7 +46,7 @@ extern "C" {
 
 static inline void memory_barrier(void)
 {
-	__asm volatile ("dmb osh" ::: "memory");
+	__asm volatile ("dmb sy" ::: "memory");
 }
 
 static inline uint64_t reg_read64(uintptr_t base, uintptr_t reg)

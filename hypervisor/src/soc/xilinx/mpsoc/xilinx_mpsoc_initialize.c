@@ -52,8 +52,8 @@ static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc
     memset(&config, 0, sizeof(config));
     config.vm = &(chip->soc.vm);
     config.gic = chip_config->gic;
-    config.base.virtif_control = (void *)GIC400H_BASE;
-    config.base.virtual_cpuif = (void *)GIC400V_BASE;
+    config.base.virtif_control = (void *)REG_GIC400H;
+    config.base.virtual_cpuif = (void *)REG_GIC400V;
     config.boolean.trap_cpuif = true;
     ret = vgic400_initialize(&(chip->vgic400), &config);
     if ((ret == SUCCESS) && (chip_config->ram.size > 0)) {

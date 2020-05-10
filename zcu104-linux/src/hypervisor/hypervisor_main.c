@@ -31,15 +31,15 @@ static void launch_guest(void)
     struct vpc_boot_configuration boot;
 
     chip = guest_linux();
-#if 0
+
     memset(&boot, 0, sizeof(boot));
     boot.arch = VPC_ARCH_AARCH64;
     boot.pc = BOOT_ADDR;
     boot.arg = 0;
     ret = vm_launch(&(chip->soc.vm), 0, &boot);
     printk("vm_launch() -> %d\n", ret);
+
     vpc_dump(chip->soc.vm.vpcs[0], 0);
-#endif
 }
 
 void hypervisor_main(void)

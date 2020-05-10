@@ -54,7 +54,7 @@ static struct dump_register gr0[] = {
 static struct dump_register s1_cb[] = {
     REGISTER(SMMU_S1_CB_SCTLR),
     REGISTER(SMMU_S1_CB_ACTLR),
-    REGISTER(SMMU_S1_CB_RESUME),
+/*  REGISTER(SMMU_S1_CB_RESUME),        Write-Only */
     REGISTER(SMMU_S1_CB_TCR2),
     REGISTER(SMMU_S1_CB_TTBR0),
     REGISTER(SMMU_S1_CB_TTBR1),
@@ -66,7 +66,7 @@ static struct dump_register s1_cb[] = {
     REGISTER(SMMU_S1_CB_MAIR1),
     REGISTER(SMMU_S1_CB_PAR),
     REGISTER(SMMU_S1_CB_FSR),
-    REGISTER(SMMU_S1_CB_FSRRESTORE),
+/*  REGISTER(SMMU_S1_CB_FSRRESTORE),    Write-Only */
     REGISTER(SMMU_S1_CB_FAR),
     REGISTER(SMMU_S1_CB_FSYNR0),
     REGISTER(SMMU_S1_CB_FSYNR1),
@@ -89,11 +89,11 @@ static struct dump_register s1_cb[] = {
 static struct dump_register s2_cb[] = {
     REGISTER(SMMU_S2_CB_SCTLR),
     REGISTER(SMMU_S2_CB_ACTLR),
-    REGISTER(SMMU_S2_CB_RESUME),
+/*  REGISTER(SMMU_S2_CB_RESUME),        Write-Only */
     REGISTER(SMMU_S2_CB_TTBR0),
     REGISTER(SMMU_S2_CB_TCR),
     REGISTER(SMMU_S2_CB_FSR),
-    REGISTER(SMMU_S2_CB_FSRRESTORE),
+/*  REGISTER(SMMU_S2_CB_FSRRESTORE),    Write-Only */
     REGISTER(SMMU_S2_CB_FAR),
     REGISTER(SMMU_S2_CB_FSYNR0),
     REGISTER(SMMU_S2_CB_FSYNR1),
@@ -112,7 +112,7 @@ static void dump_cb(const struct smmu500 *smmu, uint8_t n, const struct dump_reg
     int i;
 
     for (i = 0; list[i].name != NULL; ++i) {
-        printk("  %s: 0x%08x\n", list[i].name, smmu500_cb_read32(smmu, n, list[i].regs));
+        printk("  %21s: 0x%08x\n", list[i].name, smmu500_cb_read32(smmu, n, list[i].regs));
     }
 }
 

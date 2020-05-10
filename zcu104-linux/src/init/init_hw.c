@@ -69,6 +69,15 @@ static errno_t init_smmu500(void)
         printk("smmu500_initialize() -> %d\n", ret);
     }
 
+    if (ret == SUCCESS) {
+        struct gic400_interrupt_configuration config;
+        memset(&config, 0, sizeof(config));
+        config.targets = 1;
+        config.priority = 0x0f;
+        ret = gic400_configure_interrupt(&sys_gic, 187, &config);
+        printk("gic400_configure_interrupt() -> %d\n", ret);
+    }
+
     return ret;
 }
 

@@ -18,15 +18,19 @@
 
 /* defines */
 
-#define NR_CPUS     1
-#define GUEST_VMID  1
+#define NR_CPUS         1
+#define GUEST_VMID      1
 
-#define UART_IPA    0xff000000  /* PS UART0 */
-#define UART_PA     0xff000000
-#define UART_SIZE   4096
+#define UART_IPA        0xff000000  /* PS UART0 */
+#define UART_PA         0xff000000
+#define UART_SIZE       4096
 
-#define RAM_START   0x00000000  /* 1GB */
-#define RAM_SIZE    0x40000000
+#define SMMU_TEST_IPA   0xa0002000
+#define SMMU_TEST_PA    0xa0002000
+#define SMMU_TEST_SIZE  4096
+
+#define RAM_START       0x00000000  /* 1GB */
+#define RAM_SIZE        0x40000000
 
 /* types */
 
@@ -52,6 +56,8 @@ static errno_t emulate_hvc(struct vpc *vpc)
 {
     gic400_dump_ns_cpuif(&sys_gic);
     gic400_dump_ns_distributor(&sys_gic);
+    smmu500_dump(&sys_smmu);
+    smmu500_dump_stream_match_register(&sys_smmu, 0);
 
     return -ENOSYS;
 }
@@ -72,11 +78,15 @@ static void init_smmu(void)
     if (ret == SUCCESS) {
         struct smmu_translation_stream_configuration config;
         memset(&config, 0, sizeof(config));
-        config.stream.mask = 0x3fff;
-        config.stream.id = 0;
+        config.stream.mask = 0x0000;
+        config.stream.id = 0x0e80;
         config.cbndx = cb;
         ret = smmu500_create_translation_stream(&sys_smmu, &id, &config);
         printk("smmu500_create_translation_stream() -> %d, id=%u\n", ret, id);
+        if (ret == SUCCESS) {
+            ret = smmu500_enable(&sys_smmu, id);
+            printk("smmu500_enable() -> %d\n", ret);
+        }
     }
 }
 
@@ -92,6 +102,11 @@ static void map_device(void)
     attr.s2ap = STAGE2_S2AP_RW;
     attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
     ret = aarch64_stage2_map(&(mpsoc.soc.stage2), (void *)UART_IPA, (void *)UART_PA, UART_SIZE, &attr);
+    if (ret != SUCCESS) {
+        printk("aarch64_stage2_map() -> %d\n", ret);
+    }
+
+    ret = aarch64_stage2_map(&(mpsoc.soc.stage2), (void *)SMMU_TEST_IPA, (void *)SMMU_TEST_PA, SMMU_TEST_SIZE, &attr);
     if (ret != SUCCESS) {
         printk("aarch64_stage2_map() -> %d\n", ret);
     }

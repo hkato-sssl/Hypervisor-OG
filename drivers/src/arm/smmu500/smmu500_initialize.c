@@ -35,6 +35,10 @@ static errno_t initialize_device(struct smmu500 *smmu)
     smmu500_gr0_write32(smmu, SMMU_sCR0, 0);
     smmu500_gr0_write32(smmu, SMMU_sGFAR, 0);
     smmu500_gr0_write32(smmu, SMMU_sGFSR, ~(uint32_t)0);
+    smmu500_gr0_write32(smmu, SMMU_sGFSRRESTORE, 0);
+    smmu500_gr0_write32(smmu, SMMU_sGFSYNR0, 0);
+    smmu500_gr0_write32(smmu, SMMU_sGFSYNR1, 0);
+    smmu500_gr0_write32(smmu, SMMU_sGFSYNR2, 0);
 
     /* clear SMMU_SMRn */
     for (i = 0; i < smmu->nr_stream_matches; ++i) {

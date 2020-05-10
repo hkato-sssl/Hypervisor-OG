@@ -67,7 +67,6 @@ static const char out_fmt[] = "%-17s: %08x\n";
 
 /* functions */
 
-
 static void dump_sr(const struct gic400 *gic)
 {
     int n;
@@ -85,7 +84,6 @@ static void dump_sr(const struct gic400 *gic)
         reg += 4;
         ++n;
     }
- 
 }
 
 static void dump_array(const struct gic400 *gic, const struct reg_type2 list[])

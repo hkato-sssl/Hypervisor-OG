@@ -162,7 +162,7 @@ static void dump_stream_match_register(const struct smmu500 *smmu, uint8_t id, i
     }
 }
 
-static void dump_stream_matche_registers(const struct smmu500 *smmu)
+static void dump_stream_match_registers(const struct smmu500 *smmu)
 {
     uint8_t i;
 
@@ -206,7 +206,7 @@ void smmu500_dump(struct smmu500 *smmu)
 
     dump_smmu500(smmu);
     dump_gr0(smmu);
-    dump_stream_matche_registers(smmu);
+    dump_stream_match_registers(smmu);
 
     smmu500_unlock(smmu);
 }

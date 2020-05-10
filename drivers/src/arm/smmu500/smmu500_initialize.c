@@ -51,7 +51,7 @@ static errno_t initialize_device(struct smmu500 *smmu)
 
     /* enable SMMU */
 
-    d = SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GFRE;
+    d = SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GFIE;
     smmu500_gr0_write32_sync(smmu, SMMU_sCR0, d);
 
     return SUCCESS;

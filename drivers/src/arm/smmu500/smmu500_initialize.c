@@ -27,12 +27,14 @@
 
 /* functions */
 
-static errno_t initialize_device(struct smmu500 *smmu)
+static errno_t initialize_device(struct smmu500 *smmu, const struct smmu500_configuration *config)
 {
     uint32_t i;
     uint32_t d;
 
-    smmu500_gr0_write32(smmu, SMMU_sCR0, 0);
+    /* disable SMMU */
+    smmu500_gr0_write32_sync(smmu, SMMU_sCR0, SMMU_CR0_CLIENTPD);
+
     smmu500_gr0_write32(smmu, SMMU_sGFAR, 0);
     smmu500_gr0_write32(smmu, SMMU_sGFSR, ~(uint32_t)0);
     smmu500_gr0_write32(smmu, SMMU_sGFSRRESTORE, 0);
@@ -50,8 +52,11 @@ static errno_t initialize_device(struct smmu500 *smmu)
     }
 
     /* enable SMMU */
-
-    d = SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GFIE;
+    if (config->flag.interrupt) {
+        d = SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GCFGFIE | SMMU_CR0_GFIE;
+    } else {
+        d = 0;
+    }
     smmu500_gr0_write32_sync(smmu, SMMU_sCR0, d);
 
     return SUCCESS;
@@ -136,7 +141,7 @@ static errno_t initialize(struct smmu500 *smmu, const struct smmu500_configurati
     probe_device(smmu);
     ret = map_register_region(smmu, config);
     if (ret == SUCCESS) {
-        ret = initialize_device(smmu);
+        ret = initialize_device(smmu, config);
     }
     
     return ret;

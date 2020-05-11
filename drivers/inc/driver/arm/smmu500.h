@@ -130,6 +130,9 @@ struct smmu500_configuration {
     uintptr_t               smmu_base;
     struct aarch64_mmu      *mmu;
     struct aarch64_mmu_attr *mmu_attr;
+    struct {
+        uint8_t             interrupt:1;    /* global interrupt */
+    } flag;
 };
 
 struct smmu_stream {
@@ -161,6 +164,9 @@ struct smmu_context_bank_with_stage2_configuration {
     struct aarch64_stage2   *stage2;
     uint16_t    vmid;
     uint8_t     interrupt_index;
+    struct {
+        uint8_t interrupt:1;
+    } flag;
 };
 
 /* variables */

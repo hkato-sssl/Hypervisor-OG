@@ -7,7 +7,9 @@
 #include <stdint.h>
 #include <string.h>
 #include "lib/system/printk.h"
+#include "driver/arm/gic400.h"
 #include "driver/system/cpu.h"
+#include "driver/xilinx/device/mpsoc.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 
 /* defines */
@@ -20,6 +22,8 @@
 
 /* variables */
 
+extern struct gic400 sys_gic;
+
 /* functions */
 
 static void launch_guest(void)
@@ -31,6 +35,9 @@ static void launch_guest(void)
     struct vpc_boot_configuration boot;
 
     chip = guest_linux();
+
+    gic400_enable_interrupt(&sys_gic, IRQ_SMMU500);
+    gic400_set_priority_mask(&sys_gic, 0xff);
 
     memset(&boot, 0, sizeof(boot));
     boot.arch = VPC_ARCH_AARCH64;

@@ -73,6 +73,7 @@ static void init_smmu(void)
     config.stage2 = &(mpsoc.soc.stage2);
     config.interrupt_index = 0;
     config.vmid = GUEST_VMID;
+    config.flag.interrupt = 1;
     ret = smmu500_create_context_bank_with_stage2(&sys_smmu, &cb, &config);
     printk("smmu500_create_context_bank_with_stage2() -> %d, cb=%u\n", ret, cb);
     if (ret == SUCCESS) {

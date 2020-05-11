@@ -60,9 +60,10 @@ static errno_t init_smmu500(void)
     attr.attrindx = HYP_MMU_DEVICE_nGnRE;
 
     memset(&config, 0, sizeof(config));
-    config.smmu_base = 0xfd800000;
+    config.smmu_base = REG_SMMU500;
     config.mmu = &sys_mmu;
     config.mmu_attr = &attr;
+    config.flag.interrupt = 1;
 
     ret = smmu500_initialize(&sys_smmu, &config);
     if (ret != SUCCESS) {
@@ -73,8 +74,8 @@ static errno_t init_smmu500(void)
         struct gic400_interrupt_configuration config;
         memset(&config, 0, sizeof(config));
         config.targets = 1;
-        config.priority = 0x0f;
-        ret = gic400_configure_interrupt(&sys_gic, 187, &config);
+        config.priority = 0x01;
+        ret = gic400_configure_interrupt(&sys_gic, IRQ_SMMU500, &config);
         printk("gic400_configure_interrupt() -> %d\n", ret);
     }
 
@@ -131,3 +132,4 @@ void init_hw(void)
         init_secondary_processor();
     }
 }
+

@@ -27,7 +27,7 @@ static void set_aarch64(struct vpc *vpc)
      *    M[4:0] = 0x05 - AArch64 EL1h
      */
     vpc->regs[VPC_SPSR_EL2] = PSTATE_D | PSTATE_A | PSTATE_I | PSTATE_F | 0x05;
-    vpc->regs[VPC_HCR_EL2] = HCR_RW | HCR_IMO | HCR_VM;
+    vpc->regs[VPC_HCR_EL2] = HCR_RW | HCR_AMO | HCR_IMO | HCR_FMO | HCR_VM;
 }
 
 static void set_aarch32(struct vpc *vpc)
@@ -37,7 +37,7 @@ static void set_aarch32(struct vpc *vpc)
      *    M[4:0] = 0x13 - AArch32 Supervisor mode
      */
     vpc->regs[VPC_SPSR_EL2] = PSTATE_I | PSTATE_F | 0x13;
-    vpc->regs[VPC_HCR_EL2] = HCR_IMO | HCR_VM;
+    vpc->regs[VPC_HCR_EL2] = HCR_AMO | HCR_IMO | HCR_FMO | HCR_VM;
 }
 
 void vpc_set_boot_parameters(struct vpc *vpc, const struct vpc_boot_configuration *boot)

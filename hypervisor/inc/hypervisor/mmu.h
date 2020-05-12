@@ -32,13 +32,13 @@ extern "C" {
                          MAIR_ATTR(6, MAIR_ATTR_DEVICE_nGRE) |\
                          MAIR_ATTR(7, MAIR_ATTR_DEVICE_GRE))
 
-#define HYP_MMU_NC              0
-#define HYP_MMU_WB              1
-#define HYP_MMU_WBWA            2
-#define HYP_MMU_DEVICE_nGnRnE   4
-#define HYP_MMU_DEVICE_nGnRE    5
-#define HYP_MMU_DEVICE_nGRE     6
-#define HYP_MMU_DEVICE_GRE      7
+#define HYP_MMU_MT_NORMAL_NC        0
+#define HYP_MMU_MT_NORMAL_WB        1
+#define HYP_MMU_MT_NORMAL_WBWA      2
+#define HYP_MMU_MT_DEVICE_nGnRnE    4
+#define HYP_MMU_MT_DEVICE_nGnRE     5
+#define HYP_MMU_MT_DEVICE_nGRE      6
+#define HYP_MMU_MT_DEVICE_GRE       7
 
 /* types */
 

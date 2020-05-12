@@ -57,7 +57,7 @@ static errno_t init_smmu500(void)
     attr.af = 1;
     attr.sh = MMU_ATTR_SH_OSH;
     attr.ap21 = MMU_ATTR_AP_RW;
-    attr.attrindx = HYP_MMU_DEVICE_nGnRE;
+    attr.attrindx = HYP_MMU_MT_DEVICE_nGnRE;
 
     memset(&config, 0, sizeof(config));
     config.smmu_base = REG_SMMU500;

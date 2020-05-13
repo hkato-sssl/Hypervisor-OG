@@ -28,16 +28,21 @@ static errno_t initialize(struct soc *soc, const struct soc_configuration *soc_c
     errno_t ret;
     struct vm_configuration config;
 
+    /* initialize struct soc */
+
     memset(soc, 0, sizeof(*soc));
 
     spin_lock_init(&(soc->lock));
     soc->chip = soc_config->chip;
     soc->ops = soc_config->ops;
 
+    /* initialize struct vm */
+
     memset(&config, 0, sizeof(config));
+
     config.soc = soc;
     config.nr_procs = soc_config->nr_procs;
-    config.stage2 = &(soc->stage2);
+    config.stage2 = soc_config->stage2;
 
     ret = vm_initialize(&(soc->vm), &config);
 

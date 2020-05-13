@@ -60,7 +60,8 @@ struct vm {
         uint16_t                    physical[MAX_NR_VM_PROCESSORS];
     } proc_map;
     struct vpc                      *vpcs[MAX_NR_VM_PROCESSORS];
-    struct aarch64_stage2           *stage2;
+
+    struct aarch64_stage2           stage2;
 
     struct {
         struct {
@@ -70,9 +71,9 @@ struct vm {
 };
 
 struct vm_configuration {
-    struct soc              *soc;
-    uint16_t                nr_procs;
-    struct aarch64_stage2   *stage2;
+    struct soc                      *soc;
+    uint16_t                        nr_procs;
+    const struct aarch64_stage2_configuration   *stage2;
 };
 
 /* variables */

@@ -22,29 +22,27 @@
 
 static errno_t initialize(struct vm *vm, const struct vm_configuration *config)
 {
+    errno_t ret;
+
     memset(vm, 0, sizeof(*vm));
     memset(&(vm->proc_map), VM_NO_ASSIGN, sizeof(vm->proc_map));
+
     spin_lock_init(&(vm->lock));
     vm->soc = config->soc;
     vm->nr_procs = config->nr_procs;
-    vm->stage2 = config->stage2;
 
-    return SUCCESS;
+    ret = aarch64_stage2_initialize(&(vm->stage2), config->stage2);
+
+    return ret;
 }
 
 static errno_t validate_parameters(const struct vm *vm, const struct vm_configuration *config)
 {
     errno_t ret;
 
-    if (vm == NULL) {
-        ret = -EINVAL;
-    } else if (config == NULL) {
-        ret = -EINVAL;
-    } else if (config->nr_procs == 0) {
+    if (config->nr_procs == 0) {
         ret = -EINVAL;
     } else if (config->nr_procs >= MAX_NR_VM_PROCESSORS) {
-        ret = -EINVAL;
-    } else if (config->stage2 == NULL) {
         ret = -EINVAL;
     } else {
         ret = SUCCESS;

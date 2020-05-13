@@ -25,10 +25,16 @@ extern "C" {
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
 #include "driver/aarch64/stage2.h"
+#include "hypervisor/mmu.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 
 /* defines */
+
+#define SOC_DEVICE_NO_IRQ               0xffff
+
+#define SOC_DEVICE_MT_RAM               HYP_MMU_MT_WBWA
+#define SOC_DEVICE_MT_DEVICE            HYP_MMU_MT_DEVICE_nGnRE
 
 /* types */
 
@@ -39,17 +45,42 @@ struct soc_ops {
 };
 
 struct soc {
+    struct vm               vm;
     spin_lock_t             lock;
     void                    *chip;
     const struct soc_ops    *ops;
-    struct vm               vm;
-    struct aarch64_stage2   stage2;
 };
 
 struct soc_configuration {
     void                    *chip;
     const struct soc_ops    *ops;
     uint16_t                nr_procs;
+    const struct aarch64_stage2_configuration   *stage2;
+};
+
+struct soc_device_region {
+    uintptr_t               ipa;
+    uintptr_t               pa;
+    size_t                  size;
+};
+
+struct soc_device {
+    uint16_t                nr_irqs;
+    uint16_t                *irqs;
+
+    struct {
+        uintptr_t           pa;
+        uintptr_t           ipa;
+        size_t              size;
+        uint8_t             memory_type;    /* hypervisor/mmu.h: HYP_MMU_MT_XXX */
+        struct {
+            struct {
+                uint8_t         read:1;
+                uint8_t         write:1;
+                uint8_t         exec:1;
+            } flag;
+        } access;
+    } region;
 };
 
 /* variables */

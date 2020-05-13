@@ -44,7 +44,7 @@ static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *region)
         attr.s2ap = STAGE2_S2AP_RO;
     }
 
-    ret = aarch64_stage2_map(vm->stage2, (void *)region->ipa, (void *)region->pa, region->size, &attr);
+    ret = aarch64_stage2_map(&(vm->stage2), (void *)region->ipa, (void *)region->pa, region->size, &attr);
 
     return ret;
 }

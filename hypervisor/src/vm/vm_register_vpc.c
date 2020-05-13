@@ -39,6 +39,8 @@ errno_t vm_register_vpc(struct vm *vm, struct vpc *vpc)
         ret = -EINVAL;
     } else if (vm->vpcs[vpc->proc_no] != NULL) {
         ret = -EEXIST;
+    } else if (vm != vpc->vm) {
+        ret = -EPERM;
     } else {
         ret = register_vpc(vm, vpc);
     }

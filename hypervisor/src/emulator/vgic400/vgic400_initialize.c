@@ -41,7 +41,7 @@ static errno_t map_cpuif(struct vgic400 *vgic)
     attr.s2ap = STAGE2_S2AP_RW;
 
     addr = gic400_cpuif_register_base(vgic->gic);
-    ret = aarch64_stage2_map(vgic->vm->stage2, addr, vgic->base.virtual_cpuif, 4096, &attr);
+    ret = aarch64_stage2_map(&(vgic->vm->stage2), addr, vgic->base.virtual_cpuif, 4096, &attr);
 
     return ret;
 }

@@ -51,8 +51,8 @@ static errno_t switch_to_guest_context(struct vpc *vpc, const struct vpc_boot_co
     initialize_el1(vpc);
 
     vm = vpc->vm;
-    vpc->regs[VPC_VTTBR_EL2] = aarch64_stage2_vttbr_el2(vm->stage2);
-    vpc->regs[VPC_VTCR_EL2] = aarch64_stage2_vtcr_el2(vm->stage2);
+    vpc->regs[VPC_VTTBR_EL2] = aarch64_stage2_vttbr_el2(&(vm->stage2));
+    vpc->regs[VPC_VTCR_EL2] = aarch64_stage2_vtcr_el2(&(vm->stage2));
     vpc->regs[VPC_HCR_EL2] |= HCR_EL2_TSC;
 
     thread_write_tls(TLS_CURRENT_VPC_REGS, (uint64_t)vpc->regs);

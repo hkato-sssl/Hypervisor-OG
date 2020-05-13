@@ -62,115 +62,41 @@ static errno_t emulate_hvc(struct vpc *vpc)
     return -ENOSYS;
 }
 
-static void init_smmu(void)
+static void *init_mpsoc(void)
 {
     errno_t ret;
-    uint8_t id;
-    uint8_t cb;
-    struct smmu_context_bank_with_stage2_configuration config;
-
-    memset(&config, 0, sizeof(config));
-    config.stage2 = &(mpsoc.soc.stage2);
-    config.interrupt_index = 0;
-    config.vmid = GUEST_VMID;
-    config.flag.interrupt = 1;
-    ret = smmu500_create_context_bank_with_stage2(&sys_smmu, &cb, &config);
-    printk("smmu500_create_context_bank_with_stage2() -> %d, cb=%u\n", ret, cb);
-    if (ret == SUCCESS) {
-        struct smmu_translation_stream_configuration config;
-        memset(&config, 0, sizeof(config));
-        config.stream.mask = 0x0000;
-        config.stream.id = 0x0e80;
-        config.cbndx = cb;
-        ret = smmu500_create_translation_stream(&sys_smmu, &id, &config);
-        printk("smmu500_create_translation_stream() -> %d, id=%u\n", ret, id);
-        if (ret == SUCCESS) {
-            ret = smmu500_enable(&sys_smmu, id);
-            printk("smmu500_enable() -> %d\n", ret);
-        }
-    }
-}
-
-static void map_device(void)
-{
-    errno_t ret;
-    struct aarch64_stage2_attr attr;
-
-    memset(&attr, 0, sizeof(attr));
-    attr.xn = 0;
-    attr.af = 1;
-    attr.sh = STAGE2_SH_OSH;
-    attr.s2ap = STAGE2_S2AP_RW;
-    attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
-    ret = aarch64_stage2_map(&(mpsoc.soc.stage2), (void *)UART_IPA, (void *)UART_PA, UART_SIZE, &attr);
-    if (ret != SUCCESS) {
-        printk("aarch64_stage2_map() -> %d\n", ret);
-    }
-
-    ret = aarch64_stage2_map(&(mpsoc.soc.stage2), (void *)SMMU_TEST_IPA, (void *)SMMU_TEST_PA, SMMU_TEST_SIZE, &attr);
-    if (ret != SUCCESS) {
-        printk("aarch64_stage2_map() -> %d\n", ret);
-    }
-
-    init_smmu();
-}
-
-static void init_vpc(void)
-{
-    int i;
-    errno_t ret;
-    struct vpc *vpc;
-    struct vpc_configuration config;
-
-    ops = *xilinx_mpsoc_default_vpc_exception_ops();
-    ops.aarch64.hvc = emulate_hvc;
-
-    memset(&config, 0, sizeof(config));
-    config.vm = &(mpsoc.soc.vm);
-    config.hook = xilinx_mpsoc_default_vpc_hook();
-    config.exception.ops = &ops;
-
-    for (i = 0; i < NR_CPUS; ++i) {
-        vpc = &(vpcs[i]);
-        config.regs = regs[i];
-        config.proc_no = (uint8_t)i;
-        ret = xilinx_mpsoc_initialize_vpc(&mpsoc, vpc, &config);
-        if (ret == SUCCESS) {
-            printk("vpc_initialize(%d) -> %d\n", i, ret);
-            break;
-        }
-    }
-
-    if (ret == SUCCESS) {
-        map_device();
-    }
-}
-
-static void init_mpsoc(void)
-{
-    errno_t ret;
+    uint32_t i;
     struct xilinx_mpsoc_configuration config;
 
     memset(&config, 0, sizeof(config));
-    config.nr_procs = NR_CPUS;
+
+    for (i = 0; i < NR_CPUS; ++i) {
+        config.vpc.vpcs[i] = &(vpcs[i]);
+        config.vpc.register_arrays[i] = regs[i];
+    }
+
     config.vmid = GUEST_VMID;
+    config.nr_procs = 1;
     config.stage2.pool = &sys_pool;
     config.stage2.level1_table = table;
     config.gic = &sys_gic;
-    config.ram.ipa = RAM_START;
+    config.smmu.device = &sys_smmu;
+    config.smmu.nr_streams = 0;
+    config.smmu.streams = NULL;
     config.ram.pa = RAM_START;
+    config.ram.ipa = RAM_START;
     config.ram.size = RAM_SIZE;
+    config.nr_devices = 0;
+    config.devices = NULL;
+    config.nr_ppis = 0;
+
     ret = xilinx_mpsoc_initialize(&mpsoc, &config);
-    printk("xilinx_mpsoc_initialize() -> %d\n", ret);
-    if (ret == SUCCESS) {
-        init_vpc();
-    }
+
+    return (ret == SUCCESS) ? &mpsoc : NULL;
 }
 
 void *guest_linux(void)
 {
-    init_mpsoc();
-
-    return &mpsoc;
+    return init_mpsoc();
 }
 

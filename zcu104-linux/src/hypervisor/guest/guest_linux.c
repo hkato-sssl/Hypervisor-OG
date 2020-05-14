@@ -18,19 +18,19 @@
 
 /* defines */
 
-#define NR_CPUS         1
-#define GUEST_VMID      1
+#define NR_CPUS             1
+#define GUEST_VMID          1
 
-#define UART_IPA        0xff000000  /* PS UART0 */
-#define UART_PA         0xff000000
-#define UART_SIZE       4096
+#define UART_IPA            0xff000000  /* PS UART0 */
+#define UART_PA             0xff000000
+#define UART_SIZE           4096
 
-#define SMMU_TEST_IPA   0xa0002000
-#define SMMU_TEST_PA    0xa0002000
-#define SMMU_TEST_SIZE  4096
+#define AXI_SMMU_TEST_IPA   0xa0002000
+#define AXI_SMMU_TEST_PA    0xa0002000
+#define AXI_SMMU_TEST_SIZE  4096
 
-#define RAM_START       0x00000000  /* 1GB */
-#define RAM_SIZE        0x40000000
+#define RAM_START           0x00000000  /* 1GB */
+#define RAM_SIZE            0x40000000
 
 /* types */
 
@@ -49,6 +49,45 @@ static struct xilinx_mpsoc mpsoc;
 static struct vpc vpcs[NR_CPUS];
 static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
 static struct vpc_exception_ops ops;
+
+static uint16_t uart0_irqs[] = { 53 };
+static struct soc_device uart0 = {
+    .nr_irqs = 1,
+    .irqs = uart0_irqs,
+    .region.pa = UART_PA,
+    .region.ipa = UART_IPA,
+    .region.size = UART_SIZE,
+    .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
+    .region.access.flag.read = 1,
+    .region.access.flag.write = 1,
+    .region.access.flag.exec = 0
+};
+
+static struct soc_device axi_smmu_test = {
+    .nr_irqs = 0,
+    .irqs = NULL,
+    .region.pa = AXI_SMMU_TEST_PA,
+    .region.ipa = AXI_SMMU_TEST_IPA,
+    .region.size = AXI_SMMU_TEST_SIZE,
+    .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
+    .region.access.flag.read = 1,
+    .region.access.flag.write = 1,
+    .region.access.flag.exec = 0
+};
+
+static struct soc_device *devices[] = {
+    &uart0,
+    &axi_smmu_test,
+};
+
+static struct smmu_stream stream = {
+    .mask = 0,
+    .id = 0x0e80
+};
+
+static struct smmu_stream *streams[] = {
+    &stream
+};
 
 /* functions */
 
@@ -81,13 +120,14 @@ static void *init_mpsoc(void)
     config.stage2.level1_table = table;
     config.gic = &sys_gic;
     config.smmu.device = &sys_smmu;
-    config.smmu.nr_streams = 0;
-    config.smmu.streams = NULL;
+    config.smmu.nr_streams = 1;
+    config.smmu.streams = streams;
+    config.smmu.flag.fault = 1;
     config.ram.pa = RAM_START;
     config.ram.ipa = RAM_START;
     config.ram.size = RAM_SIZE;
-    config.nr_devices = 0;
-    config.devices = NULL;
+    config.nr_devices = 2;
+    config.devices = devices;
     config.nr_ppis = 0;
 
     ret = xilinx_mpsoc_initialize(&mpsoc, &config);
@@ -97,6 +137,7 @@ static void *init_mpsoc(void)
 
 void *guest_linux(void)
 {
+printk("%p\n", devices);
     return init_mpsoc();
 }
 

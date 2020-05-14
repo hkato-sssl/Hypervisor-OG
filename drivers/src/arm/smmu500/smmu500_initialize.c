@@ -52,10 +52,12 @@ static errno_t initialize_device(struct smmu500 *smmu, const struct smmu500_conf
     }
 
     /* enable SMMU */
+    d = 0;
     if (config->flag.interrupt) {
-        d = SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GCFGFIE | SMMU_CR0_GFIE;
-    } else {
-        d = 0;
+        d |= SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GCFGFIE | SMMU_CR0_GFIE;
+    }
+    if (config->flag.fault) {
+        d |= SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GCFGFRE | SMMU_CR0_GFRE;
     }
     smmu500_gr0_write32_sync(smmu, SMMU_sCR0, d);
 

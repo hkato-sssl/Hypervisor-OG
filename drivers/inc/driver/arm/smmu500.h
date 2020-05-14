@@ -132,6 +132,7 @@ struct smmu500_configuration {
     struct aarch64_mmu_attr *mmu_attr;
     struct {
         uint8_t             interrupt:1;    /* global interrupt */
+        uint8_t             fault:1;
     } flag;
 };
 
@@ -166,6 +167,7 @@ struct smmu_context_bank_with_stage2_configuration {
     uint8_t     interrupt_index;
     struct {
         uint8_t interrupt:1;
+        uint8_t fault:1;
     } flag;
 };
 

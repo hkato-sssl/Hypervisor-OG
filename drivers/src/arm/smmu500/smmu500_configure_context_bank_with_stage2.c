@@ -42,8 +42,11 @@ static errno_t configure_context_bank_with_stage2(struct smmu500 *smmu, uint8_t 
     smmu500_cb_write32(smmu, cb, SMMU_S2_CB_ACTLR, d);
 
     d = SMMU_S2_CB_SCTLR_AFE | SMMU_S2_CB_SCTLR_TRE | SMMU_S2_CB_SCTLR_M;
-    if (config->flag.interrupt) {
+    if (config->flag.interrupt != 0) {
         d |= SMMU_S2_CB_SCTLR_CFIE;
+    }
+    if (config->flag.fault != 0) {
+        d |= SMMU_S2_CB_SCTLR_CFRE;
     }
     smmu500_cb_write32(smmu, cb, SMMU_S2_CB_SCTLR, d);
 

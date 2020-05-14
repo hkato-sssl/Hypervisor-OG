@@ -41,7 +41,7 @@ static errno_t create_smmu_streams(struct xilinx_mpsoc *chip, const struct xilin
     config.cbndx = chip->smmu.context_bank;
 
     for (i = 0; i < chip_config->smmu.nr_streams; ++i) {
-        config.stream = chip_config->smmu.streams[i];
+        config.stream = *(chip_config->smmu.streams[i]);
         ret = smmu500_create_translation_stream(chip->smmu.device, &id, &config);
         if (ret != SUCCESS) {
             break;
@@ -68,6 +68,7 @@ static errno_t create_smmu_context_bank(struct xilinx_mpsoc *chip, const struct 
     config.interrupt_index = 0;
     config.vmid = chip_config->vmid;
     config.flag.interrupt = 1;
+    config.flag.fault = chip_config->smmu.flag.fault;
     ret = smmu500_create_context_bank_with_stage2(chip->smmu.device, &(chip->smmu.context_bank), &config);
 
     return ret;
@@ -103,7 +104,7 @@ static errno_t map_device_regions(struct xilinx_mpsoc *chip, const struct xilinx
     attr.sh = STAGE2_SH_OSH;
 
     for (i = 0; i < chip_config->nr_devices; ++i) {
-        dev = &(chip_config->devices[i]);
+        dev = chip_config->devices[i];
         if (dev->region.access.flag.exec != 0) {
             attr.xn = 0;
         } else {
@@ -196,7 +197,7 @@ static errno_t init_virtual_interrupts(struct xilinx_mpsoc *chip, const struct x
 
     ret = SUCCESS;
     for (i = 0; i < chip_config->nr_devices; ++i) {
-        dev = &(chip_config->devices[i]);
+        dev = chip_config->devices[i];
         for (j = 0; j < dev->nr_irqs; ++j) {
             config.virtual_id = dev->irqs[j];
             config.physical_id = dev->irqs[j];

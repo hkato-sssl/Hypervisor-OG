@@ -79,7 +79,10 @@ struct xilinx_mpsoc_configuration {
     struct {
         struct smmu500              *device;
         uint32_t                    nr_streams;
-        const struct smmu_stream    *streams;
+        const struct smmu_stream    **streams;
+        struct {
+            uint8_t                 fault:1;
+        } flag;
     } smmu;
 
     struct {
@@ -89,7 +92,7 @@ struct xilinx_mpsoc_configuration {
     } ram;
 
     uint32_t            nr_devices;
-    struct soc_device   *devices;
+    struct soc_device   **devices;
 
     uint16_t            nr_ppis;
     struct {

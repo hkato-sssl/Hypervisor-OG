@@ -63,8 +63,8 @@ struct xilinx_mpsoc_configuration {
     uint8_t             nr_procs;
 
     struct {
-        struct vpc                      **vpcs;
-        uint64_t                        **register_arrays;
+        struct vpc                      *vpcs[NR_XILINX_MPSOC_CPUS];
+        uint64_t                        *register_arrays[NR_XILINX_MPSOC_CPUS];
         const struct vpc_hook           *hook;
         const struct vpc_exception_ops  *ops;
     } vpc;

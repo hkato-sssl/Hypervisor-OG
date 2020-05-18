@@ -35,6 +35,8 @@ static errno_t initialize(struct soc *soc, const struct soc_configuration *soc_c
     spin_lock_init(&(soc->lock));
     soc->chip = soc_config->chip;
     soc->ops = soc_config->ops;
+    soc->nr_devices = soc_config->nr_devices;
+    soc->devices = soc_config->devices;
 
     /* initialize struct vm */
 

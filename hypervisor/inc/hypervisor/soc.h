@@ -40,28 +40,10 @@ extern "C" {
 
 struct soc;
 
-struct soc_ops {
-    bool (*test_executable_region)(struct soc *soc, uintptr_t addr);
-};
-
-struct soc {
-    struct vm               vm;
-    spin_lock_t             lock;
-    void                    *chip;
-    const struct soc_ops    *ops;
-};
-
-struct soc_configuration {
-    void                    *chip;
-    const struct soc_ops    *ops;
-    uint16_t                nr_procs;
-    const struct aarch64_stage2_configuration   *stage2;
-};
-
-struct soc_device_region {
-    uintptr_t               ipa;
-    uintptr_t               pa;
-    size_t                  size;
+enum soc_shareability {
+    SOC_NSH,            /* None-shareabile */
+    SOC_ISH,            /* Inner Shareable */
+    SOC_OSH             /* Outer Shareable */
 };
 
 struct soc_device {
@@ -69,10 +51,11 @@ struct soc_device {
     uint16_t                *irqs;
 
     struct {
-        uintptr_t           pa;
-        uintptr_t           ipa;
-        size_t              size;
-        uint8_t             memory_type;    /* hypervisor/mmu.h: HYP_MMU_MT_XXX */
+        uintptr_t               pa;
+        uintptr_t               ipa;
+        size_t                  size;
+        uint8_t                 memory_type;    /* hypervisor/mmu.h: HYP_MMU_MT_XXX */
+        enum soc_shareability   shareability;
         struct {
             struct {
                 uint8_t         read:1;
@@ -83,12 +66,35 @@ struct soc_device {
     } region;
 };
 
+struct soc_ops {
+    errno_t (*test_executable_region)(struct vpc *vpc, uintptr_t addr);
+};
+
+struct soc {
+    struct vm               vm;
+    spin_lock_t             lock;
+    void                    *chip;
+    const struct soc_ops    *ops;
+    uint16_t                nr_devices;
+    struct soc_device       **devices;
+};
+
+struct soc_configuration {
+    void                    *chip;
+    const struct soc_ops    *ops;
+    uint16_t                nr_procs;
+    const struct aarch64_stage2_configuration   *stage2;
+    uint16_t                nr_devices;
+    struct soc_device       **devices;
+};
+
 /* variables */
 
 /* functions */
 
 errno_t soc_initialize(struct soc *soc, const struct soc_configuration *config);
 errno_t soc_initialize_vpc(struct soc *soc, struct vpc *vpc, const struct vpc_configuration *config);
+errno_t soc_default_test_executable_region(struct vpc *vpc, uintptr_t addr);
 
 /* inline functions */
 

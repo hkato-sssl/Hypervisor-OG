@@ -50,12 +50,6 @@ struct xilinx_mpsoc {
         uint8_t             context_bank;
         uint64_t            stream_ids[NR_SMMU_STREAM_IDS];
     } smmu;
-
-    struct {
-        uintptr_t           pa;
-        uintptr_t           ipa;
-        size_t              size;
-    } ram;
 };
 
 struct xilinx_mpsoc_configuration {
@@ -74,7 +68,14 @@ struct xilinx_mpsoc_configuration {
         void                            *level1_table;
     } stage2;
 
-    struct gic400       *gic;
+    struct {
+        struct gic400    *device;
+        uint16_t         nr_ppis;
+        struct {
+            uint16_t     virtual_id;
+            uint16_t     physical_id;
+        } ppis[NR_GIC400_PPIS];
+    } gic;
 
     struct {
         struct smmu500              *device;
@@ -85,20 +86,8 @@ struct xilinx_mpsoc_configuration {
         } flag;
     } smmu;
 
-    struct {
-        uintptr_t       pa;
-        uintptr_t       ipa;
-        size_t          size;
-    } ram;
-
     uint32_t            nr_devices;
     struct soc_device   **devices;
-
-    uint16_t            nr_ppis;
-    struct {
-        uint16_t        virtual_id;
-        uint16_t        physical_id;
-    } ppis[NR_GIC400_PPIS];
 };
 
 /* variables */

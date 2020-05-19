@@ -5,7 +5,7 @@
  */
 
 #include <stdint.h>
-#include <stdbool.h>
+#include "lib/system/errno.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 #include "mpsoc_local.h"
@@ -16,7 +16,7 @@
 
 /* prototypes */
 
-static bool test_executable_region(struct soc *soc, uintptr_t addr);
+static errno_t test_executable_region(struct vpc *soc, uintptr_t addr);
 
 /* variables */
 
@@ -26,8 +26,9 @@ struct soc_ops xilinx_mpsoc_ops = {
 
 /* functions */
 
-static bool test_executable_region(struct soc *soc, uintptr_t addr)
+static errno_t test_executable_region(struct vpc *soc, uintptr_t addr)
 {
+#if 0
     bool result;
     struct xilinx_mpsoc *chip;
 
@@ -39,5 +40,7 @@ static bool test_executable_region(struct soc *soc, uintptr_t addr)
     }
 
     return result;
+#else
+    return -EINVAL;
+#endif
 }
-

@@ -74,7 +74,7 @@ static errno_t create_smmu_context_bank(struct xilinx_mpsoc *chip, const struct 
     return ret;
 }
 
-static errno_t init_smmu(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t map_smmu_space(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
 
@@ -90,7 +90,47 @@ static errno_t init_smmu(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_co
     return ret;
 }
 
-static errno_t map_device_regions(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const struct soc_device *dev)
+{
+    errno_t ret;
+
+    ret = SUCCESS;
+    attr->af = 1;
+
+    if (dev->region.access.flag.exec != 0) {
+        attr->xn = 0;
+    } else {
+        attr->xn = 1;
+    }
+
+    if (dev->region.access.flag.read != 0) {
+        if (dev->region.access.flag.write != 0) {
+            attr->s2ap = STAGE2_S2AP_RW;
+        } else {
+            attr->s2ap = STAGE2_S2AP_RO;
+        }
+    } else {
+        if (dev->region.access.flag.write != 0) {
+            attr->s2ap = STAGE2_S2AP_WO;
+        } else {
+            attr->s2ap = STAGE2_S2AP_NONE;
+        }
+    }
+
+    if (dev->region.shareability == SOC_NSH) {
+        attr->sh = STAGE2_SH_NSH;
+    } else if (dev->region.shareability == SOC_ISH) {
+        attr->sh = STAGE2_SH_ISH;
+    } else if (dev->region.shareability == SOC_OSH) {
+        attr->sh = STAGE2_SH_OSH;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
+static errno_t map_stage2_space(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
 
 {
     errno_t ret;
@@ -100,64 +140,18 @@ static errno_t map_device_regions(struct xilinx_mpsoc *chip, const struct xilinx
 
     memset(&attr, 0, sizeof(attr));
 
-    attr.af = 1;
-    attr.sh = STAGE2_SH_OSH;
-
     for (i = 0; i < chip_config->nr_devices; ++i) {
         dev = chip_config->devices[i];
-        if (dev->region.access.flag.exec != 0) {
-            attr.xn = 0;
-        } else {
-            attr.xn = 1;
+
+        ret = create_stage2_attribute(&attr, dev);
+        if (ret != SUCCESS) {
+            break;
         }
-        if (dev->region.access.flag.read != 0) {
-            if (dev->region.access.flag.write != 0) {
-                attr.s2ap = STAGE2_S2AP_RW;
-            } else {
-                attr.s2ap = STAGE2_S2AP_RO;
-            }
-        } else {
-            if (dev->region.access.flag.write != 0) {
-                attr.s2ap = STAGE2_S2AP_WO;
-            } else {
-                attr.s2ap = STAGE2_S2AP_NONE;
-            }
-        }
-    
+
         ret = aarch64_stage2_map(&(chip->soc.vm.stage2), (void *)(dev->region.ipa), (void *)(dev->region.pa), dev->region.size, &attr);
         if (ret != SUCCESS) {
             break;
         }
-    }
-
-    return ret;
-}
-
-static errno_t map_ram_region(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
-{
-    errno_t ret;
-    struct aarch64_stage2_attr attr;
-
-    memset(&attr, 0, sizeof(attr));
-
-    attr.xn = 0;
-    attr.af = 1;
-    attr.sh = STAGE2_SH_ISH;
-    attr.s2ap = STAGE2_S2AP_RW;
-    attr.memattr = STAGE2_MEMATTR_NORMAL_WB;
-
-    ret = aarch64_stage2_map(&(chip->soc.vm.stage2), (void *)(chip_config->ram.ipa), (void *)(chip_config->ram.pa), chip_config->ram.size, &attr);
-
-    return ret;
-}
-
-static errno_t init_stage2(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
-{
-    errno_t ret;
-
-    ret = map_ram_region(chip, chip_config);
-    if (ret == SUCCESS) {
-        ret = map_device_regions(chip, chip_config);
     }
 
     return ret;
@@ -172,9 +166,9 @@ static errno_t init_virtual_ppis(struct xilinx_mpsoc *chip, const struct xilinx_
     memset(&config, 0, sizeof(config));
     config.flag.hw = 1;
 
-    for (i = 0; i < chip_config->nr_ppis; ++i) {
-        config.virtual_id = chip_config->ppis[i].virtual_id;
-        config.physical_id = chip_config->ppis[i].physical_id;
+    for (i = 0; i < chip_config->gic.nr_ppis; ++i) {
+        config.virtual_id = chip_config->gic.ppis[i].virtual_id;
+        config.physical_id = chip_config->gic.ppis[i].physical_id;
         ret = vgic400_configure_interrupt(&(chip->vgic400), &config);
         if (ret != SUCCESS) {
             break;
@@ -219,7 +213,7 @@ static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc
     memset(&config, 0, sizeof(config));
 
     config.vm = &(chip->soc.vm);
-    config.gic = chip_config->gic;
+    config.gic = chip_config->gic.device;
     config.base.virtif_control = (void *)REG_GIC400H;
     config.base.virtual_cpuif = (void *)REG_GIC400V;
     config.boolean.trap_cpuif = true;
@@ -230,7 +224,7 @@ static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc
         ret = init_virtual_interrupts(chip, chip_config);
     }
 
-    if ((ret == SUCCESS) && (chip_config->nr_ppis > 0)) {
+    if ((ret == SUCCESS) && (chip_config->gic.nr_ppis > 0)) {
         ret = init_virtual_ppis(chip, chip_config);
     }
 
@@ -307,10 +301,6 @@ static errno_t initialize(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_c
 
     chip->smmu.device = config->smmu.device;
 
-    chip->ram.pa = config->ram.pa;
-    chip->ram.ipa = config->ram.ipa;
-    chip->ram.size = config->ram.size;
-
     ret = init_soc(chip, config);
 
     if (ret == SUCCESS) {
@@ -322,11 +312,11 @@ static errno_t initialize(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_c
     }
 
     if (ret == SUCCESS) {
-        init_stage2(chip, config);
+        map_stage2_space(chip, config);
     }
 
     if (ret == SUCCESS) {
-        ret = init_smmu(chip, config);
+        ret = map_smmu_space(chip, config);
     }
 
     return ret;
@@ -338,7 +328,7 @@ static errno_t validate_parameters(const struct xilinx_mpsoc_configuration *conf
 
     if ((config->nr_procs == 0) || (config->nr_procs > NR_XILINX_MPSOC_CPUS)) {
         ret = -EINVAL;
-    } else if (config->nr_ppis > NR_GIC400_PPIS) {
+    } else if (config->gic.nr_ppis > NR_GIC400_PPIS) {
         ret = -EINVAL;
     } else {
         ret = SUCCESS;

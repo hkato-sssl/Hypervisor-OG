@@ -94,6 +94,12 @@ static errno_t init_map(void)
         ret = map((void*)0xff000000, (void*)0xff001000, &attr);
     }
 
+    if (ret == SUCCESS) {
+        attr.sh = MMU_ATTR_SH_OSH;
+        attr.attrindx = EL1_MMU_DEVICE_nGnRnE;
+        ret = map((void*)0xa0002000, (void*)0xa0003000, &attr);
+    }
+
 #ifdef CONFIG_REGION_TRAP
     if (ret == SUCCESS) {
         attr.sh = MMU_ATTR_SH_OSH;

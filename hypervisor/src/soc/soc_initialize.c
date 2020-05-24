@@ -10,6 +10,7 @@
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
 #include "driver/aarch64/stage2.h"
+#include "hypervisor/mmu.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/soc.h"
 
@@ -22,6 +23,41 @@
 /* variables */
 
 /* functions */
+
+static errno_t stage2_memattr(struct aarch64_stage2_attr *attr, const struct soc_device *dev)
+{
+    errno_t ret;
+
+    ret = SUCCESS;
+    switch (dev->region.memory_type) {
+    case HYP_MMU_MT_NORMAL_NC:
+        attr->memattr = STAGE2_MEMATTR_NORMAL_NC;
+        break;
+    case HYP_MMU_MT_NORMAL_WB:
+        attr->memattr = STAGE2_MEMATTR_NORMAL_WB;
+        break;
+    case HYP_MMU_MT_NORMAL_WBWA:
+        attr->memattr = STAGE2_MEMATTR_NORMAL_WB;
+        break;
+    case HYP_MMU_MT_DEVICE_nGnRnE:
+        attr->memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
+        break;
+    case HYP_MMU_MT_DEVICE_nGnRE:
+        attr->memattr = STAGE2_MEMATTR_DEVICE_nGnRE;
+        break;
+    case HYP_MMU_MT_DEVICE_nGRE:
+        attr->memattr = STAGE2_MEMATTR_DEVICE_nGRE;
+        break;
+    case HYP_MMU_MT_DEVICE_GRE:
+        attr->memattr = STAGE2_MEMATTR_DEVICE_GRE;
+        break;
+    default:
+        ret = -EINVAL;
+        break;
+    }
+
+    return ret;
+}
 
 static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const struct soc_device *dev)
 {
@@ -58,6 +94,10 @@ static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const s
         attr->sh = STAGE2_SH_OSH;
     } else {
         ret = -EINVAL;
+    }
+
+    if (ret == SUCCESS) {
+        ret = stage2_memattr(attr, dev);
     }
 
     return ret;

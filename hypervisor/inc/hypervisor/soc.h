@@ -33,9 +33,6 @@ extern "C" {
 
 #define SOC_DEVICE_NO_IRQ               0xffff
 
-#define SOC_DEVICE_MT_RAM               HYP_MMU_MT_WBWA
-#define SOC_DEVICE_MT_DEVICE            HYP_MMU_MT_DEVICE_nGnRE
-
 /* types */
 
 struct soc;

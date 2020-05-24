@@ -33,31 +33,37 @@ extern "C" {
 
 #define SOC_DEVICE_NO_IRQ               0xffff
 
+#define SOC_MT_DEVICE_nGnRnE            0
+#define SOC_MT_DEVICE_nGnRE             1
+#define SOC_MT_DEVICE_nGRE              2
+#define SOC_MT_DEVICE_GRE               3
+#define SOC_MT_NORMAL_NC                4   /* Non-cacheable */
+#define SOC_MT_NORMAL_WT                5   /* Write-Through */
+#define SOC_MT_NORMAL_WB                6   /* Write-Back */
+
+#define SOC_SH_NSH                      0   /* Non-shareable */
+#define SOC_SH_ISH                      1   /* Inner Shareable */
+#define SOC_SH_OSH                      2   /* Outer Shareable */
+
 /* types */
 
 struct soc;
-
-enum soc_shareability {
-    SOC_NSH,            /* None-shareabile */
-    SOC_ISH,            /* Inner Shareable */
-    SOC_OSH             /* Outer Shareable */
-};
 
 struct soc_device {
     uint16_t                nr_irqs;
     uint16_t                *irqs;
 
     struct {
-        uintptr_t               pa;
-        uintptr_t               ipa;
-        size_t                  size;
-        uint8_t                 memory_type;    /* hypervisor/mmu.h: HYP_MMU_MT_XXX */
-        enum soc_shareability   shareability;
+        uintptr_t           pa;
+        uintptr_t           ipa;
+        size_t              size;
+        uint8_t             memory_type;
+        uint8_t             shareability;
         struct {
             struct {
-                uint8_t         read:1;
-                uint8_t         write:1;
-                uint8_t         exec:1;
+                uint8_t     read:1;
+                uint8_t     write:1;
+                uint8_t     exec:1;
             } flag;
         } access;
     } region;

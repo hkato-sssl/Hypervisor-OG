@@ -30,26 +30,26 @@ static errno_t stage2_memattr(struct aarch64_stage2_attr *attr, const struct soc
 
     ret = SUCCESS;
     switch (dev->region.memory_type) {
-    case HYP_MMU_MT_NORMAL_NC:
-        attr->memattr = STAGE2_MEMATTR_NORMAL_NC;
-        break;
-    case HYP_MMU_MT_NORMAL_WB:
-        attr->memattr = STAGE2_MEMATTR_NORMAL_WB;
-        break;
-    case HYP_MMU_MT_NORMAL_WBWA:
-        attr->memattr = STAGE2_MEMATTR_NORMAL_WB;
-        break;
-    case HYP_MMU_MT_DEVICE_nGnRnE:
+    case SOC_MT_DEVICE_nGnRnE:
         attr->memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
         break;
-    case HYP_MMU_MT_DEVICE_nGnRE:
+    case SOC_MT_DEVICE_nGnRE:
         attr->memattr = STAGE2_MEMATTR_DEVICE_nGnRE;
         break;
-    case HYP_MMU_MT_DEVICE_nGRE:
+    case SOC_MT_DEVICE_nGRE:
         attr->memattr = STAGE2_MEMATTR_DEVICE_nGRE;
         break;
-    case HYP_MMU_MT_DEVICE_GRE:
+    case SOC_MT_DEVICE_GRE:
         attr->memattr = STAGE2_MEMATTR_DEVICE_GRE;
+        break;
+    case SOC_MT_NORMAL_NC:
+        attr->memattr = STAGE2_MEMATTR_NORMAL_NC;
+        break;
+    case SOC_MT_NORMAL_WT:
+        attr->memattr = STAGE2_MEMATTR_NORMAL_WT;
+        break;
+    case SOC_MT_NORMAL_WB:
+        attr->memattr = STAGE2_MEMATTR_NORMAL_WB;
         break;
     default:
         ret = -EINVAL;
@@ -86,11 +86,11 @@ static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const s
         }
     }
 
-    if (dev->region.shareability == SOC_NSH) {
+    if (dev->region.shareability == SOC_SH_NSH) {
         attr->sh = STAGE2_SH_NSH;
-    } else if (dev->region.shareability == SOC_ISH) {
+    } else if (dev->region.shareability == SOC_SH_ISH) {
         attr->sh = STAGE2_SH_ISH;
-    } else if (dev->region.shareability == SOC_OSH) {
+    } else if (dev->region.shareability == SOC_SH_OSH) {
         attr->sh = STAGE2_SH_OSH;
     } else {
         ret = -EINVAL;

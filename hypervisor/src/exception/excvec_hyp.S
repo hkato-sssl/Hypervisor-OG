@@ -209,10 +209,10 @@ store_vpc_registers:
         mrs             x2, HPFAR_EL2
         str             x2, [x1, #(VPC_HPFAR_EL2 * 8)]
 
-        // disable FPU/Advanced SIMD
+        // disable Advanced SIMD/FLoating-point function
 
         mrs             x2, CPTR_EL2
-        orr             x2, x2, BIT(10)         // set CPTR_EL2.TFP
+        orr             x2, x2, #BIT(10)    // set CPTR_EL2.TFP
         msr             CPTR_EL2, x2
         isb
 

@@ -53,6 +53,13 @@ vpc_switch_to_el1:
         msr             ELR_EL2, x4
         msr             SPSR_EL2, x5
 
+        // enable Advanced SIMD/Floating-point function
+
+        mrs             x1, CPTR_EL2
+        bic             x1, x1, #BIT(10)    // clear CPTR_EL2.TFP
+        msr             CPTR_EL2, x1
+        isb
+
         // restore general purpose registers
 
         ldp             x1,  x2,  [x0, #(VPC_X1 * 8)]

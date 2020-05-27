@@ -30,22 +30,39 @@ static uint32_t irq_no(uintptr_t reg)
     return (uint32_t)(reg - GICD_ITARGETSR(0));
 }
 
+static uintptr_t reg_addr(uint32_t irq)
+{
+    return (uintptr_t)GICD_ITARGETSR(0) + irq;
+}
+
+static uint64_t read_itargetsr(const struct vgic400 *vgic, const struct vm *vm, uint32_t virq)
+{
+    uint64_t result;
+    uint32_t irq;
+    uint64_t d;
+    uintptr_t reg;
+
+    irq = vgic400_virq_to_irq(vgic, virq);
+    if (irq < NR_GIC400_INTERRUPTS) {
+        reg = reg_addr(irq);
+        d = gic400_read_distributor_b(vgic->gic, reg);
+        result = vgic400_p2v_cpu_map_b(d, vm);
+    } else {
+        result = 0;
+    }
+
+    return result;
+}
+
 static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
+    uint32_t virq;
     uint64_t d;
-    uintptr_t no;
 
-    no = irq_no(reg);
-    if (is_target_irq(vgic, no)) {
-        gic400_lock(vgic->gic);
-        d = VGIC400_READ8(insn->op.ldr.pa);
-        gic400_unlock(vgic->gic);
+    virq = irq_no(reg);
+    d = read_itargetsr(vgic, insn->vpc->vm, virq);
 
-        d = vgic400_p2v_cpu_map_b(d, insn->vpc->vm);
-    } else {
-        d = 0;
-    }
     ret = insn_emulate_ldr(insn, d);
 
     return ret;
@@ -54,39 +71,45 @@ static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *i
 static errno_t read_itargetsr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
-    uint32_t no;
+    uint32_t i;
+    uint32_t virq;
     uint64_t d;
-    uint64_t mask;
 
-    no = irq_no(reg);
-    mask = vgic400_quad_byte_mask(vgic, no);
-    gic400_lock(vgic->gic);
-    d = VGIC400_READ32(insn->op.ldr.pa);
-    gic400_unlock(vgic->gic);
-    d &= mask;
+    virq = irq_no(reg);
+    d = 0;
 
-    d = vgic400_p2v_cpu_map_w(d, insn->vpc->vm);
+    for (i = 0; i < 4; ++i) {
+        d |= read_itargetsr(vgic, insn->vpc->vm, virq) << (i * 8);
+        ++virq;
+    }
 
     ret = insn_emulate_ldr(insn, d);
 
     return ret;
 }
 
+static void write_itargetsr(const struct vgic400 *vgic, const struct vm *vm, uint32_t virq, uint64_t d)
+{
+    uint32_t irq;
+    uintptr_t reg;
+
+    irq = vgic400_virq_to_irq(vgic, virq);
+    if (irq < NR_GIC400_INTERRUPTS) {
+        d = vgic400_v2p_cpu_map_b(d, vm);
+        reg = reg_addr(irq);
+        gic400_write_distributor_b(vgic->gic, reg, (uint32_t)d);
+    }
+}
+
 static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
+    uint32_t virq;
     uint64_t d;
-    uintptr_t no;
 
     d = insn_str_src_value(insn);
-    no = irq_no(reg);
-    if (is_target_irq(vgic, no)) {
-        d = vgic400_v2p_cpu_map_b(d, insn->vpc->vm);
-
-        gic400_lock(vgic->gic);
-        VGIC400_WRITE8(insn->op.str.pa, d);
-        gic400_unlock(vgic->gic);
-    }
+    virq = irq_no(reg);
+    write_itargetsr(vgic, insn->vpc->vm, virq, d);
 
     ret = insn_emulate_str(insn);
 
@@ -96,22 +119,18 @@ static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *
 static errno_t write_itargetsr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
-    uint32_t no;
+    uint32_t i;
+    uint32_t virq;
     uint64_t d;
-    uint64_t d0;
-    uint64_t mask;
 
-    no = irq_no(reg);
-    mask = vgic400_quad_byte_mask(vgic, no);
     d = insn_str_src_value(insn);
-    d &= mask;
-    d = vgic400_v2p_cpu_map_w(d, insn->vpc->vm);
+    virq = irq_no(reg);
 
-    gic400_lock(vgic->gic);
-    d0 = VGIC400_READ32(insn->op.str.pa);
-    d |= d0 & ~mask;
-    VGIC400_WRITE32(insn->op.str.pa, d);
-    gic400_unlock(vgic->gic);
+    for (i = 0; i < 4; ++i) {
+        write_itargetsr(vgic, insn->vpc->vm, virq, d);
+        ++virq;
+        d >>= 8;
+    }
 
     ret = insn_emulate_str(insn);
 

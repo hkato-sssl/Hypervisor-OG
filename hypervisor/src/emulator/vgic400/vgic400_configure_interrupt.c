@@ -25,8 +25,9 @@ static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_in
     uint32_t d;
     uint32_t i;
     uint32_t idx;
+    uint32_t bit;
 
-    d = 1 << 28;        /* State = pending */
+    d = BIT(28);    /* State = pending */
     if (config->flag.hw != 0) {
         d |= BIT(31);   /* HW */
     }
@@ -35,6 +36,10 @@ static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_in
     }
     d |= (uint32_t)(config->physical_id) << 10;
     d |= (uint32_t)(config->virtual_id);
+
+    idx = config->virtual_id / 32;
+    bit = BIT(config->virtual_id % 32);
+    vgic->target.irq[idx] |= bit;
 
     if (config->virtual_id < 32) {
         idx = config->virtual_id - 16;

@@ -46,6 +46,10 @@ struct vgic400 {
     uint32_t        priority_mask;
 
     struct {
+        uint16_t    interrupt[NR_GIC400_INTERRUPTS];
+    } map;
+
+    struct {
         uint32_t    irq[NR_VGIC400_STATUS_MAPS];
     } target;
 

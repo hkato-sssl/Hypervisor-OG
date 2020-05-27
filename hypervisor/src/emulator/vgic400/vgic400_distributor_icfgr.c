@@ -25,72 +25,104 @@
 
 /* functions */
 
-static uint64_t byte_mask(const struct vgic400 *vgic, uintptr_t reg)
+static uint32_t irq_no(uintptr_t reg)
 {
-    uint32_t mask;
-    uint32_t no;
+    uintptr_t no;
 
-    static uint8_t table[16] = {
-        0x00, 0x03, 0x0c, 0x0f,
-        0x30, 0x33, 0x3c, 0x3f,
-        0xc0, 0xc3, 0xcc, 0xcf,
-        0xf0, 0xf3, 0xfc, 0xff
-    };
+    no = (uint32_t)((reg - GICD_ICFGR(0)) * 4);
 
-    no = (uint32_t)(reg - GICD_ICFGR(0)) * 4;   /* interrupt No. in LSB */
-    mask = vgic->target.irq[no / 32];
-    mask = (mask >> (no % 32)) & 0x0f;
-    mask = table[mask];
-
-    return mask;
+    return no;
 }
 
-static uint64_t word_mask(const struct vgic400 *vgic, uintptr_t reg)
+static uintptr_t reg_addr(uint32_t irq)
 {
-    uint64_t mask;
-    uint64_t m0, m1, m2, m3;
+    return (uintptr_t)GICD_ICFGR(irq / 16);
+}
 
-    m0 = byte_mask(vgic, reg);
-    m1 = byte_mask(vgic, (reg + 1));
-    m2 = byte_mask(vgic, (reg + 2));
-    m3 = byte_mask(vgic, (reg + 3));
-    mask = (m3 << 24) | (m2 << 16) | (m1 << 8) | m0;
+static uint64_t read_icfgr(const struct vgic400 *vgic, uint32_t virq)
+{
+    uint64_t result;
+    uint32_t d;
+    uint32_t irq;
+    uintptr_t reg;
 
-    return mask;
+    irq = vgic400_virq_to_irq(vgic, virq);
+    if (irq < NR_GIC400_INTERRUPTS) {
+        reg = reg_addr(irq);
+        d = gic400_read_distributor(vgic->gic, reg);
+        result = (d >> ((irq % 16) * 2)) & 0x03;
+    } else {
+        result = 0;
+    }
+
+    return result;
 }
 
 static errno_t read_icfgr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
+    uint32_t i;
+    uint32_t virq;
     uint64_t d;
-    uint64_t mask;
 
-    mask = word_mask(vgic, reg);
-    gic400_lock(vgic->gic);
-    d = VGIC400_READ32(insn->op.ldr.pa);
-    gic400_unlock(vgic->gic);
-    d &= mask;
+    virq = irq_no(reg);
+    d = 0;
+
+    for (i = 0; i < 16; ++i) {
+        d |= read_icfgr(vgic, virq) << (i * 2);
+        ++virq;
+    }
 
     ret = insn_emulate_ldr(insn, d);
 
     return ret;
 }
 
+static void write_icfgr(const struct vgic400 *vgic, uint32_t virq, uint32_t d)
+{
+    uint32_t d0;
+    uint32_t irq;
+    uint32_t mask;
+    uint32_t shift_ct;
+    uintptr_t reg;
+
+    irq = vgic400_virq_to_irq(vgic, virq);
+    if (irq < NR_GIC400_INTERRUPTS) {
+        shift_ct = (irq % 16) * 2;
+        mask = ~((uint32_t)BITS(1, 0) << shift_ct);
+        d = (d & BITS(1, 0)) << shift_ct;
+        reg = reg_addr(irq);
+
+        d0 = gic400_read_distributor(vgic->gic, reg);
+        d |= d0 & mask;
+        gic400_write_distributor(vgic->gic, reg, d);
+    }
+}
+
 static errno_t write_icfgr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
+    uint32_t i;
+    uint32_t virq;
     uint64_t d;
-    uint64_t d0;
-    uint64_t mask;
 
     d = insn_str_src_value(insn);
-    mask = word_mask(vgic, reg);
-    d &= mask;
+    virq = irq_no(reg);
+
+    /*
+     * 本関数は GICD_ICFGRn に対して read/modify/write 操作を実施する為、
+     * 同じレジスタを操作する gic400_configure_interrupt() との間で排他
+     * 制御を行う。
+     */
 
     gic400_lock(vgic->gic);
-    d0 = VGIC400_READ32(insn->op.str.pa);
-    d |= (d0 & ~mask);
-    VGIC400_WRITE32(insn->op.str.pa, d);
+
+    for (i = 0; i < 16; ++i) {
+        write_icfgr(vgic, virq, (uint32_t)d);
+        ++virq;
+        d >>= 2;
+    }
+
     gic400_unlock(vgic->gic);
 
     ret = insn_emulate_str(insn);

@@ -25,29 +25,45 @@
 
 /* functions */
 
-static uint64_t irq_no(uintptr_t reg, uintptr_t base)
+static uint32_t irq_no(uintptr_t reg, uintptr_t base)
 {
-    uint64_t no;
+    uint32_t no;
 
-    no = reg - base;
+    no = (uint32_t)(reg - base);
 
     return no;
+}
+
+static uintptr_t reg_addr(uintptr_t base, uint32_t irq)
+{
+    return (base + irq);
+}
+
+static uint64_t read_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq)
+{
+    uint64_t result;
+    uint32_t irq;
+    uintptr_t reg;
+
+    irq = vgic400_virq_to_irq(vgic, virq);
+    if (irq < NR_GIC400_INTERRUPTS) {
+        reg = reg_addr(base, irq);
+        result = gic400_read_distributor_b(vgic->gic, reg);
+    } else {
+        result = 0;
+    }
+
+    return result;
 }
 
 static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
     errno_t ret;
+    uint32_t virq;
     uint64_t d;
-    uint64_t no;
 
-    no = irq_no(reg, base);
-    if (is_target_irq(vgic, no)) {
-        gic400_lock(vgic->gic);
-        d = VGIC400_READ8(insn->op.ldr.pa);
-        gic400_unlock(vgic->gic);
-    } else {
-        d = 0;
-    }
+    virq = irq_no(reg, base);
+    d = read_byte(vgic, base, virq);
 
     ret = insn_emulate_ldr(insn, d);
 
@@ -57,35 +73,44 @@ static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *ins
 static errno_t read_byte_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
     errno_t ret;
+    uint32_t i;
+    uint32_t virq;
     uint64_t d;
-    uint64_t no;
-    uint64_t mask;
 
-    gic400_lock(vgic->gic);
-    d = VGIC400_READ32(insn->op.ldr.pa);
-    gic400_unlock(vgic->gic);
+    virq = irq_no(reg, base);
+    d = 0;
 
-    no = irq_no(reg, base);
-    mask = vgic400_quad_byte_mask(vgic, no);
-    d &= mask;
+    for (i = 0; i < 4; ++i) {
+        d |= read_byte(vgic, base, virq) << (i * 8);
+        ++virq;
+    }
 
     ret = insn_emulate_ldr(insn, d);
 
     return ret;
 }
 
+static void write_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq, uint32_t d)
+{
+    uint32_t irq;
+    uintptr_t reg;
+
+    irq = vgic400_virq_to_irq(vgic, virq);
+    if (irq < NR_GIC400_INTERRUPTS) {
+        reg = reg_addr(base, irq);
+        gic400_write_distributor_b(vgic->gic, reg, d);
+    }
+}
 static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
     errno_t ret;
-    uint64_t d;
-    uint64_t no;
+    uint32_t d;
+    uint64_t virq;
 
-    d = insn_str_src_value(insn);
-    no = irq_no(reg, base);
-    if (is_target_irq(vgic, no)) {
-        gic400_lock(vgic->gic);
-        VGIC400_WRITE8(insn->op.str.pa, d);
-        gic400_unlock(vgic->gic);
+    d = (uint32_t)insn_str_src_value(insn);
+    virq = irq_no(reg, base);
+    if (is_target_irq(vgic, virq)) {
+        write_byte(vgic, base, virq, d);
     }
 
     ret = insn_emulate_str(insn);
@@ -96,21 +121,20 @@ static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *in
 static errno_t write_byte_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
 {
     errno_t ret;
-    uint64_t d;
-    uint64_t d0;
-    uint64_t mask;
-    uint64_t no;
+    uint32_t i;
+    uint32_t d;
+    uint32_t virq;
 
-    d = insn_str_src_value(insn);
-    no = irq_no(reg, base);
-    mask = vgic400_quad_byte_mask(vgic, no);
-    d &= mask;
+    d = (uint32_t)insn_str_src_value(insn);
+    virq = irq_no(reg, base);
 
-    gic400_lock(vgic->gic);
-    d0 = VGIC400_READ32(insn->op.str.pa);
-    d |= d0 & ~mask;
-    VGIC400_WRITE32(insn->op.str.pa, d);
-    gic400_unlock(vgic->gic);
+    for (i = 0; i < 4; ++i) {
+        if (is_target_irq(vgic, virq)) {
+            write_byte(vgic, base, virq, d);
+        }
+        d >>= 8;
+        ++virq;
+    }
 
     ret = insn_emulate_str(insn);
 

@@ -95,6 +95,8 @@ static errno_t initialize(struct vgic400 *vgic, const struct vgic400_configurati
     uint32_t d;
 
     memset(vgic, 0, sizeof(*vgic));
+    memset(vgic->map.interrupt, 0xff, sizeof(vgic->map.interrupt));
+
     vgic->vm = config->vm;
     vgic->gic = config->gic;
     vgic->base.virtif_control = config->base.virtif_control;

@@ -39,6 +39,8 @@ extern "C" {
 #define VGIC400_WRITE8(a, d)    REG_WRITE8((a), 0, (d))
 #define VGIC400_WRITE32(a, d)   REG_WRITE32((a), 0, (d))
 
+#define VGIC400_NO_ASSIGNED     0xffff
+
 /* types */
 
 /* variables */
@@ -73,11 +75,16 @@ static inline uint32_t gic400_read_virtual_cpuif(struct vgic400 *vgic, uint32_t 
     return d;
 }
 
+static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic, uint32_t virq)
+{
+    return vgic->map.interrupt[virq];
+}
+
 static inline bool is_target_irq(const struct vgic400 *vgic, uint16_t irq)
 {
     uint32_t bit;
 
-    bit = 1 << (irq & 31);
+    bit = BIT(irq % 32);
 
     return ((vgic->target.irq[irq / 32] & bit) != 0) ? true : false;
 }

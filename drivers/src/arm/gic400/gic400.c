@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
 #include "lib/system/spin_lock.h"
@@ -190,8 +191,28 @@ errno_t gic400_assert_spi(struct gic400 *gic, uint16_t intr_no)
     return ret;
 }
 
+static errno_t configure_icfg(struct gic400 *gic, uint16_t intr_no, uint32_t d)
+{
+    uint32_t d0;
+    uint32_t mask;
+    uint32_t shift_ct;
+    uintptr_t reg;
+
+    reg = GICD_ICFGR(intr_no / 16);
+    shift_ct = (intr_no % 16) * 2;
+    mask = ~((uint32_t)BITS(1, 0) << shift_ct);
+    d <<= shift_ct;
+
+    d0 = gic400_read_distributor(gic, reg);
+    d |= d0 & mask;
+    gic400_write_distributor(gic, reg, d);
+
+    return SUCCESS;
+}
+
 static errno_t configure(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)
 {
+    errno_t ret;
     uint32_t d;
 
     write_dist_bit(gic, intr_no, GICD_ICENABLER(0));
@@ -200,7 +221,14 @@ static errno_t configure(struct gic400 *gic, uint16_t intr_no, const struct gic4
     d = config->priority << gic->priority.shift_ct;
     write_dist_byte(gic, intr_no, GICD_IPRIORITYR(0), d);
 
-    return SUCCESS;
+    if (config->flag.edge == 0) {
+        d = 0;
+    } else {
+        d = 2;
+    }
+    ret = configure_icfg(gic, intr_no, d);
+
+    return ret;
 }
 
 static errno_t configure_interrupt(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)

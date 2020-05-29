@@ -21,9 +21,6 @@
 #define NR_CPUS             1
 #define GUEST_VMID          1
 
-#define RAM_START           0x00000000  /* 1GB */
-#define RAM_SIZE            0x40000000
-
 /* types */
 
 /* prototypes */
@@ -81,9 +78,9 @@ static void *init_mpsoc(void)
     config.stage2.pool = &sys_pool;
     config.stage2.level1_table = table;
     config.gic.device = &sys_gic;
-    config.gic.nr_ppis = 1;
-    config.gic.ppis[0].virtual_id = 27;
-    config.gic.ppis[0].physical_id = 27;
+    config.gic.nr_ppis = 2;
+    config.gic.ppis[0] = 27;
+    config.gic.ppis[1] = 30;
     config.smmu.device = &sys_smmu;
     config.smmu.nr_streams = nr_guest_linux_streams;
     config.smmu.streams = guest_linux_streams;

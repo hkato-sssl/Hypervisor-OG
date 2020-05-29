@@ -100,8 +100,8 @@ static errno_t init_virtual_ppis(struct xilinx_mpsoc *chip, const struct xilinx_
     config.flag.hw = 1;
 
     for (i = 0; i < chip_config->gic.nr_ppis; ++i) {
-        config.virtual_id = chip_config->gic.ppis[i].virtual_id;
-        config.physical_id = chip_config->gic.ppis[i].physical_id;
+        config.virtual_id = chip_config->gic.ppis[i];
+        config.physical_id = chip_config->gic.ppis[i];
         ret = vgic400_configure_interrupt(&(chip->vgic400), &config);
         if (ret != SUCCESS) {
             break;

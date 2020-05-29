@@ -71,10 +71,7 @@ struct xilinx_mpsoc_configuration {
     struct {
         struct gic400    *device;
         uint16_t         nr_ppis;
-        struct {
-            uint16_t     virtual_id;
-            uint16_t     physical_id;
-        } ppis[NR_GIC400_PPIS];
+        uint16_t         ppis[NR_GIC400_PPIS];
     } gic;
 
     struct {

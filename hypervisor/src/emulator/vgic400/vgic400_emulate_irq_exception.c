@@ -25,39 +25,6 @@
 
 /* functions */
 
-static void maintenance_misr_eoi(struct vpc *vpc, struct vgic400 *vgic)
-{
-    uint32_t d;
-    uint32_t no;
-    uint32_t *iar;
-
-    iar = vgic->iar[vpc->proc_no];
-    d = gic400_read_virtif_control(vgic, GICH_EISR0);
-    while (d != 0) {
-        no = 63 - (uint32_t)aarch64_clz(d);
-        gic400_deactivate(vgic->gic, iar[no]);
-        gic400_write_virtif_control(vgic, GICH_LR(no), 0);
-        d ^= BIT(no);
-    }
-}
-
-static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
-{
-    errno_t ret;
-    uint32_t d;
-
-    d = gic400_read_virtif_control(vgic, GICH_MISR);
-
-    if ((d & BIT(0)) != 0) {    /* EOI */
-        maintenance_misr_eoi(vpc, vgic);
-        d = gic400_read_virtif_control(vgic, GICH_MISR);
-    }
-
-    ret = gic400_deactivate(vgic->gic, iar);
-
-    return ret;
-}
-
 static errno_t accept_irq(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
@@ -65,7 +32,7 @@ static errno_t accept_irq(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 
     no = BF_EXTRACT(iar, 9, 0);
     if (no == GIC400_MAINTENANCE_INTERRUPT) {
-        ret = maintenance_interrupt(vpc, vgic, iar);
+        ret = vgic400_operate_maintenance_interrupt(vpc, vgic, iar);
     } else if (no == GIC400_HYPERVISOR_TIMER) {
         ret = -ENOTSUP;
     } else if (no < 16) {

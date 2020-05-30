@@ -109,6 +109,7 @@ errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t
 errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);
 
 errno_t vgic400_emulate_irq_exception(struct vpc *vpc, struct vgic400 *vgic);
+errno_t vgic400_operate_maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar);
 
 /* for debugging */
 

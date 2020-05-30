@@ -35,6 +35,15 @@ static void *dist;
 
 /* functions */
 
+static void hvc(void)
+{
+    static unsigned ct = 0;
+
+    ++ct;
+    printk("DUMP#%u\n", ct);
+    __asm volatile ("mov x0, %0; hvc #0" :: "r"(ct));
+}
+
 static uint32_t readw(uint32_t reg)
 {
     uint32_t d;
@@ -139,78 +148,91 @@ static void test_GICD_ISENABLER(void)
 {
     PRINT_TITLE();
     test_bit_register(GICD_ISENABLER(0));
+    hvc();
 }
 
 static void test_GICD_ICENABLER(void)
 {
     PRINT_TITLE();
     test_bit_register(GICD_ICENABLER(0));
+    hvc();
 }
 
 static void test_GICD_ISPENDR(void)
 {
     PRINT_TITLE();
     test_bit_register(GICD_ISPENDR(0));
+    hvc();
 }
 
 static void test_GICD_ICPENDR(void)
 {
     PRINT_TITLE();
     test_bit_register(GICD_ICPENDR(0));
+    hvc();
 }
 
 static void test_GICD_ISACTIVER(void)
 {
     PRINT_TITLE();
     test_bit_register(GICD_ISACTIVER(0));
+    hvc();
 }
 
 static void test_GICD_ICACTIVER(void)
 {
     PRINT_TITLE();
     test_bit_register(GICD_ICACTIVER(0));
+    hvc();
 }
 
 static void test_GICD_IPRIORITYR(void)
 {
     PRINT_TITLE();
     test_byte_register(GICD_IPRIORITYR(0));
+    hvc();
 }
 
 static void test_GICD_ITARGETSR(void)
 {
     PRINT_TITLE();
     test_byte_register(GICD_ITARGETSR(0));
+    hvc();
 }
 
 static void test_GICD_ICFGR(void)
 {
     PRINT_TITLE();
     test_dbit_register(GICD_ICFGR(0));
+    hvc();
 }
 
 static void test_GICD_PPISR(void)
 {
     PRINT_TITLE();
     test_ro_register(GICD_PPISR);
+    hvc();
 }
 
 static void test_GICD_SPISR(void)
 {
     PRINT_TITLE();
     test_array_register(GICD_SPISR(0), NR_GIC400_SPIS / 32);
+    hvc();
 }
 
 static void test_GICD_CPENDSGIR(void)
 {
     PRINT_TITLE();
     test_array_register(GICD_CPENDSGIR(0), 4);
+    hvc();
 }
 
 static void test_GICD_SPENDSGIR(void)
 {
     PRINT_TITLE();
     test_array_register(GICD_SPENDSGIR(0), 4);
+    hvc();
 }
 
 static void test_GICD_PIDR4(void)

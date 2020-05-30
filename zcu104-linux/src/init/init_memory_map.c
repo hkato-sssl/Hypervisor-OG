@@ -14,6 +14,7 @@
 #include "driver/aarch64/system_register/tcr_elx.h"
 #include "driver/aarch64/mmu.h"
 #include "driver/system/cpu.h"
+#include "driver/xilinx/device/mpsoc.h"
 #include "hypervisor/mmu.h"
 
 /* defines */
@@ -68,7 +69,7 @@ static errno_t init_map(void)
 
     /* guest region */
     if (ret == SUCCESS) {
-        ret = map((void *)0x20000000, (void *)0x21000000, &attr);
+        ret = map((void *)0, (void *)0x40000000, &attr);
     }
 
     if (ret == SUCCESS) {
@@ -80,13 +81,13 @@ static errno_t init_map(void)
     if (ret == SUCCESS) {
         attr.sh = MMU_ATTR_SH_OSH;
 	    attr.attrindx = HYP_MMU_MT_DEVICE_nGnRE;
-	    ret = map((void*)0xa0001000, (void*)0xa0001000, &attr);
+	    ret = map((void*)0xa0001000, (void*)0xa0002000, &attr);
     }
 
     if (ret == SUCCESS) {
         attr.sh = MMU_ATTR_SH_OSH;
 	    attr.attrindx = HYP_MMU_MT_DEVICE_nGnRE;
-	    ret = map((void*)0xa0002000, (void*)0xa0002000, &attr);
+	    ret = map((void*)0xa0002000, (void*)0xa0003000, &attr);
     }
 
     if (ret == SUCCESS) {
@@ -115,6 +116,12 @@ static errno_t init_map(void)
         attr.sh = MMU_ATTR_SH_NSH;
 	    attr.attrindx = HYP_MMU_MT_DEVICE_nGnRE;
 	    ret = map((void*)CONFIG_GICV_BASE, (void*)(CONFIG_GICV_BASE + 4096), &attr);
+    }
+
+    if (ret == SUCCESS) {
+        attr.sh = MMU_ATTR_SH_OSH;
+	    attr.attrindx = HYP_MMU_MT_DEVICE_nGnRE;
+	    ret = map((void*)REG_SMMU500, (void*)(REG_SMMU500 + 4096), &attr);
     }
 
     return ret;

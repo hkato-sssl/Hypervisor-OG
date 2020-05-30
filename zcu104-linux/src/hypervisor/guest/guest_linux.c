@@ -43,6 +43,12 @@ static struct xilinx_mpsoc mpsoc;
 static struct vpc vpcs[NR_CPUS];
 static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
 static struct vpc_exception_ops ops;
+static struct vgic400_interrupt_ops interrupt_ops = {
+    .maintenance = vgic400_operate_maintenance_interrupt,
+    .el1.sgi = vgic400_inject_sgi,
+    .el1.ppi = vgic400_inject_interrupt,
+    .el1.spi = vgic400_inject_interrupt,
+};
 
 /* functions */
 
@@ -81,6 +87,7 @@ static void *init_mpsoc(void)
     config.gic.nr_ppis = 2;
     config.gic.ppis[0] = 27;
     config.gic.ppis[1] = 30;
+    config.gic.ops = &interrupt_ops;
     config.smmu.device = &sys_smmu;
     config.smmu.nr_streams = nr_guest_linux_streams;
     config.smmu.streams = guest_linux_streams;

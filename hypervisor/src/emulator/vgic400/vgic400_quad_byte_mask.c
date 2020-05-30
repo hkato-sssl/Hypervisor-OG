@@ -36,12 +36,12 @@ static const uint32_t table[] = {
 
 /* functions */
 
-uint32_t vgic400_quad_byte_mask(struct vgic400 *vgic, uint32_t irq)
+uint32_t vgic400_quad_byte_mask(struct vgic400 *vgic, uint32_t virq)
 {
     uint32_t mask;
 
-    mask = vgic->target.irq[irq / 32];
-    mask = (mask >> (irq & 0x1f)) & 0x0f;
+    mask = vgic->target.virq[virq / 32];
+    mask = (mask >> (virq & 0x1f)) & 0x0f;
     mask = table[mask];
 
     return mask;

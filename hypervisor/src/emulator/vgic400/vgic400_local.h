@@ -75,18 +75,26 @@ static inline uint32_t gic400_read_virtual_cpuif(struct vgic400 *vgic, uint32_t 
     return d;
 }
 
-static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic, uint32_t virq)
-{
-    return vgic->map.interrupt[virq];
-}
-
-static inline bool is_target_irq(const struct vgic400 *vgic, uint16_t irq)
+static inline bool is_target_virq(const struct vgic400 *vgic, uint16_t virq)
 {
     uint32_t bit;
 
-    bit = BIT(irq % 32);
+    bit = BIT(virq % 32);
 
-    return ((vgic->target.irq[irq / 32] & bit) != 0) ? true : false;
+    return ((vgic->target.virq[virq / 32] & bit) != 0) ? true : false;
+}
+
+static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic, uint32_t virq)
+{
+    uint16_t irq;
+
+    if (virq < 32) {
+        irq = is_target_virq(vgic, virq) ? virq : VGIC400_NO_ASSIGNED;
+    } else {
+        irq = vgic->spi.map.physical[virq - 32];
+    }
+
+    return irq;
 }
 
 static inline bool is_aligned_word_access(const struct insn *insn)

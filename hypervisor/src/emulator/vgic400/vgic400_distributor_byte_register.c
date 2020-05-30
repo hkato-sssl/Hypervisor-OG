@@ -109,7 +109,7 @@ static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *in
 
     d = (uint32_t)insn_str_src_value(insn);
     virq = irq_no(reg, base);
-    if (is_target_irq(vgic, virq)) {
+    if (is_target_virq(vgic, virq)) {
         write_byte(vgic, base, virq, d);
     }
 
@@ -129,7 +129,7 @@ static errno_t write_byte_register_w(struct vgic400 *vgic, const struct insn *in
     virq = irq_no(reg, base);
 
     for (i = 0; i < 4; ++i) {
-        if (is_target_irq(vgic, virq)) {
+        if (is_target_virq(vgic, virq)) {
             write_byte(vgic, base, virq, d);
         }
         d >>= 8;

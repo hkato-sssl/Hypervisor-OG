@@ -23,7 +23,7 @@
 
 /* functions */
 
-static errno_t inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar, int list_no)
+static errno_t inject_sgi(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar, int list_no)
 {
     uint32_t d;
     uint32_t id;
@@ -45,7 +45,7 @@ static errno_t inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar, i
     return SUCCESS;
 }
 
-errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar)
+errno_t vgic400_inject_sgi(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
     int idx;
@@ -55,7 +55,7 @@ errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar)
     if (id < 16) {
         idx = vgic400_list_register(vgic);
         if (idx >= 0) {
-            ret = inject_sgi(vgic, vpc, iar, idx);
+            ret = inject_sgi(vpc, vgic, iar, idx);
         } else {
             ret = -EBUSY;
         }

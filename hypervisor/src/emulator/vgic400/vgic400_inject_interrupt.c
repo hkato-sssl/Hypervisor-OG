@@ -23,7 +23,7 @@
 
 /* functions */
 
-static errno_t inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar, int list_no)
+static errno_t inject_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar, int list_no)
 {
     errno_t ret;
     uint32_t d;
@@ -46,7 +46,7 @@ static errno_t inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t 
     return ret;
 }
 
-errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar)
+errno_t vgic400_inject_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
     int idx;
@@ -54,7 +54,7 @@ errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t
     if ((iar > 15) && (iar < NR_GIC400_INTERRUPTS)) {
         idx = vgic400_list_register(vgic);
         if (idx >= 0) {
-            ret = inject_interrupt(vgic, vpc, iar, idx);
+            ret = inject_interrupt(vpc, vgic, iar, idx);
         } else {
             ret = -EBUSY;
         }

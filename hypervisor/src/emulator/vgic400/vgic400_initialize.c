@@ -102,6 +102,7 @@ static errno_t initialize(struct vgic400 *vgic, const struct vgic400_configurati
     vgic->base.virtif_control = config->base.virtif_control;
     vgic->base.virtual_cpuif = config->base.virtual_cpuif;
     vgic->priority_mask = gic400_priority_mask(vgic->gic);
+    vgic->ops = config->ops;
 
     /* probe # of List Register */
 
@@ -132,7 +133,7 @@ errno_t vgic400_initialize(struct vgic400 *vgic, const struct vgic400_configurat
 {
     errno_t ret;
 
-    if ((vgic != NULL) && (config != NULL)) {
+    if (config->ops != NULL) {
         ret = initialize(vgic, config);
     } else {
         ret = -EINVAL;

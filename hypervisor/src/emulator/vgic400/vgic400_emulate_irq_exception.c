@@ -25,6 +25,19 @@
 
 /* functions */
 
+static errno_t call_interrupt_op(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar, vgic400_interrupt_op_t func)
+{
+    errno_t ret;
+
+    if (func != NULL) {
+        ret = (*func)(vpc, vgic, iar);
+    } else {
+        ret = -ENOTSUP;
+    }
+
+    return ret;
+}
+
 static errno_t accept_irq(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
@@ -32,16 +45,17 @@ static errno_t accept_irq(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 
     no = BF_EXTRACT(iar, 9, 0);
     if (no == GIC400_MAINTENANCE_INTERRUPT) {
-        ret = vgic400_operate_maintenance_interrupt(vpc, vgic, iar);
-    } else if (no == GIC400_HYPERVISOR_TIMER) {
-        ret = -ENOTSUP;
-    } else if (no < 16) {
-        ret = vgic400_inject_sgi(vgic, vpc, iar);
-    } else if (no < NR_GIC400_INTERRUPTS) {
-        /* PPI or SPI */
-        ret = vgic400_inject_interrupt(vgic, vpc, no);
+        ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->maintenance);
+    } else if (is_target_virq(vgic, no)) {
+        if (no < 16) {
+            ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el1.sgi);
+        } else if (no < 32) {
+            ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el1.ppi);
+        } else {
+            ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el1.spi);
+        }
     } else {
-        ret = -EINVAL;
+        ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el2);
     }
 
     return ret;

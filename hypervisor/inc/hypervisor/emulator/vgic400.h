@@ -34,6 +34,20 @@ extern "C" {
 
 struct vpc;
 struct insn;
+struct vgic400;
+
+typedef errno_t (*vgic400_interrupt_op_t)(struct vpc *, struct vgic400 *, uint32_t iar);
+
+struct vgic400_interrupt_ops {
+    struct {
+        vgic400_interrupt_op_t  sgi;
+        vgic400_interrupt_op_t  ppi;
+        vgic400_interrupt_op_t  spi;
+    } el1;
+
+    vgic400_interrupt_op_t  el2;
+    vgic400_interrupt_op_t  maintenance;
+};
 
 struct vgic400 {
     struct vm       *vm;
@@ -44,6 +58,8 @@ struct vgic400 {
     } base;
     uint32_t        nr_list_registers;
     uint32_t        priority_mask;
+
+    const struct vgic400_interrupt_ops  *ops;
 
     struct {
         uint32_t    virq[NR_VGIC400_TARGET_MAPS];
@@ -82,6 +98,9 @@ struct vgic400_configuration {
         void        *virtual_cpuif;
     } base;
     uint8_t         priority_mask;
+
+    const struct vgic400_interrupt_ops  *ops;
+
     struct {
         bool        trap_cpuif;
     } boolean;
@@ -105,8 +124,8 @@ errno_t vgic400_configure_interrupt(struct vgic400 *vgic, const struct vgic400_i
 errno_t vgic400_activate_virtual_cpuif(struct vgic400 *vgic);
 errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
 errno_t vgic400_cpuif_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
-errno_t vgic400_inject_interrupt(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);
-errno_t vgic400_inject_sgi(struct vgic400 *vgic, struct vpc *vpc, uint32_t iar);
+errno_t vgic400_inject_interrupt(struct vpc *, struct vgic400 *vgic, uint32_t iar);
+errno_t vgic400_inject_sgi(struct vpc *, struct vgic400 *vgic, uint32_t iar);
 
 errno_t vgic400_emulate_irq_exception(struct vpc *vpc, struct vgic400 *vgic);
 errno_t vgic400_operate_maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar);

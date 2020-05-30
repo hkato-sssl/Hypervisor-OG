@@ -39,14 +39,19 @@ struct vgic400;
 typedef errno_t (*vgic400_interrupt_op_t)(struct vpc *, struct vgic400 *, uint32_t iar);
 
 struct vgic400_interrupt_ops {
+    vgic400_interrupt_op_t  maintenance;
+
     struct {
         vgic400_interrupt_op_t  sgi;
         vgic400_interrupt_op_t  ppi;
         vgic400_interrupt_op_t  spi;
     } el1;
 
-    vgic400_interrupt_op_t  el2;
-    vgic400_interrupt_op_t  maintenance;
+    struct {
+        vgic400_interrupt_op_t  sgi;
+        vgic400_interrupt_op_t  ppi;
+        vgic400_interrupt_op_t  spi;
+    } el2;
 };
 
 struct vgic400 {

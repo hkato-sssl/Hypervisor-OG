@@ -55,7 +55,13 @@ static errno_t accept_irq(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
             ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el1.spi);
         }
     } else {
-        ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el2);
+        if (no < 16) {
+            ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el2.sgi);
+        } else if (no < 32) {
+            ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el2.ppi);
+        } else {
+            ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el2.spi);
+        }
     }
 
     return ret;

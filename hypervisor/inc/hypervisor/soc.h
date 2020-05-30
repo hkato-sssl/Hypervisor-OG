@@ -49,9 +49,14 @@ extern "C" {
 
 struct soc;
 
+struct soc_device_interrupt {
+    uint16_t    virtual;
+    uint16_t    physical;
+}; 
+
 struct soc_device {
-    uint16_t                nr_irqs;
-    uint16_t                *irqs;
+    uint16_t                    nr_irqs;
+    struct soc_device_interrupt *irqs;
 
     struct {
         uintptr_t           pa;

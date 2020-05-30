@@ -26,7 +26,7 @@ extern "C" {
 
 /* defines */
 
-#define NR_VGIC400_STATUS_MAPS          ((NR_GIC400_INTERRUPTS + 31) / 32)
+#define NR_VGIC400_TARGET_MAPS          ((NR_GIC400_INTERRUPTS + 31) / 32)
 #define NR_VGIC400_CPUS                 8
 #define MAX_NR_VGIC400_LIST_REGISTERS   32
 
@@ -46,11 +46,7 @@ struct vgic400 {
     uint32_t        priority_mask;
 
     struct {
-        uint16_t    interrupt[NR_GIC400_INTERRUPTS];
-    } map;
-
-    struct {
-        uint32_t    irq[NR_VGIC400_STATUS_MAPS];
+        uint32_t    virq[NR_VGIC400_TARGET_MAPS];
     } target;
 
     struct {
@@ -58,11 +54,15 @@ struct vgic400 {
     } sgi[MAX_NR_VM_PROCESSORS];
 
     struct {
-        uint32_t    template[NR_GIC400_PPIS];
+        uint32_t        template[NR_GIC400_PPIS];
     } ppi[MAX_NR_VM_PROCESSORS];
 
     struct {
-        uint32_t    template[NR_GIC400_SPIS];
+        uint32_t        template[NR_GIC400_SPIS];
+        struct {
+            uint16_t    virtual[NR_GIC400_SPIS];
+            uint16_t    physical[NR_GIC400_SPIS];
+        } map;
     } spi;
 
     uint32_t    lr[MAX_NR_VM_PROCESSORS][MAX_NR_VGIC400_LIST_REGISTERS];
@@ -81,6 +81,7 @@ struct vgic400_configuration {
         void        *virtif_control;
         void        *virtual_cpuif;
     } base;
+    uint8_t         priority_mask;
     struct {
         bool        trap_cpuif;
     } boolean;

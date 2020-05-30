@@ -126,8 +126,8 @@ static errno_t init_virtual_interrupts(struct xilinx_mpsoc *chip, const struct x
     for (i = 0; i < chip_config->nr_devices; ++i) {
         dev = chip_config->devices[i];
         for (j = 0; j < dev->nr_irqs; ++j) {
-            config.virtual_id = dev->irqs[j];
-            config.physical_id = dev->irqs[j];
+            config.virtual_id = dev->irqs[j].virtual;
+            config.physical_id = dev->irqs[j].physical;
             ret = vgic400_configure_interrupt(&(chip->vgic400), &config);
             if (ret != SUCCESS) {
                 return ret;

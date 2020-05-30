@@ -70,6 +70,8 @@ struct xilinx_mpsoc_configuration {
 
     struct {
         struct gic400                       *device;
+        uint16_t                            nr_sgis;
+        uint16_t                            sgis[NR_GIC400_SGIS];
         uint16_t                            nr_ppis;
         uint16_t                            ppis[NR_GIC400_PPIS];
         const struct vgic400_interrupt_ops  *ops;

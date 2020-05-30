@@ -90,6 +90,27 @@ static errno_t map_smmu_space(struct xilinx_mpsoc *chip, const struct xilinx_mps
     return ret;
 }
 
+static errno_t init_virtual_sgis(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+{
+    errno_t ret;
+    uint32_t i;
+    struct vgic400_interrupt_configuration config;
+
+    memset(&config, 0, sizeof(config));
+    config.flag.hw = 1;
+
+    for (i = 0; i < chip_config->gic.nr_sgis; ++i) {
+        config.virtual_id = chip_config->gic.sgis[i];
+        config.physical_id = chip_config->gic.sgis[i];
+        ret = vgic400_configure_interrupt(&(chip->vgic400), &config);
+        if (ret != SUCCESS) {
+            break;
+        }
+    }
+
+    return ret;
+}
+
 static errno_t init_virtual_ppis(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
@@ -154,12 +175,16 @@ static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc
 
     ret = vgic400_initialize(&(chip->vgic400), &config);
 
-    if ((ret == SUCCESS) && (chip_config->nr_devices > 0)) {
-        ret = init_virtual_interrupts(chip, chip_config);
+    if ((ret == SUCCESS) && (chip_config->gic.nr_ppis > 0)) {
+        ret = init_virtual_sgis(chip, chip_config);
     }
 
     if ((ret == SUCCESS) && (chip_config->gic.nr_ppis > 0)) {
         ret = init_virtual_ppis(chip, chip_config);
+    }
+
+    if ((ret == SUCCESS) && (chip_config->nr_devices > 0)) {
+        ret = init_virtual_interrupts(chip, chip_config);
     }
 
     return ret;

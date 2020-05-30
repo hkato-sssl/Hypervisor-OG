@@ -149,6 +149,7 @@ static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc
     config.gic = chip_config->gic.device;
     config.base.virtif_control = (void *)REG_GIC400H;
     config.base.virtual_cpuif = (void *)REG_GIC400V;
+    config.ops = chip_config->gic.ops;
     config.boolean.trap_cpuif = true;
 
     ret = vgic400_initialize(&(chip->vgic400), &config);

@@ -69,9 +69,10 @@ struct xilinx_mpsoc_configuration {
     } stage2;
 
     struct {
-        struct gic400    *device;
-        uint16_t         nr_ppis;
-        uint16_t         ppis[NR_GIC400_PPIS];
+        struct gic400                       *device;
+        uint16_t                            nr_ppis;
+        uint16_t                            ppis[NR_GIC400_PPIS];
+        const struct vgic400_interrupt_ops  *ops;
     } gic;
 
     struct {

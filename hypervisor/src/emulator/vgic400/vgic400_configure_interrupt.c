@@ -42,12 +42,12 @@ static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_in
     bit = BIT(config->virtual_id % 32);
     vgic->target.virq[idx] |= bit;
 
-    if (config->virtual_id < 32) {
+    if ((config->virtual_id >= 16) && (config->virtual_id < 32)) {
         idx = config->virtual_id - 16;
         for (i =0; i < vgic->vm->nr_procs; ++i) {
             vgic->ppi[i].template[idx] = d;
         }
-    } else {
+    } else if (config->virtual_id >= 32) {
         vgic->spi.template[config->virtual_id - 32] = d;
         vgic->spi.map.virtual[config->physical_id - 32] = config->virtual_id;
         vgic->spi.map.physical[config->virtual_id - 32] = config->physical_id;
@@ -60,7 +60,7 @@ static bool is_valid_id(uint16_t id)
 {
     bool ret;
 
-    if ((id != GIC400_SECURE_PHYSICAL_TIMER) && (id != GIC400_MAINTENANCE_INTERRUPT) && (id != GIC400_HYPERVISOR_TIMER) && (id >= 16) && (id < NR_GIC400_INTERRUPTS)) {
+    if ((id != GIC400_SECURE_PHYSICAL_TIMER) && (id != GIC400_MAINTENANCE_INTERRUPT) && (id != GIC400_HYPERVISOR_TIMER) && (id < NR_GIC400_INTERRUPTS)) {
         ret = true;
     } else {
         ret = false;

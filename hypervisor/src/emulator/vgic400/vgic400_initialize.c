@@ -109,21 +109,6 @@ static errno_t initialize(struct vgic400 *vgic, const struct vgic400_configurati
     d = gic400_read_virtif_control(vgic, GICH_VTR);
     vgic->nr_list_registers = BF_EXTRACT(d, 5, 0) + 1;
 
-    /* initialize the target map */
-
-    /*   ID  Assign      Source            
-     *   31  guest       Legacy IRQ signal              
-     *   30  guest       Non-secure Physical timer 
-     *   29  N/A         Secure physical timer
-     *   28  guest       Legacy FIQ signal
-     *   27  guest       Virtual timer
-     *   26  hypervisor  Hypervisor timer
-     *   25  hypervisor  Virtual maintenance interrupt
-     * 24-16 guest       Undefined
-     */
-
-    vgic->target.virq[0] = 0x0000ffff;
-
     ret = register_trap_distributor(vgic, config);
 
     return ret;

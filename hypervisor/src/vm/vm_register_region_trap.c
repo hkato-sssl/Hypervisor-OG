@@ -9,6 +9,7 @@
 #include <string.h>
 #include "lib/system.h"
 #include "lib/system/errno.h"
+#include "hypervisor/mmu.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
 
@@ -22,43 +23,65 @@
 
 /* functions */
 
-static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *region)
+static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, struct vm_region_trap *trap)
 {
     errno_t ret;
-    struct aarch64_stage2_attr attr;
+    uint8_t sh;
+    uint8_t mt;
 
-    memset(&attr, 0, sizeof(attr));
+    ret = hyp_mmu_stage2_shareability(&sh, trap->memory.shareability);
 
-    attr.xn = 1;
-    attr.af = 1;
-    attr.sh = STAGE2_SH_OSH;
-    attr.memattr = STAGE2_MEMATTR_DEVICE_GRE;
-
-    if (region->condition.read) {
-        if (region->condition.write) {
-            attr.s2ap = STAGE2_S2AP_NONE;
-        } else {
-            attr.s2ap = STAGE2_S2AP_WO;
-        }
-    } else {
-        attr.s2ap = STAGE2_S2AP_RO;
+    if (ret == SUCCESS) {
+        ret = hyp_mmu_stage2_memory_type(&mt, trap->memory.type);
     }
 
-    ret = aarch64_stage2_map(&(vm->stage2), (void *)region->ipa, (void *)region->pa, region->size, &attr);
+    if (ret == SUCCESS) {
+        memset(attr, 0, sizeof(*attr));
+
+        attr->xn = 1;
+        attr->af = 1;
+        attr->sh = sh;
+        attr->memattr = mt;
+        attr->smmu.wacfg = SMMU_WACFG_WA;
+        attr->smmu.racfg = SMMU_RACFG_RA;
+
+        if (trap->condition.read) {
+            if (trap->condition.write) {
+                attr->s2ap = STAGE2_S2AP_NONE;
+            } else {
+                attr->s2ap = STAGE2_S2AP_WO;
+            }
+        } else {
+            attr->s2ap = STAGE2_S2AP_RO;
+        }
+    }
 
     return ret;
 }
 
-static errno_t append_region_trap(struct vm_region_trap *head, struct vm_region_trap *region)
+static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *trap)
+{
+    errno_t ret;
+    struct aarch64_stage2_attr attr;
+
+    ret = create_stage2_attribute(&attr, trap);
+    if (ret == SUCCESS) {
+        ret = aarch64_stage2_map(&(vm->stage2), (void *)trap->memory.ipa, (void *)trap->memory.pa, trap->memory.size, &attr);
+    }
+
+    return ret;
+}
+
+static errno_t append_region_trap(struct vm_region_trap *head, struct vm_region_trap *trap)
 {
     bool done;
     struct vm_region_trap *p;
 
     done = false;
-    for (p = head; p != region; p = p->next) {
+    for (p = head; p != trap; p = p->next) {
         if (p->next == NULL) {
-            p->next = region;
-            region->next = NULL;
+            p->next = trap;
+            trap->next = NULL;
             done = true;
             break;
         }
@@ -67,28 +90,28 @@ static errno_t append_region_trap(struct vm_region_trap *head, struct vm_region_
     return (done ? SUCCESS : -EINVAL);
 }
 
-static errno_t register_region_trap(struct vm *vm, struct vm_region_trap *region)
+static errno_t register_region_trap(struct vm *vm, struct vm_region_trap *trap)
 {
     errno_t ret;
     struct vm_region_trap *head;
 
     head = vm->emulator.trap.memory_region;
     if (head != NULL) {
-        ret = append_region_trap(head, region);
+        ret = append_region_trap(head, trap);
     } else {
-        vm->emulator.trap.memory_region = region; 
-        region->next = NULL;
+        vm->emulator.trap.memory_region = trap; 
+        trap->next = NULL;
         ret = SUCCESS;
     }
 
     return ret;
 }
 
-static bool is_valid_condition(const struct vm_region_trap *region)
+static bool is_valid_condition(const struct vm_region_trap *trap)
 {
     bool ret;
 
-    if (region->condition.read || region->condition.write) {
+    if (trap->condition.read || trap->condition.write) {
         ret = true;
     } else {
         ret = false;
@@ -97,17 +120,17 @@ static bool is_valid_condition(const struct vm_region_trap *region)
     return ret;
 }
 
-static errno_t validate_parameters(const struct vm *vm, const struct vm_region_trap *region)
+static errno_t validate_parameters(const struct vm *vm, const struct vm_region_trap *trap)
 {
     errno_t ret;
 
-    if (system_test_valid_stack_region(region, sizeof(*region))) {
+    if (system_test_valid_stack_region(trap, sizeof(*trap))) {
         ret = -EFAULT;
-    } else if (! is_valid_condition(region)) {
+    } else if (! is_valid_condition(trap)) {
         ret = -EINVAL;
-    } else if (region->size == 0) {
+    } else if (trap->memory.size == 0) {
         ret = -EINVAL;
-    } else if (! IS_ALIGNED(region->size, 4096)) {
+    } else if (! IS_ALIGNED(trap->memory.size, 4096)) {
         ret = -EINVAL;
     } else {
         ret = SUCCESS;
@@ -116,17 +139,18 @@ static errno_t validate_parameters(const struct vm *vm, const struct vm_region_t
     return ret;
 }
 
-errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *region)
+errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *trap)
 {
     errno_t ret;
 
-    ret = validate_parameters(vm, region);
+    ret = validate_parameters(vm, trap);
     if (ret == SUCCESS) {
-        ret = register_region_trap(vm, region);
+        ret = register_region_trap(vm, trap);
         if (ret == SUCCESS) {
-            ret = map_region_trap(vm, region);
+            ret = map_region_trap(vm, trap);
         }
     }
 
     return ret;
 }
+

@@ -38,13 +38,20 @@ struct soc;
 
 struct vm_region_trap {
     struct vm_region_trap   *next;
+
     struct {
         bool                read;
         bool                write;
     } condition;
-    uint64_t                ipa;
-    uint64_t                pa;
-    size_t                  size;
+
+    struct {
+        uint64_t            ipa;
+        uint64_t            pa;
+        size_t              size;
+        uint8_t             shareability;   /* hypervisor/mmu.h: HYP_MMU_SH_XXX */
+        uint8_t             type;           /* hypervisor/mmu.h: HYP_MMU_MT_XXX */
+    } memory;
+
     struct {
         void                *arg;
         vpc_emulator_t      handler;

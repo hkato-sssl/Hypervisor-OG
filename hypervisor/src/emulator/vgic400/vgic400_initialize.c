@@ -12,6 +12,7 @@
 #include "driver/arm/gic400_io.h"
 #include "driver/arm/device/gic400.h"
 #include "driver/aarch64/stage2.h"
+#include "hypervisor/mmu.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/vgic400.h"
@@ -54,9 +55,11 @@ static errno_t register_trap_cpuif(struct vgic400 *vgic)
     trap = &(vgic->trap.cpuif);
     trap->condition.read = false;
     trap->condition.write = true;
-    trap->ipa = (uint64_t)gic400_cpuif_register_base(vgic->gic);
-    trap->pa = (uint64_t)vgic->base.virtual_cpuif;
-    trap->size = 4096;
+    trap->memory.ipa = (uint64_t)gic400_cpuif_register_base(vgic->gic);
+    trap->memory.pa = (uint64_t)vgic->base.virtual_cpuif;
+    trap->memory.size = 4096;
+    trap->memory.shareability = HYP_MMU_SH_NSH;
+    trap->memory.type = HYP_MMU_MT_DEVICE_nGnRE;
     trap->emulator.arg = vgic;
     trap->emulator.handler = (vpc_emulator_t)vgic400_cpuif_emulate_memory_access;
     ret = vm_register_region_trap(vgic->vm, trap);
@@ -72,9 +75,11 @@ static errno_t register_trap_distributor(struct vgic400 *vgic, const struct vgic
     trap = &(vgic->trap.distributor);
     trap->condition.read = true;
     trap->condition.write = true;
-    trap->ipa = (uint64_t)gic400_distributor_register_base(vgic->gic);
-    trap->pa = trap->ipa;
-    trap->size = 4096;
+    trap->memory.ipa = (uint64_t)gic400_distributor_register_base(vgic->gic);
+    trap->memory.pa = trap->memory.ipa;
+    trap->memory.size = 4096;
+    trap->memory.shareability = HYP_MMU_SH_OSH;
+    trap->memory.type = HYP_MMU_MT_DEVICE_nGnRE;
     trap->emulator.arg = vgic;
     trap->emulator.handler = (vpc_emulator_t)vgic400_distributor_emulate_memory_access;
     ret = vm_register_region_trap(vgic->vm, trap);

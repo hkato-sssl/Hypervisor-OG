@@ -9,7 +9,7 @@
 
 /* defines */
 
-#define IS_IN_RANGE(trap, addr)   (((trap)->pa <= (addr)) && ((addr) < ((trap)->pa + (trap)->size)))
+#define IS_IN_RANGE(trap, addr)   (((trap)->memory.pa <= (addr)) && ((addr) < ((trap)->memory.pa + (trap)->memory.size)))
 
 /* types */
 

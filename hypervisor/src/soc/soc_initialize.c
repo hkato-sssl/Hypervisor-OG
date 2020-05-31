@@ -67,6 +67,55 @@ static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const s
     return ret;
 }
 
+static errno_t create_trap_condition(struct vm_region_trap *trap, struct soc_device *dev)
+{
+    errno_t ret;
+
+    if (dev->region.access.flag.exec == 0) {
+        trap->condition.read = (dev->region.access.flag.read == 0) ? true : false;
+        trap->condition.write = (dev->region.access.flag.write == 0) ? true : false;
+        ret = SUCCESS;
+    } else {
+        ret = -EINVAL;
+    }
+
+    return ret;
+}
+
+static errno_t create_region_trap(struct soc *soc, struct soc_device *dev)
+{
+    errno_t ret;
+    struct vm_region_trap *trap;
+
+    trap = dev->emulator->trap;
+    memset(trap, 0, sizeof(*trap));
+
+    ret = create_trap_condition(trap, dev);
+    if (ret == SUCCESS) {
+        trap->memory.ipa = dev->region.ipa;
+        trap->memory.pa = dev->region.pa;
+        trap->memory.size = dev->region.size;
+        trap->memory.shareability = dev->region.memory_type;
+        trap->memory.type = dev->region.shareability;
+        trap->emulator.arg = dev->emulator->arg;
+        trap->emulator.handler = dev->emulator->handler;
+    }
+
+    return ret;
+}
+
+static errno_t register_region_trap(struct soc *soc, struct soc_device *dev)
+{
+    errno_t ret;
+
+    ret = create_region_trap(soc, dev);
+    if (ret == SUCCESS) {
+        ret = vm_register_region_trap(&(soc->vm), dev->emulator->trap);
+    }
+
+    return ret;
+}
+
 static errno_t map_stage2(struct soc *soc)
 {
     errno_t ret;
@@ -78,13 +127,15 @@ static errno_t map_stage2(struct soc *soc)
 
     for (i = 0; i < soc->nr_devices; ++i) {
         dev = soc->devices[i];
-
-        ret = create_stage2_attribute(&attr, dev);
-        if (ret != SUCCESS) {
-            break;
+        if (dev->emulator != NULL) {
+            ret = register_region_trap(soc, dev);
+        } else {
+            ret = create_stage2_attribute(&attr, dev);
+            if (ret == SUCCESS) {
+                ret = aarch64_stage2_map(&(soc->vm.stage2), (void *)(dev->region.ipa), (void *)(dev->region.pa), dev->region.size, &attr);
+            }
         }
 
-        ret = aarch64_stage2_map(&(soc->vm.stage2), (void *)(dev->region.ipa), (void *)(dev->region.pa), dev->region.size, &attr);
         if (ret != SUCCESS) {
             break;
         }

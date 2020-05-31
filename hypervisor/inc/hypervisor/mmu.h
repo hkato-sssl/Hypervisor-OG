@@ -40,11 +40,18 @@ extern "C" {
 #define HYP_MMU_MT_DEVICE_nGRE      6
 #define HYP_MMU_MT_DEVICE_GRE       7
 
+#define HYP_MMU_SH_NSH              0
+#define HYP_MMU_SH_ISH              1
+#define HYP_MMU_SH_OSH              2
+
 /* types */
 
 /* variables */
 
 /* functions */
+
+errno_t hyp_mmu_stage2_memory_type(uint8_t *stage2_memory_type, uint8_t memory_type);
+errno_t hyp_mmu_stage2_shareability(uint8_t *stage2_shareability, uint8_t shareability);
 
 #ifdef __cplusplus
 }

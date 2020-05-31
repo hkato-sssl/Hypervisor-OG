@@ -25,6 +25,8 @@
 
 /* prototypes */
 
+static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar);
+
 /* variables */
 
 extern struct gic400 sys_gic;
@@ -48,6 +50,7 @@ static struct vgic400_interrupt_ops interrupt_ops = {
     .el1.sgi = vgic400_inject_sgi,
     .el1.ppi = vgic400_inject_interrupt,
     .el1.spi = vgic400_inject_interrupt,
+    .el2.spi = el2_irq_handler,
 };
 
 /* functions */
@@ -60,6 +63,22 @@ static errno_t emulate_hvc(struct vpc *vpc)
     smmu500_dump_stream_match_register(&sys_smmu, 0);
 
     return -ENOSYS;
+}
+
+static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
+{
+    struct xilinx_mpsoc *chip;
+
+    printk("<%s>\n", __func__);
+
+    if (iar == IRQ_SMMU500) {
+        chip = vpc->vm->soc->chip;
+        smmu500_dump(chip->smmu.device);
+    } else {
+        printk("Unrecognized IRQ#%u has occured.\n", iar);
+    }
+
+    return -ENOTSUP;
 }
 
 static void *init_mpsoc(void)

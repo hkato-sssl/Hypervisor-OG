@@ -43,9 +43,9 @@ struct soc_device_interrupt {
 }; 
 
 struct soc_device_emulator {
-    vpc_emulator_t          handler;
-    void                    *arg;
     struct vm_region_trap   *trap;
+    void                    *arg;
+    vpc_emulator_t          handler;
 };
 
 struct soc_device {
@@ -55,8 +55,8 @@ struct soc_device {
     struct soc_device_interrupt *irqs;
 
     struct {
-        uintptr_t           pa;
         uintptr_t           ipa;
+        uintptr_t           pa;
         size_t              size;
         uint8_t             memory_type;
         uint8_t             shareability;

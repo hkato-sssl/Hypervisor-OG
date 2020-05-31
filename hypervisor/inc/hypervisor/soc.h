@@ -33,18 +33,6 @@ extern "C" {
 
 #define SOC_DEVICE_NO_IRQ               0xffff
 
-#define SOC_MT_DEVICE_nGnRnE            0
-#define SOC_MT_DEVICE_nGnRE             1
-#define SOC_MT_DEVICE_nGRE              2
-#define SOC_MT_DEVICE_GRE               3
-#define SOC_MT_NORMAL_NC                4   /* Non-cacheable */
-#define SOC_MT_NORMAL_WT                5   /* Write-Through */
-#define SOC_MT_NORMAL_WB                6   /* Write-Back */
-
-#define SOC_SH_NSH                      0   /* Non-shareable */
-#define SOC_SH_ISH                      1   /* Inner Shareable */
-#define SOC_SH_OSH                      2   /* Outer Shareable */
-
 /* types */
 
 struct soc;
@@ -54,7 +42,15 @@ struct soc_device_interrupt {
     uint16_t    physical;
 }; 
 
+struct soc_device_emulator {
+    vpc_emulator_t          handler;
+    void                    *arg;
+    struct vm_region_trap   *trap;
+};
+
 struct soc_device {
+    struct soc_device_emulator  *emulator;
+
     uint16_t                    nr_irqs;
     struct soc_device_interrupt *irqs;
 

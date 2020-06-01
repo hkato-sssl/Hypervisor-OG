@@ -12,9 +12,9 @@
 
 /* defines */
 
-#define RAM_START_PA        0x00000000  /* 1GB */
-#define RAM_START_IPA       0x00000000
-#define RAM_SIZE            0x40000000
+#define RAM_START_IPA       0x00000000  /* 512MB */
+#define RAM_START_PA        0x20000000
+#define RAM_SIZE            0x20000000
 
 #define UART_IPA            0xff000000  /* PS UART0 */
 #define UART_PA             0xff000000
@@ -33,8 +33,8 @@
 static struct soc_device ram = {
     .nr_irqs = 0,
     .irqs = NULL,
-    .region.pa = RAM_START_PA,
     .region.ipa = RAM_START_IPA,
+    .region.pa = RAM_START_PA,
     .region.size = RAM_SIZE,
     .region.memory_type = HYP_MMU_MT_NORMAL_WB,
     .region.shareability = HYP_MMU_SH_ISH,
@@ -47,8 +47,8 @@ static struct soc_device_interrupt uart0_irqs[] = { { 53, 53}  };
 static struct soc_device uart0 = {
     .nr_irqs = 1,
     .irqs = uart0_irqs,
-    .region.pa = UART_PA,
     .region.ipa = UART_IPA,
+    .region.pa = UART_PA,
     .region.size = UART_SIZE,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
@@ -61,8 +61,8 @@ static struct soc_device_interrupt rtc_irqs[] = { { 58, 58} , { 59, 59 } };
 static struct soc_device rtc = {
     .nr_irqs = 2,
     .irqs = rtc_irqs,
-    .region.pa = 0xffa60000,
     .region.ipa = 0xffa60000,
+    .region.pa = 0xffa60000,
     .region.size = 0x1000,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
@@ -74,8 +74,8 @@ static struct soc_device rtc = {
 static struct soc_device ddrc = {
     .nr_irqs = 0,
     .irqs = NULL,
-    .region.pa = 0xfd070000,
     .region.ipa = 0xfd070000,
+    .region.pa = 0xfd070000,
     .region.size = 0x1000,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
@@ -88,8 +88,8 @@ static struct soc_device_interrupt gem3_irqs[] = { { 95, 95 } };
 static struct soc_device gem3 = {
     .nr_irqs = 1,
     .irqs = gem3_irqs,
-    .region.pa = 0xff0e0000,
     .region.ipa = 0xff0e0000,
+    .region.pa = 0xff0e0000,
     .region.size = 0x1000,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
@@ -102,8 +102,8 @@ static struct soc_device_interrupt sd1_irqs[] = { { 81, 81 } };
 static struct soc_device sd1 = {
     .nr_irqs = 1,
     .irqs = sd1_irqs,
-    .region.pa = 0xff170000,
     .region.ipa = 0xff170000,
+    .region.pa = 0xff170000,
     .region.size = 0x1000,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
@@ -115,8 +115,8 @@ static struct soc_device sd1 = {
 static struct soc_device xhci0_reg = {
     .nr_irqs = 0,
     .irqs = NULL,
-    .region.pa = 0xff9d0000,
     .region.ipa = 0xff9d0000,
+    .region.pa = 0xff9d0000,
     .region.size = 0x1000,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
@@ -129,8 +129,8 @@ static struct soc_device_interrupt xhci0_irqs[] = { { 97, 97 } };
 static struct soc_device xhci0 = {
     .nr_irqs = 1,
     .irqs = xhci0_irqs,
-    .region.pa = 0xfe200000,
     .region.ipa = 0xfe200000,
+    .region.pa = 0xfe200000,
     .region.size = 0x10000,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
@@ -142,8 +142,8 @@ static struct soc_device xhci0 = {
 static struct soc_device serdes0 = {
     .nr_irqs = 0,
     .irqs = NULL,
-    .region.pa = 0xfd400000,
     .region.ipa = 0xfd400000,
+    .region.pa = 0xfd400000,
     .region.size = 0x20000,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
@@ -156,8 +156,8 @@ static struct soc_device_interrupt i2c1_irqs[] = { { 50, 50 } };
 static struct soc_device i2c1 = {
     .nr_irqs = 1,
     .irqs = i2c1_irqs,
-    .region.pa = 0xff030000,
     .region.ipa = 0xff030000,
+    .region.pa = 0xff030000,
     .region.size = 0x1000,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
@@ -169,8 +169,8 @@ static struct soc_device i2c1 = {
 static struct soc_device axi_smmu_test = {
     .nr_irqs = 0,
     .irqs = NULL,
-    .region.pa = AXI_SMMU_TEST_PA,
     .region.ipa = AXI_SMMU_TEST_IPA,
+    .region.pa = AXI_SMMU_TEST_PA,
     .region.size = AXI_SMMU_TEST_SIZE,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,

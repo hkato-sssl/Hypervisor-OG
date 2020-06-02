@@ -17,7 +17,7 @@
         .type           thread_start, %function
         .balign         4
         /*
-         * errno_t thread_start(void *entry, void *sp, void *arg)
+         * volatile void thread_start(void *entry, void *sp, void *arg)
          */
 thread_start:
         /*

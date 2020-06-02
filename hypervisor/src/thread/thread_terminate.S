@@ -8,9 +8,10 @@
 #include "driver/aarch64/system_register.h"
 #include "thread_local.h"
 
-        .global         thread_terminate.S
+        .global         thread_terminate
 
         .extern         aarch64_cpu_no
+        .extern         thread_start
         .extern         thread_setup_array
 
         .section        ".text.thread_terminate.S", "ax", %progbits
@@ -24,7 +25,7 @@ thread_terminate:
         cbz             x0, no_array
 
         mov             ip0, x0
-        dsb             ish
+        dmb             ish
         str             xzr, [ip0]
         dsb             ish
 loop:
@@ -34,7 +35,7 @@ loop:
 
         ldr             x1,  [ip0, #(THREAD_SETUP_SP * 8)]
         ldr             x2,  [ip0, #(THREAD_SETUP_ARG0 * 8)]
-        bl              thread_launch
+        bl              thread_start
         svc             #0          
 
 no_array:

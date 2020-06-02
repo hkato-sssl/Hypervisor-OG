@@ -47,7 +47,7 @@ void thread_start(void *entry, void *sp, void *arg);
 
 uint64_t thread_read_tls(uint32_t index);
 void thread_write_tls(uint32_t index, uint64_t d);
-volatile void thread_exit(void);
+volatile void thread_terminate(void);
 
 #ifdef __cplusplus
 }

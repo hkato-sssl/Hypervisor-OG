@@ -162,7 +162,7 @@ static struct soc_device serdes0 = {
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
     .region.access.flag.read = 1,
-    .region.access.flag.write = 1,
+    .region.access.flag.write = 0,
     .region.access.flag.exec = 0
 };
 
@@ -194,13 +194,19 @@ struct soc_device *guest_linux_devices[] = {
     &axi_smmu_test,
 };
 
-static struct smmu_stream stream = {
-    .mask = 0xffff,
-    .id = 0x0e80
+static struct smmu_stream tbu2_sd1 = {
+    .mask = 0,
+    .id =0x0871     /* 00010, 0001 11 0000 */
 };
 
-uint16_t nr_guest_linux_streams = 1;
+static struct smmu_stream tbu2_gem3 = {
+    .mask = 0,
+    .id =0x0877     /* 00010, 0001 11 0111 */
+};
+
+uint16_t nr_guest_linux_streams = 2;
 struct smmu_stream *guest_linux_streams[] = {
-    &stream
+    &tbu2_sd1,
+    &tbu2_gem3,
 };
 

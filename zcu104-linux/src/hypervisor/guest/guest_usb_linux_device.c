@@ -166,19 +166,6 @@ static struct soc_device i2c1 = {
     .region.access.flag.exec = 0
 };
 
-static struct soc_device axi_smmu_test = {
-    .nr_irqs = 0,
-    .irqs = NULL,
-    .region.ipa = AXI_SMMU_TEST_IPA,
-    .region.pa = AXI_SMMU_TEST_PA,
-    .region.size = AXI_SMMU_TEST_SIZE,
-    .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
-    .region.shareability = HYP_MMU_SH_OSH,
-    .region.access.flag.read = 1,
-    .region.access.flag.write = 1,
-    .region.access.flag.exec = 0
-};
-
 uint16_t nr_guest_usb_linux_devices = 10;
 struct soc_device *guest_usb_linux_devices[] = {
     &ram,
@@ -191,16 +178,14 @@ struct soc_device *guest_usb_linux_devices[] = {
     &serdes0,
     &gem3,
     &i2c1,
-    &axi_smmu_test,
 };
 
-static struct smmu_stream stream = {
-    .mask = 0xffff,
-    .id = 0x0e80
+static struct smmu_stream tbu2_usb0 = {
+    .mask = 0,
+    .id =0x0860     /* 00010, 0001 10 0000 */
 };
 
 uint16_t nr_guest_usb_linux_streams = 1;
 struct smmu_stream *guest_usb_linux_streams[] = {
-    &stream
+    &tbu2_usb0
 };
-

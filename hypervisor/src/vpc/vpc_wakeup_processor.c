@@ -45,10 +45,8 @@ static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_
         ret = -EFAULT;
     } else if (vpc->vm->vpcs[vpc->proc_no] != vpc) {
         ret = -EPERM;
-    } else if (! soc_test_executable_region(vpc->vm->soc, boot->pc)) {
-        ret = -EFAULT;
     } else {
-        ret = SUCCESS;
+        ret = soc_test_executable_region(vpc->vm->soc, boot->pc, 4);
     }
 
     return ret;

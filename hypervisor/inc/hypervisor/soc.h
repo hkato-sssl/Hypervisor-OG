@@ -71,7 +71,7 @@ struct soc_device {
 };
 
 struct soc_ops {
-    errno_t (*test_executable_region)(struct vpc *vpc, uintptr_t addr);
+    errno_t (*test_executable_region)(struct soc *, uintptr_t addr, size_t size);
 };
 
 struct soc {
@@ -98,7 +98,7 @@ struct soc_configuration {
 
 errno_t soc_initialize(struct soc *soc, const struct soc_configuration *config);
 errno_t soc_initialize_vpc(struct soc *soc, struct vpc *vpc, const struct vpc_configuration *config);
-errno_t soc_default_test_executable_region(struct vpc *vpc, uintptr_t addr);
+errno_t soc_default_test_executable_region(struct soc *soc, uintptr_t addr, size_t size);
 
 /* inline functions */
 
@@ -112,9 +112,9 @@ static inline void soc_unlock(struct soc *soc)
     spin_unlock(&(soc->lock));
 }
 
-static inline bool soc_test_executable_region(struct soc *soc, uintptr_t addr)
+static inline errno_t soc_test_executable_region(struct soc *soc, uintptr_t addr, size_t size)
 {
-    return (*(soc->ops->test_executable_region))(soc->chip, addr);
+    return (*(soc->ops->test_executable_region))(soc, addr, size);
 }
 
 #ifdef __cplusplus

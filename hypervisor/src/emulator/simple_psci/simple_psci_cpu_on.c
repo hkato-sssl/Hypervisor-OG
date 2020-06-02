@@ -69,7 +69,7 @@ errno_t simple_psci_cpu_on(struct vpc *vpc)
 
     if (target >= vpc->vm->nr_procs) {
         ret = psci_set_error(vpc, PSCI_ERROR_INVALID_PARAMETERS);
-    } else if ((! IS_ALIGNED(addr, 4)) || (! soc_test_executable_region(vpc->vm->soc, addr))) {
+    } else if ((! IS_ALIGNED(addr, 4)) || (soc_test_executable_region(vpc->vm->soc, addr, 4) != SUCCESS)) {
         ret = psci_set_error(vpc, PSCI_ERROR_INVALID_ADDRESS);
     } else {
         ret = cpu_on(vpc, target, addr);

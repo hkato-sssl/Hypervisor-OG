@@ -33,7 +33,7 @@ extern "C" {
 
 /* functions */
 
-uint64_t *thread_setup_array(uint32_t no);
+uintptr_t *thread_setup_array(uint32_t no);
 
 #ifdef __cplusplus
 }

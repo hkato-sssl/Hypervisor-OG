@@ -17,11 +17,11 @@
 
 /* variables */
 
-static uint64_t setup_array[HYP_MAX_NR_VPCS][4];
+static uintptr_t setup_array[HYP_MAX_NR_VPCS][4];
 
 /* functions */
 
-uint64_t *thread_setup_array(uint32_t no)
+uintptr_t *thread_setup_array(uint32_t no)
 {
     uint64_t *p;
 

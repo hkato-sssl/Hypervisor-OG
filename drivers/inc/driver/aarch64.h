@@ -52,6 +52,21 @@ static inline void aarch64_isb(void)
     __asm volatile ("isb" ::: "memory");
 }
 
+static inline void aarch64_dmb(void)
+{
+    __asm volatile ("dmb sy" ::: "memory");
+}
+
+static inline void aarch64_dsb(void)
+{
+    __asm volatile ("dsb sy" ::: "memory");
+}
+
+static inline void aarch64_sev(void)
+{
+    __asm volatile ("sev" ::: "memory");
+}
+
 #ifdef __cplusplus
 }
 #endif

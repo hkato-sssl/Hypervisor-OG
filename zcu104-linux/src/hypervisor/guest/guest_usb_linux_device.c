@@ -148,7 +148,7 @@ static struct soc_device serdes0 = {
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
     .region.access.flag.read = 1,
-    .region.access.flag.write = 1,
+    .region.access.flag.write = 0,
     .region.access.flag.exec = 0
 };
 

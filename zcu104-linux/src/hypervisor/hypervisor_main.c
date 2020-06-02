@@ -52,7 +52,6 @@ static void launch_guest(void)
     printk("vm_launch() -> %d\n", ret);
 
     vpc_dump(chip->soc.vm.vpcs[0], 0);
-    smmu500_dump(chip->smmu.device);
 }
 
 void hypervisor_main(void)

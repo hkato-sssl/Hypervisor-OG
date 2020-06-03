@@ -37,13 +37,15 @@ extern "C" {
 
 /* types */
 
+typedef void (*thread_entry_t)(void *);
+
 /* variables */
 
 /* functions */
 
-errno_t thread_launch(void *entry, void *arg);
-errno_t thread_launch_at(uint32_t processor_no, void *entry, void *arg);
-volatile void thread_start(void *entry, void *arg);
+errno_t thread_launch(thread_entry_t entry, void *arg);
+errno_t thread_launch_at(uint32_t processor_no, thread_entry_t entry, void *arg);
+volatile void thread_start(thread_entry_t entry, void *arg);
 
 uint64_t thread_read_tls(uint32_t index);
 void thread_write_tls(uint32_t index, uint64_t d);

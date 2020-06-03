@@ -32,7 +32,7 @@ static errno_t launch_at(uintptr_t *setup, void *entry, void *arg)
     return SUCCESS;
 }
 
-errno_t thread_launch_at(uint32_t processor_no, void *entry, void *arg)
+errno_t thread_launch_at(uint32_t processor_no, thread_entry_t entry, void *arg)
 {
     errno_t ret;
     uintptr_t   *setup;

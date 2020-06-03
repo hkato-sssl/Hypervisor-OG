@@ -8,8 +8,8 @@
 #include <stdint.h>
 #include <string.h>
 #include "lib/list.h"
-#include "lib/system/atomic.h"
 #include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 #include "driver/aarch64/cache.h"
 #include "driver/aarch64/mmu.h"
 #include "mmu_local.h"
@@ -51,6 +51,7 @@ static errno_t mmu_block_pool_initialize(struct aarch64_mmu_block_pool *pool, co
 
     memset(pool, 0, sizeof(*pool));
 
+    spin_lock_init(&(pool->lock));
     pool->block_sz = config->block_sz;
     pool->block_region.addr = config->block_region.addr;
     pool->block_region.size = config->block_region.size;
@@ -89,19 +90,23 @@ void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block
 {
     void *p;
 
+    spin_lock(&(pool->lock));
+
     if ((pool != NULL) && (pool->block_sz == block_sz)) {
         p = list_get_front(&(pool->block_list));
         if (p != NULL) {
             memset(p, 0, block_sz);
             aarch64_dcache_clean_range(p, block_sz);
-            atomic_inc_u64(&(pool->counter.calloc.success));
+            ++(pool->counter.calloc.success);
         } else {
-            atomic_inc_u64(&(pool->counter.calloc.failure));
+            ++(pool->counter.calloc.failure);
         }
     } else {
-        atomic_inc_u64(&(pool->counter.calloc.failure));
+        ++pool->counter.calloc.failure;
         p = NULL;
     }
+
+    spin_unlock(&(pool->lock));
 
     return p;
 }
@@ -110,17 +115,21 @@ errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block,
 {
     errno_t ret;
 
+    spin_lock(&(pool->lock));
+
     if ((pool != NULL) && (block != NULL) && (pool->block_sz == block_sz)) {
         ret = list_append(&(pool->block_list), block);
         if (ret == SUCCESS) {
-            atomic_inc_u64(&(pool->counter.free.success));
+            ++(pool->counter.free.success);
         } else {
-            atomic_inc_u64(&(pool->counter.free.failure));
+            ++(pool->counter.free.failure);
         }
     } else {
-        atomic_inc_u64(&(pool->counter.free.failure));
+        ++(pool->counter.free.failure);
         ret = -EINVAL;
     }
+
+    spin_unlock(&(pool->lock));
 
     return ret;
 }

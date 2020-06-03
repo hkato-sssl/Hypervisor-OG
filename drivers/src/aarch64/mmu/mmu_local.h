@@ -18,6 +18,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "lib/system/errno.h"
+#include "driver/aarch64/mmu_base.h"
 
 /* defines */
 

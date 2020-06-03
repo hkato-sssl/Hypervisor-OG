@@ -10,6 +10,7 @@
 #include <string.h>
 #include "lib/bit.h"
 #include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/system_register/vtcr_el2.h"
 #include "driver/aarch64/cache.h"
@@ -144,6 +145,7 @@ static errno_t stage2_initialize(struct aarch64_stage2 *stage2, const struct aar
 
     memset(stage2, 0, sizeof(*stage2));
 
+    spin_lock_init(&(stage2->base.lock));
     stage2->base.type = config->base.type;
     stage2->base.granule = config->base.granule;
     stage2->base.ops = &stage2_ops;

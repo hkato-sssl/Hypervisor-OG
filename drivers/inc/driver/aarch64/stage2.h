@@ -147,7 +147,7 @@ errno_t aarch64_stage2_map(struct aarch64_stage2 *stage2, void *ipa, void *pa, s
 
 /* for debugging */
 
-void aarch64_stage2_dump_descriptor(const struct aarch64_stage2 *stage2);
+void aarch64_stage2_dump_descriptor(struct aarch64_stage2 *stage2);
 
 /* inline functions */
 

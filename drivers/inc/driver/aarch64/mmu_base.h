@@ -27,6 +27,7 @@
 #include "lib/bit.h"
 #include "lib/list.h"
 #include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,6 +55,7 @@ enum aarch64_mmu_type { AARCH64_MMU_STAGE2, AARCH64_MMU_EL0, AARCH64_MMU_EL1, AA
 enum aarch64_mmu_granule { AARCH64_MMU_4KB_GRANULE, AARCH64_MMU_16KB_GRANULE, AARCH64_MMU_64KB_GRANULE }; 
 
 struct aarch64_mmu_block_pool {
+    spin_lock_t         lock;
     size_t              block_sz;
     struct list         block_list;
     struct {
@@ -89,6 +91,7 @@ struct aarch64_mmu_ops {
 };
 
 struct aarch64_mmu_base {
+    spin_lock_t                     lock;
     enum aarch64_mmu_type           type;
     enum aarch64_mmu_granule        granule;
     uint8_t                         start_level;
@@ -106,6 +109,16 @@ struct aarch64_mmu_base_configuration {
 /* variables */
 
 /* functions */
+
+static inline void aarch64_mmu_base_lock(struct aarch64_mmu_base *mmu)
+{
+    spin_lock(&(mmu->lock));
+}
+
+static inline void aarch64_mmu_base_unlock(struct aarch64_mmu_base *mmu)
+{
+    spin_unlock(&(mmu->lock));
+}
 
 errno_t aarch64_mmu_block_pool_initialize(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config);
 void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);

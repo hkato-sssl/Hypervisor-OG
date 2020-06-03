@@ -52,9 +52,13 @@ errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu_base *mmu, void *va, void
 {
     errno_t ret;
 
+    aarch64_mmu_base_lock(mmu);
+
     do {
         ret = mmu_map(mmu, &va, &pa, &sz, attr);
     } while ((ret == SUCCESS) && (sz != 0));
+
+    aarch64_mmu_base_unlock(mmu);
 
     return ret;
 }

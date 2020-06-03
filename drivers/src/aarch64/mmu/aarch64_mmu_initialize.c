@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include "lib/bit.h"
 #include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 #include "driver/aarch64/system_register/tcr_elx.h"
 #include "driver/aarch64/mmu.h"
 #include "mmu_local.h"
@@ -143,6 +144,7 @@ static errno_t mmu_initialize(struct aarch64_mmu *mmu, const struct aarch64_mmu_
 
     memset(mmu, 0, sizeof(*mmu));
 
+    spin_lock_init(&(mmu->base.lock));
     mmu->base.type = config->base.type;
     mmu->base.granule = config->base.granule;
     mmu->base.pool = config->base.pool;

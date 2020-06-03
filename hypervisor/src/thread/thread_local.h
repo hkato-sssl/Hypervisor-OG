@@ -12,8 +12,7 @@
 /* defines */
 
 #define THREAD_SETUP_ENTRY  0
-#define THREAD_SETUP_SP     1
-#define THREAD_SETUP_ARG0   2
+#define THREAD_SETUP_ARG0   1
 
 #ifndef ASSEMBLY
 
@@ -33,6 +32,7 @@ extern "C" {
 
 /* functions */
 
+void *thread_stack_top(void);
 uintptr_t *thread_setup_array(uint32_t no);
 
 #ifdef __cplusplus

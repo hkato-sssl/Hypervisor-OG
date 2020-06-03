@@ -21,9 +21,8 @@
 
 /* functions */
 
-static errno_t launch_at(uintptr_t *setup, void *entry, void *sp, void *arg)
+static errno_t launch_at(uintptr_t *setup, void *entry, void *arg)
 {
-    setup[THREAD_SETUP_SP] = (uintptr_t)sp;
     setup[THREAD_SETUP_ARG0] = (uintptr_t)arg;
     aarch64_dmb();
     setup[THREAD_SETUP_ENTRY] = (uintptr_t)entry;
@@ -33,7 +32,7 @@ static errno_t launch_at(uintptr_t *setup, void *entry, void *sp, void *arg)
     return SUCCESS;
 }
 
-errno_t thread_launch_at(uint32_t processor_no, void *entry, void *sp, void *arg)
+errno_t thread_launch_at(uint32_t processor_no, void *entry, void *arg)
 {
     errno_t ret;
     uintptr_t   *setup;
@@ -44,7 +43,7 @@ errno_t thread_launch_at(uint32_t processor_no, void *entry, void *sp, void *arg
     } else if (setup[THREAD_SETUP_ENTRY] != 0) {
         ret = -EBUSY;
     } else {
-        ret = launch_at(setup, entry, sp, arg);
+        ret = launch_at(setup, entry, arg);
     }
 
     return ret;

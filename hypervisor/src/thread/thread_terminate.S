@@ -24,19 +24,11 @@ thread_terminate:
         bl              thread_setup_array
         cbz             x0, no_array
 
-        mov             ip0, x0
-        dmb             ish
-        str             xzr, [ip0]
+        dmb             sy
+        str             xzr, [x0, #(THREAD_SETUP_ENTRY * 8)]
         dsb             ish
-loop:
-        wfe
-        ldr             x0,  [ip0]
-        cbz             x0,  loop
 
-        ldr             x1,  [ip0, #(THREAD_SETUP_SP * 8)]
-        ldr             x2,  [ip0, #(THREAD_SETUP_ARG0 * 8)]
-        bl              thread_start
-        svc             #0          
+        b               thread_standby
 
 no_array:
         svc             #0

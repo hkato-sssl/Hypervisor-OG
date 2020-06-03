@@ -17,7 +17,7 @@
         .type           thread_start, %function
         .balign         4
         /*
-         * volatile void thread_start(void *entry, void *sp, void *arg)
+         * volatile void thread_start(void *entry, void *arg)
          */
 thread_start:
         /*
@@ -31,17 +31,21 @@ thread_start:
          * initialize SP, and allocate TLS
          */
 
+        mov             x20, x0
+        mov             x21, x1
+        bl              thread_stack_top
+
         msr             SPSel, #0
-        sub             x1, x1, #TLS_SIZE
-        bic             x1, x1, #BITS(3, 0)
-        msr             TPIDR_EL2, x1
-        mov             sp, x1
+        sub             x0, x0, #TLS_SIZE
+        bic             x0, x0, #BITS(3, 0)
+        msr             TPIDR_EL2, x0
+        mov             sp, x0
 
         /*
          * initialize TLS
          */
 
-        stp             x0, x2, [sp, #-16]!
+        stp             x20, x21, [sp, #-16]!
 
         mrs             x0, TPIDR_EL2
         mov             x1, #0
@@ -51,7 +55,7 @@ thread_start:
         bl              exc_stack_top
         mrs             x1, TPIDR_EL2
         str             x0, [x1, #(TLS_EXCEPTION_SP * 8)]
-        ldp             x1, x0, [sp], #16
+        ldp             x1, x0,  [sp], #16
 
         msr             DAIFClr, DAIF_A
         blr             x1

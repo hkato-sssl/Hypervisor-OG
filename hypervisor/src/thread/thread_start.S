@@ -12,6 +12,8 @@
         .global         thread_start
 
         .extern         exc_stack_top
+        .extern         thread_stack_top
+        .extern         thread_terminate
 
         .section        ".text.thread_start", "ax", %progbits
         .type           thread_start, %function
@@ -35,10 +37,9 @@ thread_start:
         mov             x21, x1
         bl              thread_stack_top
 
-        msr             SPSel, #0
         sub             x0, x0, #TLS_SIZE
-        bic             x0, x0, #BITS(3, 0)
         msr             TPIDR_EL2, x0
+        msr             SPSel, #0
         mov             sp, x0
 
         /*
@@ -60,9 +61,7 @@ thread_start:
         msr             DAIFClr, DAIF_A
         blr             x1
 
-        svc             #0
-
-        ret
+        b               thread_terminate
 
         .end
 

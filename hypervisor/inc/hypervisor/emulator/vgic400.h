@@ -67,6 +67,7 @@ struct vgic400 {
     const struct vgic400_interrupt_ops  *ops;
 
     struct {
+        uint32_t    irq[NR_VGIC400_TARGET_MAPS];
         uint32_t    virq[NR_VGIC400_TARGET_MAPS];
     } target;
 

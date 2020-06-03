@@ -11,6 +11,7 @@
 #include "driver/arm/smmu500.h"
 #include "driver/system/cpu.h"
 #include "driver/xilinx/device/mpsoc.h"
+#include "hypervisor/thread.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 
 #include "driver/aarch64/system_register.h"
@@ -24,25 +25,19 @@
 
 /* prototypes */
 
+struct xilinx_mpsoc *guest_linux(void);
+struct xilinx_mpsoc *guest_usb_linux(void);
+
 /* variables */
 
 extern struct gic400 sys_gic;
 
 /* functions */
 
-static void launch_guest(void)
+static void launch_guest(struct xilinx_mpsoc *chip)
 {
-    void *guest_linux(void);
-
     errno_t ret;
-    struct xilinx_mpsoc *chip;
     struct vpc_boot_configuration boot;
-
-    chip = guest_linux();
-    printk("guest_linux() -> %p\n", chip);
-
-    gic400_enable_interrupt(&sys_gic, IRQ_SMMU500);
-    gic400_set_priority_mask(&sys_gic, 0xff);
 
     memset(&boot, 0, sizeof(boot));
     boot.arch = VPC_ARCH_AARCH64;
@@ -56,12 +51,19 @@ static void launch_guest(void)
 
 void hypervisor_main(void)
 {
+    struct xilinx_mpsoc *chip;
+
     printk("CPU#%u\n", cpu_no());
 
-    if (cpu_no() == 0) {
-        launch_guest();
-    }
+    gic400_enable_interrupt(&sys_gic, IRQ_SMMU500);
+    gic400_set_priority_mask(&sys_gic, 0xff);
 
-    for (;;);
+    chip = guest_linux();
+    thread_launch_at(1, (thread_entry_t)launch_guest, chip);
+
+    chip = guest_usb_linux();
+    thread_launch_at(3, (thread_entry_t)launch_guest, chip);
+
+    thread_terminate();
 }
 

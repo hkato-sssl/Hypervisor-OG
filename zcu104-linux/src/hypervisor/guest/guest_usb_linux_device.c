@@ -16,10 +16,6 @@
 #define RAM_START_PA        0x20000000
 #define RAM_SIZE            0x20000000
 
-#define UART_IPA            0xff000000  /* PS UART0 */
-#define UART_PA             0xff000000
-#define UART_SIZE           4096
-
 #define AXI_SMMU_TEST_IPA   0xa0002000
 #define AXI_SMMU_TEST_PA    0xa0002000
 #define AXI_SMMU_TEST_SIZE  4096
@@ -43,13 +39,13 @@ static struct soc_device ram = {
     .region.access.flag.exec = 1
 };
 
-static struct soc_device_interrupt uart0_irqs[] = { { 53, 53}  };
+static struct soc_device_interrupt uart0_irqs[] = { { 53, 54}  };
 static struct soc_device uart0 = {
     .nr_irqs = 1,
     .irqs = uart0_irqs,
-    .region.ipa = UART_IPA,
-    .region.pa = UART_PA,
-    .region.size = UART_SIZE,
+    .region.ipa = 0xff000000,
+    .region.pa = 0xff010000,
+    .region.size = 4096,
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
     .region.access.flag.read = 1,
@@ -148,7 +144,7 @@ static struct soc_device serdes0 = {
     .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
     .region.shareability = HYP_MMU_SH_OSH,
     .region.access.flag.read = 1,
-    .region.access.flag.write = 0,
+    .region.access.flag.write = 1,
     .region.access.flag.exec = 0
 };
 

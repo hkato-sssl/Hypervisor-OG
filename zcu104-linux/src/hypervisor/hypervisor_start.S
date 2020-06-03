@@ -12,7 +12,9 @@
         .extern         hypervisor_main
         .extern         thread_stack_top
         .extern         thread_start
+        .extern         thread_standby
         .extern         excvec_hyp
+        .extern         aarch64_cpu_no
 
         .section        ".text.hypervisor_start", "ax", %progbits
         .type           hypervisor_start, %function
@@ -29,6 +31,9 @@ hypervisor_start:
         isb
         msr             VBAR_EL2, x0
         isb
+
+        bl              aarch64_cpu_no
+        cbnz            x0, thread_standby
 
         /* call the entry function */
 

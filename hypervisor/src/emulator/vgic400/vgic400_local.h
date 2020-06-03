@@ -84,6 +84,15 @@ static inline bool is_target_virq(const struct vgic400 *vgic, uint16_t virq)
     return ((vgic->target.virq[virq / 32] & bit) != 0) ? true : false;
 }
 
+static inline bool is_target_irq(const struct vgic400 *vgic, uint16_t irq)
+{
+    uint32_t bit;
+
+    bit = BIT(irq % 32);
+
+    return ((vgic->target.irq[irq / 32] & bit) != 0) ? true : false;
+}
+
 static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic, uint32_t virq)
 {
     uint16_t irq;
@@ -95,6 +104,19 @@ static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic, uint32_t 
     }
 
     return irq;
+}
+
+static inline uint16_t vgic400_irq_to_virq(const struct vgic400 *vgic, uint32_t irq)
+{
+    uint16_t virq;
+
+    if (irq < 32) {
+        virq = is_target_irq(vgic, irq) ? irq : VGIC400_NO_ASSIGNED;
+    } else {
+        virq = vgic->spi.map.virtual[irq - 32];
+    }
+
+    return virq;
 }
 
 static inline bool is_aligned_word_access(const struct insn *insn)
@@ -127,7 +149,6 @@ errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn,
 errno_t vgic400_cpuif_write_pmr(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_cpuif_write_word_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
 
-uint32_t vgic400_quad_byte_mask(const struct vgic400 *vgic, uint32_t irq);
 uint64_t vgic400_p2v_cpu_map_b(uint64_t src, const struct vm *vm);
 uint64_t vgic400_p2v_cpu_map_w(uint64_t src, const struct vm *vm);
 uint64_t vgic400_v2p_cpu_map_b(uint64_t src, const struct vm *vm);

@@ -21,12 +21,16 @@
 
 /* functions */
 
+static void set_target_bit(uint32_t *targets, uint32_t no)
+{
+    targets[no / 32] |= 1UL << (no % 32);
+}
+
 static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_interrupt_configuration *config)
 {
     uint32_t d;
     uint32_t i;
     uint32_t idx;
-    uint32_t bit;
 
     d = BIT(28);    /* State = pending */
     if (config->flag.hw != 0) {
@@ -38,10 +42,6 @@ static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_in
     d |= (uint32_t)(config->physical_id) << 10;
     d |= (uint32_t)(config->virtual_id);
 
-    idx = config->virtual_id / 32;
-    bit = BIT(config->virtual_id % 32);
-    vgic->target.virq[idx] |= bit;
-
     if ((config->virtual_id >= 16) && (config->virtual_id < 32)) {
         idx = config->virtual_id - 16;
         for (i =0; i < vgic->vm->nr_procs; ++i) {
@@ -52,6 +52,9 @@ static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_in
         vgic->spi.map.virtual[config->physical_id - 32] = config->virtual_id;
         vgic->spi.map.physical[config->virtual_id - 32] = config->physical_id;
     }
+
+    set_target_bit(vgic->target.virq, config->virtual_id);
+    set_target_bit(vgic->target.irq, config->physical_id);
 
     return SUCCESS;
 }

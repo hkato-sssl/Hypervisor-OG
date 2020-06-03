@@ -38,7 +38,7 @@ static errno_t call_interrupt_op(struct vpc *vpc, struct vgic400 *vgic, uint32_t
     return ret;
 }
 
-static errno_t accept_irq(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
+static errno_t emulate_irq_exception(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
     uint32_t no;
@@ -46,7 +46,7 @@ static errno_t accept_irq(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     no = BF_EXTRACT(iar, 9, 0);
     if (no == GIC400_MAINTENANCE_INTERRUPT) {
         ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->maintenance);
-    } else if (is_target_virq(vgic, no)) {
+    } else if (is_target_irq(vgic, no)) {
         if (no < 16) {
             ret = call_interrupt_op(vpc, vgic, iar, vgic->ops->el1.sgi);
         } else if (no < 32) {
@@ -76,7 +76,7 @@ errno_t vgic400_emulate_irq_exception(struct vpc *vpc, struct vgic400 *vgic)
     iar = gic400_ack(vgic->gic);
     while (iar != GIC400_SPURIOUS_INTERRUPT) {
         gic400_eoi(vgic->gic, iar);
-        ret = accept_irq(vpc, vgic, iar);
+        ret = emulate_irq_exception(vpc, vgic, iar);
         if (ret != SUCCESS) {
             break;
         }

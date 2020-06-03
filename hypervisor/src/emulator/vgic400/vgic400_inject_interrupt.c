@@ -27,11 +27,14 @@ static errno_t inject_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t 
 {
     errno_t ret;
     uint32_t d;
+    uint32_t virq;
+
+    virq = vgic400_irq_to_virq(vgic, iar);
 
     if (iar < 32) {
-        d = vgic->ppi[vpc->proc_no].template[iar - 16];
+        d = vgic->ppi[vpc->proc_no].template[virq - 16];
     } else {
-        d = vgic->spi.template[iar - 32];
+        d = vgic->spi.template[virq - 32];
     }
 
     if (d != 0) {

@@ -9,11 +9,11 @@
 
         .global         hypervisor_start
 
-        .extern         hypervisor_main
+        .extern         hypervisor
         .extern         thread_stack_top
-        .extern         thread_start
         .extern         thread_standby
         .extern         excvec_hyp
+        .extern         exc_stack_top
         .extern         aarch64_cpu_no
 
         .section        ".text.hypervisor_start", "ax", %progbits
@@ -24,7 +24,7 @@ hypervisor_start:
 
         msr             DAIFSet, #(DAIF_A | DAIF_I | DAIF_F)
 
-        /* initialize an exception vector */
+        /* initialize processor status */
 
         adr             x0, excvec_hyp
         dsb             sy
@@ -32,16 +32,21 @@ hypervisor_start:
         msr             VBAR_EL2, x0
         isb
 
-        bl              aarch64_cpu_no
-        cbnz            x0, thread_standby
+        bl              exc_stack_top
+        msr             SPSel, #1
+        mov             sp, x0
 
-        /* call the entry function */
+        /* call an initial function */
+
+        bl              aarch64_cpu_no
+        cbnz            x0, thread_standby      /* secondary processor */
 
         bl              thread_stack_top
-        mov             x1, x0
-        mov             x2, xzr
-        adr             x0, hypervisor_main
-        b               thread_start
+        msr             SPSel, #0
+        mov             sp, x0
+        bl              hypervisor              /* primary processor */
+
+        b               thread_standby
 
         .end
 

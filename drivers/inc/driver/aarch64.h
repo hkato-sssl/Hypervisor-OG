@@ -57,9 +57,29 @@ static inline void aarch64_dmb(void)
     __asm volatile ("dmb sy" ::: "memory");
 }
 
+static inline void aarch64_dmb_osh(void)
+{
+    __asm volatile ("dmb osh" ::: "memory");
+}
+
+static inline void aarch64_dmb_ish(void)
+{
+    __asm volatile ("dmb ish" ::: "memory");
+}
+
 static inline void aarch64_dsb(void)
 {
     __asm volatile ("dsb sy" ::: "memory");
+}
+
+static inline void aarch64_dsb_osh(void)
+{
+    __asm volatile ("dsb osh" ::: "memory");
+}
+
+static inline void aarch64_dsb_ish(void)
+{
+    __asm volatile ("dsb ish" ::: "memory");
 }
 
 static inline void aarch64_sev(void)

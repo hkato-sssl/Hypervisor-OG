@@ -18,7 +18,7 @@
 
 /* defines */
 
-#define NR_CPUS             2
+#define NR_CPUS             4
 #define GUEST_VMID          2
 
 /* types */

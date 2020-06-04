@@ -12,8 +12,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "lib/bit.h"
-#include "lib/system/memio.h"
 #include "lib/system/spin_lock.h"
+#include "driver/aarch64.h"
 #include "driver/aarch64/system_register/esr_el2_iss.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
@@ -53,9 +53,9 @@ static inline void vpc_unlock(struct vpc *vpc)
 
 static inline void vpc_set_status(struct vpc *vpc, enum vpc_status status)
 {
-    memory_barrier();
+    aarch64_dmb_ish();
     vpc->status = status;
-    memory_barrier();
+    aarch64_dsb_ish();
 }
 
 static inline enum vpc_status vpc_watch_status(const struct vpc *vpc)

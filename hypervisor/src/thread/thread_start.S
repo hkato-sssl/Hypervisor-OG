@@ -8,18 +8,21 @@
 #include "lib/bit.h"
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/thread.h"
+#include "thread_local.h"
 
         .global         thread_start
 
         .extern         exc_stack_top
+        .extern         aarch64_cpu_no
         .extern         thread_stack_top
+        .extern         thread_parameter_array
         .extern         thread_terminate
 
         .section        ".text.thread_start", "ax", %progbits
         .type           thread_start, %function
         .balign         4
         /*
-         * volatile void thread_start(void *entry, void *arg)
+         * volatile void thread_start(void)
          */
 thread_start:
         /*
@@ -33,10 +36,7 @@ thread_start:
          * initialize SP, and allocate TLS
          */
 
-        mov             x20, x0
-        mov             x21, x1
         bl              thread_stack_top
-
         sub             x0, x0, #TLS_SIZE
         msr             TPIDR_EL2, x0
         msr             SPSel, #0
@@ -46,8 +46,6 @@ thread_start:
          * initialize TLS
          */
 
-        stp             x20, x21, [sp, #-16]!
-
         mrs             x0, TPIDR_EL2
         mov             x1, #0
         mov             x2, #TLS_SIZE
@@ -56,10 +54,25 @@ thread_start:
         bl              exc_stack_top
         mrs             x1, TPIDR_EL2
         str             x0, [x1, #(TLS_EXCEPTION_SP * 8)]
-        ldp             x1, x0,  [sp], #16
+
+        /*
+         * load the parameters
+         */
+
+        bl              aarch64_cpu_no
+        bl              thread_parameter_array
+        ldr             ip0, [x0, #(THREAD_PARAMETER_ENTRY* 8)]
+        ldp             x2,  x3,  [x0, #(THREAD_PARAMETER_ARG(2) * 8)]
+        ldp             x4,  x5,  [x0, #(THREAD_PARAMETER_ARG(4) * 8)]
+        ldp             x6,  x7,  [x0, #(THREAD_PARAMETER_ARG(6) * 8)]
+        ldp             x0,  x1,  [x0, #(THREAD_PARAMETER_ARG(0) * 8)]
+
+        /*
+         * call the entry routine
+         */
 
         msr             DAIFClr, DAIF_A
-        blr             x1
+        blr             ip0
 
         b               thread_terminate
 

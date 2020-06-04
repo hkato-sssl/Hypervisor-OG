@@ -12,7 +12,7 @@
 
         .extern         aarch64_cpu_no
         .extern         thread_start
-        .extern         thread_setup_array
+        .extern         thread_parameter_array
 
         .section        ".text.thread_terminate.S", "ax", %progbits
         .type           thread_terminate.S, %function
@@ -21,11 +21,11 @@ thread_terminate:
         msr             DAIFSet, #(DAIF_A | DAIF_I | DAIF_F)
 
         bl              aarch64_cpu_no
-        bl              thread_setup_array
+        bl              thread_parameter_array
         cbz             x0, no_array
 
         dmb             sy
-        str             xzr, [x0, #(THREAD_SETUP_ENTRY * 8)]
+        str             xzr, [x0, #(THREAD_PARAMETER_ENTRY * 8)]
         dsb             ish
 
         b               thread_standby

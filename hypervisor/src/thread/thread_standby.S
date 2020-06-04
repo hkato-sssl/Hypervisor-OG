@@ -13,7 +13,7 @@
 
         .extern         aarch64_cpu_no
         .extern         thread_stack_top
-        .extern         thread_setup_array
+        .extern         thread_parameter_array
         .extern         thread_start
 
         .section        ".text.thread_standby", "ax", %progbits
@@ -27,18 +27,16 @@ thread_standby:
         mov             sp, x0
 
         bl              aarch64_cpu_no
-        bl              thread_setup_array
+        bl              thread_parameter_array
         cbz             x0, no_array
-        mov             x1, x0
         sevl
 
 standby:
         wfe
-        ldr             x0, [x1, #(THREAD_SETUP_ENTRY * 8)]
-        cbz             x0, standby
+        ldr             ip0, [x0, #(THREAD_PARAMETER_ENTRY * 8)]
+        cbz             ip0, standby
 
 launch:
-        ldr             x1,   [x1, #(THREAD_SETUP_ARG0 * 8)]
         b               thread_start
 
 no_array:

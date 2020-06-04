@@ -9,10 +9,13 @@
 
 /* includes */
 
+#include "hypervisor/thread.h"
+
 /* defines */
 
-#define THREAD_SETUP_ENTRY  0
-#define THREAD_SETUP_ARG0   1
+#define THREAD_PARAMETER_ENTRY      0
+#define THREAD_PARAMETER_ARG(n)     ((n) + 1)
+#define NR_THREAD_PARAMETERS        (1 + NR_THREAD_ARGS)
 
 #ifndef ASSEMBLY
 
@@ -33,7 +36,8 @@ extern "C" {
 /* functions */
 
 void *thread_stack_top(void);
-uintptr_t *thread_setup_array(uint32_t no);
+uintptr_t *thread_parameter_array(uint32_t processor_no);
+volatile void thread_start(void);
 
 #ifdef __cplusplus
 }

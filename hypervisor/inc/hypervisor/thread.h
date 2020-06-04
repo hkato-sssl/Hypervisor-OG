@@ -35,17 +35,23 @@ extern "C" {
 
 /* defines */
 
+#define NR_THREAD_ARGS      8
+
 /* types */
 
-typedef void (*thread_entry_t)(void *);
+typedef void (*thread_entry_t)(uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t);
+
+struct thread_parameter {
+    thread_entry_t  entry;
+    uintptr_t       args[NR_THREAD_ARGS];
+};
 
 /* variables */
 
 /* functions */
 
-errno_t thread_launch(thread_entry_t entry, void *arg);
-errno_t thread_launch_at(uint32_t processor_no, thread_entry_t entry, void *arg);
-volatile void thread_start(thread_entry_t entry, void *arg);
+errno_t thread_launch(uint32_t processor_no, const struct thread_parameter *parameter);
+errno_t thread_launch_self(const struct thread_parameter *parameter);
 
 uint64_t thread_read_tls(uint32_t index);
 void thread_write_tls(uint32_t index, uint64_t d);

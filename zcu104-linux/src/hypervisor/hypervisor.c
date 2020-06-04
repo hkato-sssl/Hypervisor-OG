@@ -34,17 +34,22 @@ extern struct gic400 sys_gic;
 
 /* functions */
 
-static void launch_guest(struct xilinx_mpsoc *chip)
+static void launch_linux_guest(struct xilinx_mpsoc *chip, uint32_t vpc_no, uintptr_t boot_addr, uintptr_t dtb_addr)
 {
     errno_t ret;
     struct vpc_boot_configuration boot;
 
-    memset(&boot, 0, sizeof(boot));
-    boot.arch = VPC_ARCH_AARCH64;
-    boot.pc = BOOT_ADDR;
-    boot.arg = DTB_ADDR;
-    ret = vm_launch(&(chip->soc.vm), 0, &boot);
-    printk("vm_launch() -> %d\n", ret);
+    if (vpc_no == 0) {
+        memset(&boot, 0, sizeof(boot));
+        boot.arch = VPC_ARCH_AARCH64;
+        boot.pc = boot_addr;
+        boot.arg = dtb_addr;
+        ret = vm_launch(&(chip->soc.vm), vpc_no, &boot);
+        printk("vm_launch() -> %d\n", ret);
+    } else {
+        ret = vm_launch_secondary(&(chip->soc.vm), vpc_no);
+        printk("vm_launch_secondary() -> %d\n", ret);
+    }
 
     vpc_dump(chip->soc.vm.vpcs[0], 0);
 }
@@ -54,21 +59,28 @@ void hypervisor_main(void)
     struct xilinx_mpsoc *chip;
     struct thread_parameter parameter;
 
-    printk("CPU#%u\n", cpu_no());
-
-    gic400_enable_interrupt(&sys_gic, IRQ_SMMU500);
-    gic400_set_priority_mask(&sys_gic, 0xff);
+    printk("<%u#%s>\n", aarch64_cpu_no(), __func__);
 
     memset(&parameter, 0, sizeof(parameter));
 
     chip = guest_linux();
-    parameter.entry = (thread_entry_t)launch_guest;
+    parameter.entry = (thread_entry_t)launch_linux_guest;
     parameter.args[0] = (uintptr_t)chip;
+    parameter.args[1] = 0;
+    parameter.args[2] = BOOT_ADDR;
+    parameter.args[3] = DTB_ADDR;
     thread_launch(1, &parameter);
 
     chip = guest_usb_linux();
     parameter.args[0] = (uintptr_t)chip;
+    parameter.args[1] = 1;
+    thread_launch(2, &parameter);
+
+    parameter.args[1] = 0;
     thread_launch(3, &parameter);
+
+    gic400_enable_interrupt(&sys_gic, IRQ_SMMU500);
+    gic400_set_priority_mask(&sys_gic, 0xff);
 
     thread_terminate();
 }

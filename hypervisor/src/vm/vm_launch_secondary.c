@@ -1,5 +1,5 @@
 /*
- * vm/vm_ready.c
+ * vm/vm_launch_secondary.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -19,7 +19,7 @@
 
 /* functions */
 
-static errno_t ready(struct vm *vm, struct vpc *vpc)
+static errno_t launch_secondary(struct vm *vm, struct vpc *vpc)
 {
     errno_t ret;
 
@@ -34,16 +34,16 @@ static errno_t ready(struct vm *vm, struct vpc *vpc)
     return ret;
 }
 
-errno_t vm_ready(struct vm *vm, uint16_t proc_no)
+errno_t vm_launch_secondary(struct vm *vm, uint16_t vpc_no)
 {
     errno_t ret;
 
     struct vpc *vpc;
 
-    if (proc_no < vm->nr_procs) {
-        vpc = vm_aquire_vpc(vm, proc_no);
+    if (vpc_no < vm->nr_procs) {
+        vpc = vm_aquire_vpc(vm, vpc_no);
         if (vpc != NULL) {
-            ret = ready(vm, vpc);
+            ret = launch_secondary(vm, vpc);
         } else {
             ret = -EPERM;
         }

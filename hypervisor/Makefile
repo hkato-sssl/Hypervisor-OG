@@ -20,7 +20,7 @@ INCS := inc
 include $(MAKE_PATH)/project-env.mk
 include $(MAKE_PATH)/command.mk
 
-CFLAGS += -DHYPERVISOR
+CFLAGS += -DTRACE_ERRNO
 
 # Depending on the target you want to build,
 # uncomment either of the following two sentences.

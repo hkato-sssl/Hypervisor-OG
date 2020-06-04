@@ -13,7 +13,7 @@
 
 #define SUCCESS         0
 
-#if defined(ASSEMBLY) || (! defined(HYPERVISOR))
+#if defined(ASSEMBLY) || (! defined(TRACE_ERRNO))
 
 #define E2BIG           10      /* Argument list too long. */
 #define EACCES          11      /* Permission denied. */
@@ -111,7 +111,7 @@ extern "C" {
 
 /* defines */
 
-#ifdef HYPERVISOR
+#ifdef TRACE_ERRNO
 
 #define E2BIG           system_errno(10, __FILE__, __LINE__)
 #define EACCES          system_errno(11, __FILE__, __LINE__)

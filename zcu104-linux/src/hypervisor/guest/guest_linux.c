@@ -14,6 +14,7 @@
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/mmu.h"
+#include "hypervisor/emulator/insn.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 
 /* defines */
@@ -55,7 +56,7 @@ static struct vgic400_interrupt_ops interrupt_ops = {
 
 /* functions */
 
-static errno_t emulate_hvc(struct vpc *vpc)
+static errno_t emulate_hvc(const struct insn *insn, void *arg)
 {
     gic400_dump_ns_cpuif(&sys_gic);
     gic400_dump_ns_distributor(&sys_gic);

@@ -5,9 +5,10 @@
  */
 
 #include <stdint.h>
-#include <stdbool.h>
 #include <string.h>
+#include "lib/slist.h"
 #include "lib/system.h"
+#include "lib/system/memio.h"
 #include "lib/system/errno.h"
 #include "hypervisor/mmu.h"
 #include "hypervisor/vpc.h"
@@ -72,37 +73,15 @@ static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *trap)
     return ret;
 }
 
-static errno_t append_region_trap(struct vm_region_trap *head, struct vm_region_trap *trap)
-{
-    bool done;
-    struct vm_region_trap *p;
-
-    done = false;
-    for (p = head; p != trap; p = p->next) {
-        if (p->next == NULL) {
-            p->next = trap;
-            trap->next = NULL;
-            done = true;
-            break;
-        }
-    }
-
-    return (done ? SUCCESS : -EINVAL);
-}
-
 static errno_t register_region_trap(struct vm *vm, struct vm_region_trap *trap)
 {
     errno_t ret;
-    struct vm_region_trap *head;
 
-    head = vm->emulator.trap.memory_region;
-    if (head != NULL) {
-        ret = append_region_trap(head, trap);
-    } else {
-        vm->emulator.trap.memory_region = trap; 
-        trap->next = NULL;
-        ret = SUCCESS;
-    }
+    trap->node.element = trap;
+
+    vm_lock(vm);
+    ret = slist_append(&(vm->emulator.trap.memory_region), &(trap->node));
+    vm_unlock(vm);
 
     return ret;
 }

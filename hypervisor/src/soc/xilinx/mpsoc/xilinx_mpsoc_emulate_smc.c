@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include "lib/system/errno.h"
 #include "hypervisor/vpc.h"
+#include "hypervisor/emulator/insn.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 #include "mpsoc_local.h"
 
@@ -20,11 +21,13 @@
 
 /* functions */
 
-errno_t xilinx_mpsoc_emulate_smc(struct vpc *vpc)
+static errno_t emulate_smc(const struct insn *insn)
 {
     errno_t ret;
     uint64_t func;
+    struct vpc *vpc;
 
+    vpc = insn->vpc;
     func = (vpc->regs[VPC_X0] >> 24) & 0xff;
     switch (func) {
     case 0x84:  /* PSCI 32-bit calls */
@@ -38,6 +41,19 @@ errno_t xilinx_mpsoc_emulate_smc(struct vpc *vpc)
     default:
         ret = -ENOTSUP;
         break;
+    }
+
+    return ret;
+}
+
+errno_t xilinx_mpsoc_emulate_smc(const struct insn *insn, void *arg)
+{
+    errno_t ret;
+
+    if (insn->op.system_call.imm == 0) {
+        ret = emulate_smc(insn);
+    } else {
+        ret = -ENOTSUP;
     }
 
     return ret;

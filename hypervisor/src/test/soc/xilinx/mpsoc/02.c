@@ -21,6 +21,7 @@
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/mmu.h"
+#include "hypervisor/emulator/insn.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 
 /* defines */
@@ -93,9 +94,9 @@ static struct soc_device uart0 = {
 
 /* functions */
 
-static errno_t emulate_hvc(struct vpc *vpc)
+static errno_t emulate_hvc(const struct insn *insn, void *arg)
 {
-    printk("DUMP#%u\n", vpc->regs[VPC_X0]);
+    printk("DUMP#%u\n", insn->vpc->regs[VPC_X0]);
     gic400_dump_ns_distributor(&sys_gic);
     printk("\n");
 

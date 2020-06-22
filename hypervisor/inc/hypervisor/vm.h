@@ -22,6 +22,7 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "lib/slist.h"
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
 #include "driver/aarch64/stage2.h"
@@ -37,7 +38,7 @@ extern "C" {
 struct soc;
 
 struct vm_region_trap {
-    struct vm_region_trap   *next;
+    struct slist_node       node;
 
     struct {
         bool                read;
@@ -72,8 +73,15 @@ struct vm {
 
     struct {
         struct {
-            struct vm_region_trap   *memory_region;
+            struct slist            memory_region;
         } trap;
+
+        /* arguments for vpc_emulator_t */
+        struct {
+            void                    *svc;
+            void                    *hvc;
+            void                    *smc;
+        } system_call;
     } emulator;
 };
 
@@ -81,6 +89,13 @@ struct vm_configuration {
     struct soc                      *soc;
     uint16_t                        nr_procs;
     const struct aarch64_stage2_configuration   *stage2;
+    struct {
+        struct {
+            void                    *svc;
+            void                    *hvc;
+            void                    *smc;
+        } system_call;
+    } emulator;
 };
 
 /* variables */

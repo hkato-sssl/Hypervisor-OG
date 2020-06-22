@@ -51,9 +51,9 @@ struct vpc_exception_ops {
     vpc_exception_emulator_t        fiq;
 
     struct {
-        vpc_exception_emulator_t    svc;
-        vpc_exception_emulator_t    hvc;
-        vpc_exception_emulator_t    smc;
+        vpc_emulator_t              svc;
+        vpc_emulator_t              hvc;
+        vpc_emulator_t              smc;
         vpc_exception_emulator_t    data_abort;
     } aarch64;
 };
@@ -90,6 +90,7 @@ struct vpc_configuration {
     uint8_t         proc_no;
 
     const struct vpc_hook               *hook;
+
     struct {
         const struct vpc_exception_ops  *ops;
     } exception;
@@ -120,6 +121,7 @@ errno_t vpc_initialize(struct vpc *vpc, const struct vpc_configuration *config);
 errno_t vpc_emulate_exception(struct vpc *vpc);
 errno_t vpc_emulate_gic400_irq(struct vpc *vpc);
 errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc);
+errno_t vpc_emulate_hvc(struct vpc *vpc);
 errno_t vpc_update_pc(struct vpc *vpc);
 errno_t vpc_va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va);
 errno_t vpc_read_instruction(const struct vpc *vpc, uint32_t *code, uint64_t va);

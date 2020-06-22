@@ -32,7 +32,9 @@ enum insn_operand_type {
     INSN_TYPE_NULL,
     INSN_TYPE_LDR,
     INSN_TYPE_STR,
-    INSN_TYPE_HVC
+    INSN_TYPE_SVC,
+    INSN_TYPE_HVC,
+    INSN_TYPE_SMC,
 };
 
 struct insn_ldr_str {
@@ -55,17 +57,17 @@ struct insn_ldr_str {
     } flag;
 };
 
-struct insn_hvc {
+struct insn_system_call {
     uint16_t        imm;
 };
 
 struct insn {
-    struct vpc              *vpc;
-    enum insn_operand_type  type;
+    struct vpc                  *vpc;
+    enum insn_operand_type      type;
     union {
-        struct insn_ldr_str ldr;
-        struct insn_ldr_str str;
-        struct insn_hvc     hvc;
+        struct insn_ldr_str     ldr;
+        struct insn_ldr_str     str;
+        struct insn_system_call system_call;
     } op;
 };
 
@@ -74,7 +76,9 @@ struct insn {
 /* functions */
 
 errno_t insn_parse_aarch64_ldr_str(struct insn *insn, struct vpc *vpc);
+errno_t insn_parse_aarch64_svc(struct insn *insn, struct vpc *vpc);
 errno_t insn_parse_aarch64_hvc(struct insn *insn, struct vpc *vpc);
+errno_t insn_parse_aarch64_smc(struct insn *insn, struct vpc *vpc);
 uint64_t insn_str_src_value(const struct insn *insn);
 errno_t insn_emulate_ldr(const struct insn *insn, uint64_t d);
 errno_t insn_emulate_str(const struct insn *insn);

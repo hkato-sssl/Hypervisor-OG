@@ -15,6 +15,7 @@
 #include "hypervisor/thread.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
+#include "hypervisor/emulator/insn.h"
 
 /* defines */
 
@@ -37,6 +38,19 @@ static uint8_t esr_el2_ec(struct vpc *vpc)
     return ec;
 }
 
+static errno_t emulate_aarch64_system_call(struct insn *insn, vpc_emulator_t func, void *arg)
+{
+    errno_t ret;
+
+    if (func != NULL) {
+        ret = (*func)(insn, arg);
+    } else {
+        ret = -ENOTSUP;
+    }
+
+    return ret;
+}
+
 static errno_t call_emulator(struct vpc *vpc, vpc_exception_emulator_t func)
 {
     errno_t ret;
@@ -54,17 +68,27 @@ static errno_t emulate_aarch64_synchronous(struct vpc *vpc)
 {
     errno_t ret;
     uint8_t ec;
+    struct insn insn;
 
     ec = esr_el2_ec(vpc);
     switch (ec) {
     case 0x15:  /* 010101 - SVC instruction execution in AArch64 state */
-        ret = call_emulator(vpc, vpc->exception.ops->aarch64.svc);
+        ret = insn_parse_aarch64_svc(&insn, vpc);
+        if (ret == SUCCESS) {
+            ret = emulate_aarch64_system_call(&insn, vpc->exception.ops->aarch64.svc, vpc->vm->emulator.system_call.svc);
+        }
         break;
     case 0x16:  /* 010110 - HVC instruction execution in AArch64 state */
-        ret = call_emulator(vpc, vpc->exception.ops->aarch64.hvc);
+        ret = insn_parse_aarch64_hvc(&insn, vpc);
+        if (ret == SUCCESS) {
+            ret = emulate_aarch64_system_call(&insn, vpc->exception.ops->aarch64.hvc, vpc->vm->emulator.system_call.hvc);
+        }
         break;
     case 0x17:  /* 010111 - SMC instruction execution in AArch64 state */
-        ret = call_emulator(vpc, vpc->exception.ops->aarch64.smc);
+        ret = insn_parse_aarch64_smc(&insn, vpc);
+        if (ret == SUCCESS) {
+            ret = emulate_aarch64_system_call(&insn, vpc->exception.ops->aarch64.smc, vpc->vm->emulator.system_call.smc);
+        }
         break;
     case 0x24:  /*100100 - Data Abort from a lower Exception level */
         ret = call_emulator(vpc, vpc->exception.ops->aarch64.data_abort);

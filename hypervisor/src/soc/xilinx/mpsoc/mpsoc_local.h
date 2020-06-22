@@ -22,11 +22,13 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 #include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 
 /* defines */
 
 /* types */
+
+struct vpc;
+struct insn;
 
 /* variables */
 
@@ -34,7 +36,7 @@ extern "C" {
 
 errno_t xilinx_mpsoc_previous_launch_hook(struct vpc *vpc);
 errno_t xilinx_mpsoc_emulate_irq_exception(struct vpc *vpc);
-errno_t xilinx_mpsoc_emulate_smc(struct vpc *vpc);
+errno_t xilinx_mpsoc_emulate_smc(const struct insn *insn, void *arg);
 errno_t xilinx_mpsoc_emulate_psci(struct vpc *vpc);
 errno_t xilinx_mpsoc_emulate_tz(struct vpc *vpc);
 errno_t xilinx_mpsoc_emulate_tz_asm(uint64_t *regs);

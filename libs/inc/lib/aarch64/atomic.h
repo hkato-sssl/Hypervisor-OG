@@ -31,6 +31,7 @@ extern "C" {
 
 void aarch64_atomic_add_u64(uint64_t *p, uint64_t d);
 void aarch64_atomic_sub_u64(uint64_t *p, uint64_t d);
+uint8_t aarch64_atomic_swap_u8(uint8_t *p, uint8_t d);
 
 #ifdef __cplusplus
 }

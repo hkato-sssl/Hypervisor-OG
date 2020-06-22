@@ -50,6 +50,15 @@ static inline void atomic_dec_u64(uint64_t *p)
     atomic_sub_u64(p, 1);
 }
 
+static inline uint8_t atomic_swap_u8(uint8_t *p, uint8_t d)
+{
+    uint8_t ret;
+
+    ret = aarch64_atomic_swap_u8(p, d);
+
+    return d;
+}
+
 #ifdef __cplusplus
 }
 #endif

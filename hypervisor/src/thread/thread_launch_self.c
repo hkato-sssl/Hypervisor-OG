@@ -39,6 +39,7 @@ errno_t thread_launch_self(const struct thread_parameter *parameter)
     uint32_t no;
     uintptr_t *params;
 
+    ret = SUCCESS;
     no = aarch64_cpu_no();
     params = thread_parameter_array(no);
     if (params == NULL) {

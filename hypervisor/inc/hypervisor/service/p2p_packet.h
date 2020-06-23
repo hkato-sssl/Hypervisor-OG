@@ -30,46 +30,46 @@ extern "C" {
 /* types */
 
 struct vpc;
-struct p2p_packet;
+struct p2p_packet_ep;
 
-typedef errno_t (*p2p_packet_handler_t)(struct p2p_packet *pkt);
+typedef errno_t (*p2p_packet_handler_t)(struct p2p_packet_ep *ep);
 
-struct p2p_packet_ops {
+struct p2p_packet_ep_ops {
     p2p_packet_handler_t    assert_interrupt;
 };
 
-struct p2p_packet {
-    struct p2p_packet           *peer;
-    const struct p2p_packet_ops *ops;
-    void                        *arg;
-    uint32_t                    length;
-    uint16_t                    interrupt_no;
+struct p2p_packet_ep {
+    struct p2p_packet_ep            *peer;
+    const struct p2p_packet_ep_ops  *ops;
+    void                            *arg;
+    uint32_t                        length;
+    uint16_t                        interrupt_no;
     struct {
-        uint8_t                 empty;
+        uint8_t                     empty;
     } status;
-    uint64_t                    buff[NR_MAX_PACKET_BUFF];
+    uint64_t                        buff[NR_MAX_PACKET_BUFF];
 };
 
-struct p2p_packet_configuration {
-    struct p2p_packet           *peer;
-    const struct p2p_packet_ops *ops;
-    void                        *arg;
-    uint32_t                    length;
-    uint16_t                    interrupt_no;
+struct p2p_packet_ep_configuration {
+    struct p2p_packet_ep            *peer;
+    const struct p2p_packet_ep_ops  *ops;
+    void                            *arg;
+    uint32_t                        length;
+    uint16_t                        interrupt_no;
 };
 
 /* variables */
 
 /* functions */
 
-static inline errno_t p2p_packet_assert_interrupt(struct p2p_packet *pkt)
+static inline errno_t p2p_packet_assert_interrupt(struct p2p_packet_ep *ep)
 {
     errno_t ret;
     p2p_packet_handler_t handler;
 
-    handler = pkt->ops->assert_interrupt;
+    handler = ep->ops->assert_interrupt;
     if (handler != NULL) {
-        ret = (*handler)(pkt);
+        ret = (*handler)(ep);
     } else {
         ret = SUCCESS;      /* no operation */
     }
@@ -77,9 +77,9 @@ static inline errno_t p2p_packet_assert_interrupt(struct p2p_packet *pkt)
     return ret;
 }
 
-errno_t p2p_packet_init(struct p2p_packet *pkt, const struct p2p_packet_configuration *config);
-errno_t p2p_packet_send(struct p2p_packet *pkt, struct vpc *vpc);
-errno_t p2p_packet_receive(struct p2p_packet *pkt, struct vpc *vpc);
+errno_t p2p_packet_init(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config);
+errno_t p2p_packet_send(struct p2p_packet_ep *ep, struct vpc *vpc);
+errno_t p2p_packet_receive(struct p2p_packet_ep *ep, struct vpc *vpc);
 
 #ifdef __cplusplus
 }

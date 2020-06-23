@@ -1,5 +1,5 @@
 /*
- * service/p2p_packet/p2p_packet_receive.c
+ * service/p2p_packet_ep/p2p_packet_ep_receive.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -20,32 +20,32 @@
 
 /* functions */
 
-static errno_t packet_receive(struct p2p_packet *pkt, struct vpc *vpc)
+static errno_t ep_receive(struct p2p_packet_ep *ep, struct vpc *vpc)
 {
     errno_t ret;
     uint32_t i;
     uint32_t n;
 
-    n = pkt->length / sizeof(uint64_t);
+    n = ep->length / sizeof(uint64_t);
     for (i = 0; i < n; ++i) {
-        vpc->regs[VPC_X0 + i] = pkt->buff[i];
+        vpc->regs[VPC_X0 + i] = ep->buff[i];
     }
 
     memory_barrier();
-    pkt->status.empty = 0;
+    ep->status.empty = 0;
     memory_barrier();
 
-    ret = p2p_packet_assert_interrupt(pkt->peer);
+    ret = p2p_packet_assert_interrupt(ep->peer);
 
     return ret;
 }
 
-errno_t p2p_packet_receive(struct p2p_packet *pkt, struct vpc *vpc)
+errno_t p2p_packet_ep_receive(struct p2p_packet_ep *ep, struct vpc *vpc)
 {
     errno_t ret;
 
-    if (pkt->status.empty != 0) {
-        ret = packet_receive(pkt, vpc);
+    if (ep->status.empty != 0) {
+        ret = ep_receive(ep, vpc);
     } else {
         ret = -ENODATA;
     }

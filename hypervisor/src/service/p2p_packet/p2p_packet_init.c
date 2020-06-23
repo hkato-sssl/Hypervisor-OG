@@ -1,5 +1,5 @@
 /*
- * service/p2p_packet/p2p_packet_init.c
+ * service/p2p_packet_ep/p2p_packet_ep_init.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -19,18 +19,18 @@
 
 /* functions */
 
-static errno_t packet_init(struct p2p_packet *pkt, const struct p2p_packet_configuration *config)
+static errno_t ep_init(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
 {
-    memset(pkt, 0, sizeof(*pkt));
-    pkt->peer = config->peer;
-    pkt->ops = config->ops;
-    pkt->arg = config->arg;
-    pkt->interrupt_no = config->interrupt_no;
+    memset(ep, 0, sizeof(*ep));
+    ep->peer = config->peer;
+    ep->ops = config->ops;
+    ep->arg = config->arg;
+    ep->interrupt_no = config->interrupt_no;
 
     return SUCCESS;
 }
 
-static errno_t validate_parameters(const struct p2p_packet_configuration *config)
+static errno_t validate_parameters(const struct p2p_packet_ep_configuration *config)
 {
     errno_t ret;
 
@@ -49,13 +49,13 @@ static errno_t validate_parameters(const struct p2p_packet_configuration *config
     return ret;
 }
 
-errno_t p2p_packet_init(struct p2p_packet *pkt, const struct p2p_packet_configuration *config)
+errno_t p2p_packet_ep_init(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
 {
     errno_t ret;
 
     ret = validate_parameters(config);
     if (ret == SUCCESS) {
-        ret = packet_init(pkt, config);
+        ret = ep_init(ep, config);
     }
 
     return ret;

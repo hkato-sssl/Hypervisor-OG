@@ -1,5 +1,5 @@
 /*
- * service/p2p_packet/p2p_packet_send.c
+ * service/p2p_packet_ep/p2p_packet_ep_send.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -21,34 +21,34 @@
 
 /* functions */
 
-static errno_t packet_send(struct p2p_packet *pkt, struct vpc *vpc)
+static errno_t ep_send(struct p2p_packet_ep *ep, struct vpc *vpc)
 {
     errno_t ret;
     uint32_t i;
     uint32_t n;
     uint64_t *buff;
 
-    buff = pkt->peer->buff;
-    n = pkt->peer->length / sizeof(uint64_t);
+    buff = ep->peer->buff;
+    n = ep->peer->length / sizeof(uint64_t);
     for (i = 0; i < n; ++i) {
         buff[i] = vpc->regs[VPC_X0 + i];
     }
 
     memory_barrier();
-    pkt->peer->status.empty = 1;
+    ep->peer->status.empty = 1;
     memory_barrier();
 
-    ret = p2p_packet_assert_interrupt(pkt->peer);
+    ret = p2p_packet_assert_interrupt(ep->peer);
 
     return ret;
 }
 
-errno_t p2p_packet_send(struct p2p_packet *pkt, struct vpc *vpc)
+errno_t p2p_packet_ep_send(struct p2p_packet_ep *ep, struct vpc *vpc)
 {
     errno_t ret;
 
-    if (pkt->peer->status.empty == 0) {
-        ret = packet_send(pkt, vpc);
+    if (ep->peer->status.empty == 0) {
+        ret = ep_send(ep, vpc);
     } else {
         ret = -ENOBUFS;
     }

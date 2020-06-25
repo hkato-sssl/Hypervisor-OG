@@ -1,5 +1,5 @@
 /*
- * vm/vm_aquire_vpc.c
+ * vm/vm_acquire_vpc.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -21,7 +21,7 @@
 
 /* functions */
 
-struct vpc *aquire_vpc(struct vm *vm, uint16_t proc_no)
+struct vpc *acquire_vpc(struct vm *vm, uint16_t proc_no)
 {
     struct vpc *vpc;
     uint16_t physical_no;
@@ -41,12 +41,12 @@ struct vpc *aquire_vpc(struct vm *vm, uint16_t proc_no)
     return vpc;
 }
 
-struct vpc *vm_aquire_vpc(struct vm *vm, uint16_t proc_no)
+struct vpc *vm_acquire_vpc(struct vm *vm, uint16_t proc_no)
 {
     struct vpc *vpc;
 
     if (proc_no < vm->nr_procs) {
-        vpc = aquire_vpc(vm, proc_no);
+        vpc = acquire_vpc(vm, proc_no);
     } else {
         vpc = NULL;
     }

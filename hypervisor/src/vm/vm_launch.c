@@ -56,7 +56,7 @@ errno_t vm_launch(struct vm *vm, uint16_t vpc_no, const struct vpc_boot_configur
 
     ret = validate_parameters(vm, vpc_no, boot);
     if (ret == SUCCESS) {
-        vpc = vm_aquire_vpc(vm, vpc_no);
+        vpc = vm_acquire_vpc(vm, vpc_no);
         if (vpc != NULL) {
             ret = vpc_launch(vpc, boot);
             if (ret == SUCCESS) {

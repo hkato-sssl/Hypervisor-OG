@@ -41,7 +41,7 @@ errno_t vm_launch_secondary(struct vm *vm, uint16_t vpc_no)
     struct vpc *vpc;
 
     if (vpc_no < vm->nr_procs) {
-        vpc = vm_aquire_vpc(vm, vpc_no);
+        vpc = vm_acquire_vpc(vm, vpc_no);
         if (vpc != NULL) {
             ret = launch_secondary(vm, vpc);
         } else {

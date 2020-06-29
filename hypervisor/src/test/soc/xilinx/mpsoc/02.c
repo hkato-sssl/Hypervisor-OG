@@ -29,9 +29,7 @@
 #define NR_CPUS             1
 #define GUEST_VMID          1
 
-#define NR_DEVICES          64
-#define DUMMY_DEVICE_ADDR   0xfff00000UL
-#define DUMMY_DEVICE_SIZE   4096UL
+#define NR_SPIS             64
 
 #define BOOT_ADDR           0x280000
 #define DTB_ADDR            0
@@ -62,39 +60,65 @@ static struct vpc vpcs[NR_CPUS];
 static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
 static struct vpc_exception_ops ops;
 
-static struct soc_device_interrupt irqs[NR_DEVICES];
-static struct soc_device device_array[NR_DEVICES];
-static struct soc_device *devices[NR_DEVICES + 2];
+static struct soc_device_interrupt irqs[NR_SPIS];
 
+static struct soc_device dummy = {
+    .nr_irqs = NR_SPIS,
+    .irqs = irqs,
+    .nr_regions = 0,
+    .regions = NULL,
+};
+
+static struct soc_device_region ram_region = {
+    .pa = RAM_START_PA,
+    .ipa = RAM_START_IPA,
+    .size = RAM_SIZE,
+    .memory_type = HYP_MMU_MT_NORMAL_WB,
+    .shareability = HYP_MMU_SH_ISH,
+    .access.flag.read = 1,
+    .access.flag.write = 1,
+    .access.flag.exec = 1,
+};
+static struct soc_device_region *ram_regions[] = {
+    &ram_region,
+};
 static struct soc_device ram = {
     .nr_irqs = 0,
     .irqs = NULL,
-    .region.pa = RAM_START_PA,
-    .region.ipa = RAM_START_IPA,
-    .region.size = RAM_SIZE,
-    .region.memory_type = HYP_MMU_MT_NORMAL_WB,
-    .region.shareability = HYP_MMU_SH_ISH,
-    .region.access.flag.read = 1,
-    .region.access.flag.write = 1,
-    .region.access.flag.exec = 1
+    .nr_regions = 1,
+    .regions = ram_regions,
 };
 
+static struct soc_device_region uart0_region = {
+    .pa = UART_PA,
+    .ipa = UART_IPA,
+    .size = UART_SIZE,
+    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
+    .shareability = HYP_MMU_SH_OSH,
+    .access.flag.read = 1,
+    .access.flag.write = 1,
+    .access.flag.exec = 0
+};
+static struct soc_device_region *uart0_regions[] = {
+    &uart0_region,
+};
 static struct soc_device uart0 = {
     .nr_irqs = 0,
     .irqs = NULL,           /* 割り込み番号はdevices[]で設定されるので省略 */
-    .region.pa = UART_PA,
-    .region.ipa = UART_IPA,
-    .region.size = UART_SIZE,
-    .region.memory_type = HYP_MMU_MT_DEVICE_nGnRE,
-    .region.shareability = HYP_MMU_SH_OSH,
-    .region.access.flag.read = 1,
-    .region.access.flag.write = 1,
-    .region.access.flag.exec = 0
+    .nr_regions = 1,
+    .regions = uart0_regions,
+};
+
+static uint16_t nr_devices = 3;
+static struct soc_device *devices[] = {
+    &dummy,
+    &ram,
+    &uart0,
 };
 
 /* functions */
 
-static errno_t emulate_hvc(const struct insn *insn, void *arg)
+static errno_t emulate_hvc(const struct insn *insn)
 {
     printk("DUMP#%u\n", insn->vpc->regs[VPC_X0]);
     gic400_dump_ns_distributor(&sys_gic);
@@ -103,49 +127,13 @@ static errno_t emulate_hvc(const struct insn *insn, void *arg)
     return SUCCESS;
 }
 
-static void init_devices(void)
-{
-    int i;
-    uintptr_t addr;
-    struct soc_device *dev;
-
-    memset(irqs, 0, sizeof(irqs));
-    memset(device_array, 0, sizeof(device_array));
-    memset(devices, 0, sizeof(devices));
-
-    /*
-     * テストの目的は割り込みのエミュレーションなので
-     * I/Oのアドレスとサイズはダミー値を設定している。
-     */
-
-    for (i = 0; i < NR_DEVICES; ++i) {
-        addr = DUMMY_DEVICE_ADDR + DUMMY_DEVICE_SIZE * i;
-        dev = &(device_array[i]);
-        dev->nr_irqs = 1;
-        dev->irqs = irqs + i;
-        dev->region.pa = addr;
-        dev->region.ipa = addr;
-        dev->region.size = DUMMY_DEVICE_SIZE;
-        dev->region.memory_type = HYP_MMU_MT_DEVICE_nGnRE;
-        dev->region.shareability = HYP_MMU_SH_OSH;
-        dev->region.access.flag.read = 1;
-        dev->region.access.flag.write = 1;
-        dev->region.access.flag.exec = 1;
-
-        devices[i] = dev;
-    }
-
-    devices[NR_DEVICES] = &ram;
-    devices[NR_DEVICES + 1] = &uart0;
-}
-
 static void init_irqs(void)
 {
     int i;
 
-    for (i = 0; i < NR_DEVICES; ++i) {
-        device_array[i].irqs[0].virtual = (uint16_t)(32 + i);
-        device_array[i].irqs[0].physical = (uint16_t)(32 + 4 + i);
+    for (i = 0; i < NR_SPIS; ++i) {
+        irqs[i].virtual = (uint16_t)(32 + i);
+        irqs[i].physical = (uint16_t)(32 + 4 + i);
     }
 }
 
@@ -179,7 +167,7 @@ static errno_t init_mpsoc(void)
     config.smmu.device = &sys_smmu;
     config.smmu.nr_streams = 0;
     config.smmu.streams = NULL;
-    config.nr_devices = NR_DEVICES + 2;
+    config.nr_devices = nr_devices;
     config.devices = devices;
 
     ret = xilinx_mpsoc_initialize(&mpsoc, &config);
@@ -190,7 +178,6 @@ static errno_t init_mpsoc(void)
 
 static errno_t init(void)
 {
-    init_devices();
     init_irqs();
 
     return init_mpsoc();

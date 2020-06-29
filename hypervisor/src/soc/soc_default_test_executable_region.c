@@ -22,6 +22,27 @@
 
 /* functions */
 
+static errno_t test_device_regions(struct soc *soc, uintptr_t addr, size_t size, const struct soc_device *dev)
+{
+    errno_t ret;
+    uint32_t i;
+    const struct soc_device_region *region;
+
+    ret = -EPERM;
+    for (i = 0; i < dev->nr_regions; ++i) {
+        region = dev->regions[i];
+        if (region->access.flag.exec != 0) {
+            if ((region->ipa <= addr) &&
+                ((addr + size - 1) <= (region->ipa + region->size - 1))) {
+                ret = SUCCESS;
+                break;
+            }
+        }
+    }
+
+    return ret;
+}
+
 static errno_t test_executable_region(struct soc *soc, uintptr_t addr, size_t size)
 {
     errno_t ret;
@@ -31,12 +52,9 @@ static errno_t test_executable_region(struct soc *soc, uintptr_t addr, size_t si
     ret = -EPERM;
     for (i = 0; i < soc->nr_devices; ++i) {
         dev = soc->devices[i];
-        if (dev->region.access.flag.exec != 0) {
-            if ((dev->region.ipa <= addr) &&
-                ((addr + size) <= (dev->region.ipa + dev->region.size))) {
-                ret = SUCCESS;
-                break;
-            }
+        ret = test_device_regions(soc, addr, size, dev);
+        if (ret == SUCCESS) {
+            break;
         }
     }
 

@@ -24,28 +24,30 @@
 
 /* functions */
 
-static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const struct soc_device *dev)
+static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const struct soc_device_region *region)
 {
     errno_t ret;
     uint8_t sh;
     uint8_t mt;
 
+    memset(attr, 0, sizeof(*attr));
+
     attr->af = 1;
 
-    if (dev->region.access.flag.exec != 0) {
+    if (region->access.flag.exec != 0) {
         attr->xn = 0;
     } else {
         attr->xn = 1;
     }
 
-    if (dev->region.access.flag.read != 0) {
-        if (dev->region.access.flag.write != 0) {
+    if (region->access.flag.read != 0) {
+        if (region->access.flag.write != 0) {
             attr->s2ap = STAGE2_S2AP_RW;
         } else {
             attr->s2ap = STAGE2_S2AP_RO;
         }
     } else {
-        if (dev->region.access.flag.write != 0) {
+        if (region->access.flag.write != 0) {
             attr->s2ap = STAGE2_S2AP_WO;
         } else {
             attr->s2ap = STAGE2_S2AP_NONE;
@@ -55,10 +57,10 @@ static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const s
     attr->smmu.wacfg = SMMU_WACFG_WA;
     attr->smmu.racfg = SMMU_RACFG_RA;
 
-    ret = hyp_mmu_stage2_shareability(&sh, dev->region.shareability);
+    ret = hyp_mmu_stage2_shareability(&sh, region->shareability);
     if (ret == SUCCESS) {
         attr->sh = sh;
-        ret = hyp_mmu_stage2_memory_type(&mt, dev->region.memory_type);
+        ret = hyp_mmu_stage2_memory_type(&mt, region->memory_type);
         if (ret == SUCCESS) {
             attr->memattr = mt;
         }
@@ -67,13 +69,26 @@ static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const s
     return ret;
 }
 
-static errno_t create_trap_condition(struct vm_region_trap *trap, struct soc_device *dev)
+static errno_t map_stage2(struct soc *soc, const struct soc_device_region *region)
+{
+    errno_t ret;
+    struct aarch64_stage2_attr attr;
+
+    ret = create_stage2_attribute(&attr, region);
+    if (ret == SUCCESS) {
+        ret = aarch64_stage2_map(&(soc->vm.stage2), (void *)(region->ipa), (void *)(region->pa), region->size, &attr);
+    }
+
+    return ret;
+}
+
+static errno_t create_trap_condition(struct vm_region_trap *trap, const struct soc_device_region *region)
 {
     errno_t ret;
 
-    if (dev->region.access.flag.exec == 0) {
-        trap->condition.read = (dev->region.access.flag.read == 0) ? true : false;
-        trap->condition.write = (dev->region.access.flag.write == 0) ? true : false;
+    if (region->access.flag.exec == 0) {
+        trap->condition.read = (region->access.flag.read == 0) ? true : false;
+        trap->condition.write = (region->access.flag.write == 0) ? true : false;
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -82,60 +97,77 @@ static errno_t create_trap_condition(struct vm_region_trap *trap, struct soc_dev
     return ret;
 }
 
-static errno_t create_region_trap(struct soc *soc, struct soc_device *dev)
+static errno_t create_region_trap(struct soc *soc, const struct soc_device_region *region)
 {
     errno_t ret;
     struct vm_region_trap *trap;
 
-    trap = dev->emulator->trap;
+    trap = region->emulator->trap;
     memset(trap, 0, sizeof(*trap));
 
-    ret = create_trap_condition(trap, dev);
+    ret = create_trap_condition(trap, region);
     if (ret == SUCCESS) {
-        trap->memory.ipa = dev->region.ipa;
-        trap->memory.pa = dev->region.pa;
-        trap->memory.size = dev->region.size;
-        trap->memory.shareability = dev->region.memory_type;
-        trap->memory.type = dev->region.shareability;
-        trap->emulator.arg = dev->emulator->arg;
-        trap->emulator.handler = dev->emulator->handler;
+        trap->memory.ipa = region->ipa;
+        trap->memory.pa = region->pa;
+        trap->memory.size = region->size;
+        trap->memory.shareability = region->shareability;
+        trap->memory.type = region->memory_type;
+        trap->emulator.arg = region->emulator->arg;
+        trap->emulator.handler = region->emulator->handler;
     }
 
     return ret;
 }
 
-static errno_t register_region_trap(struct soc *soc, struct soc_device *dev)
+static errno_t register_region_trap(struct soc *soc, const struct soc_device_region *region)
 {
     errno_t ret;
 
-    ret = create_region_trap(soc, dev);
+    ret = create_region_trap(soc, region);
     if (ret == SUCCESS) {
-        ret = vm_register_region_trap(&(soc->vm), dev->emulator->trap);
+        ret = vm_register_region_trap(&(soc->vm), region->emulator->trap);
     }
 
     return ret;
 }
 
-static errno_t map_stage2(struct soc *soc)
+static errno_t map_region(struct soc *soc, const struct soc_device_region *region)
+{
+    errno_t ret;
+
+    if (region->emulator != NULL) {
+        ret = register_region_trap(soc, region);
+    } else {
+        ret = map_stage2(soc, region);
+    }
+
+    return ret;
+}
+
+static errno_t map_device(struct soc *soc, const struct soc_device *device)
 {
     errno_t ret;
     uint16_t i;
-    struct aarch64_stage2_attr attr;
-    struct soc_device *dev;
 
-    memset(&attr, 0, sizeof(attr));
-
-    for (i = 0; i < soc->nr_devices; ++i) {
-        dev = soc->devices[i];
-        if (dev->emulator != NULL) {
-            ret = register_region_trap(soc, dev);
-        } else {
-            ret = create_stage2_attribute(&attr, dev);
-            if (ret == SUCCESS) {
-                ret = aarch64_stage2_map(&(soc->vm.stage2), (void *)(dev->region.ipa), (void *)(dev->region.pa), dev->region.size, &attr);
-            }
+    ret = SUCCESS;
+    for (i = 0; i < device->nr_regions; ++i) {
+        ret = map_region(soc, device->regions[i]);
+        if (ret != SUCCESS) {
+            break;
         }
+    }
 
+    return ret;
+}
+
+static errno_t map_devices(struct soc *soc)
+{
+    errno_t ret;
+    uint16_t i;
+
+    ret = SUCCESS;
+    for (i = 0; i < soc->nr_devices; ++i) {
+        ret = map_device(soc, soc->devices[i]);
         if (ret != SUCCESS) {
             break;
         }
@@ -169,7 +201,7 @@ static errno_t initialize(struct soc *soc, const struct soc_configuration *soc_c
 
     ret = vm_initialize(&(soc->vm), &config);
     if (ret == SUCCESS) {
-        ret = map_stage2(soc);
+        ret = map_devices(soc);
     }
 
     return ret;
@@ -179,7 +211,7 @@ static errno_t validate_parameters(struct soc *soc, const struct soc_configurati
 {
     errno_t ret;
 
-    if ((soc != NULL) && (config != NULL) && (config->chip != NULL) && (config->ops != NULL)) {
+    if ((config->chip != NULL) && (config->ops != NULL) && (config->nr_devices > 0) && (config->devices != NULL)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;

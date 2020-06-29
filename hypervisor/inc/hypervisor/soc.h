@@ -31,8 +31,6 @@ extern "C" {
 
 /* defines */
 
-#define SOC_DEVICE_NO_IRQ               0xffff
-
 /* types */
 
 struct soc;
@@ -48,26 +46,29 @@ struct soc_device_emulator {
     vpc_emulator_t          handler;
 };
 
-struct soc_device {
+struct soc_device_region {
     struct soc_device_emulator  *emulator;
 
+    uintptr_t                   ipa;
+    uintptr_t                   pa;
+    size_t                      size;
+    uint8_t                     memory_type;
+    uint8_t                     shareability;
+    struct {
+        struct {
+            uint8_t             read:1;
+            uint8_t             write:1;
+            uint8_t             exec:1;
+        } flag;
+    } access;
+};
+
+struct soc_device {
     uint16_t                    nr_irqs;
     struct soc_device_interrupt *irqs;
 
-    struct {
-        uintptr_t           ipa;
-        uintptr_t           pa;
-        size_t              size;
-        uint8_t             memory_type;
-        uint8_t             shareability;
-        struct {
-            struct {
-                uint8_t     read:1;
-                uint8_t     write:1;
-                uint8_t     exec:1;
-            } flag;
-        } access;
-    } region;
+    uint16_t                    nr_regions;
+    struct soc_device_region    **regions;
 };
 
 struct soc_ops {

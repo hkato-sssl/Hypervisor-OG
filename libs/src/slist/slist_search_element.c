@@ -26,7 +26,7 @@ static void *search_element(const struct slist *list, slist_match_func_t match, 
     struct slist_node *node;
 
     for (node = list->head; node != NULL; node = node->next) {
-        if ((*match)(node, arg)) {
+        if ((*match)(node->element, arg)) {
             break;
         }
     }

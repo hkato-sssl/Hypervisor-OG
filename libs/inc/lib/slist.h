@@ -37,7 +37,7 @@ struct slist {
     struct slist_node   *tail;
 };
 
-typedef bool (*slist_match_func_t)(const struct slist_node *, void *arg);
+typedef bool (*slist_match_func_t)(void *element, void *arg);
 
 /* variables */
 

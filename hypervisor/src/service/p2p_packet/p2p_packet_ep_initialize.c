@@ -1,5 +1,5 @@
 /*
- * service/p2p_packet_ep/p2p_packet_ep_init.c
+ * service/p2p_packet_ep/p2p_packet_ep_initialize.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -19,12 +19,13 @@
 
 /* functions */
 
-static errno_t ep_init(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
+static errno_t ep_initialize(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
 {
     memset(ep, 0, sizeof(*ep));
     ep->peer = config->peer;
     ep->ops = config->ops;
     ep->arg = config->arg;
+    ep->length = config->length;
     ep->interrupt_no = config->interrupt_no;
 
     return SUCCESS;
@@ -34,9 +35,7 @@ static errno_t validate_parameters(const struct p2p_packet_ep_configuration *con
 {
     errno_t ret;
 
-    if (config->peer == NULL) {
-        ret = -EINVAL;
-    } else if (config->ops == NULL) {
+    if (config->ops == NULL) {
         ret = -EINVAL;
     } else if ((config->length == 0) || (config->length > MAX_PACKET_SIZE)) {
         ret = -EINVAL;
@@ -49,13 +48,13 @@ static errno_t validate_parameters(const struct p2p_packet_ep_configuration *con
     return ret;
 }
 
-errno_t p2p_packet_ep_init(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
+errno_t p2p_packet_ep_initialize(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
 {
     errno_t ret;
 
     ret = validate_parameters(config);
     if (ret == SUCCESS) {
-        ret = ep_init(ep, config);
+        ret = ep_initialize(ep, config);
     }
 
     return ret;

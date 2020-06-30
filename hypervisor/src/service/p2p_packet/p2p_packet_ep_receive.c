@@ -28,7 +28,7 @@ static errno_t ep_receive(struct p2p_packet_ep *ep, struct vpc *vpc)
 
     n = ep->length / sizeof(uint64_t);
     for (i = 0; i < n; ++i) {
-        vpc->regs[VPC_X0 + i] = ep->buff[i];
+        vpc->regs[VPC_X1 + i] = ep->buff[i];
     }
 
     memory_barrier();

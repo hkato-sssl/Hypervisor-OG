@@ -77,9 +77,9 @@ static inline errno_t p2p_packet_assert_interrupt(struct p2p_packet_ep *ep)
     return ret;
 }
 
-errno_t p2p_packet_init(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config);
-errno_t p2p_packet_send(struct p2p_packet_ep *ep, struct vpc *vpc);
-errno_t p2p_packet_receive(struct p2p_packet_ep *ep, struct vpc *vpc);
+errno_t p2p_packet_ep_initialize(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config);
+errno_t p2p_packet_ep_send(struct p2p_packet_ep *ep, struct vpc *vpc);
+errno_t p2p_packet_ep_receive(struct p2p_packet_ep *ep, struct vpc *vpc);
 
 #ifdef __cplusplus
 }

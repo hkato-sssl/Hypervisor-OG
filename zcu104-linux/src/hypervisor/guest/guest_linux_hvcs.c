@@ -44,7 +44,7 @@ static errno_t cmd_send(const struct insn *insn, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
-    ret = p2p_packet_ep_send(ep, insn->vpc);
+    ret = p2p_packet_send(ep, insn->vpc);
 
     return ret;
 }
@@ -53,7 +53,7 @@ static errno_t cmd_recv(const struct insn *insn, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
-    ret = p2p_packet_ep_receive(ep, insn->vpc);
+    ret = p2p_packet_receive(ep, insn->vpc);
 
     return ret;
 }
@@ -106,17 +106,18 @@ static errno_t assert_interrupt(struct p2p_packet_ep *ep)
 static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc, uint16_t interrupt_no)
 {
     errno_t ret;
-    int peer;
     struct p2p_packet_ep_configuration config;
+    extern struct p2p_packet_connector p2p_connector;
 
     memset(&config, 0, sizeof(config));
-    peer = (no == 0) ? 1 : 0;
-    config.peer = eps + peer;
     config.ops = &ops;
     config.arg = mpsoc;
     config.length = 128;
     config.interrupt_no = interrupt_no;
-    ret = p2p_packet_ep_initialize(&(eps[no]), &config);
+    ret = p2p_packet_initialize_ep(&(eps[no]), &config);
+    if (ret == SUCCESS) {
+        ret = p2p_packet_connect(&p2p_connector, &(eps[no]));
+    }
 
     return ret;
 }

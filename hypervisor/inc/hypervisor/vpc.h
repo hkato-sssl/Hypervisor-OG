@@ -44,16 +44,17 @@ enum vpc_status {
 };
 
 typedef errno_t (*vpc_emulator_t)(const struct insn *insn, void *arg);
-typedef errno_t (*vpc_exception_emulator_t)(struct vpc *);
+typedef errno_t (*vpc_exception_emulator_t)(struct vpc *vpc);
+typedef errno_t (*vpc_syscall_emulator_t)(const struct insn *insn);
 
 struct vpc_exception_ops {
     vpc_exception_emulator_t        irq;
     vpc_exception_emulator_t        fiq;
 
     struct {
-        vpc_emulator_t              svc;
-        vpc_emulator_t              hvc;
-        vpc_emulator_t              smc;
+        vpc_syscall_emulator_t      svc;
+        vpc_syscall_emulator_t      hvc;
+        vpc_syscall_emulator_t      smc;
         vpc_exception_emulator_t    data_abort;
     } aarch64;
 };

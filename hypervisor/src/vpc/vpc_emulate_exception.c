@@ -38,12 +38,12 @@ static uint8_t esr_el2_ec(struct vpc *vpc)
     return ec;
 }
 
-static errno_t emulate_aarch64_system_call(struct insn *insn, vpc_emulator_t func, void *arg)
+static errno_t call_syscall_emulator(struct insn *insn, vpc_syscall_emulator_t func)
 {
     errno_t ret;
 
     if (func != NULL) {
-        ret = (*func)(insn, arg);
+        ret = (*func)(insn);
     } else {
         ret = -ENOTSUP;
     }
@@ -51,7 +51,7 @@ static errno_t emulate_aarch64_system_call(struct insn *insn, vpc_emulator_t fun
     return ret;
 }
 
-static errno_t call_emulator(struct vpc *vpc, vpc_exception_emulator_t func)
+static errno_t call_exception_emulator(struct vpc *vpc, vpc_exception_emulator_t func)
 {
     errno_t ret;
 
@@ -75,23 +75,23 @@ static errno_t emulate_aarch64_synchronous(struct vpc *vpc)
     case 0x15:  /* 010101 - SVC instruction execution in AArch64 state */
         ret = insn_parse_aarch64_svc(&insn, vpc);
         if (ret == SUCCESS) {
-            ret = emulate_aarch64_system_call(&insn, vpc->exception.ops->aarch64.svc, vpc->vm->emulator.system_call.svc);
+            ret = call_syscall_emulator(&insn, vpc->exception.ops->aarch64.svc);
         }
         break;
     case 0x16:  /* 010110 - HVC instruction execution in AArch64 state */
         ret = insn_parse_aarch64_hvc(&insn, vpc);
         if (ret == SUCCESS) {
-            ret = emulate_aarch64_system_call(&insn, vpc->exception.ops->aarch64.hvc, vpc->vm->emulator.system_call.hvc);
+            ret = call_syscall_emulator(&insn, vpc->exception.ops->aarch64.hvc);
         }
         break;
     case 0x17:  /* 010111 - SMC instruction execution in AArch64 state */
         ret = insn_parse_aarch64_smc(&insn, vpc);
         if (ret == SUCCESS) {
-            ret = emulate_aarch64_system_call(&insn, vpc->exception.ops->aarch64.smc, vpc->vm->emulator.system_call.smc);
+            ret = call_syscall_emulator(&insn, vpc->exception.ops->aarch64.smc);
         }
         break;
     case 0x24:  /*100100 - Data Abort from a lower Exception level */
-        ret = call_emulator(vpc, vpc->exception.ops->aarch64.data_abort);
+        ret = call_exception_emulator(vpc, vpc->exception.ops->aarch64.data_abort);
         break;
     default:
         printk("%s: ESR_EL2.EC=0x%02x\n", __func__, ec);
@@ -104,12 +104,12 @@ static errno_t emulate_aarch64_synchronous(struct vpc *vpc)
 
 static errno_t emulate_irq(struct vpc *vpc)
 {
-    return call_emulator(vpc, vpc->exception.ops->irq);
+    return call_exception_emulator(vpc, vpc->exception.ops->irq);
 }
 
 static errno_t emulate_fiq(struct vpc *vpc)
 {
-    return call_emulator(vpc, vpc->exception.ops->fiq);
+    return call_exception_emulator(vpc, vpc->exception.ops->fiq);
 }
 
 static errno_t emulate_serror(struct vpc *vpc)

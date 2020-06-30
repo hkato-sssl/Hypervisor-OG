@@ -49,6 +49,11 @@ static inline void memory_barrier(void)
 	__asm volatile ("dmb sy" ::: "memory");
 }
 
+static inline void memory_barrier_sync(void)
+{
+	__asm volatile ("dsb sy" ::: "memory");
+}
+
 static inline uint64_t reg_read64(uintptr_t base, uintptr_t reg)
 {
     memory_barrier();

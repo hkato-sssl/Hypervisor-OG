@@ -26,7 +26,9 @@
 #define VPC_X14                 14
 #define VPC_X15                 15
 #define VPC_X16                 16
+#define VPC_IP0                 VPC_X16
 #define VPC_X17                 17
+#define VPC_IP1                 VPC_X17
 #define VPC_X18                 18
 #define VPC_X19                 19
 #define VPC_X20                 20
@@ -39,6 +41,7 @@
 #define VPC_X27                 27
 #define VPC_X28                 28
 #define VPC_X29                 29
+#define VPC_FP                  VPC_X29
 #define VPC_X30                 30
 #define VPC_LR                  VPC_X30
 #define VPC_SP_EL0              31

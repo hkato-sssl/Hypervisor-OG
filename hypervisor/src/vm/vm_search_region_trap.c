@@ -19,12 +19,12 @@
 
 /* functions */
 
-static bool match(const struct slist_node *node, void *arg)
+static bool match(void *element, void *arg)
 {
     bool result;
     struct vm_region_trap *trap;
 
-    trap = node->element;
+    trap = element;
     result = IS_IN_RANGE(trap, (uintptr_t)arg) ? true : false;
 
     return result;

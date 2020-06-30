@@ -107,7 +107,7 @@ static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc, uint16_t interrupt_no
 {
     errno_t ret;
     struct p2p_packet_ep_configuration config;
-    extern struct p2p_packet_connector p2p_connector;
+    extern struct p2p_packet_path p2p_path;
 
     memset(&config, 0, sizeof(config));
     config.ops = &ops;
@@ -116,7 +116,7 @@ static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc, uint16_t interrupt_no
     config.interrupt_no = interrupt_no;
     ret = p2p_packet_initialize_ep(&(eps[no]), &config);
     if (ret == SUCCESS) {
-        ret = p2p_packet_connect(&p2p_connector, &(eps[no]));
+        ret = p2p_packet_connect(&p2p_path, &(eps[no]));
     }
 
     return ret;

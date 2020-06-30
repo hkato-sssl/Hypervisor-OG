@@ -20,20 +20,20 @@
 
 /* functions */
 
-static errno_t connect(struct p2p_packet_connector *connector, struct p2p_packet_ep *ep)
+static errno_t connect(struct p2p_packet_path *path, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
-    if (connector->eps[0] == NULL) {
-        connector->eps[0] = ep;
-        ep->connector = connector;
+    if (path->eps[0] == NULL) {
+        path->eps[0] = ep;
+        ep->path = path;
         ret = SUCCESS;
     } else {
-        if (connector->eps[0]->length == ep->length) {
-            connector->eps[1] = ep;
-            connector->eps[0]->peer = ep;
-            ep->peer = connector->eps[0];
-            ep->connector = connector;
+        if (path->eps[0]->length == ep->length) {
+            path->eps[1] = ep;
+            path->eps[0]->peer = ep;
+            ep->peer = path->eps[0];
+            ep->path = path;
             ret = SUCCESS;
         } else {
             ret = -EPERM;
@@ -43,13 +43,13 @@ static errno_t connect(struct p2p_packet_connector *connector, struct p2p_packet
     return ret;
 }
 
-static errno_t validate_parameters(struct p2p_packet_connector *connector, struct p2p_packet_ep *ep)
+static errno_t validate_parameters(struct p2p_packet_path *path, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
-    if ((connector->eps[0] != NULL) && (connector->eps[1] != NULL)) {
+    if ((path->eps[0] != NULL) && (path->eps[1] != NULL)) {
         ret = -EBUSY;
-    } else if (ep->connector != NULL) {
+    } else if (ep->path != NULL) {
         ret = -EBUSY;
     } else {
         ret = SUCCESS;
@@ -58,18 +58,18 @@ static errno_t validate_parameters(struct p2p_packet_connector *connector, struc
     return ret;
 }
 
-errno_t p2p_packet_connect(struct p2p_packet_connector *connector, struct p2p_packet_ep *ep)
+errno_t p2p_packet_connect(struct p2p_packet_path *path, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
-    spin_lock(&(connector->lock));
+    spin_lock(&(path->lock));
 
-    ret = validate_parameters(connector, ep);
+    ret = validate_parameters(path, ep);
     if (ret == SUCCESS) {
-        ret = connect(connector, ep);
+        ret = connect(path, ep);
     }
 
-    spin_unlock(&(connector->lock));
+    spin_unlock(&(path->lock));
 
     return ret;
 }

@@ -25,14 +25,14 @@ extern "C" {
 
 /* defines */
 
-#define MAX_PACKET_SIZE     128     /* byte */
-#define NR_MAX_PACKET_BUFF  (MAX_PACKET_SIZE / sizeof(uint64_t))
+#define MAX_PACKET_SIZE         128     /* byte */
+#define NR_PACKET_BUFFS         (MAX_PACKET_SIZE / sizeof(uint64_t))
 
 /* types */
 
 struct vpc;
 struct p2p_packet_ep;
-struct p2p_packet_connector;
+struct p2p_packet_path;
 
 typedef errno_t (*p2p_packet_handler_t)(struct p2p_packet_ep *ep);
 
@@ -41,7 +41,7 @@ struct p2p_packet_ep_ops {
 };
 
 struct p2p_packet_ep {
-    struct p2p_packet_connector     *connector;
+    struct p2p_packet_path          *path;
     struct p2p_packet_ep            *peer;
     const struct p2p_packet_ep_ops  *ops;
     void                            *arg;
@@ -50,7 +50,7 @@ struct p2p_packet_ep {
     struct {
         uint8_t                     empty;
     } status;
-    uint64_t                        buff[NR_MAX_PACKET_BUFF];
+    uint64_t                        buff[NR_PACKET_BUFFS];
 };
 
 struct p2p_packet_ep_configuration {
@@ -60,7 +60,7 @@ struct p2p_packet_ep_configuration {
     uint16_t                        interrupt_no;
 };
 
-struct p2p_packet_connector {
+struct p2p_packet_path {
     spin_lock_t                     lock;
     struct p2p_packet_ep            *eps[2];
 };
@@ -70,11 +70,11 @@ struct p2p_packet_connector {
 /* functions */
 
 errno_t p2p_packet_initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config);
-errno_t p2p_packet_initialize_connector(struct p2p_packet_connector *connector);
+errno_t p2p_packet_initialize_path(struct p2p_packet_path *path);
 errno_t p2p_packet_send(struct p2p_packet_ep *ep, struct vpc *vpc);
 errno_t p2p_packet_receive(struct p2p_packet_ep *ep, struct vpc *vpc);
 errno_t p2p_packet_assert_interrupt(struct p2p_packet_ep *ep);
-errno_t p2p_packet_connect(struct p2p_packet_connector *connector, struct p2p_packet_ep *ep);
+errno_t p2p_packet_connect(struct p2p_packet_path *path, struct p2p_packet_ep *ep);
 
 #ifdef __cplusplus
 }

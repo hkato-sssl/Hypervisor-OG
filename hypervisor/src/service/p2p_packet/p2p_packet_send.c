@@ -1,5 +1,5 @@
 /*
- * service/p2p_packet_ep/p2p_packet_ep_send.c
+ * service/p2p_packet_ep/p2p_packet_send.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
+#include "lib/system/spin_lock.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vpc_register.h"
 #include "hypervisor/service/p2p_packet.h"
@@ -21,7 +22,7 @@
 
 /* functions */
 
-static errno_t ep_send(struct p2p_packet_ep *ep, struct vpc *vpc)
+static errno_t send(struct p2p_packet_ep *ep, struct vpc *vpc)
 {
     errno_t ret;
     uint32_t i;
@@ -43,14 +44,20 @@ static errno_t ep_send(struct p2p_packet_ep *ep, struct vpc *vpc)
     return ret;
 }
 
-errno_t p2p_packet_ep_send(struct p2p_packet_ep *ep, struct vpc *vpc)
+errno_t p2p_packet_send(struct p2p_packet_ep *ep, struct vpc *vpc)
 {
     errno_t ret;
 
-    if (ep->peer->status.empty == 0) {
-        ret = ep_send(ep, vpc);
+    if (ep->connector != NULL) {
+        spin_lock(&(ep->connector->lock));
+        if (ep->peer->status.empty == 0) {
+            ret = send(ep, vpc);
+        } else {
+            ret = -ENOBUFS;
+        }
+        spin_unlock(&(ep->connector->lock));
     } else {
-        ret = -ENOBUFS;
+        ret = -EPERM;
     }
 
     return ret;

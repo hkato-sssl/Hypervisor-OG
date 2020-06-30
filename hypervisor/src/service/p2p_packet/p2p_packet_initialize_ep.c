@@ -1,5 +1,5 @@
 /*
- * service/p2p_packet_ep/p2p_packet_ep_initialize.c
+ * service/p2p_packet_ep/p2p_packet_initialize_ep.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -19,10 +19,9 @@
 
 /* functions */
 
-static errno_t ep_initialize(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
+static errno_t initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
 {
     memset(ep, 0, sizeof(*ep));
-    ep->peer = config->peer;
     ep->ops = config->ops;
     ep->arg = config->arg;
     ep->length = config->length;
@@ -48,13 +47,13 @@ static errno_t validate_parameters(const struct p2p_packet_ep_configuration *con
     return ret;
 }
 
-errno_t p2p_packet_ep_initialize(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
+errno_t p2p_packet_initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
 {
     errno_t ret;
 
     ret = validate_parameters(config);
     if (ret == SUCCESS) {
-        ret = ep_initialize(ep, config);
+        ret = initialize_ep(ep, config);
     }
 
     return ret;

@@ -21,6 +21,7 @@ extern "C" {
 
 #include <stdint.h>
 #include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 
 /* defines */
 
@@ -31,6 +32,7 @@ extern "C" {
 
 struct vpc;
 struct p2p_packet_ep;
+struct p2p_packet_connector;
 
 typedef errno_t (*p2p_packet_handler_t)(struct p2p_packet_ep *ep);
 
@@ -39,6 +41,7 @@ struct p2p_packet_ep_ops {
 };
 
 struct p2p_packet_ep {
+    struct p2p_packet_connector     *connector;
     struct p2p_packet_ep            *peer;
     const struct p2p_packet_ep_ops  *ops;
     void                            *arg;
@@ -51,35 +54,28 @@ struct p2p_packet_ep {
 };
 
 struct p2p_packet_ep_configuration {
-    struct p2p_packet_ep            *peer;
     const struct p2p_packet_ep_ops  *ops;
     void                            *arg;
     uint32_t                        length;
     uint16_t                        interrupt_no;
 };
 
+struct p2p_packet_connector {
+    spin_lock_t                     lock;
+    struct p2p_packet_ep            *eps[2];
+};
+
 /* variables */
 
 /* functions */
 
-static inline errno_t p2p_packet_assert_interrupt(struct p2p_packet_ep *ep)
-{
-    errno_t ret;
-    p2p_packet_handler_t handler;
-
-    handler = ep->ops->assert_interrupt;
-    if (handler != NULL) {
-        ret = (*handler)(ep);
-    } else {
-        ret = SUCCESS;      /* no operation */
-    }
-
-    return ret;
-}
-
-errno_t p2p_packet_ep_initialize(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config);
-errno_t p2p_packet_ep_send(struct p2p_packet_ep *ep, struct vpc *vpc);
-errno_t p2p_packet_ep_receive(struct p2p_packet_ep *ep, struct vpc *vpc);
+errno_t p2p_packet_initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config);
+errno_t p2p_packet_initialize_connector(struct p2p_packet_connector *connector);
+errno_t p2p_packet_initialize_trunk(struct p2p_packet_trunk *trunk, const struct p2p_packet_trunk_configuration *config);
+errno_t p2p_packet_send(struct p2p_packet_ep *ep, struct vpc *vpc);
+errno_t p2p_packet_receive(struct p2p_packet_ep *ep, struct vpc *vpc);
+errno_t p2p_packet_assert_interrupt(struct p2p_packet_ep *ep);
+errno_t p2p_packet_connect(struct p2p_packet_connector *connector, struct p2p_packet_ep *ep);
 
 #ifdef __cplusplus
 }

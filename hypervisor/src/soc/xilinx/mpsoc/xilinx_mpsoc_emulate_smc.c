@@ -46,7 +46,7 @@ static errno_t emulate_smc(const struct insn *insn)
     return ret;
 }
 
-errno_t xilinx_mpsoc_emulate_smc(const struct insn *insn, void *arg)
+errno_t xilinx_mpsoc_emulate_smc(const struct insn *insn)
 {
     errno_t ret;
 

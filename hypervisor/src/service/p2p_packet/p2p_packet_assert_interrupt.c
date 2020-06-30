@@ -4,6 +4,7 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include <stddef.h>
 #include <stdint.h>
 #include "lib/system/errno.h"
 #include "hypervisor/service/p2p_packet.h"

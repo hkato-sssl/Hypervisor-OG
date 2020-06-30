@@ -56,7 +56,7 @@ static struct vgic400_interrupt_ops interrupt_ops = {
 
 /* functions */
 
-static errno_t emulate_hvc(const struct insn *insn, void *arg)
+static errno_t emulate_hvc(const struct insn *insn)
 {
     gic400_dump_ns_cpuif(&sys_gic);
     gic400_dump_ns_distributor(&sys_gic);

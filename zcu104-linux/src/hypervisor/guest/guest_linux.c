@@ -27,6 +27,7 @@
 /* prototypes */
 
 static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar);
+errno_t guest_linux_initialize_hvcs(struct xilinx_mpsoc *mpsoc);
 
 /* variables */
 
@@ -56,7 +57,7 @@ static struct vgic400_interrupt_ops interrupt_ops = {
 
 /* functions */
 
-static errno_t emulate_hvc(const struct insn *insn, void *arg)
+static errno_t emulate_hvc(const struct insn *insn)
 {
     gic400_dump_ns_cpuif(&sys_gic);
     gic400_dump_ns_distributor(&sys_gic);
@@ -96,7 +97,7 @@ static void *init_mpsoc(void)
     }
 
     ops = *xilinx_mpsoc_default_vpc_exception_ops();
-    ops.aarch64.hvc = emulate_hvc;
+    //ops.aarch64.hvc = emulate_hvc;
     config.vpc.ops = &ops;
 
     config.vmid = GUEST_VMID;
@@ -120,6 +121,10 @@ static void *init_mpsoc(void)
     config.devices = guest_linux_devices;
 
     ret = xilinx_mpsoc_initialize(&mpsoc, &config);
+
+    if (ret == SUCCESS) {
+        ret = guest_linux_initialize_hvcs(&mpsoc);
+    }
 
     return (ret == SUCCESS) ? &mpsoc : NULL;
 }

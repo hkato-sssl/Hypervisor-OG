@@ -75,13 +75,6 @@ struct vm {
         struct {
             struct slist            memory_region;
         } trap;
-
-        /* arguments for vpc_emulator_t */
-        struct {
-            void                    *svc;
-            void                    *hvc;
-            void                    *smc;
-        } system_call;
     } emulator;
 };
 
@@ -89,13 +82,6 @@ struct vm_configuration {
     struct soc                      *soc;
     uint16_t                        nr_procs;
     const struct aarch64_stage2_configuration   *stage2;
-    struct {
-        struct {
-            void                    *svc;
-            void                    *hvc;
-            void                    *smc;
-        } system_call;
-    } emulator;
 };
 
 /* variables */
@@ -108,7 +94,7 @@ errno_t vm_launch(struct vm *vm, uint16_t vpc_no, const struct vpc_boot_configur
 errno_t vm_launch_secondary(struct vm *vm, uint16_t vpc_no);
 errno_t vm_wakeup(struct vm *vm, uint16_t vpc_no, const struct vpc_boot_configuration *boot);
 errno_t vm_init_local_context(struct vm *vm);
-struct vpc *vm_aquire_vpc(struct vm *vm, uint16_t proc_no);
+struct vpc *vm_acquire_vpc(struct vm *vm, uint16_t proc_no);
 uint16_t vm_virtual_proc_no(struct vm *vm, uint16_t physical_no);
 uint16_t vm_physical_proc_no(struct vm *vm, uint16_t virtual_no);
 

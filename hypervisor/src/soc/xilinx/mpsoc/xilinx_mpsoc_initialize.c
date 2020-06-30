@@ -13,6 +13,7 @@
 #include "driver/aarch64/stage2.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "hypervisor/parameter.h"
+#include "hypervisor/service/hvcs.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/vm.h"
@@ -29,6 +30,26 @@
 extern const struct soc_ops xilinx_mpsoc_ops;
 
 /* functions */
+
+static errno_t init_hvc_service(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+{
+    errno_t ret;
+    uint32_t i;
+    struct hvcs_service **services;
+
+    slist_init(&(chip->hvc_service_list));
+
+    ret = SUCCESS;
+    services = chip_config->hvc.services;
+    for (i = 0; i < chip_config->hvc.nr_services; ++i) {
+        ret = slist_append(&(chip->hvc_service_list), &(services[i]->node));
+        if (ret != SUCCESS) {
+            break;
+        }
+    }
+
+    return ret;
+}
 
 static errno_t create_smmu_streams(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
 {
@@ -274,6 +295,10 @@ static errno_t initialize(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_c
 
     if (ret == SUCCESS) {
         ret = map_smmu_space(chip, config);
+    }
+
+    if (ret == SUCCESS) {
+        ret = init_hvc_service(chip, config);
     }
 
     return ret;

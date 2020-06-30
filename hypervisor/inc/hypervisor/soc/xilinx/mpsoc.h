@@ -30,7 +30,10 @@ extern "C" {
 
 /* defines */
 
-#define NR_XILINX_MPSOC_CPUS    4
+#define NR_XILINX_MPSOC_CPUS            4
+#define XILINX_MPSOC_HVC_SERVICE_IMM    0x10
+
+#define NR_P128_CONNECTIONS             1
 
 #define DESC_XILINX_MPSOC_STAGE2_LEVEL1_TABLE(name)   uint8_t name[4096 * 2] __attribute__ ((aligned(4096 * 2)))
 
@@ -40,6 +43,13 @@ extern "C" {
 
 struct gic400;
 struct smmu500;
+struct hvcs_service;
+
+struct xilinx_mpsoc_hvc_service {
+    struct slist                node;
+    uint32_t                    id;
+    vpc_exception_emulator_t    handler;
+};
 
 struct xilinx_mpsoc {
     struct soc              soc;
@@ -50,6 +60,8 @@ struct xilinx_mpsoc {
         uint8_t             context_bank;
         uint64_t            stream_ids[NR_SMMU_STREAM_IDS];
     } smmu;
+
+    struct slist            hvc_service_list;
 };
 
 struct xilinx_mpsoc_configuration {
@@ -88,6 +100,11 @@ struct xilinx_mpsoc_configuration {
 
     uint32_t            nr_devices;
     struct soc_device   **devices;
+
+    struct {
+        uint32_t                nr_services;
+        struct hvcs_service     **services;
+    } hvc;
 };
 
 /* variables */

@@ -1,5 +1,5 @@
 /*
- * service/hvc/hvc_match_service.c
+ * hvc/hvc_match_service.c
  *
  * (C) 2020 Hidekazu Kato
  */

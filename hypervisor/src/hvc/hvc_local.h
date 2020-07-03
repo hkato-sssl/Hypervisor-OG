@@ -1,5 +1,5 @@
 /*
- * service/hvc/hvc_local.h
+ * hvc/hvc_local.h
  *
  * (C) 2020 Hidekazu Kato
  */

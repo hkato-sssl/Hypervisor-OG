@@ -1,5 +1,5 @@
 /*
- * service/hvc/hvc_service_append_slist.c
+ * hvc/hvc_service_append_slist.c
  *
  * (C) 2020 Hidekazu Kato
  */

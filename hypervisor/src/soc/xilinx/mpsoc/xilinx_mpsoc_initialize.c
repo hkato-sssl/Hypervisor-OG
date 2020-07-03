@@ -13,11 +13,11 @@
 #include "driver/aarch64/stage2.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "hypervisor/parameter.h"
-#include "hypervisor/service/hvcs.h"
-#include "hypervisor/soc/xilinx/mpsoc.h"
+#include "hypervisor/hvc.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
+#include "hypervisor/soc/xilinx/mpsoc.h"
 
 /* defines */
 
@@ -35,7 +35,7 @@ static errno_t init_hvc_service(struct xilinx_mpsoc *chip, const struct xilinx_m
 {
     errno_t ret;
     uint32_t i;
-    struct hvcs_service **services;
+    struct hvc_service **services;
 
     slist_init(&(chip->hvc_service_list));
 

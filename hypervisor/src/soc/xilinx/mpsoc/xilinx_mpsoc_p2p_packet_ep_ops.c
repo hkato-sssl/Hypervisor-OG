@@ -22,7 +22,8 @@ static errno_t assert_interrupt(struct p2p_packet_ep *ep);
 /* variables */
 
 const struct p2p_packet_ep_ops xilinx_mpsoc_p2p_packet_ep_ops = {
-    .assert_interrupt = assert_interrupt,
+    .arrive = assert_interrupt,
+    .empty = assert_interrupt,
 };
 
 /* functions */

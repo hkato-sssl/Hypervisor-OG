@@ -8,7 +8,7 @@
 #include "lib/system/errno.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
-#include "hypervisor/service/hvcs.h"
+#include "hypervisor/hvc.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 #include "mpsoc_local.h"
 
@@ -28,7 +28,7 @@ errno_t xilinx_mpsoc_emulate_hvc(const struct insn *insn)
     struct xilinx_mpsoc *mpsoc;
 
     mpsoc = insn->vpc->vm->soc->chip;
-    ret = hvcs_server(insn, &(mpsoc->hvc_service_list));
+    ret = hvc_server(insn, &(mpsoc->hvc_service_list));
 
     return ret;
 }

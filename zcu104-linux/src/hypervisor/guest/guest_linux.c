@@ -27,7 +27,7 @@
 /* prototypes */
 
 static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar);
-errno_t guest_linux_initialize_hvcs(struct xilinx_mpsoc *mpsoc);
+errno_t guest_linux_initialize_hvc(struct xilinx_mpsoc *mpsoc);
 
 /* variables */
 
@@ -123,7 +123,7 @@ static void *init_mpsoc(void)
     ret = xilinx_mpsoc_initialize(&mpsoc, &config);
 
     if (ret == SUCCESS) {
-        ret = guest_linux_initialize_hvcs(&mpsoc);
+        ret = guest_linux_initialize_hvc(&mpsoc);
     }
 
     return (ret == SUCCESS) ? &mpsoc : NULL;

@@ -1,5 +1,5 @@
 /*
- * hypervisor/guest/guest_linux_hvcs.c
+ * hypervisor/guest/guest_linux_hvc.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -10,9 +10,9 @@
 #include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
 #include "hypervisor/vpc.h"
+#include "hypervisor/hvc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/service/p2p_packet.h"
-#include "hypervisor/service/hvcs.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 
 /* defines */
@@ -32,10 +32,11 @@ static errno_t assert_interrupt(struct p2p_packet_ep *ep);
 /* variables */
 
 static struct p2p_packet_ep eps[2];
-static struct hvcs_service service;
+static struct hvc_service service;
 
 static struct p2p_packet_ep_ops ops = {
-    .assert_interrupt = assert_interrupt,
+    .arrive = assert_interrupt,
+    .empty = assert_interrupt,
 };
 
 /* functions */
@@ -58,7 +59,7 @@ static errno_t cmd_recv(const struct insn *insn, struct p2p_packet_ep *ep)
     return ret;
 }
 
-static errno_t server(const struct insn *insn, void *arg)
+static errno_t server(const struct insn *insn, const struct hvc_service *service)
 {
     errno_t ret;
     struct p2p_packet_ep *ep;
@@ -134,23 +135,23 @@ static errno_t init_p2p_eps(struct xilinx_mpsoc *mpsoc)
     return ret;
 }
 
-errno_t guest_linux_initialize_hvcs(struct xilinx_mpsoc *mpsoc)
+errno_t guest_linux_initialize_hvc(struct xilinx_mpsoc *mpsoc)
 {
     errno_t ret;
-    struct hvcs_service_configuration config;
+    struct hvc_service_configuration config;
 
     ret = init_p2p_eps(mpsoc);
 
     if (ret == SUCCESS) {
         memset(&config, 0, sizeof(config));
-        config.id = HVCS_SERVICE_ID(1, 'P', '1', '2', '8');
+        config.id = HVC_SERVICE_ID(1, 'P', '1', '2', '8');
         config.server = server;
         config.arg = mpsoc;
-        ret = hvcs_initialize_service(&service, &config);
+        ret = hvc_service_initialize(&service, &config);
     }
 
     if (ret == SUCCESS) {
-        ret = hvcs_register_service(&(mpsoc->hvc_service_list), &service);
+        ret = hvc_service_append_slist(&(mpsoc->hvc_service_list), &service);
     }
 
     return ret;

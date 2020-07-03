@@ -10,6 +10,7 @@
 #include "hypervisor/vpc.h"
 #include "hypervisor/vpc_register.h"
 #include "hypervisor/service/p2p_packet.h"
+#include "p2p_packet_local.h"
 
 /* defines */
 
@@ -38,7 +39,7 @@ static errno_t send(struct p2p_packet_ep *ep, struct vpc *vpc)
     ep->peer->status.empty = 1;
     memory_barrier_sync();
 
-    ret = p2p_packet_assert_interrupt(ep->peer);
+    ret = p2p_packet_call_arrive_handler(ep->peer);
 
     return ret;
 }

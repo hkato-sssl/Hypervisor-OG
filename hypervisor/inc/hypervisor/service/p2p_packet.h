@@ -37,7 +37,8 @@ struct p2p_packet_path;
 typedef errno_t (*p2p_packet_handler_t)(struct p2p_packet_ep *ep);
 
 struct p2p_packet_ep_ops {
-    p2p_packet_handler_t    assert_interrupt;
+    p2p_packet_handler_t    arrive;     /* A packet has arrived. */
+    p2p_packet_handler_t    empty;      /* The peer has received a packet. */
 };
 
 struct p2p_packet_ep {
@@ -73,7 +74,6 @@ errno_t p2p_packet_initialize_ep(struct p2p_packet_ep *ep, const struct p2p_pack
 errno_t p2p_packet_initialize_path(struct p2p_packet_path *path);
 errno_t p2p_packet_send(struct p2p_packet_ep *ep, struct vpc *vpc);
 errno_t p2p_packet_receive(struct p2p_packet_ep *ep, struct vpc *vpc);
-errno_t p2p_packet_assert_interrupt(struct p2p_packet_ep *ep);
 errno_t p2p_packet_connect(struct p2p_packet_path *path, struct p2p_packet_ep *ep);
 
 #ifdef __cplusplus

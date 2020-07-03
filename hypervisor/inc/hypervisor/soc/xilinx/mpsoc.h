@@ -43,7 +43,7 @@ extern "C" {
 
 struct gic400;
 struct smmu500;
-struct hvcs_service;
+struct hvc_service;
 
 struct xilinx_mpsoc_hvc_service {
     struct slist                node;
@@ -103,7 +103,7 @@ struct xilinx_mpsoc_configuration {
 
     struct {
         uint32_t                nr_services;
-        struct hvcs_service     **services;
+        struct hvc_service      **services;
     } hvc;
 };
 

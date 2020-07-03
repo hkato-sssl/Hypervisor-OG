@@ -1,5 +1,5 @@
 /*
- * service/hvcs/hvcs_require.c
+ * service/hvc/hvc_match_service.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -8,8 +8,8 @@
 #include <stdbool.h>
 #include "lib/slist.h"
 #include "lib/system/errno.h"
-#include "hypervisor/service/hvcs.h"
-#include "hvcs_local.h"
+#include "hypervisor/hvc.h"
+#include "hvc_local.h"
 
 /* defines */
 
@@ -21,10 +21,10 @@
 
 /* functions */
 
-bool hvcs_match_service(void *element, void *arg)
+bool hvc_match_service(void *element, void *arg)
 {
     bool result;
-    struct hvcs_service *service;
+    struct hvc_service *service;
 
     service = element;
     result = (service->id == (uint64_t)arg) ? true : false;

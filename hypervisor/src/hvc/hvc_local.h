@@ -1,11 +1,11 @@
 /*
- * service/hvcs/hvcs_local.h
+ * service/hvc/hvc_local.h
  *
  * (C) 2020 Hidekazu Kato
  */
 
-#ifndef SERVICE_HVCS_HVCS_LOCAL_H
-#define SERVICE_HVCS_HVCS_LOCAL_H
+#ifndef SERVICE_HVC_HVC_LOCAL_H
+#define SERVICE_HVC_HVC_LOCAL_H
 
 /* includes */
 
@@ -31,7 +31,7 @@ extern "C" {
 
 /* functions */
 
-bool hvcs_match_service(void *element, void *arg);
+bool hvc_match_service(void *element, void *arg);
 
 #ifdef __cplusplus
 }
@@ -39,5 +39,5 @@ bool hvcs_match_service(void *element, void *arg);
 
 #endif /* ASSEMBLY */
 
-#endif /* SERVICE_HVCS_HVCS_LOCAL_H */
+#endif /* SERVICE_HVC_HVC_LOCAL_H */
 

@@ -1,5 +1,5 @@
 /*
- * service/hvcs/hvcs_initialize_service.c
+ * service/hvc/hvc_service_initialize.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "lib/system/errno.h"
-#include "hypervisor/service/hvcs.h"
+#include "hypervisor/hvc.h"
 
 /* defines */
 
@@ -19,7 +19,7 @@
 
 /* functions */
 
-errno_t hvcs_initialize_service(struct hvcs_service *service, const struct hvcs_service_configuration *config)
+errno_t hvc_service_initialize(struct hvc_service *service, const struct hvc_service_configuration *config)
 {
     memset(service, 0, sizeof(*service));
 

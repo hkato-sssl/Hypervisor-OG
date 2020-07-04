@@ -1,5 +1,5 @@
 /*
- * hvc/hvc_set_errno.c
+ * hvc/hvc_set_result.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -19,9 +19,9 @@
 
 /* functions */
 
-errno_t hvc_set_errno(struct vpc *vpc, uint64_t errno)
+errno_t hvc_set_result(struct vpc *vpc, uint64_t result)
 {
-    vpc->regs[VPC_X0] = errno;
+    vpc->regs[VPC_X0] = result;
 
     return SUCCESS;
 }

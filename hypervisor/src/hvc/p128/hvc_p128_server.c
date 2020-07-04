@@ -1,0 +1,137 @@
+/*
+ * hvc/p128/hvc_p128_server.c
+ *
+ * (C) 2020 Hidekazu Kato
+ */
+
+#include <stdint.h>
+#include "lib/bit.h"
+#include "lib/system/errno.h"
+#include "hypervisor/vpc.h"
+#include "hypervisor/emulator/insn.h"
+#include "hypervisor/service/p2p_packet.h"
+#include "hypervisor/hvc.h"
+#include "hypervisor/hvc/p128.h"
+
+/* defines */
+
+#define P128_CMD(c0, c1)        (((uint16_t)(c0) << 8) | (uint16_t)(c1))
+#define P128_CMD_WR             P128_CMD('W', 'R')
+#define P128_CMD_RD             P128_CMD('R', 'D')
+#define P128_CMD_GI             P128_CMD('G', 'I')
+#define P128_CMD_GS             P128_CMD('G', 'S')
+
+#define P128_STATUS_DATA_READY  BIT(0)
+#define P128_STATUS_TX_EMPTY    BIT(1)
+
+/* types */
+
+/* prototypes */
+
+/* variables */
+
+/* functions */
+
+static errno_t cmd_write(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+{
+    errno_t ret;
+
+    ret = p2p_packet_send(vpc, ep);
+    ret = hvc_set_result(vpc, HVC_ERRNO(ret));
+    
+    return ret;
+}
+
+static errno_t cmd_read(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+{
+    errno_t ret;
+
+    ret = p2p_packet_receive(vpc, ep);
+
+    ret = hvc_set_result(vpc, HVC_ERRNO(ret));
+
+    return ret;
+}
+
+static errno_t cmd_get_interrupt_no(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+{
+    errno_t ret;
+
+    vpc->regs[VPC_X1] = ep->interrupt_no;
+
+    ret = hvc_set_result(vpc, HVC_ERRNO(SUCCESS));
+
+    return ret;
+}
+
+static errno_t cmd_get_status(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+{
+    errno_t ret;
+    uint64_t d;
+
+    if (ep->status.empty == 0) {
+        d = P128_STATUS_DATA_READY;
+    } else {
+        d = 0;
+    }
+
+    if (ep->peer->status.empty != 0) {
+        d |= P128_STATUS_TX_EMPTY;
+    }
+
+    vpc->regs[VPC_X1] = d;
+
+    ret = hvc_set_result(vpc, HVC_ERRNO(SUCCESS));
+
+    return ret;
+}
+
+static errno_t p128_server(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep, uint16_t command)
+{
+    errno_t ret;
+
+    switch (command) {
+    case P128_CMD_WR:
+        ret = cmd_write(vpc, service, ep);
+        break;
+    case P128_CMD_RD:
+        ret = cmd_read(vpc, service, ep);
+        break;
+    case P128_CMD_GI:
+        ret = cmd_get_interrupt_no(vpc, service, ep);
+        break;
+    case P128_CMD_GS:
+        ret = cmd_get_status(vpc, service, ep);
+        break;
+    default:
+        ret = hvc_set_result(vpc, HVC_ERRNO(-ENOTSUP));
+        break;
+    }
+
+    return ret;
+}
+
+errno_t hvc_p128_server(const struct insn *insn, const struct hvc_service *service)
+{
+    errno_t ret;
+    uint64_t ip0;
+    uint16_t command;
+    uint16_t ifno;
+    struct hvc_p128_service *p128;
+    struct p2p_packet_ep *ep;
+
+    p128 = service->arg;
+    ip0 = insn->vpc->regs[VPC_IP0];
+    command = (uint16_t)ip0;
+    ifno = (uint16_t)(ip0 >> 16);
+
+    if (ifno < p128->nr_eps) {
+        ep = p128->eps[ifno];
+        ret = p128_server(insn->vpc, p128, ep, command);
+    } else {
+        ret = hvc_set_result(insn->vpc, HVC_ERRNO(-EINVAL));
+    }
+
+    return ret;
+}
+

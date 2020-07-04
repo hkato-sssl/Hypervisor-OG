@@ -9,19 +9,17 @@
 #include "lib/slist.h"
 #include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/hvc.h"
-#include "hypervisor/emulator/insn.h"
 #include "hypervisor/service/p2p_packet.h"
+#include "hypervisor/hvc/p128.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 
 /* defines */
 
+#define DEV_NAME        "P128"
+#define HVC_IMM         1
+
 #define INTR_EP0        130
 #define INTR_EP1        131
-
-#define CMD_SEND        (((uint32_t)'S' << 8) | (uint32_t)'D')
-#define CMD_RECV        (((uint32_t)'R' << 8) | (uint32_t)'V')
 
 /* types */
 
@@ -31,8 +29,14 @@ static errno_t assert_interrupt(struct p2p_packet_ep *ep);
 
 /* variables */
 
+extern struct p2p_packet_path p2p_path;
+
 static struct p2p_packet_ep eps[2];
-static struct hvc_service service;
+static struct p2p_packet_ep *p128_eps[2] = {
+    &(eps[0]),
+    &(eps[1]),
+};
+static struct hvc_p128_service p128;
 
 static struct p2p_packet_ep_ops ops = {
     .arrive = assert_interrupt,
@@ -40,58 +44,6 @@ static struct p2p_packet_ep_ops ops = {
 };
 
 /* functions */
-
-static errno_t cmd_send(const struct insn *insn, struct p2p_packet_ep *ep)
-{
-    errno_t ret;
-
-    ret = p2p_packet_send(ep, insn->vpc);
-
-    return ret;
-}
-
-static errno_t cmd_recv(const struct insn *insn, struct p2p_packet_ep *ep)
-{
-    errno_t ret;
-
-    ret = p2p_packet_receive(ep, insn->vpc);
-
-    return ret;
-}
-
-static errno_t server(const struct insn *insn, const struct hvc_service *service)
-{
-    errno_t ret;
-    struct p2p_packet_ep *ep;
-    uint32_t cmd;
-    uint32_t dev;
-
-    /*
-     *  ip0[31:16] - device ID
-     *  ip0[15:0]  - command
-     */
-
-    cmd = (uint32_t)(insn->vpc->regs[VPC_IP0]);
-    dev = cmd & BITS(15, 0);
-    cmd >>= 16;
-
-    if (dev <= 1) {
-        ep = eps + dev;
-        if (cmd == CMD_SEND) {
-            ret = cmd_send(insn, ep);
-        } else if (cmd == CMD_RECV) {
-            ret = cmd_recv(insn, ep);
-        } else {
-            ret = -ENOTSUP;
-        }
-    } else {
-        ret = -EINVAL;
-    }
-
-    insn->vpc->regs[VPC_X0] = (uint64_t)ret;
-
-    return SUCCESS;
-}
 
 static errno_t assert_interrupt(struct p2p_packet_ep *ep)
 {
@@ -108,7 +60,6 @@ static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc, uint16_t interrupt_no
 {
     errno_t ret;
     struct p2p_packet_ep_configuration config;
-    extern struct p2p_packet_path p2p_path;
 
     memset(&config, 0, sizeof(config));
     config.ops = &ops;
@@ -119,6 +70,25 @@ static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc, uint16_t interrupt_no
     if (ret == SUCCESS) {
         ret = p2p_packet_connect(&p2p_path, &(eps[no]));
     }
+
+    return ret;
+}
+
+static errno_t init_p128_service(struct xilinx_mpsoc *mpsoc)
+{
+    errno_t ret;
+    struct hvc_p128_service_configuration config;
+
+    memset(&config, 0, sizeof(config));
+    config.imm = HVC_IMM;
+    config.name[0] = DEV_NAME[0];
+    config.name[1] = DEV_NAME[1];
+    config.name[2] = DEV_NAME[2];
+    config.name[3] = DEV_NAME[3];
+    config.arg = mpsoc;
+    config.nr_eps = 2;
+    config.eps = p128_eps;
+    ret = hvc_p128_service_initialize(&p128, &config);
 
     return ret;
 }
@@ -138,20 +108,15 @@ static errno_t init_p2p_eps(struct xilinx_mpsoc *mpsoc)
 errno_t guest_linux_initialize_hvc(struct xilinx_mpsoc *mpsoc)
 {
     errno_t ret;
-    struct hvc_service_configuration config;
 
     ret = init_p2p_eps(mpsoc);
 
     if (ret == SUCCESS) {
-        memset(&config, 0, sizeof(config));
-        config.id = HVC_SERVICE_ID(1, 'P', '1', '2', '8');
-        config.server = server;
-        config.arg = mpsoc;
-        ret = hvc_service_initialize(&service, &config);
+        ret = init_p128_service(mpsoc);
     }
 
     if (ret == SUCCESS) {
-        ret = hvc_service_append_slist(&(mpsoc->hvc_service_list), &service);
+        ret = hvc_service_append_slist(&(mpsoc->hvc_service_list), &(p128.service));
     }
 
     return ret;

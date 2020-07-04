@@ -25,15 +25,11 @@ extern "C" {
 
 /* defines */
 
-#define HVC_SERVICE_ID(imm, c0, c1, c2, c3)         \
-            (((uint64_t)(imm) << 32)            |   \
-             ((uint64_t)(uint8_t)(c0) << 24)    |   \
-             ((uint64_t)(uint8_t)(c1) << 16)    |   \
-             ((uint64_t)(uint8_t)(c2) << 8)     |   \
-             ((uint64_t)(uint8_t)(c3)))
+#define HVC_ERRNO(e)    (uint64_t)(int64_t)(e)
 
 /* types */
 
+struct vpc;
 struct insn;
 struct hvc_service;
 
@@ -59,6 +55,8 @@ struct hvc_service_configuration {
 errno_t hvc_service_initialize(struct hvc_service *service, const struct hvc_service_configuration *config);
 errno_t hvc_service_append_slist(struct slist *list, struct hvc_service *service);
 errno_t hvc_server(const struct insn *insn, const struct slist *service_list);
+uint64_t hvc_service_id(uint16_t imm, const char *name);
+errno_t hvc_set_result(struct vpc *vpc, uint64_t result);
 
 #ifdef __cplusplus
 }

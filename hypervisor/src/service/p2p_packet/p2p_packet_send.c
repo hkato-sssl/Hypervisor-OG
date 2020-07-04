@@ -22,7 +22,7 @@
 
 /* functions */
 
-static errno_t send(struct p2p_packet_ep *ep, struct vpc *vpc)
+static errno_t send(struct vpc *vpc, struct p2p_packet_ep *ep)
 {
     errno_t ret;
     uint32_t i;
@@ -44,13 +44,13 @@ static errno_t send(struct p2p_packet_ep *ep, struct vpc *vpc)
     return ret;
 }
 
-errno_t p2p_packet_send(struct p2p_packet_ep *ep, struct vpc *vpc)
+errno_t p2p_packet_send(struct vpc *vpc, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
     if (ep->path != NULL) {
         if (ep->peer->status.empty == 0) {
-            ret = send(ep, vpc);
+            ret = send(vpc, ep);
         } else {
             ret = -ENOBUFS;
         }

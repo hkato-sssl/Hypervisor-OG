@@ -21,7 +21,7 @@
 
 /* functions */
 
-static errno_t receive(struct p2p_packet_ep *ep, struct vpc *vpc)
+static errno_t receive(struct vpc *vpc, struct p2p_packet_ep *ep)
 {
     errno_t ret;
     uint32_t i;
@@ -41,13 +41,13 @@ static errno_t receive(struct p2p_packet_ep *ep, struct vpc *vpc)
     return ret;
 }
 
-errno_t p2p_packet_receive(struct p2p_packet_ep *ep, struct vpc *vpc)
+errno_t p2p_packet_receive(struct vpc *vpc, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
     if (ep->path != NULL) {
         if (ep->status.empty != 0) {
-            ret = receive(ep, vpc);
+            ret = receive(vpc, ep);
         } else {
             ret = -ENODATA;
         }

@@ -72,8 +72,8 @@ struct p2p_packet_path {
 
 errno_t p2p_packet_initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config);
 errno_t p2p_packet_initialize_path(struct p2p_packet_path *path);
-errno_t p2p_packet_send(struct p2p_packet_ep *ep, struct vpc *vpc);
-errno_t p2p_packet_receive(struct p2p_packet_ep *ep, struct vpc *vpc);
+errno_t p2p_packet_send(struct vpc *vpc, struct p2p_packet_ep *ep);
+errno_t p2p_packet_receive(struct vpc *vpc, struct p2p_packet_ep *ep);
 errno_t p2p_packet_connect(struct p2p_packet_path *path, struct p2p_packet_ep *ep);
 
 #ifdef __cplusplus

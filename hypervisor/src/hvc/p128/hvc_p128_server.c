@@ -122,8 +122,8 @@ errno_t hvc_p128_server(const struct insn *insn, const struct hvc_service *servi
 
     p128 = service->arg;
     ip0 = insn->vpc->regs[VPC_IP0];
-    command = (uint16_t)ip0;
-    ifno = (uint16_t)(ip0 >> 16);
+    command = (uint16_t)(ip0 >> 16);
+    ifno = (uint16_t)ip0;
 
     if (ifno < p128->nr_eps) {
         ep = p128->eps[ifno];

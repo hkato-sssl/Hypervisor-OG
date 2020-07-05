@@ -7,8 +7,8 @@
         .global         test_hvcs_recv
 
 #define SERVICE_ID      (('P' << 56) | ('1' << 48) | ('2' << 40) | ('8' << 32))
-#define CMD_SEND        (('S' << 24) | ('D' << 16))
-#define CMD_RECV        (('R' << 24) | ('V' << 16))
+#define CMD_SEND        (('W' << 24) | ('R' << 16))
+#define CMD_RECV        (('R' << 24) | ('D' << 16))
 
         .section        ".text.test_hvcs_send", "ax", %progbits
         .type           test_hvcs_send, %function

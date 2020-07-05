@@ -16,6 +16,7 @@
 /* defines */
 
 #define P128_CMD(c0, c1)        (((uint16_t)(c0) << 8) | (uint16_t)(c1))
+#define P128_CMD_NI             P128_CMD('N', 'I')
 #define P128_CMD_WR             P128_CMD('W', 'R')
 #define P128_CMD_RD             P128_CMD('R', 'D')
 #define P128_CMD_GI             P128_CMD('G', 'I')
@@ -32,12 +33,18 @@
 
 /* functions */
 
+static errno_t cmd_number_of_interfaces(struct vpc *vpc, const struct hvc_p128_service *service)
+{
+    vpc->regs[VPC_X1] = service->nr_eps;
+
+    return SUCCESS;
+}
+
 static errno_t cmd_write(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
     ret = p2p_packet_send(vpc, ep);
-    ret = hvc_set_result(vpc, HVC_ERRNO(ret));
     
     return ret;
 }
@@ -48,25 +55,18 @@ static errno_t cmd_read(struct vpc *vpc, const struct hvc_p128_service *service,
 
     ret = p2p_packet_receive(vpc, ep);
 
-    ret = hvc_set_result(vpc, HVC_ERRNO(ret));
-
     return ret;
 }
 
 static errno_t cmd_get_interrupt_no(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
 {
-    errno_t ret;
-
     vpc->regs[VPC_X1] = ep->interrupt_no;
 
-    ret = hvc_set_result(vpc, HVC_ERRNO(SUCCESS));
-
-    return ret;
+    return SUCCESS;
 }
 
 static errno_t cmd_get_status(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
 {
-    errno_t ret;
     uint64_t d;
 
     if (ep->status.empty == 0) {
@@ -81,12 +81,10 @@ static errno_t cmd_get_status(struct vpc *vpc, const struct hvc_p128_service *se
 
     vpc->regs[VPC_X1] = d;
 
-    ret = hvc_set_result(vpc, HVC_ERRNO(SUCCESS));
-
-    return ret;
+    return SUCCESS;
 }
 
-static errno_t p128_server(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep, uint16_t command)
+static errno_t p128_interface_command(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep, uint16_t command)
 {
     errno_t ret;
 
@@ -104,7 +102,7 @@ static errno_t p128_server(struct vpc *vpc, const struct hvc_p128_service *servi
         ret = cmd_get_status(vpc, service, ep);
         break;
     default:
-        ret = hvc_set_result(vpc, HVC_ERRNO(-ENOTSUP));
+        ret = -ENOTSUP;
         break;
     }
 
@@ -123,14 +121,20 @@ errno_t hvc_p128_server(const struct insn *insn, const struct hvc_service *servi
     p128 = service->arg;
     ip0 = insn->vpc->regs[VPC_IP0];
     command = (uint16_t)(ip0 >> 16);
-    ifno = (uint16_t)ip0;
 
-    if (ifno < p128->nr_eps) {
-        ep = p128->eps[ifno];
-        ret = p128_server(insn->vpc, p128, ep, command);
+    if (command == P128_CMD_NI) {
+        ret = cmd_number_of_interfaces(insn->vpc, p128);
     } else {
-        ret = hvc_set_result(insn->vpc, HVC_ERRNO(-EINVAL));
+        ifno = (uint16_t)ip0;
+        if (ifno < p128->nr_eps) {
+            ep = p128->eps[ifno];
+            ret = p128_interface_command(insn->vpc, p128, ep, command);
+        } else {
+            ret = -EINVAL;
+        }
     }
+
+    ret = hvc_set_result(insn->vpc, HVC_ERRNO(ret));
 
     return ret;
 }

@@ -13,7 +13,8 @@
 
 /* defines */
 
-#define EOS     '\0'
+#define EOS         '\0'
+#define MAX_NR_EPS  0xff
 
 /* types */
 
@@ -68,6 +69,8 @@ static errno_t validate_parameters(const struct hvc_p128_service_configuration *
     errno_t ret;
 
     if (config->nr_eps == 0) {
+        ret = -EINVAL;
+    } else if (config->nr_eps > MAX_NR_EPS) {
         ret = -EINVAL;
     } else if (config->eps == NULL) {
         ret = -EINVAL;

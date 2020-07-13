@@ -21,6 +21,7 @@
 #define P128_CMD_RD             P128_CMD('R', 'D')
 #define P128_CMD_GI             P128_CMD('G', 'I')
 #define P128_CMD_GS             P128_CMD('G', 'S')
+#define P128_CMD_GE             P128_CMD('G', 'E')
 
 #define P128_STATUS_DATA_READY  BIT(0)
 #define P128_STATUS_TX_EMPTY    BIT(1)
@@ -84,6 +85,27 @@ static errno_t cmd_get_status(struct vpc *vpc, const struct hvc_p128_service *se
     return SUCCESS;
 }
 
+static errno_t cmd_get_event(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+{
+    uint64_t d;
+
+    if (ep->event.data_ready != 0) {
+        ep->event.data_ready = 0;
+        d = P128_STATUS_DATA_READY;
+    } else {
+        d = 0;
+    }
+
+    if (ep->event.peer_ready != 0) {
+        ep->event.peer_ready = 0;
+        d |= P128_STATUS_TX_EMPTY;
+    }
+
+    vpc->regs[VPC_X1] = d;
+
+    return SUCCESS;
+}
+
 static errno_t p128_interface_command(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep, uint16_t command)
 {
     errno_t ret;
@@ -100,6 +122,9 @@ static errno_t p128_interface_command(struct vpc *vpc, const struct hvc_p128_ser
         break;
     case P128_CMD_GS:
         ret = cmd_get_status(vpc, service, ep);
+        break;
+    case P128_CMD_GE:
+        ret = cmd_get_event(vpc, service, ep);
         break;
     default:
         ret = -ENOTSUP;

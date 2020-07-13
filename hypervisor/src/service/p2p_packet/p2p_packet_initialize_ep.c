@@ -26,6 +26,7 @@ static errno_t initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_e
     ep->arg = config->arg;
     ep->length = config->length;
     ep->interrupt_no = config->interrupt_no;
+    ep->status.empty = 1;
 
     return SUCCESS;
 }

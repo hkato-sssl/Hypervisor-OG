@@ -33,7 +33,7 @@ static errno_t receive(struct vpc *vpc, struct p2p_packet_ep *ep)
     }
 
     memory_barrier();
-    ep->status.empty = 0;
+    ep->status.empty = 1;
     memory_barrier_sync();
 
     ret = p2p_packet_call_empty_handler(ep->peer);
@@ -46,7 +46,7 @@ errno_t p2p_packet_receive(struct vpc *vpc, struct p2p_packet_ep *ep)
     errno_t ret;
 
     if (ep->path != NULL) {
-        if (ep->status.empty != 0) {
+        if (ep->status.empty == 0) {
             ret = receive(vpc, ep);
         } else {
             ret = -ENODATA;

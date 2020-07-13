@@ -36,7 +36,7 @@ static errno_t send(struct vpc *vpc, struct p2p_packet_ep *ep)
     }
 
     memory_barrier();
-    ep->peer->status.empty = 1;
+    ep->peer->status.empty = 0;
     memory_barrier_sync();
 
     ret = p2p_packet_call_arrive_handler(ep->peer);
@@ -49,7 +49,7 @@ errno_t p2p_packet_send(struct vpc *vpc, struct p2p_packet_ep *ep)
     errno_t ret;
 
     if (ep->path != NULL) {
-        if (ep->peer->status.empty == 0) {
+        if (ep->peer->status.empty != 0) {
             ret = send(vpc, ep);
         } else {
             ret = -ENOBUFS;

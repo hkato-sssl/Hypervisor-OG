@@ -36,7 +36,8 @@ errno_t hvc_server(const struct insn *insn, const struct slist *service_list)
     if (service != NULL) {
         ret = (service->server)(insn, service->arg);
     } else {
-        ret= -ENOTSUP;
+        vpc_dump(insn->vpc, 0);
+        ret= hvc_set_result(insn->vpc, -ENOTSUP);
     }
 
     return ret;

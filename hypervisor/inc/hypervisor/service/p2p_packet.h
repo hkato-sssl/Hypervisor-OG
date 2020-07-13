@@ -51,6 +51,10 @@ struct p2p_packet_ep {
     struct {
         uint8_t                     empty;
     } status;
+    struct {
+        uint8_t                     peer_ready; /* The peer can receive a packet */
+        uint8_t                     data_ready; /* The EP has received a packet */
+    } event;
     uint64_t                        buff[NR_PACKET_BUFFS];
 };
 
@@ -75,6 +79,16 @@ errno_t p2p_packet_initialize_path(struct p2p_packet_path *path);
 errno_t p2p_packet_send(struct vpc *vpc, struct p2p_packet_ep *ep);
 errno_t p2p_packet_receive(struct vpc *vpc, struct p2p_packet_ep *ep);
 errno_t p2p_packet_connect(struct p2p_packet_path *path, struct p2p_packet_ep *ep);
+
+static inline void p2p_packet_lock_path(struct p2p_packet_ep *ep)
+{
+    spin_lock(&(ep->path->lock));
+}
+
+static inline void p2p_packet_unlock_path(struct p2p_packet_ep *ep)
+{
+    spin_unlock(&(ep->path->lock));
+}
 
 #ifdef __cplusplus
 }

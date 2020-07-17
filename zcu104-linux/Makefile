@@ -6,7 +6,7 @@ PROJ_HOME := $(CURDIR)
 WORKSPACE_LOC ?= $(abspath $(PROJ_HOME)/../)
 MAKE_PATH = $(WORKSPACE_LOC)/script/make
 
-WORKSPACE_LIBRARY_PATH := $(WORKSPACE_LOC)/lib
+WORKSPACE_LIBRARY_PATH := $(WORKSPACE_LOC)/build/lib
 WORKSPACE_LIBRARY := libs drivers hypervisor
 
 CROSS_COMPILE ?= aarch64-elf-

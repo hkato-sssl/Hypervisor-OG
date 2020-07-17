@@ -6,7 +6,7 @@ PROJ_HOME := $(CURDIR)
 WORKSPACE_LOC ?= $(abspath $(PROJ_HOME)/../)
 MAKE_PATH = $(WORKSPACE_LOC)/script/make
 
-WORKSPACE_LIBRARY_PATH := $(WORKSPACE_LOC)/lib
+WORKSPACE_LIBRARY_PATH := $(WORKSPACE_LOC)/build/lib
 WORKSPACE_LIBRARY := libs
 
 CROSS_COMPILE ?= aarch64-elf-
@@ -28,7 +28,7 @@ CFLAGS += -DXILINX_MPSOC
 TARGET ?= $(notdir $(PROJ_HOME)).a	# an archive
 $(if $(TARGET),,$(error TARGET is undefined))
 
-$(OUTDIR)/$(TARGET): build
+$(OUTDIR)/$(TARGET): install
 
 prepare:
 	make -f $(MAKE_PATH)/prepare.mk

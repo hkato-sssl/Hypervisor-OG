@@ -21,6 +21,23 @@
 
 /* functions */
 
+static bool is_writable(struct vgic400 *vgic, uintptr_t virq, uint8_t priority)
+{
+    bool ret;
+
+    if (is_target_virq(vgic, virq)) {
+        if ((priority == 0) && (vgic->flag.ignore_priority0 != 0)) {
+            ret = false;
+        } else {
+            ret = true;
+        }
+    } else {
+        ret = false;
+    }
+
+    return ret;
+}
+
 static void update_priority_field(uint32_t *target, uint8_t priority)
 {
     *target = (*target & ~(uint32_t)BITS(27, 20)) | ((uint32_t)priority << 20);
@@ -32,7 +49,7 @@ static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn, ui
 
     priority &= vgic->priority_mask;
 
-    if (is_target_virq(vgic, virq)) {
+    if (is_writable(vgic, virq, priority)) {
         if (virq < 16) {
             vgic->sgi[insn->vpc->proc_no].priority[virq] = priority;
         } else if (virq < 32) {

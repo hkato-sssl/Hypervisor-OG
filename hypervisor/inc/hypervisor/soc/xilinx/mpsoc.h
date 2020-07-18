@@ -81,12 +81,15 @@ struct xilinx_mpsoc_configuration {
     } stage2;
 
     struct {
-        struct gic400                       *device;
-        uint16_t                            nr_sgis;
-        uint16_t                            sgis[NR_GIC400_SGIS];
+        struct gic400               *device;
+        uint16_t                    nr_sgis;
+        uint16_t                    sgis[NR_GIC400_SGIS];
         uint16_t                            nr_ppis;
-        uint16_t                            ppis[NR_GIC400_PPIS];
-        const struct vgic400_interrupt_ops  *ops;
+        uint16_t                    ppis[NR_GIC400_PPIS];
+        vgic400_interrupt_handler_t irq_handler;
+        struct {
+            uint8_t                 ignore_priority0:1;
+        } flag;
     } gic;
 
     struct {

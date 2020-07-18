@@ -1,5 +1,5 @@
 /*
- * emulator/vgic400/vgic400_operate_maintenance_interrupt.c
+ * emulator/vgic400/vgic400_default_ops_maintenance_interrupt.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -33,13 +33,8 @@ static void maintenance_misr_eoi(struct vpc *vpc, struct vgic400 *vgic)
     uint32_t *iar;
 
     iar = vgic->iar[vpc->proc_no];
-    d = gic400_read_virtif_control(vgic, GICH_EISR0);
-    while (d != 0) {
-        no = 63 - (uint32_t)aarch64_clz(d);
-        gic400_deactivate(vgic->gic, iar[no]);
-        gic400_write_virtif_control(vgic, GICH_LR(no), 0);
-        d ^= BIT(no);
-    }
+    gic400_deactivate(vgic->gic, iar[0]);
+    gic400_write_virtif_control(vgic, GICH_LR(0), 0);
 }
 
 static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
@@ -51,15 +46,17 @@ static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint
 
     if ((d & BIT(0)) != 0) {    /* EOI */
         maintenance_misr_eoi(vpc, vgic);
-        d = gic400_read_virtif_control(vgic, GICH_MISR);
     }
 
     ret = gic400_deactivate(vgic->gic, iar);
+    if (ret == SUCCESS) {
+        ret = gic400_set_priority_mask(vgic->gic, 0xff);
+    }
 
     return ret;
 }
 
-errno_t vgic400_operate_maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
+errno_t vgic400_default_ops_maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
 

@@ -29,9 +29,9 @@ static errno_t configure_interrupt(struct vgic400 *vgic)
     struct gic400_interrupt_configuration config;
 
     memset(&config, 0, sizeof(config));
-    config.targets = 1;
+    config.targets = 0xff;      /* This value will be ignored. */
     config.priority = 0;
-    config.flag.edge = 1;
+    config.flag.edge = 1;       /* This value will be ignored. */
     ret = gic400_configure_interrupt(vgic->gic, GIC400_MAINTENANCE_INTERRUPT, &config);
     if (ret == SUCCESS) {
         ret = gic400_enable_interrupt(vgic->gic, GIC400_MAINTENANCE_INTERRUPT);

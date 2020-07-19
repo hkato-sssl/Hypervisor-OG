@@ -86,7 +86,7 @@ struct xilinx_mpsoc_configuration {
         uint16_t                    sgis[NR_GIC400_SGIS];
         uint16_t                            nr_ppis;
         uint16_t                    ppis[NR_GIC400_PPIS];
-        vgic400_interrupt_handler_t irq_handler;
+        const struct vgic400_ops    *ops;
         struct {
             uint8_t                 ignore_priority0:1;
         } flag;

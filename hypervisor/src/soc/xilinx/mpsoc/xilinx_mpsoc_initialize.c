@@ -191,7 +191,7 @@ static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc
     config.gic = chip_config->gic.device;
     config.base.virtif_control = (void *)REG_GIC400H;
     config.base.virtual_cpuif = (void *)REG_GIC400V;
-    config.irq_handler = chip_config->gic.irq_handler;
+    config.ops = chip_config->gic.ops;
     config.boolean.ignore_priority0 = (chip_config->gic.flag.ignore_priority0 != 0) ? true : false;
     config.boolean.trap_cpuif = true;
 

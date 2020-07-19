@@ -74,21 +74,21 @@
 #define GICH_VMCR           0x0008
 #define GICH_MISR           0x0010
 #define GICH_EISR0          0x0020
-#define GICH_ELSR0          0x0030
+#define GICH_ELRSR0         0x0030
 #define GICH_APR0           0x00f0
 #define GICH_LR(n)          (0x0100 + (n) * 4)
 
-#define GICH_HCR_ALIAS(n)   (0x0000 + (n) * 0x0200)
-#define GICH_VTR_ALIAS(n)   (0x0004 + (n) * 0x0200)
-#define GICH_VMCR_ALIAS(n)  (0x0008 + (n) * 0x0200)
-#define GICH_MISR_ALIAS(n)  (0x0010 + (n) * 0x0200)
-#define GICH_EISR0_ALIAS(n) (0x0020 + (n) * 0x0200)
-#define GICH_ELSR0_ALIAS(n) (0x0030 + (n) * 0x0200)
-#define GICH_APR0_ALIAS(n)  (0x00f0 + (n) * 0x0200)
-#define GICH_LR0_ALIAS(n)   (0x0100 + (n) * 0x0200)
-#define GICH_LR1_ALIAS(n)   (0x0104 + (n) * 0x0200)
-#define GICH_LR2_ALIAS(n)   (0x0108 + (n) * 0x0200)
-#define GICH_LR3_ALIAS(n)   (0x010c + (n) * 0x0200)
+#define GICH_HCR_ALIAS(n)       (0x0000 + (n) * 0x0200)
+#define GICH_VTR_ALIAS(n)       (0x0004 + (n) * 0x0200)
+#define GICH_VMCR_ALIAS(n)      (0x0008 + (n) * 0x0200)
+#define GICH_MISR_ALIAS(n)      (0x0010 + (n) * 0x0200)
+#define GICH_EISR0_ALIAS(n)     (0x0020 + (n) * 0x0200)
+#define GICH_ELRSR0_ALIAS(n)    (0x0030 + (n) * 0x0200)
+#define GICH_APR0_ALIAS(n)      (0x00f0 + (n) * 0x0200)
+#define GICH_LR0_ALIAS(n)       (0x0100 + (n) * 0x0200)
+#define GICH_LR1_ALIAS(n)       (0x0104 + (n) * 0x0200)
+#define GICH_LR2_ALIAS(n)       (0x0108 + (n) * 0x0200)
+#define GICH_LR3_ALIAS(n)       (0x010c + (n) * 0x0200)
 
 #define GICV_CTLR           0x0000
 #define GICV_PMR            0x0004

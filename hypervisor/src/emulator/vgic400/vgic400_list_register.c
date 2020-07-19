@@ -26,7 +26,7 @@ int vgic400_list_register(struct vgic400 *vgic)
     uint32_t d;
     uint32_t ct;
 
-    d = gic400_read_virtif_control(vgic, GICH_ELSR0);
+    d = gic400_read_virtif_control(vgic, GICH_ELRSR0);
     ct = (uint32_t)aarch64_clz(d);
     no = 63 - (int)ct;      /* -1: No List Register is available. */
 

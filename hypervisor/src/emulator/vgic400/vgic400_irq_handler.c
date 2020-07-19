@@ -29,8 +29,8 @@ errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic)
 {
     errno_t ret;
 
-    if (vgic->irq_handler != NULL) {
-        ret = (*(vgic->irq_handler))(vpc, vgic);
+    if (vgic->ops->irq_handler != NULL) {
+        ret = (*(vgic->ops->irq_handler))(vpc, vgic);
     } else {
         ret = -ENOTSUP;
     }

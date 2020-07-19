@@ -38,6 +38,12 @@ struct vgic400;
 
 typedef errno_t (*vgic400_interrupt_handler_t)(struct vpc *, struct vgic400 *);
 
+struct vgic400_ops {
+    errno_t (*activate)(struct vgic400 *);
+    errno_t (*irq_handler)(struct vpc *, struct vgic400 *);
+    errno_t (*el2_irq_handler)(struct vpc *, struct vgic400 *, uint32_t iar);
+};
+
 struct vgic400 {
     struct vm       *vm;
     struct gic400   *gic;
@@ -48,7 +54,7 @@ struct vgic400 {
     uint32_t        nr_list_registers;
     uint32_t        priority_mask;
 
-    vgic400_interrupt_handler_t irq_handler;
+    const struct vgic400_ops    *ops;
 
     struct {
         uint32_t    irq[NR_VGIC400_TARGET_MAPS];
@@ -93,7 +99,7 @@ struct vgic400_configuration {
     } base;
     uint8_t         priority_mask;
 
-    vgic400_interrupt_handler_t irq_handler;
+    const struct vgic400_ops    *ops;
 
     struct {
         bool        trap_cpuif;
@@ -120,9 +126,12 @@ errno_t vgic400_activate_virtual_cpuif(struct vgic400 *vgic);
 errno_t vgic400_distributor_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
 errno_t vgic400_cpuif_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic);
 errno_t vgic400_inject_interrupt(struct vpc *, struct vgic400 *vgic, uint32_t iar);
+errno_t vgic400_inject_interrupt_at(struct vpc *, struct vgic400 *vgic, uint32_t iar, uint32_t list_no);
 errno_t vgic400_inject_sgi(struct vpc *, struct vgic400 *vgic, uint32_t iar);
+errno_t vgic400_inject_sgi_at(struct vpc *, struct vgic400 *vgic, uint32_t iar, uint32_t list_no);
 
 errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
+errno_t vgic400_default_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
 
 /* for debugging */
 

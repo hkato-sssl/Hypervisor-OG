@@ -40,18 +40,46 @@ static errno_t configure_interrupt(struct vgic400 *vgic)
     return ret;
 }
 
-errno_t vgic400_activate_virtual_cpuif(struct vgic400 *vgic)
+static errno_t call_ops_activate(struct vgic400 *vgic)
+{
+    errno_t ret;
+
+    if (vgic->ops->activate != NULL) {
+        ret = (*(vgic->ops->activate))(vgic);
+    } else {
+        ret = SUCCESS;
+    }
+
+    return ret;
+}
+
+static errno_t activate_virtual_cpuif(struct vgic400 *vgic)
 {
     errno_t ret;
     uint32_t d;
 
     gic400_lock(vgic->gic);
-    d = gic400_read_virtif_control(vgic, GICH_HCR);
-    d |= BIT(0);    /* GICH_HCR.En */
-    gic400_write_virtif_control(vgic, GICH_HCR, d);
+
+    ret = call_ops_activate(vgic);
+    if (ret == SUCCESS) {
+        d = gic400_read_virtif_control(vgic, GICH_HCR);
+        d |= BIT(0);    /* GICH_HCR.En */
+        gic400_write_virtif_control(vgic, GICH_HCR, d);
+    }
+
     gic400_unlock(vgic->gic);
 
-    ret = configure_interrupt(vgic);
+    return ret;
+}
+
+errno_t vgic400_activate_virtual_cpuif(struct vgic400 *vgic)
+{
+    errno_t ret;
+
+    ret = activate_virtual_cpuif(vgic);
+    if (ret == SUCCESS) {
+        ret = configure_interrupt(vgic);
+    }
 
     return ret;
 }

@@ -143,7 +143,9 @@ static errno_t write_virtual_icfgr(const struct insn *insn)
 {
     errno_t ret;
 
-    ret = insn_emulate_str(insn);   /* Ignore a write operation. */
+    /* Ignore a write operation. */
+
+    ret = insn_emulate_str(insn);
 
     return ret;
 }

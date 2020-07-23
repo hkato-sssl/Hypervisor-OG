@@ -85,6 +85,17 @@ static errno_t read_virtual_spisr(const struct insn *insn)
     return ret;
 }
 
+static errno_t write_virtual_spisr(const struct insn *insn)
+{
+    errno_t ret;
+
+    /* Ignore a write operation. */
+
+    ret = insn_emulate_str(insn);
+
+    return ret;
+}
+
 static bool is_virtual_spisr(struct vgic400 *vgic, uintptr_t reg)
 {
     bool ret;
@@ -119,7 +130,7 @@ errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn,
     } else {
         if (is_aligned_word_access(insn)) {
             if (is_virtual_spisr(vgic, reg)) {
-                ret = SUCCESS;  /* Ignore a write operation. */
+                ret = write_virtual_spisr(insn);
             } else {
                 ret = insn_emulate_str(insn);
             }

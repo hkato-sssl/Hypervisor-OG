@@ -12,6 +12,7 @@
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
 #include "driver/arm/device/gic400.h"
+#include "hypervisor/parameter.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/vgic400.h"
@@ -162,7 +163,7 @@ static errno_t el2(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     uint32_t no;
 
     no = BF_EXTRACT(iar, 9, 0);
-    if (no == 7) {  /* A request of asserting a virtual SPI */
+    if (no == HYP_INTR_REQUEST_VIRTUAL_SPI) {
         assert_virtual_interrupt(vgic);
         ret = gic400_eoi_and_deactivate(vgic->gic, iar);
     } else {

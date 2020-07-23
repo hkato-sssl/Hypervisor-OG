@@ -114,6 +114,14 @@ errno_t gic400_deactivate(struct gic400 *gic, uint32_t iar)
     return SUCCESS;
 }
 
+errno_t gic400_eoi_and_deactivate(struct gic400 *gic, uint32_t iar)
+{
+    gic400_write_cpuif(gic, GICC_EOIR, iar);
+    gic400_write_cpuif(gic, GICC_DIR, iar);
+
+    return SUCCESS;
+}
+
 errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no)
 {
     errno_t ret;

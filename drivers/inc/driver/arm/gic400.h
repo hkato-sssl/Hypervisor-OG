@@ -82,6 +82,7 @@ errno_t gic400_initialize(struct gic400 *gic, const struct gic400_configuration 
 uint32_t gic400_ack(struct gic400 *gic);
 errno_t gic400_eoi(struct gic400 *gic, uint32_t iar);
 errno_t gic400_deactivate(struct gic400 *gic, uint32_t iar);
+errno_t gic400_eoi_and_deactivate(struct gic400 *gic, uint32_t iar);
 errno_t gic400_enable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_disable_interrupt(struct gic400 *gic, uint16_t intr_no);
 errno_t gic400_assert_sgi(struct gic400 *gic, uint8_t targets, uint16_t intr_no);

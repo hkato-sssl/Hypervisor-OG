@@ -37,10 +37,21 @@ errno_t read_virtual_ixpendr(struct vgic400 *vgic, const struct insn *insn)
 errno_t write_virtual_ispendr(struct vgic400 *vgic, const struct insn *insn)
 {
     errno_t ret;
+    uint32_t d;
 
-    /* Ignore a write operation. */
+    d = (uint32_t)insn_str_src_value(insn);
+    if (d != 0) {
+        vgic400_lock(vgic);
+        vgic->virtual_spi.pendr |= d;
+        vgic400_unlock(vgic);
 
-    ret = insn_emulate_str(insn);
+        ret = vgic400_encourage_virtual_spi_interrupt(vgic);
+        if (ret == SUCCESS) {
+            ret = insn_emulate_str(insn);
+        }
+    } else {
+        ret = insn_emulate_str(insn);
+    }
 
     return ret;
 }
@@ -48,8 +59,16 @@ errno_t write_virtual_ispendr(struct vgic400 *vgic, const struct insn *insn)
 errno_t write_virtual_icpendr(struct vgic400 *vgic, const struct insn *insn)
 {
     errno_t ret;
+    uint32_t d;
+    uint32_t mask;
 
-    /* Ignore a write operation. */
+    d = (uint32_t)insn_str_src_value(insn);
+    if (d != 0) {
+        mask = ~d;
+        vgic400_lock(vgic);
+        vgic->virtual_spi.pendr &= mask;
+        vgic400_unlock(vgic);
+    }
 
     ret = insn_emulate_str(insn);
 

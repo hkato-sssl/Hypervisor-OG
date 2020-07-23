@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
 #include "driver/arm/device/gic400.h"
@@ -94,6 +95,26 @@ static errno_t register_trap_distributor(struct vgic400 *vgic, const struct vgic
     return ret;
 }
 
+static errno_t initialize_virtual_spi(struct vgic400 *vgic, const struct vgic400_configuration *config)
+{
+    errno_t ret;
+    int i;
+
+    if ((vgic->template_typer & BITS(4, 0)) < 0x1f) {
+        ++(vgic->template_typer);   /* Increment GICD_TYPER.ITLinesNumber */
+        vgic->virtual_spi.base_no = (vgic->template_typer & BITS(4, 0)) * 32;
+        for (i = 0; i < 32; ++i) {
+            vgic->virtual_spi.priorityr[i] = vgic->priority_mask;
+        }
+        vgic->virtual_spi.used = 0;
+        ret = SUCCESS;
+    } else {
+        ret = -EPERM;
+    }
+
+    return ret;
+}
+
 static errno_t initialize(struct vgic400 *vgic, const struct vgic400_configuration *config)
 {
     errno_t ret;
@@ -102,6 +123,8 @@ static errno_t initialize(struct vgic400 *vgic, const struct vgic400_configurati
     memset(vgic, 0, sizeof(*vgic));
     memset(&(vgic->spi.map), 0xff, sizeof(vgic->spi.map));
 
+    spin_lock_init(&(vgic->lock));
+
     vgic->vm = config->vm;
     vgic->gic = config->gic;
     vgic->base.virtif_control = config->base.virtif_control;
@@ -109,10 +132,21 @@ static errno_t initialize(struct vgic400 *vgic, const struct vgic400_configurati
     vgic->priority_mask = gic400_priority_mask(vgic->gic);
     vgic->ops = config->ops;
 
-    /* probe # of List Register */
+    /* probe the # of List Register */
 
     d = gic400_read_virtif_control(vgic, GICH_VTR);
     vgic->nr_list_registers = BF_EXTRACT(d, 5, 0) + 1;
+
+    /* probe GIC distributor */
+
+    d = gic400_read_distributor(vgic->gic, GICD_TYPER);
+    vgic->template_typer = d & ~(uint32_t)BITS(7, 5);
+
+    vgic->boolean.ignore_priority0 = config->boolean.ignore_priority0;
+    vgic->boolean.virtual_spi = config->boolean.virtual_spi;
+    if (vgic->boolean.virtual_spi) {
+        initialize_virtual_spi(vgic, config);
+    }
 
     ret = register_trap_distributor(vgic, config);
 
@@ -123,10 +157,10 @@ errno_t vgic400_initialize(struct vgic400 *vgic, const struct vgic400_configurat
 {
     errno_t ret;
 
-    if (config->ops != NULL) {
-        ret = initialize(vgic, config);
-    } else {
+    if (config->ops == NULL) {
         ret = -EINVAL;
+    } else {
+        ret = initialize(vgic, config);
     }
 
     return ret;

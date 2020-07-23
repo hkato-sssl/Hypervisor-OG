@@ -21,6 +21,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "lib/system/spin_lock.h"
 #include "driver/arm/gic400.h"
 #include "hypervisor/vm.h"
 
@@ -28,6 +29,7 @@ extern "C" {
 
 #define NR_VGIC400_TARGET_MAPS          ((NR_GIC400_INTERRUPTS + 31) / 32)
 #define NR_VGIC400_CPUS                 8
+#define NR_VGIC400_PRIORITIES           16
 #define MAX_NR_VGIC400_LIST_REGISTERS   32
 
 /* types */
@@ -36,15 +38,24 @@ struct vpc;
 struct insn;
 struct vgic400;
 
-typedef errno_t (*vgic400_interrupt_handler_t)(struct vpc *, struct vgic400 *);
-
 struct vgic400_ops {
     errno_t (*activate)(struct vgic400 *);
     errno_t (*irq_handler)(struct vpc *, struct vgic400 *);
     errno_t (*el2_irq_handler)(struct vpc *, struct vgic400 *, uint32_t iar);
 };
 
+struct vgic400_virtual_spi {
+    uint32_t        base_no;
+    uint32_t        used;
+    
+    uint8_t         priorityr[32];
+    uint32_t        enabler;
+    uint32_t        pendr;
+};
+
 struct vgic400 {
+    spin_lock_t     lock;
+
     struct vm       *vm;
     struct gic400   *gic;
     struct {
@@ -52,7 +63,8 @@ struct vgic400 {
         void        *virtual_cpuif;
     } base;
     uint32_t        nr_list_registers;
-    uint32_t        priority_mask;
+    uint32_t        template_typer;
+    uint8_t         priority_mask;
 
     const struct vgic400_ops    *ops;
 
@@ -86,8 +98,11 @@ struct vgic400 {
     } trap;
 
     struct {
-        uint8_t ignore_priority0;
-    } flag;
+        bool    ignore_priority0;
+        bool    virtual_spi;
+    } boolean;
+
+    struct vgic400_virtual_spi  virtual_spi;
 };
 
 struct vgic400_configuration {
@@ -104,6 +119,7 @@ struct vgic400_configuration {
     struct {
         bool        trap_cpuif;
         bool        ignore_priority0;
+        bool        virtual_spi;
     } boolean;
 };
 
@@ -129,9 +145,10 @@ errno_t vgic400_inject_interrupt(struct vpc *, struct vgic400 *vgic, uint32_t ia
 errno_t vgic400_inject_interrupt_at(struct vpc *, struct vgic400 *vgic, uint32_t iar, uint32_t list_no);
 errno_t vgic400_inject_sgi(struct vpc *, struct vgic400 *vgic, uint32_t iar);
 errno_t vgic400_inject_sgi_at(struct vpc *, struct vgic400 *vgic, uint32_t iar, uint32_t list_no);
-
 errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
 errno_t vgic400_default_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
+errno_t vgic400_assert_virtual_interrupt(struct vgic400 *vgic, uint16_t interrupt_no);
+errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no);
 
 /* for debugging */
 

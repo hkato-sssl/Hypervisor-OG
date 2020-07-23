@@ -76,6 +76,30 @@ static errno_t read_spisr_w(struct vgic400 *vgic, const struct insn *insn, uintp
     return ret;
 }
 
+static errno_t read_virtual_spisr(const struct insn *insn)
+{
+    errno_t ret;
+
+    ret = insn_emulate_ldr(insn, 0);
+
+    return ret;
+}
+
+static bool is_virtual_spisr(struct vgic400 *vgic, uintptr_t reg)
+{
+    bool ret;
+    uintptr_t base;
+
+    if (vgic->boolean.virtual_spi) {
+        base = GICD_SPISR(0) + ((vgic->virtual_spi.base_no - 32) / 32) * 4;
+        ret = (base == reg) ? true : false;
+    } else {
+        ret = false;
+    }
+
+    return ret;
+}
+
 errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
@@ -84,13 +108,21 @@ errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn,
 
     if (insn->type == INSN_TYPE_LDR) {
         if (is_aligned_word_access(insn)) {
-            ret = read_spisr_w(vgic, insn, reg);
+            if (is_virtual_spisr(vgic, reg)) {
+                ret = read_virtual_spisr(insn);
+            } else {
+                ret = read_spisr_w(vgic, insn, reg);
+            }
         } else {
             ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }
     } else {
         if (is_aligned_word_access(insn)) {
-            ret = insn_emulate_str(insn);
+            if (is_virtual_spisr(vgic, reg)) {
+                ret = SUCCESS;  /* Ignore a write operation. */
+            } else {
+                ret = insn_emulate_str(insn);
+            }
         } else {
             ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }

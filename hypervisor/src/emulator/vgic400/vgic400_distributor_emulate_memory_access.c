@@ -41,17 +41,17 @@ static errno_t emulate_memory_insn(const struct insn *insn, struct vgic400 *vgic
     } else if ((0x0080 <= reg) && (reg <= 0x00bf)) {    /* GICD_IGROUPRn */
         ret = vgic400_distributor_igroupr(vgic, insn);
     } else if ((0x0100 <= reg) && (reg <= 0x013f)) {    /* GICD_ISENABLERn */
-        ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ISENABLER(0));
+        ret = vgic400_distributor_isenabler(vgic, insn, reg);
     } else if ((0x0180 <= reg) && (reg <= 0x01bf)) {    /* GICD_ICENABLERn */
-        ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ICENABLER(0));
+        ret = vgic400_distributor_icenabler(vgic, insn, reg);
     } else if ((0x0200 <= reg) && (reg <= 0x023f)) {    /* GICD_ISPENDRn */
-        ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ISPENDR(0));
+        ret = vgic400_distributor_ispendr(vgic, insn, reg);
     } else if ((0x0280 <= reg) && (reg <= 0x02bf)) {    /* GICD_ICPENDRn */
-        ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ICPENDR(0));
+        ret = vgic400_distributor_icpendr(vgic, insn, reg);
     } else if ((0x0300 <= reg) && (reg <= 0x033f)) {    /* GICD_ISACTIVERn */
-        ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ISACTIVER(0));
+        ret = vgic400_distributor_isactiver(vgic, insn, reg);
     } else if ((0x0380 <= reg) && (reg <= 0x03bf)) {    /* GICD_ICACTIVERn */
-        ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ICACTIVER(0));
+        ret = vgic400_distributor_icactiver(vgic, insn, reg);
     } else if ((0x0400 <= reg) && (reg <= 0x05ff)) {    /* GICD_IPRIORITYRn */
         ret = vgic400_distributor_ipriorityr(vgic, insn, reg);
     } else if ((0x0800 <= reg) && (reg <= 0x09ff)) {    /* GICD_ITARGETSRn */

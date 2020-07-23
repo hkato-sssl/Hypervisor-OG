@@ -22,8 +22,10 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 #include "lib/bit.h"
+#include "lib/system/assert.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
+#include "lib/system/spin_lock.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
@@ -75,6 +77,16 @@ static inline uint32_t gic400_read_virtual_cpuif(struct vgic400 *vgic, uint32_t 
     return d;
 }
 
+static inline void vgic400_lock(struct vgic400 *vgic)
+{
+    spin_lock(&(vgic->lock));
+}
+
+static inline void vgic400_unlock(struct vgic400 *vgic)
+{
+    spin_unlock(&(vgic->lock));
+}
+
 static inline bool is_target_virq(const struct vgic400 *vgic, uint16_t virq)
 {
     uint32_t bit;
@@ -99,8 +111,12 @@ static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic, uint32_t 
 
     if (virq < 32) {
         irq = is_target_virq(vgic, virq) ? virq : VGIC400_NO_ASSIGNED;
-    } else {
+    } else if (vgic->boolean.virtual_spi && (virq >= vgic->virtual_spi.base_no) && (virq <= (vgic->virtual_spi.base_no + 31))) {
+        irq = virq;
+    } else if (virq < NR_GIC400_INTERRUPTS) {
         irq = vgic->spi.map.physical[virq - 32];
+    } else {
+        irq = VGIC400_NO_ASSIGNED;
     }
 
     return irq;
@@ -132,6 +148,34 @@ static inline bool is_aligned_word_access(const struct insn *insn)
     return ret;
 }
 
+static inline bool is_virtual_spi_byte_register(const struct vgic400 *vgic, uintptr_t reg, uintptr_t base)
+{
+    bool ret;
+
+    if (vgic->boolean.virtual_spi) {
+        base += vgic->virtual_spi.base_no;
+        ret = ((base <= reg) && (reg < (base + 32))) ? true : false;
+    } else {
+        ret = false;
+    }
+
+    return ret;
+}
+
+static inline bool is_virtual_spi_bit_register(const struct vgic400 *vgic, uintptr_t reg, uintptr_t base)
+{
+    bool ret;
+
+    if (vgic->boolean.virtual_spi) {
+        base += (vgic->virtual_spi.base_no / 32) * 4;
+        ret = ((base <= reg) && (reg < (base + 4))) ? true : false;
+    } else {
+        ret = false;
+    }
+
+    return ret;
+}
+
 /* functions */
 
 errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct insn *insn);
@@ -139,10 +183,16 @@ errno_t vgic400_distributor_bit_register(struct vgic400 *vgic, const struct insn
 errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base);
 errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct insn *insn);
+errno_t vgic400_distributor_igroupr(struct vgic400 *vgic, const struct insn *insn);
+errno_t vgic400_distributor_isenabler(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_icenabler(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_ispendr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_icpendr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_isactiver(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_icactiver(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
 errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
 errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
 errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
-errno_t vgic400_distributor_igroupr(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
 

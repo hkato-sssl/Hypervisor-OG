@@ -130,19 +130,60 @@ static errno_t write_icfgr_w(const struct vgic400 *vgic, const struct insn *insn
     return ret;
 }
 
+static errno_t read_virtual_icfgr(const struct insn *insn)
+{
+    errno_t ret;
+
+    ret = insn_emulate_ldr(insn, 0);
+
+    return ret;
+}
+
+static errno_t write_virtual_icfgr(const struct insn *insn)
+{
+    errno_t ret;
+
+    ret = insn_emulate_str(insn);   /* Ignore a write operation. */
+
+    return ret;
+}
+
+static bool is_virtual_icfgr(const struct vgic400 *vgic, uintptr_t reg)
+{
+    bool ret;
+    uintptr_t base;
+
+    if (vgic->boolean.virtual_spi) {
+        base = GICD_ICFGR(0) + (vgic->virtual_spi.base_no / 16) * 4;
+        ret = (reg == base) ? true : false;
+    } else {
+        ret = false;
+    }
+
+    return ret;
+}
+
 errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
 
     if (insn->type == INSN_TYPE_LDR) {
         if (is_aligned_word_access(insn)) {
-            ret = read_icfgr_w(vgic, insn, reg);
+            if (is_virtual_icfgr(vgic, reg)) {
+                ret = read_virtual_icfgr(insn);
+            } else {
+                ret = read_icfgr_w(vgic, insn, reg);
+            }
         } else {
             ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }
     } else {
         if (is_aligned_word_access(insn)) {
-            ret = write_icfgr_w(vgic, insn, reg);
+            if (is_virtual_icfgr(vgic, reg)) {
+                ret = write_virtual_icfgr(insn);
+            } else {
+                ret = write_icfgr_w(vgic, insn, reg);
+            }
         } else {
             ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }

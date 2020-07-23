@@ -59,14 +59,20 @@ static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_in
     return SUCCESS;
 }
 
-static bool is_valid_id(uint16_t id)
+static bool is_valid_id(const struct vgic400 *vgic, uint16_t id)
 {
     bool ret;
 
-    if ((id != GIC400_SECURE_PHYSICAL_TIMER) && (id != GIC400_MAINTENANCE_INTERRUPT) && (id != GIC400_HYPERVISOR_TIMER) && (id < NR_GIC400_INTERRUPTS)) {
-        ret = true;
-    } else {
+    if ((id == 7) || (id == GIC400_SECURE_PHYSICAL_TIMER) || (id == GIC400_MAINTENANCE_INTERRUPT) || (id == GIC400_HYPERVISOR_TIMER) || (id >= NR_GIC400_INTERRUPTS)) {
         ret = false;
+    } else if (vgic->boolean.virtual_spi) {
+        if ((id >= vgic->virtual_spi.base_no) && (id <= (vgic->virtual_spi.base_no + 31))) {
+            ret = false;
+        } else {
+            ret = true;
+        }
+    } else {
+        ret = true;
     }
 
     return ret;
@@ -76,9 +82,9 @@ static errno_t validate_configuration(struct vgic400 *vgic, const struct vgic400
 {
     errno_t ret;
 
-    if (! is_valid_id(config->virtual_id)) {
+    if (! is_valid_id(vgic, config->virtual_id)) {
         ret = -EINVAL;
-    } else if (! is_valid_id(config->physical_id)) {
+    } else if (! is_valid_id(vgic, config->physical_id)) {
         ret = -EINVAL;
     } else if ((config->virtual_id < 32) || (config->physical_id < 32)) {
         if (config->virtual_id != config->physical_id) {

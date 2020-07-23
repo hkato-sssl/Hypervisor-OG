@@ -27,6 +27,55 @@
 
 /* functions */
 
+static int32_t highest_virtual_spi(struct vgic400 *vgic)
+{
+    int32_t no;
+    int i;
+    uint8_t level;
+    uint32_t d;
+
+    no = -1;
+    level = 0xff;
+    d = vgic->virtual_spi.pendr & vgic->virtual_spi.enabler;
+    while (d != 0) {
+        i = 63 - (int)aarch64_clz(d);
+        if (vgic->virtual_spi.priorityr[i] <= level) {
+            level = vgic->virtual_spi.priorityr[i];
+            no = i;
+        }
+        d ^= BIT(i);
+    }
+
+    if (no >= 0) {
+        vgic->virtual_spi.pendr ^= BIT(no);
+        no += (int32_t)(vgic->virtual_spi.base_no);
+    }
+
+    return no;
+}
+
+static void assert_highest_virtual_spi(struct vgic400 *vgic)
+{
+    uint32_t d;
+    int32_t interrupt_no;
+
+    vgic400_lock(vgic);
+
+    interrupt_no = highest_virtual_spi(vgic);
+    if (interrupt_no >= 0) {
+        d = (uint32_t)(vgic->virtual_spi.priorityr[interrupt_no - vgic->virtual_spi.base_no]) << 23;
+        d |= BIT(28) | BIT(19) | interrupt_no;   /* pending, EOI, VirtualID */
+        gic400_write_virtif_control(vgic, GICH_LR(0), d);
+        vgic->lr[0][0] = d;
+        vgic->iar[0][0] = interrupt_no;
+    } else {
+        vgic->lr[0][0] = 0;
+        vgic->iar[0][0] = 0;
+    }
+
+    vgic400_unlock(vgic);
+}
+
 static void maintenance_misr_eoi(struct vpc *vpc, struct vgic400 *vgic)
 {
     uint32_t d;
@@ -35,9 +84,14 @@ static void maintenance_misr_eoi(struct vpc *vpc, struct vgic400 *vgic)
 
     iar = vgic->iar[vpc->proc_no];
     d = gic400_read_virtif_control(vgic, GICH_EISR0);
+
     while (d != 0) {
         no = 63 - (uint32_t)aarch64_clz(d);
-        gic400_deactivate(vgic->gic, iar[no]);
+        if ((no == 0) && (vpc->proc_no == 0)) {
+            assert_highest_virtual_spi(vgic);
+        } else {
+            gic400_deactivate(vgic->gic, iar[no]);
+        }
         gic400_write_virtif_control(vgic, GICH_LR(no), 0);
         d ^= BIT(no);
     }
@@ -61,8 +115,7 @@ static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint
         gic400_set_priority_mask(vgic->gic, 0xff);
     }
 
-    gic400_eoi(vgic->gic, iar);
-    ret = gic400_deactivate(vgic->gic, iar);
+    ret = gic400_eoi_and_deactivate(vgic->gic, iar);
 
     return ret;
 }
@@ -83,6 +136,7 @@ static errno_t el1(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     if (ret == SUCCESS) {
         gic400_eoi(vgic->gic, iar);
         d = gic400_read_virtif_control(vgic, GICH_ELRSR0);
+        d &= ~(uint32_t)BIT(0);     /* Bit-0 is reserved for virtual SPI. */
         if (d == 0) {
             d = gic400_read_virtif_control(vgic, GICH_HCR);
             d |= BIT(1);    /* GICH_HCR.UIE */
@@ -95,14 +149,28 @@ static errno_t el1(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     return ret;
 }
 
+static void assert_virtual_interrupt(struct vgic400 *vgic)
+{
+    vgic400_lock(vgic);
+    gic400_write_virtif_control(vgic, GICH_LR(0), vgic->lr[0][0]);
+    vgic400_unlock(vgic);
+}
+
 static errno_t el2(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
+    uint32_t no;
 
-    if (vgic->ops->el2_irq_handler != NULL) {
-        ret = (*(vgic->ops->el2_irq_handler))(vpc, vgic, iar);
+    no = BF_EXTRACT(iar, 9, 0);
+    if (no == 7) {  /* A request of asserting a virtual SPI */
+        assert_virtual_interrupt(vgic);
+        ret = gic400_eoi_and_deactivate(vgic->gic, iar);
     } else {
-        ret = -ENOTSUP;
+        if (vgic->ops->el2_irq_handler != NULL) {
+            ret = (*(vgic->ops->el2_irq_handler))(vpc, vgic, iar);
+        } else {
+            ret = -ENOTSUP;
+        }
     }
 
     return ret;

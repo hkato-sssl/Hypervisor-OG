@@ -84,11 +84,15 @@ struct xilinx_mpsoc_configuration {
         struct gic400               *device;
         uint16_t                    nr_sgis;
         uint16_t                    sgis[NR_GIC400_SGIS];
-        uint16_t                            nr_ppis;
+        uint16_t                    nr_ppis;
         uint16_t                    ppis[NR_GIC400_PPIS];
         const struct vgic400_ops    *ops;
         struct {
+            int16_t                 base_no;
+        } virtual_spi;
+        struct {
             uint8_t                 ignore_priority0:1;
+            uint8_t                 virtual_spi:1;
         } flag;
     } gic;
 
@@ -101,8 +105,8 @@ struct xilinx_mpsoc_configuration {
         } flag;
     } smmu;
 
-    uint32_t            nr_devices;
-    struct soc_device   **devices;
+    uint32_t                    nr_devices;
+    struct soc_device           **devices;
 
     struct {
         uint32_t                nr_services;

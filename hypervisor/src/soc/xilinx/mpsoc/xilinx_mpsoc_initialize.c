@@ -195,6 +195,10 @@ static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc
     config.boolean.ignore_priority0 = (chip_config->gic.flag.ignore_priority0 != 0) ? true : false;
     config.boolean.trap_cpuif = true;
 
+    if (chip_config->gic.flag.virtual_spi != 0) {
+        config.boolean.virtual_spi = true;
+    }
+
     ret = vgic400_initialize(&(chip->vgic400), &config);
 
     if ((ret == SUCCESS) && (chip_config->gic.nr_ppis > 0)) {

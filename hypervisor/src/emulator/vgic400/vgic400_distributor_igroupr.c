@@ -21,7 +21,7 @@
 
 /* functions */
 
-errno_t vgic400_distributor_igroupr(struct vgic400 *gic, const struct insn *insn)
+errno_t vgic400_distributor_igroupr(struct vgic400 *vgic, const struct insn *insn)
 {
     errno_t ret;
 

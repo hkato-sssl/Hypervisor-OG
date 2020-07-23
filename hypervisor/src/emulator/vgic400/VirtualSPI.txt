@@ -1,0 +1,30 @@
+GICD_CTLR           - 対応不要
+GICD_TYPER          - 対応不要
+GICD_IIDR           - 対応不要
+GICD_IGROUPR(n)     - RAZ/WI - 対応不要
+GICD_ISENABLER(n)   - R/W - 実装完了
+GICD_ICENABLER(n)   - R/W - 実装完了
+GICD_ISPENDR(n)     - RAZ/WI - 実装完了
+GICD_ICPENDR(n)     - RAZ/WI - 実装完了
+GICD_ISACTIVER(n)   - RAZ/WI - 実装完了
+GICD_ICACTIVER(n)   - RAZ/WI - 実装完了
+GICD_IPRIORITYR(n)  - R/W - 実装完了
+GICD_ITARGETSR(n)   - RO/WI（固定値: 0x01） - 実装完了
+GICD_ICFGR(n)       - RO/WI（Level HIGH 固定値）- 実装完了
+GICD_PPISR          - 対応不要
+GICD_SPISR(n)       - RAZ/WO - 実装完了
+GICD_SGIR           - 対応不要
+GICD_CPENDSGIR(n)   - 対応不要
+GICD_SPENDSGIR(n)   - 対応不要
+GICD_PIDR4          - 対応不要
+GICD_PIDR5          - 対応不要
+GICD_PIDR6          - 対応不要
+GICD_PIDR7          - 対応不要
+GICD_PIDR0          - 対応不要
+GICD_PIDR1          - 対応不要
+GICD_PIDR2          - 対応不要
+GICD_PIDR3          - 対応不要
+GICD_CIDR0          - 対応不要
+GICD_CIDR1          - 対応不要
+GICD_CIDR2          - 対応不要
+GICD_CIDR3          - 対応不要

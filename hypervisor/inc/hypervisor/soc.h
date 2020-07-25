@@ -72,7 +72,8 @@ struct soc_device {
 };
 
 struct soc_ops {
-    errno_t (*test_executable_region)(struct soc *, uintptr_t addr, size_t size);
+    errno_t (*test_executable_region)(struct soc *soc, uintptr_t addr, size_t size);
+    errno_t (*assert_interrupt_vpc)(struct soc *soc, const struct vpc *vpc, uint16_t interrupt_no);
 };
 
 struct soc {
@@ -116,6 +117,11 @@ static inline void soc_unlock(struct soc *soc)
 static inline errno_t soc_test_executable_region(struct soc *soc, uintptr_t addr, size_t size)
 {
     return (*(soc->ops->test_executable_region))(soc, addr, size);
+}
+
+static inline errno_t soc_assert_interrupt_vpc(struct soc *soc, const struct vpc *vpc, uint16_t interrupt_no)
+{
+    return (*(soc->ops->assert_interrupt_vpc))(soc, vpc, interrupt_no);
 }
 
 #ifdef __cplusplus

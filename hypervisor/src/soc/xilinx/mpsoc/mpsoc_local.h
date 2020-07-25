@@ -27,6 +27,7 @@ extern "C" {
 
 /* types */
 
+struct soc;
 struct vpc;
 struct insn;
 
@@ -41,7 +42,7 @@ errno_t xilinx_mpsoc_emulate_smc(const struct insn *insn);
 errno_t xilinx_mpsoc_emulate_psci(struct vpc *vpc);
 errno_t xilinx_mpsoc_emulate_tz(struct vpc *vpc);
 errno_t xilinx_mpsoc_emulate_tz_asm(uint64_t *regs);
-bool xilinx_mpsoc_test_executable_region(void *chip, uintptr_t addr);
+errno_t xilinx_mpsoc_assert_interrupt_vpc(struct soc *soc, const struct vpc *vpc, uint16_t interrupt_no);
 
 #ifdef __cplusplus
 }

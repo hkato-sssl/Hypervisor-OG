@@ -20,6 +20,7 @@
 
 struct soc_ops xilinx_mpsoc_ops = {
     .test_executable_region = soc_default_test_executable_region,
+    .assert_interrupt_vpc = xilinx_mpsoc_assert_interrupt_vpc,
 };
 
 /* functions */

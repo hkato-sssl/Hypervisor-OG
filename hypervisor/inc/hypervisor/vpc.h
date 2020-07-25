@@ -71,18 +71,29 @@ struct vpc_hook {
     } resume;
 };
 
-struct vpc {
-    spin_lock_t     lock;
-    struct vm       *vm;
-    uint64_t        *regs;
-    uint8_t         proc_no;
-    enum vpc_status status;
+typedef void (*vpc_event_func_t)(uintptr_t arg0, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3);
 
-    const struct vpc_hook               *hook;
+struct vpc_event {
+    struct vpc_event    *next;
+    bool                queued;
+    vpc_event_func_t    func;
+    uintptr_t           args[4];
+};
+
+struct vpc {
+    spin_lock_t         lock;
+    struct vm           *vm;
+    uint64_t            *regs;
+    uint8_t             proc_no;
+    enum vpc_status     status;
+
+    const struct vpc_hook   *hook;
 
     struct {
         const struct vpc_exception_ops  *ops;
     } exception;
+
+    struct vpc_event    *event_list;
 };
 
 struct vpc_configuration {
@@ -126,6 +137,8 @@ errno_t vpc_emulate_hvc(struct vpc *vpc);
 errno_t vpc_update_pc(struct vpc *vpc);
 errno_t vpc_va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va);
 errno_t vpc_read_instruction(const struct vpc *vpc, uint32_t *code, uint64_t va);
+errno_t vpc_send_event(struct vpc *vpc, struct vpc_event *event);
+void vpc_call_event(struct vpc *vpc);
 
 bool vpc_is_aarch64(const struct vpc *vpc);
 bool vpc_is_aarch32(const struct vpc *vpc);

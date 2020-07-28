@@ -21,6 +21,17 @@
 
 /* functions */
 
+static uint8_t *virtual_ipriorityr(struct vgic400 *vgic, uintptr_t reg)
+{
+    uint8_t *ipriorityr;
+    uintptr_t idx;
+
+    idx = reg - GICD_IPRIORITYR(0) - vgic->virtual_spi.base_no;
+    ipriorityr = vgic->virtual_spi.ipriorityr + idx;
+
+    return ipriorityr;
+}
+
 static bool is_writable(struct vgic400 *vgic, uintptr_t virq, uint8_t priority)
 {
     bool ret;
@@ -94,9 +105,14 @@ static errno_t read_virtual_ipriorityr_b(struct vgic400 *vgic, const struct insn
 {
     errno_t ret;
     uintptr_t d;
+    uint8_t *ipriorityr;
 
-    reg -= GICD_IPRIORITYR(0);
-    d = vgic->virtual_spi.priorityr[reg];
+    ipriorityr = virtual_ipriorityr(vgic, reg);
+
+    vgic400_lock(vgic);
+    d = *ipriorityr;
+    vgic400_unlock(vgic);
+
     ret = insn_emulate_ldr(insn, d);
 
     return ret;
@@ -105,11 +121,15 @@ static errno_t read_virtual_ipriorityr_b(struct vgic400 *vgic, const struct insn
 static errno_t read_virtual_ipriorityr_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
-    uint8_t *priorityr;
+    uint8_t *ipriorityr;
     uintptr_t d;
 
-    priorityr = vgic->virtual_spi.priorityr + (reg - GICD_IPRIORITYR(0));
-    d = ((uintptr_t)(priorityr[3]) << 24) | ((uintptr_t)(priorityr[2]) << 16) | ((uintptr_t)(priorityr[1]) << 8) | priorityr[0];
+    ipriorityr = virtual_ipriorityr(vgic, reg);
+
+    vgic400_lock(vgic);
+    d = ((uintptr_t)(ipriorityr[3]) << 24) | ((uintptr_t)(ipriorityr[2]) << 16) | ((uintptr_t)(ipriorityr[1]) << 8) | ipriorityr[0];
+    vgic400_unlock(vgic);
+
     ret = insn_emulate_ldr(insn, d);
 
     return ret;
@@ -119,10 +139,14 @@ static errno_t write_virtual_ipriorityr_b(struct vgic400 *vgic, const struct ins
 {
     errno_t ret;
     uint8_t d;
+    uint8_t *ipriorityr;
 
     d = (uint8_t)insn_str_src_value(insn);
-    reg -= GICD_IPRIORITYR(0);
-    vgic->virtual_spi.priorityr[reg] = d & vgic->priority_mask;
+    ipriorityr = virtual_ipriorityr(vgic, reg);
+
+    vgic400_lock(vgic);
+    *ipriorityr = d & vgic->priority_mask;
+    vgic400_unlock(vgic);
 
     ret = insn_emulate_str(insn);
 
@@ -133,15 +157,18 @@ static errno_t write_virtual_ipriorityr_w(struct vgic400 *vgic, const struct ins
 {
     errno_t ret;
     int i;
-    uint8_t *priorityr;
+    uint8_t *ipriorityr;
     uint32_t d;
 
     d = (uint32_t)insn_str_src_value(insn);
-    priorityr = vgic->virtual_spi.priorityr + (reg - GICD_IPRIORITYR(0));
+    ipriorityr = virtual_ipriorityr(vgic, reg);
+
+    vgic400_lock(vgic);
     for (i = 0; i < 4; ++i) {
-        priorityr[i] = (uint8_t)d & vgic->priority_mask;
+        ipriorityr[i] = (uint8_t)d & vgic->priority_mask;
         d >>= 8;
     }
+    vgic400_unlock(vgic);
 
     ret = insn_emulate_str(insn);
 
@@ -173,6 +200,10 @@ static errno_t write_virtual_ipriorityr(struct vgic400 *vgic, const struct insn 
         ret = write_virtual_ipriorityr_w(vgic, insn, reg);
     } else {
         ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
+    }
+
+    if (ret == SUCCESS) {
+        ret = vgic400_update_virtual_spi_interrupt(insn->vpc, vgic);
     }
 
     return ret;

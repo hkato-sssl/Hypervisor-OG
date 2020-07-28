@@ -26,10 +26,14 @@ int vgic400_list_register(struct vgic400 *vgic)
     uint32_t d;
     uint32_t ct;
 
+    vgic400_lock(vgic);
+
     d = gic400_read_virtif_control(vgic, GICH_ELRSR0);
     d &= ~(uint32_t)BIT(0);     /* Bit-0 is reserved for virtual SPI */
     ct = (uint32_t)aarch64_clz(d);
     no = 63 - (int)ct;          /* -1: No List Register is available. */
+
+    vgic400_unlock(vgic);
 
     return no;
 }

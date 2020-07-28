@@ -42,10 +42,10 @@ errno_t write_virtual_ispendr(struct vgic400 *vgic, const struct insn *insn)
     d = (uint32_t)insn_str_src_value(insn);
     if (d != 0) {
         vgic400_lock(vgic);
-        vgic->virtual_spi.pendr |= d;
+        vgic->virtual_spi.ipendr |= d;
         vgic400_unlock(vgic);
 
-        ret = vgic400_encourage_virtual_spi_interrupt(vgic);
+        ret = vgic400_update_virtual_spi_interrupt(insn->vpc, vgic);
         if (ret == SUCCESS) {
             ret = insn_emulate_str(insn);
         }
@@ -66,7 +66,7 @@ errno_t write_virtual_icpendr(struct vgic400 *vgic, const struct insn *insn)
     if (d != 0) {
         mask = ~d;
         vgic400_lock(vgic);
-        vgic->virtual_spi.pendr &= mask;
+        vgic->virtual_spi.ipendr &= mask;
         vgic400_unlock(vgic);
     }
 

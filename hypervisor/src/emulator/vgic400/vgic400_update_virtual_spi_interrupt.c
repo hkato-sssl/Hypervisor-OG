@@ -55,6 +55,7 @@ static errno_t encourage_virtual_spi_interrupt(struct vgic400 *vgic)
     } else {
         /* No assertable interrupt is pending. */
 
+        vgic->virtual_spi.asserting = false;
         ret = SUCCESS;
     }
 

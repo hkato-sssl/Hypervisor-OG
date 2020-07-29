@@ -59,6 +59,7 @@ static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint
     if ((d & BIT(0)) != 0) {    /* EOI has issued by EL1 */
         maintenance_misr_eoi(vpc, vgic);
     }
+
     if ((d & BIT(1)) != 0) {    /* Undeflow */
         d = gic400_read_virtif_control(vgic, GICH_HCR);
         d ^= BIT(1);    /* GICH_HCR.UIE */

@@ -45,12 +45,13 @@ struct vgic400_ops {
 };
 
 struct vgic400_virtual_spi {
+    bool            asserting;
     uint32_t        base_no;
     uint32_t        used;
     
-    uint8_t         priorityr[32];
-    uint32_t        enabler;
-    uint32_t        pendr;
+    uint8_t         ipriorityr[32];
+    uint32_t        ienabler;
+    uint32_t        ipendr;
 };
 
 struct vgic400 {
@@ -103,6 +104,7 @@ struct vgic400 {
     } boolean;
 
     struct vgic400_virtual_spi  virtual_spi;
+    struct vpc_event            vpc_events[MAX_NR_VM_PROCESSORS];
 };
 
 struct vgic400_configuration {
@@ -147,8 +149,8 @@ errno_t vgic400_inject_sgi(struct vpc *, struct vgic400 *vgic, uint32_t iar);
 errno_t vgic400_inject_sgi_at(struct vpc *, struct vgic400 *vgic, uint32_t iar, uint32_t list_no);
 errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
 errno_t vgic400_default_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
-errno_t vgic400_assert_virtual_spi_interrupt(struct vgic400 *vgic, uint16_t interrupt_no);
-errno_t vgic400_encourage_virtual_spi_interrupt(struct vgic400 *vgic);
+errno_t vgic400_assert_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint16_t interrupt_no);
+errno_t vgic400_update_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic);
 errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no);
 
 /* for debugging */

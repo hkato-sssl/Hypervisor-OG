@@ -26,10 +26,13 @@
 errno_t read_virtual_ixpendr(struct vgic400 *vgic, const struct insn *insn)
 {
     errno_t ret;
+    uint32_t d;
 
-    /* Read as zero. */
+    vgic400_lock(vgic);
+    d = vgic->virtual_spi.ipendr;
+    vgic400_unlock(vgic);
 
-    ret = insn_emulate_ldr(insn, 0);
+    ret = insn_emulate_ldr(insn, d);
 
     return ret;
 }
@@ -43,9 +46,13 @@ errno_t write_virtual_ispendr(struct vgic400 *vgic, const struct insn *insn)
     if (d != 0) {
         vgic400_lock(vgic);
         vgic->virtual_spi.ipendr |= d;
+        if ((vgic->virtual_spi.ienabler & vgic->virtual_spi.ipendr) != 0) {
+            ret = vgic400_accept_virtual_spi_interrupt(insn->vpc, vgic);
+        } else {
+            ret = SUCCESS;
+        }
         vgic400_unlock(vgic);
 
-        ret = vgic400_update_virtual_spi_interrupt(insn->vpc, vgic);
         if (ret == SUCCESS) {
             ret = insn_emulate_str(insn);
         }

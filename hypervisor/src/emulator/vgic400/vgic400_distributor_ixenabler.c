@@ -40,9 +40,13 @@ errno_t write_virtual_isenabler(struct vgic400 *vgic, const struct insn *insn)
     d = (uint32_t)insn_str_src_value(insn);
     vgic400_lock(vgic);
     vgic->virtual_spi.ienabler |= d;
+    if ((vgic->virtual_spi.ienabler & vgic->virtual_spi.ipendr) != 0) {
+        ret = vgic400_accept_virtual_spi_interrupt(insn->vpc, vgic);
+    } else {
+        ret = SUCCESS;
+    }
     vgic400_unlock(vgic);
 
-    ret = vgic400_update_virtual_spi_interrupt(insn->vpc, vgic);
     if (ret == SUCCESS) {
         ret = insn_emulate_str(insn);
     }

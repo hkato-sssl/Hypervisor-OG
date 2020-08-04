@@ -26,40 +26,38 @@
 
 /* functions */
 
-static errno_t send_event(struct vpc *vpc, struct vgic400 *vgic, uint16_t interrupt_no)
+static bool is_exposable(const struct vgic400 *vgic, uint16_t interrupt_no)
 {
-    errno_t ret;
-    struct vpc *dst;
-    struct vpc_event *event;
+    bool result;
+    uint32_t no;
+    uint32_t bit;
 
-    event = &(vgic->vpc_events[vpc->proc_no]);
-    if (! event->queued) {
-        dst = vpc->vm->vpcs[0];
-        event->func = (vpc_event_func_t)vgic400_assert_virtual_spi_interrupt;
-        event->args[0] = (uintptr_t)dst;
-        event->args[1] = (uintptr_t)vgic;
-        event->args[2] = interrupt_no;
-        event->args[3] = 0;
-        ret = vpc_send_event(dst, event);
-        if (ret == SUCCESS) {
-            vgic->virtual_spi.asserting = true;
-        }
+    no = interrupt_no - vgic->virtual_spi.base_no;
+    bit = 1UL << no;
+    if (((vgic->virtual_spi.ienabler & bit) != 0) && (vgic->virtual_spi.ipriorityr[no] < vgic->priority_mask)) {
+        result = true;
     } else {
-        ret = -EBUSY;
+        result = false;
     }
 
-    return ret;
+    return result;
 }
 
 static errno_t assert_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint16_t interrupt_no)
 {
     errno_t ret;
 
-    if (vpc->proc_no == 0) {
-        ret = vgic400_inject_virtual_spi_interrupt(vgic, interrupt_no);
+    vgic400_lock(vgic);
+
+    vgic->virtual_spi.ipendr |= 1UL << (interrupt_no - vgic->virtual_spi.base_no);
+
+    if ((! vgic->virtual_spi.asserting) && is_exposable(vgic, interrupt_no)) {
+        ret = vgic400_accept_virtual_spi_interrupt(vpc, vgic);
     } else {
-        ret = send_event(vpc, vgic, interrupt_no);
+        ret = SUCCESS;  /* no work */
     }
+
+    vgic400_unlock(vgic);
 
     return ret;
 }
@@ -89,14 +87,7 @@ errno_t vgic400_assert_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vg
 
     ret = validate_parameters(vpc, vgic, interrupt_no);
     if (ret == SUCCESS) {
-        vgic400_lock(vgic);
-        if (! vgic->virtual_spi.asserting) {
-            ret = assert_virtual_spi_interrupt(vpc, vgic, interrupt_no);
-        } else {
-            /* Only update PENDR */
-            vgic->virtual_spi.ipendr |= 1UL << (interrupt_no - vgic->virtual_spi.base_no);
-        }
-        vgic400_unlock(vgic);
+        ret = assert_virtual_spi_interrupt(vpc, vgic, interrupt_no);
     }
 
     return ret;

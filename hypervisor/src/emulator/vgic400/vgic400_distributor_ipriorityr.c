@@ -153,19 +153,23 @@ static errno_t write_virtual_ipriorityr_b(struct vgic400 *vgic, const struct ins
 
     d = (uint8_t)insn_str_src_value(insn);
     d &= vgic->priority_mask;
-    idx = virtual_ipriorityr_index(vgic, reg);
+    if (d > 0) {
+        idx = virtual_ipriorityr_index(vgic, reg);
 
-    vgic400_lock(vgic);
+        vgic400_lock(vgic);
 
-    pending = vgic->virtual_spi.ipendr & vgic->virtual_spi.ienabler;
-    vgic->virtual_spi.ipriorityr[idx] = d;
-    if ((d < vgic->priority_mask) && ((pending & BIT(idx)) != 0)) {
-        ret = vgic400_accept_virtual_spi_interrupt(insn->vpc, vgic);
+        pending = vgic->virtual_spi.ipendr & vgic->virtual_spi.ienabler;
+        vgic->virtual_spi.ipriorityr[idx] = d;
+        if ((d < vgic->priority_mask) && ((pending & BIT(idx)) != 0)) {
+            ret = vgic400_accept_virtual_spi_interrupt(insn->vpc, vgic);
+        } else {
+            ret = SUCCESS;
+        }
+
+        vgic400_unlock(vgic);
     } else {
         ret = SUCCESS;
     }
-
-    vgic400_unlock(vgic);
 
     if (ret == SUCCESS) {
         ret = insn_emulate_str(insn);
@@ -195,10 +199,12 @@ static errno_t write_virtual_ipriorityr_w(struct vgic400 *vgic, const struct ins
     pending = vgic->virtual_spi.ipendr & vgic->virtual_spi.ienabler;
     for (i = 0; i < 4; ++i) {
         priority = (uint8_t)d & vgic->priority_mask;
-        ipriorityr[i] = priority;
-        d >>= 8;
-        if ((priority < vgic->priority_mask) && ((pending & BIT(idx + i)) != 0)) {
-            accept = true;
+        if (priority > 0) {
+            ipriorityr[i] = priority;
+            d >>= 8;
+            if ((priority < vgic->priority_mask) && ((pending & BIT(idx + i)) != 0)) {
+                accept = true;
+            }
         }
     }
 

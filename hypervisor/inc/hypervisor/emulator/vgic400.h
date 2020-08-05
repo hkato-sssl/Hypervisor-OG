@@ -48,6 +48,7 @@ struct vgic400_virtual_spi {
     bool            asserting;
     uint32_t        base_no;
     uint32_t        used;
+    const char      *name[32];
     
     uint8_t         ipriorityr[32];
     uint32_t        ienabler;
@@ -151,7 +152,7 @@ errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
 errno_t vgic400_default_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
 errno_t vgic400_assert_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint16_t interrupt_no);
 errno_t vgic400_update_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic);
-errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no);
+errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no, const char *name);
 
 /* for debugging */
 

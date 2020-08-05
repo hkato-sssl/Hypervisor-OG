@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include "lib/aarch64.h"
 #include "lib/system/errno.h"
+#include "lib/system/printk.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
 
@@ -21,7 +22,7 @@
 
 /* functions */
 
-static errno_t allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no)
+static errno_t allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no, const char *name)
 {
     errno_t ret;
     uint64_t n;
@@ -31,7 +32,13 @@ static errno_t allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no
     n = 64 - aarch64_clz(vgic->virtual_spi.used);
     if (n < 32) {
         vgic->virtual_spi.used |= BIT(n);
+        vgic->virtual_spi.name[n] = name;
         *interrupt_no = (uint16_t)(n + vgic->virtual_spi.base_no);
+        if (name != NULL) {
+            printk("VSPI#%u is allocated by '%s'.\n", *interrupt_no, name);
+        } else {
+            printk("VSPI#%u is allocated.\n", *interrupt_no);
+        }
         ret = SUCCESS;
     } else {
         ret = -EBUSY;
@@ -42,12 +49,12 @@ static errno_t allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no
     return ret;
 }
 
-errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no)
+errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no, const char *name)
 {
     errno_t ret;
 
     if (vgic->boolean.virtual_spi) {
-        ret = allocate_virtual_spi(vgic, interrupt_no);
+        ret = allocate_virtual_spi(vgic, interrupt_no, name);
     } else {
         ret = -EPERM;
     }

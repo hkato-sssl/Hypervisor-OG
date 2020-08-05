@@ -24,8 +24,6 @@
 
 /* variables */
 
-static int fg = 0;
-
 /* functions */
 
 errno_t inject_virtual_spi_interrupt(struct vgic400 *vgic, uint16_t interrupt_no)

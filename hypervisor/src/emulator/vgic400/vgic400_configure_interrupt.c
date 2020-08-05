@@ -39,6 +39,7 @@ static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_in
     if (config->flag.group1 != 0) {
         d |= BIT(30);   /* Grp1 */
     }
+    d |= (uint32_t)(vgic->priority_mask) << 20;
     d |= (uint32_t)(config->physical_id) << 10;
     d |= (uint32_t)(config->virtual_id);
 

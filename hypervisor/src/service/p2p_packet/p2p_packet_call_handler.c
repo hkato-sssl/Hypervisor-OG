@@ -13,18 +13,20 @@
 
 /* types */
 
+struct vpc;
+
 /* prototypes */
 
 /* variables */
 
 /* functions */
 
-errno_t p2p_packet_call_arrive_handler(struct p2p_packet_ep *ep)
+errno_t p2p_packet_call_arrive_handler(struct vpc *vpc, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
     if ((ep->ops != NULL) && (ep->ops->arrive != NULL)) {
-        ret = (ep->ops->arrive)(ep);
+        ret = (ep->ops->arrive)(vpc, ep);
     } else {
         ret = SUCCESS;  /* no work */
     }
@@ -32,12 +34,12 @@ errno_t p2p_packet_call_arrive_handler(struct p2p_packet_ep *ep)
     return ret;
 }
 
-errno_t p2p_packet_call_empty_handler(struct p2p_packet_ep *ep)
+errno_t p2p_packet_call_empty_handler(struct vpc *vpc, struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
     if ((ep->ops != NULL) && (ep->ops->empty != NULL)) {
-        ret = (ep->ops->empty)(ep);
+        ret = (ep->ops->empty)(vpc, ep);
     } else {
         ret = SUCCESS;  /* no work */
     }

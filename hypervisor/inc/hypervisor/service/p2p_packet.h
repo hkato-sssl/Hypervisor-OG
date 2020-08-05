@@ -34,7 +34,7 @@ struct vpc;
 struct p2p_packet_ep;
 struct p2p_packet_path;
 
-typedef errno_t (*p2p_packet_handler_t)(struct p2p_packet_ep *ep);
+typedef errno_t (*p2p_packet_handler_t)(struct vpc *vpc, struct p2p_packet_ep *ep);
 
 struct p2p_packet_ep_ops {
     p2p_packet_handler_t    arrive;     /* A packet has arrived. */

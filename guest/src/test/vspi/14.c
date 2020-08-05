@@ -10,7 +10,7 @@
  *   IRQ有効化／PMRマスクなし
  *   全vSPI最低優先度設定
  *   全vSPIをアサート
- *   GICD_IPRIORITYRnを１ワードずつ優先度を最高値に設定
+ *   GICD_IPRIORITYRnを１ワードずつ優先度を1に設定
  *   割り込み番号の大きい順にレジスタ設定を行う
  *   マルチではVPC#N(N>0)にて全手順を実行
  * 確認事項（シングル）
@@ -53,7 +53,7 @@ extern struct gic400 gic;
 static void initialize(void)
 {
     vspi_set_start(false);
-    vspi_init_interrupts();
+    vspi_init_interrupts(0x0f);
 }
 
 static void set_priority(uint8_t d0)
@@ -95,12 +95,11 @@ static void vspi_14(void)
     printk("Start.\n");
     vspi_set_start(true);
 
-    set_priority(0xff);
     gic400_set_priority_mask(&gic, 0xff);
     aarch64_enable_irq();
 
     assert_14();
-    set_priority(0);
+    set_priority(0x10);
 
     gic400_dump_ns_cpuif(&gic);
     gic400_dump_ns_distributor(&gic);
@@ -147,9 +146,8 @@ static void vspi_14_secondary(void)
 
     printk("<%s>\n", __func__);
 
-    set_priority(0xff);
     assert_14();
-    set_priority(0);
+    set_priority(0x10);
     vspi_set_start(false);
 }
 

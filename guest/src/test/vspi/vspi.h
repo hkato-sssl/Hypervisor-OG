@@ -32,7 +32,7 @@ extern "C" {
 
 void vspi_set_start(bool);
 bool vspi_get_start(void);
-void vspi_init_interrupts(void);
+void vspi_init_interrupts(uint8_t level);
 void vspi_assert_interrupt(uint32_t no);
 
 #ifdef __cplusplus

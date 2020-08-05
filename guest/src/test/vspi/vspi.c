@@ -54,7 +54,7 @@ static void test_handler(uint16_t vector)
     gic400_eoi(&gic, iar);
 }
 
-void vspi_init_interrupts(void)
+void vspi_init_interrupts(uint8_t level)
 {
     errno_t ret;
     uint16_t i;
@@ -67,7 +67,7 @@ void vspi_init_interrupts(void)
 
     memset(&config, 0, sizeof(config));
     config.targets = 1;
-    config.priority = 2;
+    config.priority = level;
     config.flag.edge = 0;
 
     for (i = 0; i < gic.nr_interrupts; ++i) {

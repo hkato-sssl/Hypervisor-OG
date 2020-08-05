@@ -53,7 +53,7 @@ extern struct gic400 gic;
 static void initialize(void)
 {
     vspi_set_start(false);
-    vspi_init_interrupts();
+    vspi_init_interrupts(0x0f);
 }
 
 static void set_priority(uint8_t d0)
@@ -94,12 +94,11 @@ static void vspi_13(void)
     printk("Start.\n");
     vspi_set_start(true);
 
-    set_priority(0xff);
     gic400_set_priority_mask(&gic, 0xff);
     aarch64_enable_irq();
 
     assert_13();
-    set_priority(0);
+    set_priority(0x10);
 
     gic400_dump_ns_cpuif(&gic);
     gic400_dump_ns_distributor(&gic);
@@ -146,9 +145,8 @@ static void vspi_13_secondary(void)
 
     printk("<%s>\n", __func__);
 
-    set_priority(0xff);
     assert_13();
-    set_priority(0);
+    set_priority(0x10);
     vspi_set_start(false);
 }
 

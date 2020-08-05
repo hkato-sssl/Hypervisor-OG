@@ -51,7 +51,7 @@ extern struct gic400 gic;
 static void initialize(void)
 {
     vspi_set_start(false);
-    vspi_init_interrupts();
+    vspi_init_interrupts(0x80);
 }
 
 static void assert_10(void)

@@ -40,7 +40,7 @@ static void maintenance_misr_eoi(struct vpc *vpc, struct vgic400 *vgic)
     while (d != 0) {
         no = 63 - (uint32_t)aarch64_clz(d);
         gic400_write_virtif_control(vgic, GICH_LR(no), 0);
-        if ((! vgic->boolean.virtual_spi) || (no > 0)) {
+        if ((no > 0) || (! vgic->boolean.virtual_spi)) {
             gic400_deactivate(vgic->gic, iar[no]);
         }
         d ^= BIT(no);

@@ -32,7 +32,7 @@ errno_t inject_virtual_spi_interrupt(struct vgic400 *vgic, uint16_t interrupt_no
     uint32_t d;
 
     virtual_id = interrupt_no + vgic->virtual_spi.base_no;
-    d = (uint32_t)(vgic->virtual_spi.ipriorityr[interrupt_no]) << 23;
+    d = (uint32_t)(vgic->virtual_spi.ipriorityr[interrupt_no]) << 20;
     d |= BIT(28) | BIT(19) | virtual_id;    /* pending, EOI, VirtualID */
     gic400_write_virtif_control(vgic, GICH_LR(0), d);
 

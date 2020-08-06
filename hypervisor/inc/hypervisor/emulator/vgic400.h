@@ -31,6 +31,7 @@ extern "C" {
 #define NR_VGIC400_CPUS                 8
 #define NR_VGIC400_PRIORITIES           16
 #define MAX_NR_VGIC400_LIST_REGISTERS   32
+#define VGIC400_NAME_LEN                16
 
 /* types */
 
@@ -48,7 +49,7 @@ struct vgic400_virtual_spi {
     bool            asserting;
     uint32_t        base_no;
     uint32_t        used;
-    const char      *name[32];
+    char            name[32][VGIC400_NAME_LEN];
     
     uint8_t         ipriorityr[32];
     uint32_t        ienabler;

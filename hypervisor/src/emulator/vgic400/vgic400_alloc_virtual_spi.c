@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #include "lib/aarch64.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
@@ -32,7 +33,7 @@ static errno_t allocate_virtual_spi(struct vgic400 *vgic, uint16_t *interrupt_no
     n = 64 - aarch64_clz(vgic->virtual_spi.used);
     if (n < 32) {
         vgic->virtual_spi.used |= BIT(n);
-        vgic->virtual_spi.name[n] = name;
+        strncpy(vgic->virtual_spi.name[n], name, VGIC400_NAME_LEN);
         *interrupt_no = (uint16_t)(n + vgic->virtual_spi.base_no);
         if (name != NULL) {
             printk("VSPI#%u is allocated by '%s'.\n", *interrupt_no, name);

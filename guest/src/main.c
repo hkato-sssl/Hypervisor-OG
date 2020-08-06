@@ -10,6 +10,7 @@
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "driver/arm/gic400.h"
+#include "driver/system/cpu.h"
 
 /* defines */
 
@@ -38,13 +39,7 @@ __attribute__ ((weak)) void init_hw(void) { return ; }
 
 void launch_system(void)
 {
-    uint64_t d;
+    printk("<%u#%s>\n", cpu_no(), __func__);
 
-    printk("<%s>\n", __func__);
-
-    for (d = 1; d != 0; d <<= 1) {
-        printk("cls(%p)=%u\n", d, aarch64_cls(d));
-        printk("clz(%p)=%u\n", d, aarch64_clz(d));
-        printk("\n");
-    }
+    test_vspi_09();
 }

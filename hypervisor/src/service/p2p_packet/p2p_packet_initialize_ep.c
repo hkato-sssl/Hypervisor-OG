@@ -22,6 +22,7 @@
 static errno_t initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
 {
     memset(ep, 0, sizeof(*ep));
+    ep->owner = config->owner;
     ep->ops = config->ops;
     ep->arg = config->arg;
     ep->length = config->length;

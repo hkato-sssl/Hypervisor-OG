@@ -40,7 +40,7 @@ static errno_t send(struct vpc *vpc, struct p2p_packet_ep *ep)
     ep->peer->event.data_ready = 1;
     memory_barrier_sync();
 
-    ret = p2p_packet_call_arrive_handler(vpc, ep->peer);
+    ret = p2p_packet_call_arrive_handler(ep->peer);
 
     return ret;
 }

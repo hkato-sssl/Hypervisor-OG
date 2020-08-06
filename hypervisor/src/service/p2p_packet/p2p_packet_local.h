@@ -33,8 +33,8 @@ struct vpc;
 
 /* functions */
 
-errno_t p2p_packet_call_arrive_handler(struct vpc *vpc, struct p2p_packet_ep *ep);
-errno_t p2p_packet_call_empty_handler(struct vpc *vpc, struct p2p_packet_ep *ep);
+errno_t p2p_packet_call_arrive_handler(struct p2p_packet_ep *ep);
+errno_t p2p_packet_call_empty_handler(struct p2p_packet_ep *ep);
 
 #ifdef __cplusplus
 }

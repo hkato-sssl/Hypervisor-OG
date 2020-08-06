@@ -105,7 +105,7 @@ struct vgic400 {
     } boolean;
 
     struct vgic400_virtual_spi  virtual_spi;
-    struct vpc_event            vpc_events[MAX_NR_VM_PROCESSORS];
+    struct vpc_event            accept_event;
 };
 
 struct vgic400_configuration {

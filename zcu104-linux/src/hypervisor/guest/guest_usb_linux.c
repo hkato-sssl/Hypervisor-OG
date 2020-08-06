@@ -101,8 +101,8 @@ static void *init_mpsoc(void)
     config.stage2.pool = &sys_pool;
     config.stage2.level1_table = table;
     config.gic.device = &sys_gic;
-    config.gic.nr_sgis = 8;
-    for (i = 0; i < 8; ++i) {
+    config.gic.nr_sgis = 7;
+    for (i = 0; i < 7; ++i) {
         config.gic.sgis[i] = (uint16_t)i;
     }
     config.gic.nr_ppis = 2;

@@ -109,6 +109,7 @@ static void *init_mpsoc(void)
     config.gic.ppis[0] = 27;
     config.gic.ppis[1] = 30;
     config.gic.ops = &xilinx_mpsoc_vgic400_ops;
+    config.gic.flag.virtual_spi = 1;
     config.smmu.device = &sys_smmu;
     config.smmu.nr_streams = nr_guest_usb_linux_streams;
     config.smmu.streams = guest_usb_linux_streams;
@@ -117,6 +118,10 @@ static void *init_mpsoc(void)
     config.devices = guest_usb_linux_devices;
 
     ret = xilinx_mpsoc_initialize(&mpsoc, &config);
+
+    if (ret == SUCCESS) {
+        ret = guest_usb_linux_initialize_hvc(&mpsoc);
+    }
 
     return (ret == SUCCESS) ? &mpsoc : NULL;
 }

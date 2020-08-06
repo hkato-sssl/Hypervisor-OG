@@ -1,5 +1,5 @@
 /*
- * hypervisor/guest/guest_linux_hvc.c
+ * hypervisor/guest/guest_usb_linux_hvc.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -17,10 +17,6 @@
 
 #define DEV_NAME        "P128"
 #define HVC_IMM         1
-
-#undef  ALLOCATE_VSPI
-#define INTR_EP0        130
-#define INTR_EP1        131
 
 /* types */
 
@@ -42,17 +38,23 @@ static struct hvc_p128_service p128;
 
 /* functions */
 
-static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc, uint16_t interrupt_no)
+static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc)
 {
     errno_t ret;
+    uint16_t irq;
     struct p2p_packet_ep_configuration config;
+    static char name[] = "P128#x";
 
-    memset(&config, 0, sizeof(config));
-    config.ops = &xilinx_mpsoc_p2p_packet_ep_ops;
-    config.owner = mpsoc;
-    config.length = 128;
-    config.interrupt_no = interrupt_no;
-    ret = p2p_packet_initialize_ep(&(eps[no]), &config);
+    name[5] = '0' + (char)no;
+    ret = vgic400_allocate_virtual_spi(&(mpsoc->vgic400), &irq, name);
+    if (ret == SUCCESS) {
+        memset(&config, 0, sizeof(config));
+        config.ops = &xilinx_mpsoc_p2p_packet_ep_ops;
+        config.owner = mpsoc;
+        config.length = 128;
+        config.interrupt_no = irq;
+        ret = p2p_packet_initialize_ep(&(eps[no]), &config);
+    }
 
     return ret;
 }
@@ -79,55 +81,30 @@ static errno_t init_p128_service(struct xilinx_mpsoc *mpsoc)
 static errno_t init_p2p_eps(struct xilinx_mpsoc *mpsoc)
 {
     errno_t ret;
-    uint16_t irq;
 
-#ifdef ALLOCATE_VSPI
-    ret = vgic400_allocate_virtual_spi(&(mpsoc->vgic400), &irq, "p128#0");
-    if (ret == SUCCESS) {
-        ret = init_ep(0, mpsoc, irq);
-        if (ret == SUCCESS) {
-            ret = p2p_packet_connect(&p2p_path, &(eps[0]));
-        }
-    }
-
-    if (ret == SUCCESS) {
-        ret = vgic400_allocate_virtual_spi(&(mpsoc->vgic400), &irq, "p128#1");
-    }
-
-    if (ret == SUCCESS) {
-        ret = init_ep(1, mpsoc, irq);
-        if (ret == SUCCESS) {
-            ret = p2p_packet_connect(&p2p_path, &(eps[1]));
-        }
-    }
-#else
-    ret = init_ep(0, mpsoc, INTR_EP0);
+    ret = init_ep(0, mpsoc);
     if (ret == SUCCESS) {
         ret = p2p_packet_connect(&p2p_path, &(eps[0]));
     }
 
     if (ret == SUCCESS) {
-        ret = init_ep(1, mpsoc, INTR_EP1);
+        ret = init_ep(1, mpsoc);
         if (ret == SUCCESS) {
             ret = p2p_packet_connect(&p2p_path, &(eps[1]));
         }
     }
-#endif
 
     if (ret == SUCCESS) {
-        ret = vgic400_allocate_virtual_spi(&(mpsoc->vgic400), &irq, "p128#2");
+        ret = init_ep(2, mpsoc);
         if (ret == SUCCESS) {
-            ret = init_ep(2, mpsoc, irq);
-            if (ret == SUCCESS) {
-                ret = p2p_packet_connect(&p2p_os_path, &(eps[2]));
-            }
+            ret = p2p_packet_connect(&p2p_os_path, &(eps[2]));
         }
     }
 
     return ret;
 }
 
-errno_t guest_linux_initialize_hvc(struct xilinx_mpsoc *mpsoc)
+errno_t guest_usb_linux_initialize_hvc(struct xilinx_mpsoc *mpsoc)
 {
     errno_t ret;
 

@@ -75,7 +75,7 @@ void hypervisor_main(void)
     parameter.args[3] = DTB_ADDR;
     thread_launch(1, &parameter);
 
-#if 0
+#if 1
     chip = guest_usb_linux();
     parameter.args[0] = (uintptr_t)chip;
     parameter.args[1] = 1;

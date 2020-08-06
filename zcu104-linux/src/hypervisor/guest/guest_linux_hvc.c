@@ -18,6 +18,7 @@
 #define DEV_NAME        "P128"
 #define HVC_IMM         1
 
+#define ALLOCATE_VSPI
 #define INTR_EP0        130
 #define INTR_EP1        131
 
@@ -25,11 +26,10 @@
 
 /* prototypes */
 
-static errno_t assert_interrupt(struct p2p_packet_ep *ep);
-
 /* variables */
 
 extern struct p2p_packet_path p2p_path;
+const struct p2p_packet_ep_ops xilinx_mpsoc_p2p_packet_ep_ops;
 
 static struct p2p_packet_ep eps[2];
 static struct p2p_packet_ep *p128_eps[2] = {
@@ -38,23 +38,7 @@ static struct p2p_packet_ep *p128_eps[2] = {
 };
 static struct hvc_p128_service p128;
 
-static struct p2p_packet_ep_ops ops = {
-    .arrive = assert_interrupt,
-    .empty = assert_interrupt,
-};
-
 /* functions */
-
-static errno_t assert_interrupt(struct p2p_packet_ep *ep)
-{
-    errno_t ret;
-    struct xilinx_mpsoc *mpsoc;
-
-    mpsoc = ep->arg;
-    ret = gic400_assert_spi(mpsoc->vgic400.gic, ep->interrupt_no);
-
-    return ret;
-}
 
 static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc, uint16_t interrupt_no)
 {
@@ -62,8 +46,8 @@ static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc, uint16_t interrupt_no
     struct p2p_packet_ep_configuration config;
 
     memset(&config, 0, sizeof(config));
-    config.ops = &ops;
-    config.arg = mpsoc;
+    config.ops = &xilinx_mpsoc_p2p_packet_ep_ops;
+    config.owner = mpsoc;
     config.length = 128;
     config.interrupt_no = interrupt_no;
     ret = p2p_packet_initialize_ep(&(eps[no]), &config);
@@ -96,11 +80,28 @@ static errno_t init_p128_service(struct xilinx_mpsoc *mpsoc)
 static errno_t init_p2p_eps(struct xilinx_mpsoc *mpsoc)
 {
     errno_t ret;
-    
+
+#ifdef ALLOCATE_VSPI
+    uint16_t irq;
+
+    ret = vgic400_allocate_virtual_spi(&(mpsoc->vgic400), &irq, "p128#0");
+    if (ret == SUCCESS) {
+        ret = init_ep(0, mpsoc, irq);
+    }
+
+    if (ret == SUCCESS) {
+        ret = vgic400_allocate_virtual_spi(&(mpsoc->vgic400), &irq, "p128#1");
+    }
+
+    if (ret == SUCCESS) {
+        ret = init_ep(1, mpsoc, irq);
+    }
+#else
     ret = init_ep(0, mpsoc, INTR_EP0);
     if (ret == SUCCESS) {
         ret = init_ep(1, mpsoc, INTR_EP1);
     }
+#endif
 
     return ret;
 }

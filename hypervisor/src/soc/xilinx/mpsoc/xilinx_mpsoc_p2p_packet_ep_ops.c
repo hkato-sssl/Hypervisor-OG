@@ -32,10 +32,12 @@ static errno_t assert_interrupt(struct p2p_packet_ep *ep)
 {
     errno_t ret;
     struct xilinx_mpsoc *mpsoc;
+    struct vpc *vpc;
 
     mpsoc = ep->owner;
     if (vgic400_test_virtual_spi(&(mpsoc->vgic400), ep->interrupt_no)) {
-        ret = -ENOTSUP;
+        vpc = mpsoc->soc.vm.vpcs[0];
+        ret = vgic400_assert_virtual_spi_interrupt(vpc, &(mpsoc->vgic400), ep->interrupt_no);
     } else {
         ret = gic400_assert_spi(mpsoc->vgic400.gic, ep->interrupt_no);
     }

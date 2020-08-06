@@ -1,5 +1,5 @@
 /*
- * emulator/vgic400emulator/vgic400_assert_virtual_spi_interrupt.c
+ * emulator/vgic400emulator/vgic400_assert_virtual_spi.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -43,7 +43,7 @@ static bool is_exposable(const struct vgic400 *vgic, uint16_t interrupt_no)
     return result;
 }
 
-static errno_t assert_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint16_t interrupt_no)
+static errno_t assert_virtual_spi(struct vpc *vpc, struct vgic400 *vgic, uint16_t interrupt_no)
 {
     errno_t ret;
 
@@ -52,7 +52,7 @@ static errno_t assert_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgi
     vgic->virtual_spi.ipendr |= 1UL << (interrupt_no - vgic->virtual_spi.base_no);
 
     if ((! vgic->virtual_spi.asserting) && is_exposable(vgic, interrupt_no)) {
-        ret = vgic400_accept_virtual_spi_interrupt(vpc, vgic);
+        ret = vgic400_accept_virtual_spi(vpc, vgic);
     } else {
         ret = SUCCESS;  /* no work */
     }
@@ -81,13 +81,13 @@ static errno_t validate_parameters(struct vpc *vpc, struct vgic400 *vgic, uint16
     return ret;
 }
 
-errno_t vgic400_assert_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint16_t interrupt_no)
+errno_t vgic400_assert_virtual_spi(struct vpc *vpc, struct vgic400 *vgic, uint16_t interrupt_no)
 {
     errno_t ret;
 
     ret = validate_parameters(vpc, vgic, interrupt_no);
     if (ret == SUCCESS) {
-        ret = assert_virtual_spi_interrupt(vpc, vgic, interrupt_no);
+        ret = assert_virtual_spi(vpc, vgic, interrupt_no);
     }
 
     return ret;

@@ -67,7 +67,7 @@ static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint
     }
 
     if ((d & BIT(3)) != 0) {     /* No pending */
-        vgic400_expose_virtual_spi_interrupt(vpc, vgic);
+        vgic400_expose_virtual_spi(vpc, vgic);
     }
 
     ret = gic400_eoi_and_deactivate(vgic->gic, iar);

@@ -47,7 +47,7 @@ errno_t write_virtual_ispendr(struct vgic400 *vgic, const struct insn *insn)
         vgic400_lock(vgic);
         vgic->virtual_spi.ipendr |= d;
         if ((vgic->virtual_spi.ienabler & vgic->virtual_spi.ipendr) != 0) {
-            ret = vgic400_accept_virtual_spi_interrupt(insn->vpc, vgic);
+            ret = vgic400_accept_virtual_spi(insn->vpc, vgic);
         } else {
             ret = SUCCESS;
         }

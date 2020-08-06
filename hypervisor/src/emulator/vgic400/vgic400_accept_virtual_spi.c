@@ -1,5 +1,5 @@
 /*
- * emulator/vgic400/vgic400_accept_virtual_spi_interrupt.c
+ * emulator/vgic400/vgic400_accept_virtual_spi.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -37,7 +37,7 @@ static errno_t accept(struct vpc *vpc, struct vgic400 *vgic)
     return SUCCESS;
 }
 
-static errno_t accept_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic)
+static errno_t accept_virtual_spi(struct vpc *vpc, struct vgic400 *vgic)
 {
     errno_t ret;
 
@@ -61,7 +61,7 @@ static errno_t send_event(struct vpc *vpc, struct vgic400 *vgic)
     dst = vpc->vm->vpcs[0];
     event = &(vgic->accept_event);
     if (! event->queued) {
-        event->func = (vpc_event_func_t)accept_virtual_spi_interrupt;
+        event->func = (vpc_event_func_t)accept_virtual_spi;
         event->args[0] = (uintptr_t)dst;
         event->args[1] = (uintptr_t)vgic;
         event->args[2] = 0;
@@ -80,7 +80,7 @@ static errno_t send_event(struct vpc *vpc, struct vgic400 *vgic)
  * 本APIを呼び出す場合は必ずvgic400_lock()を実行している状態で呼
  * び出す必要がある。
  */
-errno_t vgic400_accept_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic)
+errno_t vgic400_accept_virtual_spi(struct vpc *vpc, struct vgic400 *vgic)
 {
     errno_t ret;
 

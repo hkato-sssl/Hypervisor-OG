@@ -1,5 +1,5 @@
 /*
- * emulator/vgic400emulator/vgic400/vgic400_expose_virtual_spi_interrupt.c
+ * emulator/vgic400emulator/vgic400/vgic400_expose_virtual_spi.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -26,7 +26,7 @@
 
 /* functions */
 
-errno_t inject_virtual_spi_interrupt(struct vgic400 *vgic, uint16_t interrupt_no)
+errno_t inject_virtual_spi(struct vgic400 *vgic, uint16_t interrupt_no)
 {
     uint16_t virtual_id;
     uint32_t d;
@@ -41,7 +41,7 @@ errno_t inject_virtual_spi_interrupt(struct vgic400 *vgic, uint16_t interrupt_no
     return SUCCESS;
 }
 
-static errno_t discontinue_virtual_spi_interrupt(struct vgic400 *vgic)
+static errno_t discontinue_virtual_spi(struct vgic400 *vgic)
 {
     uint32_t d;
 
@@ -54,7 +54,7 @@ static errno_t discontinue_virtual_spi_interrupt(struct vgic400 *vgic)
     return SUCCESS;
 }
 
-static errno_t expose_virtual_spi_interrupt(struct vgic400 *vgic)
+static errno_t expose_virtual_spi(struct vgic400 *vgic)
 {
     errno_t ret;
     uint8_t priority;
@@ -77,23 +77,23 @@ static errno_t expose_virtual_spi_interrupt(struct vgic400 *vgic)
     }
 
     if (priority < vgic->priority_mask) {
-        ret = inject_virtual_spi_interrupt(vgic, interrupt_no);
+        ret = inject_virtual_spi(vgic, interrupt_no);
     } else {
         /* No exposable interrupt is pending. */
-        ret = discontinue_virtual_spi_interrupt(vgic);
+        ret = discontinue_virtual_spi(vgic);
     }
 
     return ret;
 }
 
-errno_t vgic400_expose_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic)
+errno_t vgic400_expose_virtual_spi(struct vpc *vpc, struct vgic400 *vgic)
 {
     errno_t ret;
 
     vgic400_lock(vgic);
 
     if ((vgic->boolean.virtual_spi) && (vpc->proc_no == 0)) {
-        ret = expose_virtual_spi_interrupt(vgic);
+        ret = expose_virtual_spi(vgic);
     } else {
         ret = -EPERM;
     }

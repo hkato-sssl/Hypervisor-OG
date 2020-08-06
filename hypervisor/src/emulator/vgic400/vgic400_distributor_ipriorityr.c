@@ -161,7 +161,7 @@ static errno_t write_virtual_ipriorityr_b(struct vgic400 *vgic, const struct ins
         pending = vgic->virtual_spi.ipendr & vgic->virtual_spi.ienabler;
         vgic->virtual_spi.ipriorityr[idx] = d;
         if ((d < vgic->priority_mask) && ((pending & BIT(idx)) != 0)) {
-            ret = vgic400_accept_virtual_spi_interrupt(insn->vpc, vgic);
+            ret = vgic400_accept_virtual_spi(insn->vpc, vgic);
         } else {
             ret = SUCCESS;
         }
@@ -209,7 +209,7 @@ static errno_t write_virtual_ipriorityr_w(struct vgic400 *vgic, const struct ins
     }
 
     if (accept) {
-        ret = vgic400_accept_virtual_spi_interrupt(insn->vpc, vgic);
+        ret = vgic400_accept_virtual_spi(insn->vpc, vgic);
     } else {
         ret = SUCCESS;
     }

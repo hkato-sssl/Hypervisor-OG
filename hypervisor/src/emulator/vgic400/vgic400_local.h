@@ -207,8 +207,8 @@ uint64_t vgic400_v2p_cpu_map_w(uint64_t src, const struct vm *vm);
 errno_t vgic400_distributor_error(const struct insn *insn, const char *msg);
 
 int vgic400_list_register(struct vgic400 *vgic);
-errno_t vgic400_accept_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic);
-errno_t vgic400_expose_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vgic);
+errno_t vgic400_accept_virtual_spi(struct vpc *vpc, struct vgic400 *vgic);
+errno_t vgic400_expose_virtual_spi(struct vpc *vpc, struct vgic400 *vgic);
 
 #ifdef __cplusplus
 }

@@ -13,6 +13,8 @@
 #include "driver/arm.h"
 #include "driver/aarch64.h"
 #include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
+#include "driver/arm/device/gic400.h"
 #include "vspi.h"
 
 /* defines */
@@ -46,11 +48,13 @@ bool vspi_get_start(void)
 static void test_handler(uint16_t vector)
 {
     uint32_t iar;
+    uint32_t rpr;
 
     printk("<%s> vector=0x%04x\n", __func__, vector);
 
     iar = gic400_ack(&gic);
-    printk("IAR = 0x%08x\n", iar);
+    rpr = gic400_read_cpuif(&gic, GICC_RPR);
+    printk("IAR = 0x%08x, RPR = 0x%08x\n", iar, rpr);
     gic400_eoi(&gic, iar);
 }
 

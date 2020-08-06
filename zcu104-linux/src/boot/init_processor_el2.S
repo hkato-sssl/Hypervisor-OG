@@ -31,12 +31,12 @@ init_processor_el2:
 
         // initialize HCR_EL2
 
-        dsb		sy
-	isb
-        mrs		x0, HCR_EL2
-	orr		x1, x0, #(HCR_EL2_AMO | HCR_EL2_IMO | HCR_EL2_FMO)
-	msr		HCR_EL2, x1
-	isb
+        dsb             sy
+        isb
+        mrs             x0, HCR_EL2
+        orr             x1, x0, #(HCR_EL2_AMO | HCR_EL2_IMO | HCR_EL2_FMO)
+        msr             HCR_EL2, x1
+        isb
 
         // initialize SCTLR_EL2
 

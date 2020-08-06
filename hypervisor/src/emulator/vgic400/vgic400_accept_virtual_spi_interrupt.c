@@ -9,6 +9,7 @@
 #include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/device/gic400.h"
+#include "hypervisor/thread.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
@@ -57,9 +58,9 @@ static errno_t send_event(struct vpc *vpc, struct vgic400 *vgic)
     struct vpc *dst;
     struct vpc_event *event;
 
-    event = &(vgic->vpc_events[vpc->proc_no]);
+    dst = vpc->vm->vpcs[0];
+    event = &(vgic->accept_event);
     if (! event->queued) {
-        dst = vpc->vm->vpcs[0];
         event->func = (vpc_event_func_t)accept_virtual_spi_interrupt;
         event->args[0] = (uintptr_t)dst;
         event->args[1] = (uintptr_t)vgic;
@@ -84,7 +85,7 @@ errno_t vgic400_accept_virtual_spi_interrupt(struct vpc *vpc, struct vgic400 *vg
     errno_t ret;
 
     if (! vgic->virtual_spi.asserting) {
-        if (vpc->proc_no == 0) {
+        if ((vpc->proc_no == 0) && (vpc == (void *)thread_read_tls(TLS_CURRENT_VPC))) {
             ret = accept(vpc, vgic);
         } else {
             ret = send_event(vpc, vgic);

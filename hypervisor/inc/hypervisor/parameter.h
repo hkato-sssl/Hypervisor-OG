@@ -17,5 +17,7 @@
 
 #define HYP_INTR_VPC_EVENT          7
 
+#define HYP_GUEST_REGION_BASE       0xf00000000000ULL
+
 #endif /* HYPERVISOR_PARAMETER_H */
 

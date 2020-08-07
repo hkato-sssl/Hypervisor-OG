@@ -41,6 +41,7 @@ extern "C" {
 
 /* types */
 
+struct aarch64_mmu;
 struct gic400;
 struct smmu500;
 struct hvc_service;
@@ -74,6 +75,8 @@ struct xilinx_mpsoc_configuration {
         const struct vpc_hook           *hook;
         const struct vpc_exception_ops  *ops;
     } vpc;
+
+    struct aarch64_mmu                  *mmu;
 
     struct {
         struct aarch64_mmu_block_pool   *pool;

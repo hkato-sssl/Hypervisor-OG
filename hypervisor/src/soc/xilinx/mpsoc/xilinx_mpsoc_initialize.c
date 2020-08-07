@@ -269,6 +269,7 @@ static errno_t init_soc(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_con
     stage2.first_table = chip_config->stage2.level1_table;
 
     config.chip = chip;
+    config.mmu = chip_config->mmu;
     config.ops = &xilinx_mpsoc_ops;
     config.nr_procs = chip_config->nr_procs;
     config.stage2 = &stage2;

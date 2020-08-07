@@ -9,10 +9,12 @@
 #include <string.h>
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
+#include "driver/aarch64/mmu.h"
 #include "driver/aarch64/stage2.h"
 #include "hypervisor/mmu.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/soc.h"
+#include "hypervisor/parameter.h"
 
 /* defines */
 
@@ -144,6 +146,25 @@ static errno_t map_region(struct soc *soc, const struct soc_device_region *regio
     return ret;
 }
 
+static errno_t map_el2(struct soc *soc, const struct soc_device_region *region)
+{
+    errno_t ret;
+    uintptr_t va;
+    struct aarch64_mmu_attr attr;
+
+    memset(&attr, 0, sizeof(attr));
+    attr.xn = 1;
+    attr.af = 1;
+    attr.sh = MMU_ATTR_SH_ISH;
+    attr.ap21 = MMU_ATTR_AP_RO;
+    attr.attrindx = HYP_MMU_MT_NORMAL_WB;
+
+    va = region->pa + HYP_GUEST_REGION_BASE;
+    ret = aarch64_mmu_map(soc->mmu, (void *)va, (void *)region->pa, region->size, &attr);
+
+    return ret;
+}
+
 static errno_t map_device(struct soc *soc, const struct soc_device *device)
 {
     errno_t ret;
@@ -154,6 +175,13 @@ static errno_t map_device(struct soc *soc, const struct soc_device *device)
         ret = map_region(soc, device->regions[i]);
         if (ret != SUCCESS) {
             break;
+        }
+
+        if (device->regions[i]->access.flag.exec != 0) {
+            ret = map_el2(soc, device->regions[i]);
+            if (ret != SUCCESS) {
+                break;
+            }
         }
     }
 
@@ -187,6 +215,7 @@ static errno_t initialize(struct soc *soc, const struct soc_configuration *soc_c
 
     spin_lock_init(&(soc->lock));
     soc->chip = soc_config->chip;
+    soc->mmu = soc_config->mmu;
     soc->ops = soc_config->ops;
     soc->nr_devices = soc_config->nr_devices;
     soc->devices = soc_config->devices;
@@ -211,10 +240,18 @@ static errno_t validate_parameters(struct soc *soc, const struct soc_configurati
 {
     errno_t ret;
 
-    if ((config->chip != NULL) && (config->ops != NULL) && (config->nr_devices > 0) && (config->devices != NULL)) {
-        ret = SUCCESS;
-    } else {
+    if (config->chip == NULL) {
         ret = -EINVAL;
+    } else if (config->mmu == NULL) {
+        ret = -EINVAL;
+    } else if (config->ops == NULL) {
+        ret = -EINVAL;
+    } else if (config->nr_devices == 0) {
+        ret = -EINVAL;
+    } else if (config->devices == NULL) {
+        ret = -EINVAL;
+    } else {
+        ret = SUCCESS;
     }
 
     return ret;

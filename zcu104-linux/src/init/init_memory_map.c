@@ -67,11 +67,6 @@ static errno_t init_map(void)
         ret = map(__rodata_start, __rodata_end, &attr);
     }
 
-    /* guest region */
-    if (ret == SUCCESS) {
-        ret = map((void *)0, (void *)0x40000000, &attr);
-    }
-
     if (ret == SUCCESS) {
         attr.ap21 = MMU_ATTR_AP_RW;
         attr.attrindx = HYP_MMU_MT_NORMAL_WBWA;

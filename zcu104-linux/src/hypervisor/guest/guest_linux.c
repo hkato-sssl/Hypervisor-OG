@@ -102,6 +102,7 @@ static void *init_mpsoc(void)
 
     config.vmid = GUEST_VMID;
     config.nr_procs = NR_CPUS;
+    config.mmu = &sys_mmu;
     config.stage2.pool = &sys_pool;
     config.stage2.level1_table = table;
     config.gic.device = &sys_gic;

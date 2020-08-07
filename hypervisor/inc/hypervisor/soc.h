@@ -34,6 +34,7 @@ extern "C" {
 /* types */
 
 struct soc;
+struct aarch64_mmu;
 
 struct soc_device_interrupt {
     uint16_t    virtual;
@@ -80,6 +81,7 @@ struct soc {
     struct vm               vm;
     spin_lock_t             lock;
     void                    *chip;
+    struct aarch64_mmu      *mmu;
     const struct soc_ops    *ops;
     uint16_t                nr_devices;
     struct soc_device       **devices;
@@ -87,6 +89,7 @@ struct soc {
 
 struct soc_configuration {
     void                    *chip;
+    struct aarch64_mmu      *mmu;
     const struct soc_ops    *ops;
     uint16_t                nr_procs;
     const struct aarch64_stage2_configuration   *stage2;

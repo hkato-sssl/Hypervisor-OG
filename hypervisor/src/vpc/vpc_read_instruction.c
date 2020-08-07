@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include "lib/bit.h"
 #include "lib/system/errno.h"
+#include "hypervisor/parameter.h"
 #include "hypervisor/vpc.h"
 
 /* defines */
@@ -27,7 +28,7 @@ errno_t vpc_read_instruction(const struct vpc *vpc, uint32_t *code, uint64_t va)
     ret = vpc_va_to_pa_r(vpc, &pa, va);
     if (ret == SUCCESS) {
         if (IS_ALIGNED(pa, 4)) {
-            *code = *(uint32_t *)pa;
+            *code = *(uint32_t *)(HYP_GUEST_REGION_BASE + pa);
             ret = SUCCESS;
         } else {
             ret = -EPERM;

@@ -11,8 +11,13 @@ outdir:
 	rm -f $(OUTDIR)/$(SRCDIRS_FILE)
 	find $(OUTDIR) -name $(SRCS_FILE) | xargs rm -f
 
+ifdef EXCLUDE_TEST
+srcdirs:
+	find $(SRC_BASES) -type d -name test -prune -o -type d -fprint $(OUTDIR)/$(SRCDIRS_FILE)
+else
 srcdirs:
 	find $(SRC_BASES) -type d -fprint $(OUTDIR)/$(SRCDIRS_FILE)
+endif
 
 srcs:
 	$(foreach DIR,$(SRCDIRS),$(call srcs_list,$(DIR)))

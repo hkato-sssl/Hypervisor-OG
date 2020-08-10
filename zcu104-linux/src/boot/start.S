@@ -20,8 +20,19 @@
         .section        ".text.entry", "ax", %progbits
         .type           _start, %function
 _start:
-        // initialize a processor and cache memory
+        b               0f
+        nop
+        .quad           0x40000000
+        .quad           0x100000
+        .quad           0xa
+        .quad           0
+        .quad           0
+        .quad           0
+        .ascii          "ARM\x64"
+        .word           0
 
+        // initialize a processor and cache memory
+0:
         bl              init_processor_el2
 
         // initialize SP

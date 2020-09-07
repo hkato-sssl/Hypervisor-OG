@@ -63,17 +63,15 @@ void hypervisor_main(void)
 
     printk("<%u#%s>\n", aarch64_cpu_no(), __func__);
 
+    gic400_enable_interrupt(&sys_gic, IRQ_SMMU500);
+    gic400_set_priority_mask(&sys_gic, 0xff);
+
     guest_initialize_shared_resource();
 
     memset(&parameter, 0, sizeof(parameter));
-
-    chip = guest_linux();
     parameter.entry = (thread_entry_t)launch_linux_guest;
-    parameter.args[0] = (uintptr_t)chip;
-    parameter.args[1] = 0;
     parameter.args[2] = BOOT_ADDR;
     parameter.args[3] = DTB_ADDR;
-    thread_launch(1, &parameter);
 
 #if 1
     chip = guest_usb_linux();
@@ -85,10 +83,13 @@ void hypervisor_main(void)
     thread_launch(3, &parameter);
 #endif
 
-    gic400_enable_interrupt(&sys_gic, IRQ_SMMU500);
-    gic400_set_priority_mask(&sys_gic, 0xff);
+    chip = guest_linux();
+    parameter.args[0] = (uintptr_t)chip;
+    parameter.args[1] = 1;
+    thread_launch(1, &parameter);
 
-    thread_terminate();
+    parameter.args[1] = 0;
+    thread_launch_self(&parameter);
 }
 
 void hypervisor(void)

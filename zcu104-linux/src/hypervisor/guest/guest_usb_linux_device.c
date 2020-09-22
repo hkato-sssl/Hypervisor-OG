@@ -108,47 +108,6 @@ static struct soc_device ddrc = {
     .regions = ddrc_regions,
 };
 
-static struct soc_device_interrupt gem3_irqs[] = { { 95, 95 } };
-static struct soc_device_region gem3_region = {
-    .ipa = 0xff0e0000,
-    .pa = 0xff0e0000,
-    .size = 0x1000,
-    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
-    .shareability = HYP_MMU_SH_OSH,
-    .access.flag.read = 1,
-    .access.flag.write = 1,
-    .access.flag.exec = 0
-};
-static struct soc_device_region *gem3_regions[] = {
-    &gem3_region,
-};
-static struct soc_device gem3 = {
-    .nr_irqs = 1,
-    .irqs = gem3_irqs,
-    .nr_regions = 1,
-    .regions = gem3_regions,
-};
-
-static struct soc_device_interrupt sd1_irqs[] = { { 81, 81 } };
-static struct soc_device_region sd1_region = {
-    .ipa = 0xff170000,
-    .pa = 0xff170000,
-    .size = 0x1000,
-    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
-    .shareability = HYP_MMU_SH_OSH,
-    .access.flag.read = 1,
-    .access.flag.write = 1,
-    .access.flag.exec = 0
-};
-static struct soc_device_region *sd1_regions[] = {
-    &sd1_region,
-};
-static struct soc_device sd1 = {
-    .nr_irqs = 1,
-    .irqs = sd1_irqs,
-    .nr_regions = 1,
-    .regions = sd1_regions,
-};
 
 static struct soc_device_interrupt xhci0_irqs[] = { { 97, 97 } };
 static struct soc_device_region xhci0_reg_region = {
@@ -223,17 +182,81 @@ static struct soc_device i2c1 = {
     .regions = i2c1_regions,
 };
 
-uint16_t nr_guest_usb_linux_devices = 9;
+static struct soc_device_interrupt dp_irqs[] = { { 151, 151 }, { 154, 154 } };
+static struct soc_device_region dp_region_1 = {
+    .ipa = 0xfd4a0000,
+    .pa = 0xfd4a0000,
+    .size = 0x1000,
+    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
+    .shareability = HYP_MMU_SH_OSH,
+    .access.flag.read = 1,
+    .access.flag.write = 1,
+    .access.flag.exec = 0
+};
+static struct soc_device_region dp_region_2 = {
+    .ipa = 0xfd4aa000,
+    .pa = 0xfd4aa000,
+    .size = 0x1000,
+    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
+    .shareability = HYP_MMU_SH_OSH,
+    .access.flag.read = 1,
+    .access.flag.write = 1,
+    .access.flag.exec = 0
+};
+static struct soc_device_region dp_region_3 = {
+    .ipa = 0xfd4ab000,
+    .pa = 0xfd4ab000,
+    .size = 0x1000,
+    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
+    .shareability = HYP_MMU_SH_OSH,
+    .access.flag.read = 1,
+    .access.flag.write = 1,
+    .access.flag.exec = 0
+};
+static struct soc_device_region dp_region_4 = {
+    .ipa = 0xfd4ac000,
+    .pa = 0xfd4ac000,
+    .size = 0x1000,
+    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
+    .shareability = HYP_MMU_SH_OSH,
+    .access.flag.read = 1,
+    .access.flag.write = 1,
+    .access.flag.exec = 0
+};
+static struct soc_device_region dp_dma_region = {
+    .ipa = 0xfd4c0000,
+    .pa = 0xfd4c0000,
+    .size = 0x1000,
+    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
+    .shareability = HYP_MMU_SH_OSH,
+    .access.flag.read = 1,
+    .access.flag.write = 1,
+    .access.flag.exec = 0
+};
+static struct soc_device_region *dp_regions[] = {
+    &dp_region_1,
+    &dp_region_2,
+    &dp_region_3,
+    &dp_region_4,
+    &dp_dma_region
+};
+static struct soc_device dp = {
+    .nr_irqs = 2,
+    .irqs = dp_irqs,
+    .nr_regions = 5,
+    .regions = dp_regions,
+};
+
+uint16_t nr_guest_usb_linux_devices = 8;
 struct soc_device *guest_usb_linux_devices[] = {
     &ram,
     &uart0,
     &rtc,
     &ddrc,
-    &sd1,
     &xhci0,
     &serdes0,
-    &gem3,
     &i2c1,
+    &dp,
 };
 
 static struct smmu_stream tbu2_usb0 = {
@@ -241,7 +264,13 @@ static struct smmu_stream tbu2_usb0 = {
     .id =0x0860     /* 00010, 0001 10 0000 */
 };
 
-uint16_t nr_guest_usb_linux_streams = 1;
+static struct smmu_stream tbu3_dp = {
+    .mask = 0x0007,
+    .id =0x0ce0     /* 00011, 0011 10 0xxx */
+};
+
+uint16_t nr_guest_usb_linux_streams = 2;
 struct smmu_stream *guest_usb_linux_streams[] = {
-    &tbu2_usb0
+    &tbu2_usb0,
+    &tbu3_dp
 };

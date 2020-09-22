@@ -53,7 +53,7 @@ static void launch_linux_guest(struct xilinx_mpsoc *chip, uint32_t vpc_no, uintp
         printk("vm_launch_secondary() -> %d\n", ret);
     }
 
-    vpc_dump(chip->soc.vm.vpcs[0], 0);
+    vpc_dump(chip->soc.vm.vpcs[vpc_no], 0);
 }
 
 void hypervisor_main(void)
@@ -83,6 +83,7 @@ void hypervisor_main(void)
     thread_launch(3, &parameter);
 #endif
 
+#if 1
     chip = guest_linux();
     parameter.args[0] = (uintptr_t)chip;
     parameter.args[1] = 1;
@@ -90,6 +91,7 @@ void hypervisor_main(void)
 
     parameter.args[1] = 0;
     thread_launch_self(&parameter);
+#endif
 }
 
 void hypervisor(void)

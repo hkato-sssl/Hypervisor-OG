@@ -88,11 +88,15 @@ static void initialize_distributor(struct gic400 *gic)
 
 static void initialize_banked_distributor(struct gic400 *gic)
 {
+    uint32_t i;
+
     gic400_write_distributor(gic, GICD_ICENABLER(0), ~(uint32_t)0);
     gic400_write_distributor(gic, GICD_ICPENDR(0), ~(uint32_t)0);
     gic400_write_distributor(gic, GICD_ICACTIVER(0), ~(uint32_t)0);
-    gic400_write_distributor(gic, GICD_IPRIORITYR(0), ~(uint32_t)0);
     gic400_write_distributor(gic, GICD_IGROUPR(0), 0);
+    for (i = 0; i < 8; ++i) {
+        gic400_write_distributor(gic, GICD_IPRIORITYR(i), ~(uint32_t)0);
+    }
 }
 
 static errno_t initialize(struct gic400 *gic, const struct gic400_configuration *config)

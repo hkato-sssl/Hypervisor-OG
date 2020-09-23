@@ -10,6 +10,7 @@
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
 #include "driver/arm/device/gic400.h"
+#include "hypervisor/parameter.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
 
@@ -35,6 +36,13 @@ static errno_t configure_interrupt(struct vgic400 *vgic)
     ret = gic400_configure_interrupt(vgic->gic, GIC400_MAINTENANCE_INTERRUPT, &config);
     if (ret == SUCCESS) {
         ret = gic400_enable_interrupt(vgic->gic, GIC400_MAINTENANCE_INTERRUPT);
+    }
+
+    if (ret == SUCCESS) {
+        ret = gic400_configure_interrupt(vgic->gic, HYP_INTR_VPC_EVENT, &config);
+        if (ret == SUCCESS) {
+            ret = gic400_enable_interrupt(vgic->gic, HYP_INTR_VPC_EVENT);
+        }
     }
 
     return ret;

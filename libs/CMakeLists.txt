@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10.2)
 project(libs)
 enable_language(C ASM)
-include(../cmake/aarch64-gcc.cmake)
+include(../scripts/cmake/aarch64-gcc.cmake)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 

@@ -1,6 +1,7 @@
 Debug/
 Release/
 CMakeFiles/
+build/
 *.d
 *.o
 *.a

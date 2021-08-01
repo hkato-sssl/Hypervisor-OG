@@ -3,7 +3,6 @@ project(zcu104-linux)
 enable_language(C ASM)
 
 get_filename_component(WORKSPACE_BASE ../../ ABSOLUTE)
-set(PROJECT_BASE "${WORKSPACE_BASE}/projects")
 set(TARGET_NAME "${PROJECT_NAME}.elf")
 
 include("${WORKSPACE_BASE}/scripts/cmake/aarch64-gcc.cmake")
@@ -32,7 +31,7 @@ add_executable(
 )
 
 target_link_libraries(${TARGET_NAME} -Wl,--start-group libs drivers hypervisor guest -Wl,--end-group)
-set(CMAKE_EXE_LINKER_FLAGS "-nostartfiles -static -T ${PROJECT_BASE}/zcu104-linux/config/memory.lds -T ${WORKSPACE_BASE}/scripts/ld/aarch64-zcu104-ram.lds")
+set(CMAKE_EXE_LINKER_FLAGS "-nostartfiles -static -T ${PROJECT_SOURCE_DIR}/config/memory.lds -T ${WORKSPACE_BASE}/scripts/ld/aarch64-zcu104-ram.lds")
 
 include_directories(.)
 include_directories(inc)

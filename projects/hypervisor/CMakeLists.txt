@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.10.2)
 project(hypervisor)
 enable_language(C ASM)
-include(../scripts/cmake/aarch64-gcc.cmake)
-
-set(CMAKE_VERBOSE_MAKEFILE ON)
+include(../../scripts/cmake/aarch64-gcc.cmake)
 
 add_library(
     hypervisor STATIC

@@ -15,6 +15,7 @@ set(CMAKE_ASM_COMPILER ${CROSS_COMPILE}gcc)
 set(CMAKE_C_COMPILER ${CROSS_COMPILE}gcc)
 set(CMAKE_CXX_COMPILER ${CROSS_COMPILE}g++)
 set(CMAKE_LINKER ${CROSS_COMPILE}gcc)
+set(CMAKE_OBJCOPY ${CROSS_COMPILE}objcopy)
 
 # root path settings
 set(CMAKE_FIND_ROOT_PATH /usr/local/sssl/toolchain/aarch64)

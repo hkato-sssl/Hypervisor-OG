@@ -21,6 +21,9 @@ extern "C" {
 
 /* includes */
 
+#include "lib/system/errno.h"
+#include <stdint.h>
+
 /* defines */
 
 #define HYP_MMU_ATTRS   (MAIR_ATTR(0, MAIR_ATTR_NORMAL_NC) |\

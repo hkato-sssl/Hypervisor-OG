@@ -62,6 +62,8 @@ extern "C" {
 
 /* includes */
 
+#include <stdint.h>
+
 /* defines */
 
 /* types */

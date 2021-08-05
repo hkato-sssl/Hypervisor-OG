@@ -125,4 +125,4 @@ add_library(
     src/service/p2p_packet/p2p_packet_initialize_ep.c
 )
 
-include_directories(inc ../libs/inc ../drivers/inc)
+include_directories(inc ../libs/inc ../libs/inc/lib/system/stdc ../drivers/inc)

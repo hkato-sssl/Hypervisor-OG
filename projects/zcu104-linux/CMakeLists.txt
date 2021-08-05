@@ -42,5 +42,6 @@ add_custom_command(
 include_directories(.)
 include_directories(inc)
 include_directories(${WORKSPACE_BASE}/projects/libs/inc)
+include_directories(${WORKSPACE_BASE}/projects/libs/inc/lib/system/stdc)
 include_directories(${WORKSPACE_BASE}/projects/drivers/inc)
 include_directories(${WORKSPACE_BASE}/projects/hypervisor/inc)

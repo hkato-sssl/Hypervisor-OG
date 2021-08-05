@@ -48,4 +48,4 @@ add_library(
     src/init/init_memory_map.c
 )
 
-include_directories(. inc ../libs/inc ../drivers/inc ../hypervisor/inc)
+include_directories(. inc ../libs/inc ../libs/inc/lib/system/stdc ../drivers/inc ../hypervisor/inc)

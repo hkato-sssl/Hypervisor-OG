@@ -4,24 +4,24 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "driver/aarch64/stage2.h"
+#include "driver/aarch64/system_register.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/printk.h"
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/printk.h"
-#include "driver/aarch64/system_register.h"
-#include "driver/aarch64/stage2.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/vm.h"
 
 /* defines */
 
-#define NR_CPUS     1
+#define NR_CPUS   1
 
-#define RAM_START   0x00000000
-#define RAM_SIZE    0x20000000
+#define RAM_START 0x00000000
+#define RAM_SIZE  0x20000000
 
-#define UART_IPA    0xa0001000
-#define UART_PA     0xa0001000
-#define UART_SIZE   4096
+#define UART_IPA  0xa0001000
+#define UART_PA   0xa0001000
+#define UART_SIZE 4096
 
 /* types */
 
@@ -36,7 +36,7 @@ void test_vm_launch_guest_start(void);
 
 static struct vm vm;
 static struct vpc vpcs[NR_CPUS];
-static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
+static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__((aligned(32)));
 
 /* functions */
 
@@ -51,7 +51,8 @@ static errno_t init_stage2_mapping(void)
     attr.sh = STAGE2_SH_ISH;
     attr.s2ap = STAGE2_S2AP_RW;
     attr.memattr = STAGE2_MEMATTR_NORMAL_WB;
-    ret = aarch64_stage2_map(&hyp_test_stage2, (void *)RAM_START, (void *)RAM_START, RAM_SIZE, &attr);
+    ret = aarch64_stage2_map(&hyp_test_stage2, (void *)RAM_START,
+                             (void *)RAM_START, RAM_SIZE, &attr);
 
     if (ret == SUCCESS) {
         attr.xn = 1;
@@ -59,7 +60,8 @@ static errno_t init_stage2_mapping(void)
         attr.sh = STAGE2_SH_OSH;
         attr.s2ap = STAGE2_S2AP_RW;
         attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
-        ret = aarch64_stage2_map(&hyp_test_stage2, (void *)UART_IPA, (void *)UART_PA, UART_SIZE, &attr);
+        ret = aarch64_stage2_map(&hyp_test_stage2, (void *)UART_IPA,
+                                 (void *)UART_PA, UART_SIZE, &attr);
     }
 
     return ret;
@@ -117,4 +119,3 @@ void test_vm_01_launch(void)
 
     printk("Done\n");
 }
-

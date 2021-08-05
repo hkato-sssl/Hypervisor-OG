@@ -26,17 +26,17 @@
  * Region Trap発生時に命令を解析した結果が正しいか否かを判断する。
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/printk.h"
 #include "driver/aarch64/cache.h"
 #include "driver/aarch64/mmu.h"
+#include "lib/system/printk.h"
 #include "system/mmu.h"
+#include <stdint.h>
+#include <string.h>
 
-#define ACCESS_REGION   0x40000000
-#define MAP_ADDR        (ACCESS_REGION - 4096)
-#define CODE_RET        0xd65f03c0              /* 'ret' instruction. */
-#define CODE_NOP        0xd503201f              /* 'nop' instruction. */
+#define ACCESS_REGION 0x40000000
+#define MAP_ADDR      (ACCESS_REGION - 4096)
+#define CODE_RET      0xd65f03c0 /* 'ret' instruction. */
+#define CODE_NOP      0xd503201f /* 'nop' instruction. */
 
 extern struct aarch64_mmu sys_mmu;
 extern const uint32_t test_insn_03_ldr[];
@@ -62,16 +62,17 @@ static void map(void)
     attr.sh = MMU_ATTR_SH_ISH;
     attr.ap21 = MMU_ATTR_AP_RW;
     attr.attrindx = EL1_MMU_WB;
-    ret = aarch64_mmu_map(&sys_mmu, (void*)MAP_ADDR, buff, 4096, &attr);
+    ret = aarch64_mmu_map(&sys_mmu, (void *)MAP_ADDR, buff, 4096, &attr);
     printk("aarch64_mmu_map() -> %d\n", ret);
 
-    ret = aarch64_mmu_map(&sys_mmu, (void*)ACCESS_REGION, (void*)ACCESS_REGION, 4096, &attr);
+    ret = aarch64_mmu_map(&sys_mmu, (void *)ACCESS_REGION,
+                          (void *)ACCESS_REGION, 4096, &attr);
     printk("aarch64_mmu_map() -> %d\n", ret);
 }
 
 static void test_insn(int n, const uint32_t *insn)
 {
-    uint32_t *p = (void*)buff;
+    uint32_t *p = (void *)buff;
     test_func_t f = (test_func_t)MAP_ADDR;
 
     p[0] = insn[n];
@@ -135,4 +136,3 @@ void test_insn_03(void)
     pattern_02();
     printk("Done.\n");
 }
-

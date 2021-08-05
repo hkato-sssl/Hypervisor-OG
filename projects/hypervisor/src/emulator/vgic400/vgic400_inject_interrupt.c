@@ -4,14 +4,14 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/aarch64.h"
-#include "lib/system/errno.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "lib/aarch64.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -23,7 +23,8 @@
 
 /* functions */
 
-static errno_t inject_interrupt_at(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar, uint32_t list_no)
+static errno_t inject_interrupt_at(struct vpc *vpc, struct vgic400 *vgic,
+                                   uint32_t iar, uint32_t list_no)
 {
     errno_t ret;
     uint32_t d;
@@ -49,7 +50,8 @@ static errno_t inject_interrupt_at(struct vpc *vpc, struct vgic400 *vgic, uint32
     return ret;
 }
 
-errno_t vgic400_inject_interrupt_at(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar, uint32_t list_no)
+errno_t vgic400_inject_interrupt_at(struct vpc *vpc, struct vgic400 *vgic,
+                                    uint32_t iar, uint32_t list_no)
 {
     errno_t ret;
 
@@ -64,7 +66,8 @@ errno_t vgic400_inject_interrupt_at(struct vpc *vpc, struct vgic400 *vgic, uint3
     return ret;
 }
 
-errno_t vgic400_inject_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
+errno_t vgic400_inject_interrupt(struct vpc *vpc, struct vgic400 *vgic,
+                                 uint32_t iar)
 {
     errno_t ret;
     int idx;
@@ -82,4 +85,3 @@ errno_t vgic400_inject_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t
 
     return ret;
 }
-

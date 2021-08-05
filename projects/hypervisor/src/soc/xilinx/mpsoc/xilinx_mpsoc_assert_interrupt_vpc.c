@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
 #include "driver/arm/gic400.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
 #include "hypervisor/vpc.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -20,7 +20,9 @@
 
 /* functions */
 
-errno_t xilinx_mpsoc_assert_interrupt_vpc(struct soc *soc, const struct vpc *vpc, uint16_t interrupt_no)
+errno_t xilinx_mpsoc_assert_interrupt_vpc(struct soc *soc,
+                                          const struct vpc *vpc,
+                                          uint16_t interrupt_no)
 {
     errno_t ret;
     uint32_t targets;
@@ -37,4 +39,3 @@ errno_t xilinx_mpsoc_assert_interrupt_vpc(struct soc *soc, const struct vpc *vpc
 
     return ret;
 }
-

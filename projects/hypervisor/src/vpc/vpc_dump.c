@@ -4,9 +4,9 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/printk.h"
 #include "hypervisor/vpc.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 

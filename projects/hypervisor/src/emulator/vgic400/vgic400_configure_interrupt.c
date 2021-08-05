@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "lib/bit.h"
-#include "hypervisor/vm.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vm.h"
+#include "lib/bit.h"
 #include "vgic400_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -26,18 +26,20 @@ static void set_target_bit(uint32_t *targets, uint32_t no)
     targets[no / 32] |= 1UL << (no % 32);
 }
 
-static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_interrupt_configuration *config)
+static errno_t
+configure_interrupt(struct vgic400 *vgic,
+                    const struct vgic400_interrupt_configuration *config)
 {
     uint32_t d;
     uint32_t i;
     uint32_t idx;
 
-    d = BIT(28);    /* State = pending */
+    d = BIT(28); /* State = pending */
     if (config->flag.hw != 0) {
-        d |= BIT(31);   /* HW */
+        d |= BIT(31); /* HW */
     }
     if (config->flag.group1 != 0) {
-        d |= BIT(30);   /* Grp1 */
+        d |= BIT(30); /* Grp1 */
     }
     d |= (uint32_t)(vgic->priority_mask) << 20;
     d |= (uint32_t)(config->physical_id) << 10;
@@ -45,7 +47,7 @@ static errno_t configure_interrupt(struct vgic400 *vgic, const struct vgic400_in
 
     if ((config->virtual_id >= 16) && (config->virtual_id < 32)) {
         idx = config->virtual_id - 16;
-        for (i =0; i < vgic->vm->nr_procs; ++i) {
+        for (i = 0; i < vgic->vm->nr_procs; ++i) {
             vgic->ppi[i].template[idx] = d;
         }
     } else if (config->virtual_id >= 32) {
@@ -64,10 +66,13 @@ static bool is_valid_id(const struct vgic400 *vgic, uint16_t id)
 {
     bool ret;
 
-    if ((id == 7) || (id == GIC400_SECURE_PHYSICAL_TIMER) || (id == GIC400_MAINTENANCE_INTERRUPT) || (id == GIC400_HYPERVISOR_TIMER) || (id >= NR_GIC400_INTERRUPTS)) {
+    if ((id == 7) || (id == GIC400_SECURE_PHYSICAL_TIMER)
+        || (id == GIC400_MAINTENANCE_INTERRUPT)
+        || (id == GIC400_HYPERVISOR_TIMER) || (id >= NR_GIC400_INTERRUPTS)) {
         ret = false;
     } else if (vgic->boolean.virtual_spi) {
-        if ((id >= vgic->virtual_spi.base_no) && (id <= (vgic->virtual_spi.base_no + 31))) {
+        if ((id >= vgic->virtual_spi.base_no)
+            && (id <= (vgic->virtual_spi.base_no + 31))) {
             ret = false;
         } else {
             ret = true;
@@ -79,7 +84,9 @@ static bool is_valid_id(const struct vgic400 *vgic, uint16_t id)
     return ret;
 }
 
-static errno_t validate_configuration(struct vgic400 *vgic, const struct vgic400_interrupt_configuration *config)
+static errno_t
+validate_configuration(struct vgic400 *vgic,
+                       const struct vgic400_interrupt_configuration *config)
 {
     errno_t ret;
 
@@ -94,9 +101,11 @@ static errno_t validate_configuration(struct vgic400 *vgic, const struct vgic400
             ret = SUCCESS;
         }
     } else {
-        if (vgic->spi.map.virtual[config->physical_id - 32] != VGIC400_NO_ASSIGNED) {
+        if (vgic->spi.map.virtual[config->physical_id - 32]
+            != VGIC400_NO_ASSIGNED) {
             ret = -EBUSY;
-        } else if (vgic->spi.map.physical[config->virtual_id - 32] != VGIC400_NO_ASSIGNED) {
+        } else if (vgic->spi.map.physical[config->virtual_id - 32]
+                   != VGIC400_NO_ASSIGNED) {
             ret = -EBUSY;
         } else {
             ret = SUCCESS;
@@ -106,7 +115,8 @@ static errno_t validate_configuration(struct vgic400 *vgic, const struct vgic400
     return ret;
 }
 
-errno_t vgic400_configure_interrupt(struct vgic400 *vgic, const struct vgic400_interrupt_configuration *config)
+errno_t vgic400_configure_interrupt(
+    struct vgic400 *vgic, const struct vgic400_interrupt_configuration *config)
 {
     errno_t ret;
 
@@ -117,4 +127,3 @@ errno_t vgic400_configure_interrupt(struct vgic400 *vgic, const struct vgic400_i
 
     return ret;
 }
-

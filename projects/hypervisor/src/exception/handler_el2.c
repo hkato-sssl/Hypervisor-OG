@@ -4,12 +4,12 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
+#include "driver/aarch64.h"
+#include "driver/aarch64/exception.h"
 #include "lib/bit.h"
 #include "lib/system/printk.h"
 #include "lib/system/spin_lock.h"
-#include "driver/aarch64.h"
-#include "driver/aarch64/exception.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -45,6 +45,6 @@ void exception_handler_el2(uint64_t *ei)
 
     spin_unlock(&lock);
 
-    for (;;);
+    for (;;)
+        ;
 }
-

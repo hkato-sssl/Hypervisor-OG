@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
 #include "hypervisor/parameter.h"
 #include "hypervisor/thread.h"
 #include "thread_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -34,4 +34,3 @@ uintptr_t *thread_parameter_array(uint32_t no)
 
     return p;
 }
-

@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -49,10 +49,9 @@ errno_t insn_emulate_indexed_addressing(const struct insn *insn)
         ret = emulate_indexed_addressing_ldr(insn);
     } else if (insn->type == INSN_TYPE_STR) {
         ret = emulate_indexed_addressing_str(insn);
-    }  else {
+    } else {
         ret = -ENOTSUP;
     }
 
     return ret;
 }
-

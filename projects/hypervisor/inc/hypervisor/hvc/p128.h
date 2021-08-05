@@ -19,39 +19,42 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "hypervisor/hvc.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
-#define MAX_P128_NAME_LEN   4
+#define MAX_P128_NAME_LEN 4
 
 /* types */
 
 struct hvc_p128_service {
-    struct hvc_service      service;
-    uint16_t                imm;                        /* hvc #imm */
-    char                    name[MAX_P128_NAME_LEN];
-    void                    *arg;
-    uint32_t                nr_eps;
-    struct p2p_packet_ep    **eps;
+    struct hvc_service service;
+    uint16_t imm; /* hvc #imm */
+    char name[MAX_P128_NAME_LEN];
+    void *arg;
+    uint32_t nr_eps;
+    struct p2p_packet_ep **eps;
 };
 
 struct hvc_p128_service_configuration {
-    uint16_t                imm;                        /* hvc #imm */
-    char                    name[MAX_P128_NAME_LEN];
-    void                    *arg;
-    uint32_t                nr_eps;
-    struct p2p_packet_ep    **eps;
+    uint16_t imm; /* hvc #imm */
+    char name[MAX_P128_NAME_LEN];
+    void *arg;
+    uint32_t nr_eps;
+    struct p2p_packet_ep **eps;
 };
 
 /* variables */
 
 /* functions */
 
-errno_t hvc_p128_service_initialize(struct hvc_p128_service *service, const struct hvc_p128_service_configuration *config);
-errno_t hvc_p128_server(const struct insn *insn, const struct hvc_service *service);
+errno_t hvc_p128_service_initialize(
+    struct hvc_p128_service *service,
+    const struct hvc_p128_service_configuration *config);
+errno_t hvc_p128_server(const struct insn *insn,
+                        const struct hvc_service *service);
 
 #ifdef __cplusplus
 }
@@ -60,4 +63,3 @@ errno_t hvc_p128_server(const struct insn *insn, const struct hvc_service *servi
 #endif /* ASSEMBLY */
 
 #endif /* HYPERVISOR_HVC_P128_H */
-

@@ -9,8 +9,8 @@
 
 /* includes */
 
-#include <stdint.h>
 #include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -66,4 +66,3 @@ static inline void spin_unlock(spin_lock_t *lock)
 #endif /* ASSEMBLY */
 
 #endif /* LIB_AARCH64_SPIN_LOCK_H */
-

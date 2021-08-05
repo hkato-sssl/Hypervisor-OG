@@ -4,15 +4,15 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "lib/system/memio.h"
 #include "driver/arm/gic400.h"
 #include "driver/system/cpu.h"
 #include "hypervisor/parameter.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
+#include "lib/system/memio.h"
 #include "vpc_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -67,4 +67,3 @@ errno_t vpc_send_event(struct vpc *vpc, struct vpc_event *event)
 
     return ret;
 }
-

@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
+#include "driver/aarch64/at.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
-#include "driver/aarch64/at.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -38,5 +38,4 @@ errno_t aarch64_va_to_pa_el2(uintptr_t *pa, uintptr_t va)
     }
 
     return ret;
-} 
-
+}

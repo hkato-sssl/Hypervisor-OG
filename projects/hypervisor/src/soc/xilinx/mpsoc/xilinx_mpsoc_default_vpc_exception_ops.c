@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "hypervisor/soc/xilinx/mpsoc.h"
+#include "hypervisor/vpc.h"
+#include "mpsoc_local.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "hypervisor/vpc.h"
-#include "hypervisor/soc/xilinx/mpsoc.h"
-#include "mpsoc_local.h"
 
 /* defines */
 

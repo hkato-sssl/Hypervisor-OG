@@ -19,8 +19,8 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
 #include "lib/aarch64/atomic.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -66,4 +66,3 @@ static inline uint8_t atomic_swap_u8(uint8_t *p, uint8_t d)
 #endif /* ASSEMBLY */
 
 #endif /* LIB_SYSTEM_ATOMIC_H */
-

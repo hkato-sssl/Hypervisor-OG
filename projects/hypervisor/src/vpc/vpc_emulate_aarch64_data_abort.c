@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include "lib/system/errno.h"
+#include "hypervisor/emulator/insn.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/emulator/insn.h"
+#include "lib/system/errno.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -48,4 +48,3 @@ errno_t vpc_emulate_aarch64_data_abort(struct vpc *vpc)
 
     return ret;
 }
-

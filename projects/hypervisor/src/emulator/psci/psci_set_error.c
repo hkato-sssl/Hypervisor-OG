@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/psci.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -25,4 +25,3 @@ errno_t psci_set_error(struct vpc *vpc, int64_t error)
 
     return SUCCESS;
 }
-

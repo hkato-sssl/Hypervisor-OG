@@ -21,13 +21,13 @@
 
 /* includes */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
 #include "lib/bit.h"
 #include "lib/list.h"
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,50 +35,60 @@ extern "C" {
 
 /* defines */
 
-#define MEM_4KB                 (4UL * 1024)
-#define MEM_64KB                (64UL * 1024)
-#define MEM_2MB                 (2UL * 1024 * 1024)
-#define MEM_32MB                (32UL * 1024 * 1024)
-#define MEM_1GB                 (1UL * 1024 * 1024 * 1024)
-#define MEM_16GB                (16UL * 1024 * 1024 * 1024)
+#define MEM_4KB             (4UL * 1024)
+#define MEM_64KB            (64UL * 1024)
+#define MEM_2MB             (2UL * 1024 * 1024)
+#define MEM_32MB            (32UL * 1024 * 1024)
+#define MEM_1GB             (1UL * 1024 * 1024 * 1024)
+#define MEM_16GB            (16UL * 1024 * 1024 * 1024)
 
-#define MMU_DESC_TABLE          3
-#define MMU_DESC_BLOCK          1
-#define MMU_DESC_PAGE           3
-#define MMU_DESC_CONTIGUOUS     BIT(52)
+#define MMU_DESC_TABLE      3
+#define MMU_DESC_BLOCK      1
+#define MMU_DESC_PAGE       3
+#define MMU_DESC_CONTIGUOUS BIT(52)
 
-#define MMU_BLOCK_SZ            MEM_4KB
+#define MMU_BLOCK_SZ        MEM_4KB
 
 /* types */
 
-enum aarch64_mmu_type { AARCH64_MMU_STAGE2, AARCH64_MMU_EL0, AARCH64_MMU_EL1, AARCH64_MMU_EL2, AARCH64_MMU_EL3 };
-enum aarch64_mmu_granule { AARCH64_MMU_4KB_GRANULE, AARCH64_MMU_16KB_GRANULE, AARCH64_MMU_64KB_GRANULE }; 
+enum aarch64_mmu_type {
+    AARCH64_MMU_STAGE2,
+    AARCH64_MMU_EL0,
+    AARCH64_MMU_EL1,
+    AARCH64_MMU_EL2,
+    AARCH64_MMU_EL3
+};
+enum aarch64_mmu_granule {
+    AARCH64_MMU_4KB_GRANULE,
+    AARCH64_MMU_16KB_GRANULE,
+    AARCH64_MMU_64KB_GRANULE
+};
 
 struct aarch64_mmu_block_pool {
-    spin_lock_t         lock;
-    size_t              block_sz;
-    struct list         block_list;
+    spin_lock_t lock;
+    size_t block_sz;
+    struct list block_list;
     struct {
-        void            *addr;
-        size_t          size;
+        void *addr;
+        size_t size;
     } block_region;
     struct {
         struct {
-            uint64_t    success;
-            uint64_t    failure;
+            uint64_t success;
+            uint64_t failure;
         } calloc;
         struct {
-            uint64_t    success;
-            uint64_t    failure;
+            uint64_t success;
+            uint64_t failure;
         } free;
     } counter;
 };
 
 struct aarch64_mmu_block_pool_configuration {
-    size_t          block_sz;
+    size_t block_sz;
     struct {
-        void        *addr;
-        size_t      size;
+        void *addr;
+        size_t size;
     } block_region;
 };
 
@@ -91,19 +101,19 @@ struct aarch64_mmu_ops {
 };
 
 struct aarch64_mmu_base {
-    spin_lock_t                     lock;
-    enum aarch64_mmu_type           type;
-    enum aarch64_mmu_granule        granule;
-    uint8_t                         start_level;
-    uint64_t                        *addr;
-    struct aarch64_mmu_block_pool   *pool;
-    const struct aarch64_mmu_ops    *ops;
+    spin_lock_t lock;
+    enum aarch64_mmu_type type;
+    enum aarch64_mmu_granule granule;
+    uint8_t start_level;
+    uint64_t *addr;
+    struct aarch64_mmu_block_pool *pool;
+    const struct aarch64_mmu_ops *ops;
 };
 
 struct aarch64_mmu_base_configuration {
-    enum aarch64_mmu_type           type;
-    enum aarch64_mmu_granule        granule;
-    struct aarch64_mmu_block_pool   *pool;
+    enum aarch64_mmu_type type;
+    enum aarch64_mmu_granule granule;
+    struct aarch64_mmu_block_pool *pool;
 };
 
 /* variables */
@@ -120,13 +130,22 @@ static inline void aarch64_mmu_base_unlock(struct aarch64_mmu_base *mmu)
     spin_unlock(&(mmu->lock));
 }
 
-errno_t aarch64_mmu_block_pool_initialize(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config);
-void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz);
-errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block, size_t block_sz);
+errno_t aarch64_mmu_block_pool_initialize(
+    struct aarch64_mmu_block_pool *pool,
+    const struct aarch64_mmu_block_pool_configuration *config);
+void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool,
+                               size_t block_sz);
+errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block,
+                               size_t block_sz);
 
-errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr);
-errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr, uint32_t level);
-errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr, uint32_t level);
+errno_t aarch64_mmu_map_4KB_granule(struct aarch64_mmu_base *mmu, void *va,
+                                    void *pa, size_t sz, const void *attr);
+errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va,
+                                      void *pa, size_t sz, const void *attr,
+                                      uint32_t level);
+errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu,
+                                          void *va, void *pa, size_t sz,
+                                          const void *attr, uint32_t level);
 
 void aarch64_mmu_write_descriptor(uint64_t *addr, uint64_t desc);
 
@@ -137,4 +156,3 @@ void aarch64_mmu_write_descriptor(uint64_t *addr, uint64_t desc);
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_AARCH64_MMU_BASE_H */
-

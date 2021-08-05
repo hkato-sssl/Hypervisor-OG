@@ -4,17 +4,17 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "hypervisor/hvc.h"
+#include "hypervisor/hvc/p128.h"
+#include "hypervisor/service/p2p_packet.h"
+#include "lib/system/errno.h"
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/errno.h"
-#include "hypervisor/hvc.h"
-#include "hypervisor/service/p2p_packet.h"
-#include "hypervisor/hvc/p128.h"
 
 /* defines */
 
-#define EOS         '\0'
-#define MAX_NR_EPS  0xff
+#define EOS        '\0'
+#define MAX_NR_EPS 0xff
 
 /* types */
 
@@ -24,7 +24,9 @@
 
 /* functions */
 
-static errno_t p128_service_initialize(struct hvc_p128_service *p128, const struct hvc_p128_service_configuration *p128_config)
+static errno_t p128_service_initialize(
+    struct hvc_p128_service *p128,
+    const struct hvc_p128_service_configuration *p128_config)
 {
     errno_t ret;
     struct hvc_service_configuration config;
@@ -64,7 +66,8 @@ static errno_t validate_eps(const struct hvc_p128_service_configuration *config)
     return ret;
 }
 
-static errno_t validate_parameters(const struct hvc_p128_service_configuration *config)
+static errno_t
+validate_parameters(const struct hvc_p128_service_configuration *config)
 {
     errno_t ret;
 
@@ -83,7 +86,9 @@ static errno_t validate_parameters(const struct hvc_p128_service_configuration *
     return ret;
 }
 
-errno_t hvc_p128_service_initialize(struct hvc_p128_service *service, const struct hvc_p128_service_configuration *config)
+errno_t
+hvc_p128_service_initialize(struct hvc_p128_service *service,
+                            const struct hvc_p128_service_configuration *config)
 {
     errno_t ret;
 
@@ -94,4 +99,3 @@ errno_t hvc_p128_service_initialize(struct hvc_p128_service *service, const stru
 
     return ret;
 }
-

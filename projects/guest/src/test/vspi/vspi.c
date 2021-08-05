@@ -4,18 +4,18 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include "lib/aarch64.h"
-#include "lib/system/printk.h"
-#include "lib/system/memio.h"
-#include "driver/arm.h"
+#include "vspi.h"
 #include "driver/aarch64.h"
+#include "driver/arm.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
-#include "vspi.h"
+#include "lib/aarch64.h"
+#include "lib/system/memio.h"
+#include "lib/system/printk.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -99,4 +99,3 @@ void vspi_assert_interrupt(uint32_t no)
         printk("gic400_assert_spi(%u) -> %d\n", no, ret);
     }
 }
-

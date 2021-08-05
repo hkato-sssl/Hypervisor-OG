@@ -40,4 +40,3 @@ errno_t simple_psci_cpu_on(struct vpc *vpc);
 #endif /* ASSEMBLY */
 
 #endif /* HYPERVISOR_EMULATOR_SIMPLE_PSCI_H */
-

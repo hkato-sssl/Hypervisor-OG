@@ -4,20 +4,20 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "cache_test.h"
+#include "driver/aarch64/mmu.h"
+#include "driver/aarch64/system_register.h"
+#include "driver/aarch64/system_register/mair_elx.h"
+#include "driver/aarch64/system_register/tcr_elx.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "driver/aarch64/system_register.h"
-#include "driver/aarch64/system_register/tcr_elx.h"
-#include "driver/aarch64/system_register/mair_elx.h"
-#include "driver/aarch64/mmu.h"
-#include "cache_test.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define NR_MMU_MEMORY_BLOCKS    1024
+#define NR_MMU_MEMORY_BLOCKS 1024
 
 /* types */
 
@@ -32,7 +32,8 @@ extern char __rodata_end[];
 extern char __data_start[];
 extern char __stack_end[];
 
-static char memory_block_region[NR_MMU_MEMORY_BLOCKS][4096] __attribute__ ((aligned(4096)));
+static char memory_block_region[NR_MMU_MEMORY_BLOCKS][4096]
+    __attribute__((aligned(4096)));
 
 static struct aarch64_mmu_block_pool pool;
 struct aarch64_mmu test_mmu;
@@ -75,7 +76,7 @@ static errno_t init_map(void)
     /* UART Lite */
     if (ret == SUCCESS) {
         attr.attrindx = MMU_ATTR_DEVICE_nGnRnE;
-        ret = map((void*)0xa0001000, (void*)0xa0002000, &attr);
+        ret = map((void *)0xa0001000, (void *)0xa0002000, &attr);
     }
 
     return ret;
@@ -158,4 +159,3 @@ errno_t test_aarch64_cache_init_memory_map(void)
 
     return ret;
 }
-

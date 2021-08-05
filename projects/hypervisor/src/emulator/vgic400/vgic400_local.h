@@ -19,29 +19,29 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "hypervisor/emulator/insn.h"
+#include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
 #include "lib/bit.h"
 #include "lib/system/assert.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
 #include "lib/system/spin_lock.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/emulator/insn.h"
-#include "hypervisor/emulator/vgic400.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
-#define ERR_MSG_UNAUTH  "An unauthorized access has occured."
-#define ERR_MSG_OOR     "A register is out of range."
+#define ERR_MSG_UNAUTH        "An unauthorized access has occured."
+#define ERR_MSG_OOR           "A register is out of range."
 
-#define VGIC400_READ8(a)        REG_READ8((a), 0)
-#define VGIC400_READ32(a)       REG_READ32((a), 0)
-#define VGIC400_WRITE8(a, d)    REG_WRITE8((a), 0, (d))
-#define VGIC400_WRITE32(a, d)   REG_WRITE32((a), 0, (d))
+#define VGIC400_READ8(a)      REG_READ8((a), 0)
+#define VGIC400_READ32(a)     REG_READ32((a), 0)
+#define VGIC400_WRITE8(a, d)  REG_WRITE8((a), 0, (d))
+#define VGIC400_WRITE32(a, d) REG_WRITE32((a), 0, (d))
 
-#define VGIC400_NO_ASSIGNED     0xffff
+#define VGIC400_NO_ASSIGNED   0xffff
 
 /* types */
 
@@ -49,12 +49,14 @@ extern "C" {
 
 /* inline functions */
 
-static inline void gic400_write_virtif_control(struct vgic400 *vgic, uint32_t reg, uint32_t d)
+static inline void gic400_write_virtif_control(struct vgic400 *vgic,
+                                               uint32_t reg, uint32_t d)
 {
     REG_WRITE32(vgic->base.virtif_control, reg, d);
 }
 
-static inline uint32_t gic400_read_virtif_control(struct vgic400 *vgic, uint32_t reg)
+static inline uint32_t gic400_read_virtif_control(struct vgic400 *vgic,
+                                                  uint32_t reg)
 {
     uint32_t d;
 
@@ -63,12 +65,14 @@ static inline uint32_t gic400_read_virtif_control(struct vgic400 *vgic, uint32_t
     return d;
 }
 
-static inline void gic400_write_virtual_cpuif(struct vgic400 *vgic, uint32_t reg, uint32_t d)
+static inline void gic400_write_virtual_cpuif(struct vgic400 *vgic,
+                                              uint32_t reg, uint32_t d)
 {
     REG_WRITE32(vgic->base.virtual_cpuif, reg, d);
 }
 
-static inline uint32_t gic400_read_virtual_cpuif(struct vgic400 *vgic, uint32_t reg)
+static inline uint32_t gic400_read_virtual_cpuif(struct vgic400 *vgic,
+                                                 uint32_t reg)
 {
     uint32_t d;
 
@@ -105,13 +109,15 @@ static inline bool is_target_irq(const struct vgic400 *vgic, uint16_t irq)
     return ((vgic->target.irq[irq / 32] & bit) != 0) ? true : false;
 }
 
-static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic, uint32_t virq)
+static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic,
+                                           uint32_t virq)
 {
     uint16_t irq;
 
     if (virq < 32) {
         irq = is_target_virq(vgic, virq) ? virq : VGIC400_NO_ASSIGNED;
-    } else if (vgic->boolean.virtual_spi && (virq >= vgic->virtual_spi.base_no) && (virq <= (vgic->virtual_spi.base_no + 31))) {
+    } else if (vgic->boolean.virtual_spi && (virq >= vgic->virtual_spi.base_no)
+               && (virq <= (vgic->virtual_spi.base_no + 31))) {
         irq = virq;
     } else if (virq < NR_GIC400_INTERRUPTS) {
         irq = vgic->spi.map.physical[virq - 32];
@@ -122,7 +128,8 @@ static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic, uint32_t 
     return irq;
 }
 
-static inline uint16_t vgic400_irq_to_virq(const struct vgic400 *vgic, uint32_t irq)
+static inline uint16_t vgic400_irq_to_virq(const struct vgic400 *vgic,
+                                           uint32_t irq)
 {
     uint16_t virq;
 
@@ -148,7 +155,8 @@ static inline bool is_aligned_word_access(const struct insn *insn)
     return ret;
 }
 
-static inline bool is_virtual_spi_byte_register(const struct vgic400 *vgic, uintptr_t reg, uintptr_t base)
+static inline bool is_virtual_spi_byte_register(const struct vgic400 *vgic,
+                                                uintptr_t reg, uintptr_t base)
 {
     bool ret;
 
@@ -162,7 +170,8 @@ static inline bool is_virtual_spi_byte_register(const struct vgic400 *vgic, uint
     return ret;
 }
 
-static inline bool is_virtual_spi_bit_register(const struct vgic400 *vgic, uintptr_t reg, uintptr_t base)
+static inline bool is_virtual_spi_bit_register(const struct vgic400 *vgic,
+                                               uintptr_t reg, uintptr_t base)
 {
     bool ret;
 
@@ -178,26 +187,45 @@ static inline bool is_virtual_spi_bit_register(const struct vgic400 *vgic, uintp
 
 /* functions */
 
-errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct insn *insn);
-errno_t vgic400_distributor_bit_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base);
-errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base);
+errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic,
+                                             const struct insn *insn);
+errno_t vgic400_distributor_bit_register(struct vgic400 *vgic,
+                                         const struct insn *insn, uintptr_t reg,
+                                         uintptr_t base);
+errno_t vgic400_distributor_byte_register(struct vgic400 *vgic,
+                                          const struct insn *insn,
+                                          uintptr_t reg, uintptr_t base);
 errno_t vgic400_distributor_ctlr(struct vgic400 *vgic, const struct insn *insn);
-errno_t vgic400_distributor_typer(struct vgic400 *vgic, const struct insn *insn);
-errno_t vgic400_distributor_igroupr(struct vgic400 *vgic, const struct insn *insn);
-errno_t vgic400_distributor_isenabler(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
-errno_t vgic400_distributor_icenabler(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
-errno_t vgic400_distributor_ispendr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
-errno_t vgic400_distributor_icpendr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
-errno_t vgic400_distributor_isactiver(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
-errno_t vgic400_distributor_icactiver(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
-errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
-errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
-errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_typer(struct vgic400 *vgic,
+                                  const struct insn *insn);
+errno_t vgic400_distributor_igroupr(struct vgic400 *vgic,
+                                    const struct insn *insn);
+errno_t vgic400_distributor_isenabler(struct vgic400 *vgic,
+                                      const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_icenabler(struct vgic400 *vgic,
+                                      const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_ispendr(struct vgic400 *vgic,
+                                    const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_icpendr(struct vgic400 *vgic,
+                                    const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_isactiver(struct vgic400 *vgic,
+                                      const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_icactiver(struct vgic400 *vgic,
+                                      const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_spisr(struct vgic400 *vgic, const struct insn *insn,
+                                  uintptr_t reg);
+errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic,
+                                       const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic,
+                                      const struct insn *insn, uintptr_t reg);
 errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn);
-errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn,
+                                  uintptr_t reg);
 
 errno_t vgic400_cpuif_write_pmr(struct vgic400 *vgic, const struct insn *insn);
-errno_t vgic400_cpuif_write_word_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg);
+errno_t vgic400_cpuif_write_word_register(struct vgic400 *vgic,
+                                          const struct insn *insn,
+                                          uintptr_t reg);
 
 uint64_t vgic400_p2v_cpu_map_b(uint64_t src, const struct vm *vm);
 uint64_t vgic400_p2v_cpu_map_w(uint64_t src, const struct vm *vm);
@@ -217,4 +245,3 @@ errno_t vgic400_expose_virtual_spi(struct vpc *vpc, struct vgic400 *vgic);
 #endif /* ASSEMBLY */
 
 #endif /* EMULATOR_VGIC400_VGIC400_LOCAL_H */
-

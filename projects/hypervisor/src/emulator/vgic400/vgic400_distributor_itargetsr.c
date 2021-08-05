@@ -4,16 +4,16 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -35,7 +35,8 @@ static uintptr_t reg_addr(uint32_t irq)
     return (uintptr_t)GICD_ITARGETSR(0) + irq;
 }
 
-static uint64_t read_itargetsr(const struct vgic400 *vgic, const struct vm *vm, uint32_t virq)
+static uint64_t read_itargetsr(const struct vgic400 *vgic, const struct vm *vm,
+                               uint32_t virq)
 {
     uint64_t result;
     uint32_t irq;
@@ -54,7 +55,8 @@ static uint64_t read_itargetsr(const struct vgic400 *vgic, const struct vm *vm, 
     return result;
 }
 
-static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t read_itargetsr_b(const struct vgic400 *vgic,
+                                const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
     uint32_t virq;
@@ -68,7 +70,8 @@ static errno_t read_itargetsr_b(const struct vgic400 *vgic, const struct insn *i
     return ret;
 }
 
-static errno_t read_itargetsr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t read_itargetsr_w(const struct vgic400 *vgic,
+                                const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
     uint32_t i;
@@ -88,7 +91,8 @@ static errno_t read_itargetsr_w(const struct vgic400 *vgic, const struct insn *i
     return ret;
 }
 
-static void write_itargetsr(const struct vgic400 *vgic, const struct vm *vm, uint32_t virq, uint64_t d)
+static void write_itargetsr(const struct vgic400 *vgic, const struct vm *vm,
+                            uint32_t virq, uint64_t d)
 {
     uint32_t irq;
     uintptr_t reg;
@@ -101,7 +105,8 @@ static void write_itargetsr(const struct vgic400 *vgic, const struct vm *vm, uin
     }
 }
 
-static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t write_itargetsr_b(const struct vgic400 *vgic,
+                                 const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
     uint32_t virq;
@@ -116,7 +121,8 @@ static errno_t write_itargetsr_b(const struct vgic400 *vgic, const struct insn *
     return ret;
 }
 
-static errno_t write_itargetsr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t write_itargetsr_w(const struct vgic400 *vgic,
+                                 const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
     uint32_t i;
@@ -166,7 +172,8 @@ static bool is_virtual_itargetsr(const struct vgic400 *vgic, uintptr_t reg)
     return ret;
 }
 
-errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic,
+                                      const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
 
@@ -206,4 +213,3 @@ errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic, const struct insn *i
 
     return ret;
 }
-

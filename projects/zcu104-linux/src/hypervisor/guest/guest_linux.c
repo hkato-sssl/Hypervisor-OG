@@ -4,30 +4,31 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/printk.h"
+#include "driver/aarch64/mmu.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/smmu500.h"
-#include "driver/aarch64/mmu.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/mmu.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/mmu.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define NR_CPUS             4
-#define GUEST_VMID          1
+#define NR_CPUS    4
+#define GUEST_VMID 1
 
 /* types */
 
 /* prototypes */
 
-static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar);
+static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic,
+                               uint32_t iar);
 errno_t guest_linux_initialize_hvc(struct xilinx_mpsoc *mpsoc);
 
 /* variables */
@@ -46,7 +47,7 @@ static DESC_XILINX_MPSOC_STAGE2_LEVEL1_TABLE(table);
 
 static struct xilinx_mpsoc mpsoc;
 static struct vpc vpcs[NR_CPUS];
-static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
+static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__((aligned(32)));
 static struct vpc_exception_ops ops;
 static struct vgic400_ops xilinx_mpsoc_vgic400_ops = {
     .irq_handler = vgic400_default_irq_handler,
@@ -61,13 +62,14 @@ static errno_t emulate_hvc(const struct insn *insn)
     gic400_dump_ns_cpuif(&sys_gic);
     gic400_dump_ns_distributor(&sys_gic);
     gic400_dump_virtif_control(&(mpsoc->vgic400));
-    //smmu500_dump(&sys_smmu);
-    //smmu500_dump_stream_match_register(&sys_smmu, 0);
+    // smmu500_dump(&sys_smmu);
+    // smmu500_dump_stream_match_register(&sys_smmu, 0);
 
     return SUCCESS;
 }
 
-static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
+static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic,
+                               uint32_t iar)
 {
     struct xilinx_mpsoc *chip;
 
@@ -97,7 +99,7 @@ static void *init_mpsoc(void)
     }
 
     ops = *xilinx_mpsoc_default_vpc_exception_ops();
-    //ops.aarch64.hvc = emulate_hvc;
+    // ops.aarch64.hvc = emulate_hvc;
     config.vpc.ops = &ops;
 
     config.vmid = GUEST_VMID;
@@ -135,4 +137,3 @@ void *guest_linux(void)
 {
     return init_mpsoc();
 }
-

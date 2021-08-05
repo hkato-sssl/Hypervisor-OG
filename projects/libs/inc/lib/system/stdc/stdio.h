@@ -9,8 +9,8 @@
 
 /* includes */
 
-#include <stddef.h>
 #include <stdarg.h>
+#include <stddef.h>
 
 /* defines */
 
@@ -42,4 +42,3 @@ int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 #endif /* ASSEMBLY */
 
 #endif /* LIB_SYSTEM_STDC_STDIO_H */
-

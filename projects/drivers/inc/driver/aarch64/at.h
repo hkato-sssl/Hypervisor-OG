@@ -19,8 +19,8 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
 #include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -51,4 +51,3 @@ errno_t aarch64_va_to_pa_el2(uint64_t *pa, uint64_t va);
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_AARCH64_AT_H */
-

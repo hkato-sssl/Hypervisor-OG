@@ -10,10 +10,10 @@
  * である事を確認する。
  */
 
-#include <stdint.h>
-#include "lib/system/printk.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -43,7 +43,7 @@ void test_fp_01(void)
 
     enable_fp();
 
-    __asm volatile ("ldr q0, [%0]" :: "r"(buff));
+    __asm volatile("ldr q0, [%0]" ::"r"(buff));
 
     printk("Done.\n");
 }

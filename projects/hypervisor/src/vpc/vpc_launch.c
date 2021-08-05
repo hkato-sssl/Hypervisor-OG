@@ -4,22 +4,23 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <assert.h>
-#include "driver/arm.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/system_register/hcr_el2.h"
+#include "driver/arm.h"
 #include "hypervisor/thread.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
 #include "vpc_local.h"
+#include <assert.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
-#define DEFAULT_SCTLR_EL1   (SCTLR_nTWE | SCTLR_nTWI | SCTLR_CP15BEN | SCTLR_SA0 | SCTLR_SA) 
+#define DEFAULT_SCTLR_EL1 \
+    (SCTLR_nTWE | SCTLR_nTWI | SCTLR_CP15BEN | SCTLR_SA0 | SCTLR_SA)
 
 /* types */
 
@@ -40,7 +41,9 @@ static void initialize_el1(struct vpc *vpc)
     vpc->regs[VPC_VMPIDR_EL2] = BIT(31) | vpc->proc_no;
 }
 
-static errno_t switch_to_guest_context(struct vpc *vpc, const struct vpc_boot_configuration *boot)
+static errno_t
+switch_to_guest_context(struct vpc *vpc,
+                        const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
     struct vm *vm;
@@ -94,7 +97,8 @@ static errno_t call_post_hook(struct vpc *vpc)
     return ret;
 }
 
-static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
+static errno_t launch(struct vpc *vpc,
+                      const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
     errno_t post;
@@ -111,7 +115,8 @@ static errno_t launch(struct vpc *vpc, const struct vpc_boot_configuration *boot
     return ret;
 }
 
-static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_configuration *boot)
+static errno_t validate_parameters(const struct vpc *vpc,
+                                   const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
     enum vpc_status status;
@@ -160,4 +165,3 @@ errno_t vpc_launch(struct vpc *vpc, const struct vpc_boot_configuration *boot)
 
     return ret;
 }
-

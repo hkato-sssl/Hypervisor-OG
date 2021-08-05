@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "hypervisor/service/p2p_packet.h"
+#include "lib/system/errno.h"
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/errno.h"
-#include "hypervisor/service/p2p_packet.h"
 
 /* defines */
 
@@ -25,4 +25,3 @@ errno_t p2p_packet_initialize_path(struct p2p_packet_path *path)
 
     return SUCCESS;
 }
-

@@ -4,31 +4,31 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <stdarg.h>
-#include <string.h>
+#include "driver/aarch64.h"
+#include "driver/aarch64/system_register.h"
+#include "driver/system/cpu.h"
+#include "driver/xilinx/mpsoc/device/ps_uart.h"
+#include "driver/xilinx/mpsoc/ps_uart.h"
+#include "lib/log.h"
+#include "lib/system.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
 #include "lib/system/printk.h"
 #include "lib/system/spin_lock.h"
-#include "lib/system.h"
-#include "lib/log.h"
-#include "driver/aarch64.h"
-#include "driver/aarch64/system_register.h"
-#include "driver/system/cpu.h"
-#include "driver/xilinx/mpsoc/ps_uart.h"
-#include "driver/xilinx/mpsoc/device/ps_uart.h"
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define UART0_BASE      0xff000000
+#define UART0_BASE 0xff000000
 
 /* types */
 
 struct arg_printk {
-    uintptr_t           reg_base;
-    int                 ct;
+    uintptr_t reg_base;
+    int ct;
 };
 
 /* prototypes */
@@ -38,7 +38,7 @@ static errno_t put_char(struct log_context *ctx, char ch);
 /* variables */
 
 static struct log_context log_ctx;
-static struct log_ops ops = { NULL, put_char };
+static struct log_ops ops = {NULL, put_char};
 static spin_lock_t lock;
 static spin_lock_t system_lock;
 
@@ -132,15 +132,14 @@ errno_t init_system(void)
     if (cpu_no() == 0) {
         ret = init_printk();
         if (ret == SUCCESS) {
-    	    ret = init_exception();
+            ret = init_exception();
         }
         if (ret == SUCCESS) {
             ret = system_register_spin_lock(&system_lock);
         }
     } else {
-    	ret = init_exception();
+        ret = init_exception();
     }
 
     return ret;
 }
-

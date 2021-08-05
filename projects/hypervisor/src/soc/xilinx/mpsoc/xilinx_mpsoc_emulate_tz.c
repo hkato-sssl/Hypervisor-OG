@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "mpsoc_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -30,4 +30,3 @@ errno_t xilinx_mpsoc_emulate_tz(struct vpc *vpc)
 
     return ret;
 }
-

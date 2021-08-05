@@ -4,14 +4,14 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "lib/system/errno.h"
 #include "driver/arm/device/gic400.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -81,7 +81,8 @@ static bool is_virtual_icactiver(struct vgic400 *vgic, uintptr_t reg)
     return is_virtual_spi(vgic, reg, GICD_ICACTIVER(0));
 }
 
-errno_t vgic400_distributor_isactiver(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+errno_t vgic400_distributor_isactiver(struct vgic400 *vgic,
+                                      const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
 
@@ -92,13 +93,15 @@ errno_t vgic400_distributor_isactiver(struct vgic400 *vgic, const struct insn *i
             ret = write_virtual_isactiver(vgic, insn);
         }
     } else {
-        ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ISACTIVER(0));
+        ret = vgic400_distributor_bit_register(vgic, insn, reg,
+                                               GICD_ISACTIVER(0));
     }
 
     return ret;
 }
 
-errno_t vgic400_distributor_icactiver(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+errno_t vgic400_distributor_icactiver(struct vgic400 *vgic,
+                                      const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
 
@@ -109,9 +112,9 @@ errno_t vgic400_distributor_icactiver(struct vgic400 *vgic, const struct insn *i
             ret = write_virtual_icactiver(vgic, insn);
         }
     } else {
-        ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ICACTIVER(0));
+        ret = vgic400_distributor_bit_register(vgic, insn, reg,
+                                               GICD_ICACTIVER(0));
     }
 
     return ret;
 }
-

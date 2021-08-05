@@ -19,10 +19,10 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -32,7 +32,8 @@ extern "C" {
 
 /* functions */
 
-errno_t vm_event_loop(struct vm *vm, uint32_t proc_no, const struct vpc_boot_configuration *boot);
+errno_t vm_event_loop(struct vm *vm, uint32_t proc_no,
+                      const struct vpc_boot_configuration *boot);
 
 #ifdef __cplusplus
 }
@@ -41,4 +42,3 @@ errno_t vm_event_loop(struct vm *vm, uint32_t proc_no, const struct vpc_boot_con
 #endif /* ASSEMBLY */
 
 #endif /* VM_VM_LOCAL_H */
-

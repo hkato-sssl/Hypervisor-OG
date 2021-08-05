@@ -38,4 +38,3 @@ errno_t printk(const char *fmt, ...);
 #endif /* ASSEMBLY */
 
 #endif /* LIB_SYSTEM_PRINTK_H */
-

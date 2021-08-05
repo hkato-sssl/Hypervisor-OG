@@ -19,8 +19,8 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -42,4 +42,3 @@ void vspi_assert_interrupt(uint32_t no);
 #endif /* ASSEMBLY */
 
 #endif /* TEST_VSPI_VSPI_H */
-

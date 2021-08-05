@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "hypervisor/service/p2p_packet.h"
+#include "lib/system/errno.h"
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/errno.h"
-#include "hypervisor/service/p2p_packet.h"
 
 /* defines */
 
@@ -19,7 +19,8 @@
 
 /* functions */
 
-static errno_t initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
+static errno_t initialize_ep(struct p2p_packet_ep *ep,
+                             const struct p2p_packet_ep_configuration *config)
 {
     memset(ep, 0, sizeof(*ep));
     ep->owner = config->owner;
@@ -32,7 +33,8 @@ static errno_t initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_e
     return SUCCESS;
 }
 
-static errno_t validate_parameters(const struct p2p_packet_ep_configuration *config)
+static errno_t
+validate_parameters(const struct p2p_packet_ep_configuration *config)
 {
     errno_t ret;
 
@@ -45,11 +47,13 @@ static errno_t validate_parameters(const struct p2p_packet_ep_configuration *con
     } else {
         ret = SUCCESS;
     }
-        
+
     return ret;
 }
 
-errno_t p2p_packet_initialize_ep(struct p2p_packet_ep *ep, const struct p2p_packet_ep_configuration *config)
+errno_t
+p2p_packet_initialize_ep(struct p2p_packet_ep *ep,
+                         const struct p2p_packet_ep_configuration *config)
 {
     errno_t ret;
 
@@ -60,4 +64,3 @@ errno_t p2p_packet_initialize_ep(struct p2p_packet_ep *ep, const struct p2p_pack
 
     return ret;
 }
-

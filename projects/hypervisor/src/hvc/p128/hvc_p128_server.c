@@ -4,27 +4,27 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
-#include "hypervisor/service/p2p_packet.h"
 #include "hypervisor/hvc.h"
 #include "hypervisor/hvc/p128.h"
+#include "hypervisor/service/p2p_packet.h"
+#include "hypervisor/vpc.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
-#define P128_CMD(c0, c1)        (((uint16_t)(c0) << 8) | (uint16_t)(c1))
-#define P128_CMD_NI             P128_CMD('N', 'I')
-#define P128_CMD_WR             P128_CMD('W', 'R')
-#define P128_CMD_RD             P128_CMD('R', 'D')
-#define P128_CMD_GI             P128_CMD('G', 'I')
-#define P128_CMD_GS             P128_CMD('G', 'S')
-#define P128_CMD_GE             P128_CMD('G', 'E')
+#define P128_CMD(c0, c1)       (((uint16_t)(c0) << 8) | (uint16_t)(c1))
+#define P128_CMD_NI            P128_CMD('N', 'I')
+#define P128_CMD_WR            P128_CMD('W', 'R')
+#define P128_CMD_RD            P128_CMD('R', 'D')
+#define P128_CMD_GI            P128_CMD('G', 'I')
+#define P128_CMD_GS            P128_CMD('G', 'S')
+#define P128_CMD_GE            P128_CMD('G', 'E')
 
-#define P128_STATUS_DATA_READY  BIT(0)
-#define P128_STATUS_TX_EMPTY    BIT(1)
+#define P128_STATUS_DATA_READY BIT(0)
+#define P128_STATUS_TX_EMPTY   BIT(1)
 
 /* types */
 
@@ -34,23 +34,27 @@
 
 /* functions */
 
-static errno_t cmd_number_of_interfaces(struct vpc *vpc, const struct hvc_p128_service *service)
+static errno_t cmd_number_of_interfaces(struct vpc *vpc,
+                                        const struct hvc_p128_service *service)
 {
     vpc->regs[VPC_X1] = service->nr_eps;
 
     return SUCCESS;
 }
 
-static errno_t cmd_write(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+static errno_t cmd_write(struct vpc *vpc,
+                         const struct hvc_p128_service *service,
+                         struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
     ret = p2p_packet_send(vpc, ep);
-    
+
     return ret;
 }
 
-static errno_t cmd_read(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+static errno_t cmd_read(struct vpc *vpc, const struct hvc_p128_service *service,
+                        struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
@@ -59,14 +63,18 @@ static errno_t cmd_read(struct vpc *vpc, const struct hvc_p128_service *service,
     return ret;
 }
 
-static errno_t cmd_get_interrupt_no(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+static errno_t cmd_get_interrupt_no(struct vpc *vpc,
+                                    const struct hvc_p128_service *service,
+                                    struct p2p_packet_ep *ep)
 {
     vpc->regs[VPC_X1] = ep->interrupt_no;
 
     return SUCCESS;
 }
 
-static errno_t cmd_get_status(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+static errno_t cmd_get_status(struct vpc *vpc,
+                              const struct hvc_p128_service *service,
+                              struct p2p_packet_ep *ep)
 {
     uint64_t d;
 
@@ -85,7 +93,9 @@ static errno_t cmd_get_status(struct vpc *vpc, const struct hvc_p128_service *se
     return SUCCESS;
 }
 
-static errno_t cmd_get_event(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep)
+static errno_t cmd_get_event(struct vpc *vpc,
+                             const struct hvc_p128_service *service,
+                             struct p2p_packet_ep *ep)
 {
     uint64_t d;
 
@@ -106,7 +116,10 @@ static errno_t cmd_get_event(struct vpc *vpc, const struct hvc_p128_service *ser
     return SUCCESS;
 }
 
-static errno_t p128_interface_command(struct vpc *vpc, const struct hvc_p128_service *service, struct p2p_packet_ep *ep, uint16_t command)
+static errno_t p128_interface_command(struct vpc *vpc,
+                                      const struct hvc_p128_service *service,
+                                      struct p2p_packet_ep *ep,
+                                      uint16_t command)
 {
     errno_t ret;
 
@@ -134,7 +147,8 @@ static errno_t p128_interface_command(struct vpc *vpc, const struct hvc_p128_ser
     return ret;
 }
 
-errno_t hvc_p128_server(const struct insn *insn, const struct hvc_service *service)
+errno_t hvc_p128_server(const struct insn *insn,
+                        const struct hvc_service *service)
 {
     errno_t ret;
     uint64_t ip0;
@@ -163,4 +177,3 @@ errno_t hvc_p128_server(const struct insn *insn, const struct hvc_service *servi
 
     return ret;
 }
-

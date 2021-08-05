@@ -4,12 +4,12 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "driver/aarch64/stage2.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/printk.h"
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/printk.h"
-#include "driver/aarch64/stage2.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/vm.h"
 
 /* defines */
 
@@ -21,8 +21,8 @@
 
 struct aarch64_stage2 hyp_test_stage2;
 static struct aarch64_mmu_block_pool pool;
-static char level1_table[4096 * 2] __attribute__ ((aligned(4096 * 2)));
-static char memory_block_region[4096][32] __attribute__ ((aligned(4096)));
+static char level1_table[4096 * 2] __attribute__((aligned(4096 * 2)));
+static char memory_block_region[4096][32] __attribute__((aligned(4096)));
 
 /* functions */
 
@@ -64,4 +64,3 @@ errno_t hyp_test_stage2_init(void)
 
     return ret;
 }
-

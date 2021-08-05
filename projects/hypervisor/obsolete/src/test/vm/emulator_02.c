@@ -4,10 +4,10 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/printk.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -30,4 +30,3 @@ errno_t emulator_02(const struct insn *insn, void *arg)
 
     return ret;
 }
-

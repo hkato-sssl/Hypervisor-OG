@@ -19,9 +19,9 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include <stdbool.h>
 #include "lib/system/errno.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -42,7 +42,9 @@ errno_t xilinx_mpsoc_emulate_smc(const struct insn *insn);
 errno_t xilinx_mpsoc_emulate_psci(struct vpc *vpc);
 errno_t xilinx_mpsoc_emulate_tz(struct vpc *vpc);
 errno_t xilinx_mpsoc_emulate_tz_asm(uint64_t *regs);
-errno_t xilinx_mpsoc_assert_interrupt_vpc(struct soc *soc, const struct vpc *vpc, uint16_t interrupt_no);
+errno_t xilinx_mpsoc_assert_interrupt_vpc(struct soc *soc,
+                                          const struct vpc *vpc,
+                                          uint16_t interrupt_no);
 
 #ifdef __cplusplus
 }
@@ -51,4 +53,3 @@ errno_t xilinx_mpsoc_assert_interrupt_vpc(struct soc *soc, const struct vpc *vpc
 #endif /* ASSEMBLY */
 
 #endif /* SOC_XILINX_MPSOC_MPSOC_LOCAL_H */
-

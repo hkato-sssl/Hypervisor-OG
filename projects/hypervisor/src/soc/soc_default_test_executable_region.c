@@ -4,13 +4,13 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -22,7 +22,8 @@
 
 /* functions */
 
-static errno_t test_device_regions(struct soc *soc, uintptr_t addr, size_t size, const struct soc_device *dev)
+static errno_t test_device_regions(struct soc *soc, uintptr_t addr, size_t size,
+                                   const struct soc_device *dev)
 {
     errno_t ret;
     uint32_t i;
@@ -32,8 +33,8 @@ static errno_t test_device_regions(struct soc *soc, uintptr_t addr, size_t size,
     for (i = 0; i < dev->nr_regions; ++i) {
         region = dev->regions[i];
         if (region->access.flag.exec != 0) {
-            if ((region->ipa <= addr) &&
-                ((addr + size - 1) <= (region->ipa + region->size - 1))) {
+            if ((region->ipa <= addr)
+                && ((addr + size - 1) <= (region->ipa + region->size - 1))) {
                 ret = SUCCESS;
                 break;
             }
@@ -43,7 +44,8 @@ static errno_t test_device_regions(struct soc *soc, uintptr_t addr, size_t size,
     return ret;
 }
 
-static errno_t test_executable_region(struct soc *soc, uintptr_t addr, size_t size)
+static errno_t test_executable_region(struct soc *soc, uintptr_t addr,
+                                      size_t size)
 {
     errno_t ret;
     uint32_t i;
@@ -61,7 +63,8 @@ static errno_t test_executable_region(struct soc *soc, uintptr_t addr, size_t si
     return ret;
 }
 
-errno_t soc_default_test_executable_region(struct soc *soc, uintptr_t addr, size_t size)
+errno_t soc_default_test_executable_region(struct soc *soc, uintptr_t addr,
+                                           size_t size)
 {
     errno_t ret;
 
@@ -72,7 +75,6 @@ errno_t soc_default_test_executable_region(struct soc *soc, uintptr_t addr, size
     } else {
         ret = test_executable_region(soc, addr, size);
     }
-    
+
     return ret;
 }
-

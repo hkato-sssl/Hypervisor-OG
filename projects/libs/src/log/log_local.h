@@ -12,7 +12,7 @@
 /* defines */
 
 #ifndef EOS
-#define	EOS			'\0'
+#define EOS '\0'
 #endif
 
 #ifndef ASSEMBLY
@@ -23,8 +23,8 @@ extern "C" {
 
 /* includes */
 
-#include "lib/system/errno.h"
 #include "lib/log.h"
+#include "lib/system/errno.h"
 
 /* defines */
 
@@ -36,20 +36,20 @@ extern "C" {
 
 static inline errno_t put_char(struct log_context *ctx, char ch)
 {
-	errno_t ret;
+    errno_t ret;
 
-	ret = (*(ctx->request.ops->putc))(ctx, ch);
+    ret = (*(ctx->request.ops->putc))(ctx, ch);
 
-	return ret;
+    return ret;
 }
 
 static inline char get_char(struct log_context *ctx)
 {
-	int ch;
+    int ch;
 
-	ch = *((ctx->request.format)++);
+    ch = *((ctx->request.format)++);
 
-	return ch;
+    return ch;
 }
 
 int log_output_unsigned_number(struct log_context *ctx);
@@ -68,4 +68,3 @@ int log_output_string(struct log_context *ctx);
 #endif /* ASSEMBLY */
 
 #endif /* SRC_LOG_LOG_LOCAL_H */
-

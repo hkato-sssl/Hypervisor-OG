@@ -4,13 +4,13 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vpc.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -62,4 +62,3 @@ errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn)
 
     return ret;
 }
-

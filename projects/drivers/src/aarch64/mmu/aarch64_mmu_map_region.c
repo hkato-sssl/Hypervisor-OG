@@ -4,12 +4,12 @@
  * (e) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
 #include "driver/aarch64/cache.h"
 #include "driver/aarch64/mmu_base.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -30,7 +30,8 @@ static uint64_t *next_table_addr(uint64_t desc)
     return addr;
 }
 
-static uint32_t desc_index(struct aarch64_mmu_base *mmu, void *va, uint32_t level)
+static uint32_t desc_index(struct aarch64_mmu_base *mmu, void *va,
+                           uint32_t level)
 {
     uint32_t index;
     uint32_t lsb;
@@ -47,7 +48,8 @@ static uint32_t desc_index(struct aarch64_mmu_base *mmu, void *va, uint32_t leve
     return index;
 }
 
-static uint64_t *new_table(struct aarch64_mmu_base *mmu, const void *attr, uint64_t *previous)
+static uint64_t *new_table(struct aarch64_mmu_base *mmu, const void *attr,
+                           uint64_t *previous)
 {
     void *table;
     uint64_t d;
@@ -61,7 +63,8 @@ static uint64_t *new_table(struct aarch64_mmu_base *mmu, const void *attr, uint6
     return table;
 }
 
-static uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, const void *attr, uint32_t level)
+static uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va,
+                            const void *attr, uint32_t level)
 {
     uint32_t i;
     uint64_t d;
@@ -87,7 +90,8 @@ static uint64_t *table_addr(struct aarch64_mmu_base *mmu, void *va, const void *
     return table;
 }
 
-static uint64_t *desc_addr(struct aarch64_mmu_base *mmu, void *va, const void *attr, uint32_t level)
+static uint64_t *desc_addr(struct aarch64_mmu_base *mmu, void *va,
+                           const void *attr, uint32_t level)
 {
     uint64_t *table;
     uint64_t *desc;
@@ -133,7 +137,9 @@ static errno_t validate_parameters(void *va, void *pa, size_t sz)
     return ret;
 }
 
-errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr, uint32_t level)
+errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu,
+                                          void *va, void *pa, size_t sz,
+                                          const void *attr, uint32_t level)
 {
     errno_t ret;
     uint64_t *p;
@@ -162,7 +168,9 @@ errno_t aarch64_mmu_map_contiguous_region(struct aarch64_mmu_base *mmu, void *va
     return ret;
 }
 
-errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, void *pa, size_t sz, const void *attr, uint32_t level)
+errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va,
+                                      void *pa, size_t sz, const void *attr,
+                                      uint32_t level)
 {
     errno_t ret;
     uint64_t *p;
@@ -171,7 +179,7 @@ errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, vo
     ret = validate_parameters(va, pa, sz);
     if (ret == SUCCESS) {
         p = desc_addr(mmu, va, attr, level);
-        if ((p != NULL) && ((*p & BITS(1,0)) == 0)) {
+        if ((p != NULL) && ((*p & BITS(1, 0)) == 0)) {
             if (level == 3) {
                 desc = (mmu->ops->page_descriptor)(pa, attr);
             } else {
@@ -186,4 +194,3 @@ errno_t aarch64_mmu_map_single_region(struct aarch64_mmu_base *mmu, void *va, vo
 
     return ret;
 }
-

@@ -4,13 +4,13 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <assert.h>
-#include "lib/system/errno.h"
+#include "hypervisor/soc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/soc.h"
+#include "lib/system/errno.h"
+#include <assert.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -22,7 +22,8 @@
 
 /* functions */
 
-errno_t soc_initialize_vpc(struct soc *soc, struct vpc *vpc, const struct vpc_configuration *config)
+errno_t soc_initialize_vpc(struct soc *soc, struct vpc *vpc,
+                           const struct vpc_configuration *config)
 {
     errno_t ret;
 

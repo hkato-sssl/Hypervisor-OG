@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "driver/arm/device/gic400.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -63,7 +63,8 @@ static void update_priority_field(uint32_t *target, uint8_t priority)
     *target = (*target & ~(uint32_t)BITS(27, 20)) | ((uint32_t)priority << 20);
 }
 
-static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn, uintptr_t virq, uint8_t priority)
+static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn,
+                               uintptr_t virq, uint8_t priority)
 {
     uint32_t *p;
 
@@ -84,7 +85,8 @@ static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn, ui
     return SUCCESS;
 }
 
-static errno_t update_priority_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t virq)
+static errno_t update_priority_b(struct vgic400 *vgic, const struct insn *insn,
+                                 uintptr_t virq)
 {
     errno_t ret;
     uint8_t priority;
@@ -95,13 +97,14 @@ static errno_t update_priority_b(struct vgic400 *vgic, const struct insn *insn, 
     return ret;
 }
 
-static errno_t update_priority_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t virq)
+static errno_t update_priority_w(struct vgic400 *vgic, const struct insn *insn,
+                                 uintptr_t virq)
 {
     int i;
     uint32_t priority;
 
     priority = (uint32_t)insn_str_src_value(insn);
-    for (i = 0; i < 4; ++i) {   
+    for (i = 0; i < 4; ++i) {
         update_priority(vgic, insn, virq, (uint8_t)priority);
         ++virq;
         priority >>= 8;
@@ -110,7 +113,8 @@ static errno_t update_priority_w(struct vgic400 *vgic, const struct insn *insn, 
     return SUCCESS;
 }
 
-static errno_t read_virtual_ipriorityr_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t read_virtual_ipriorityr_b(struct vgic400 *vgic,
+                                         const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
     uintptr_t d;
@@ -127,7 +131,8 @@ static errno_t read_virtual_ipriorityr_b(struct vgic400 *vgic, const struct insn
     return ret;
 }
 
-static errno_t read_virtual_ipriorityr_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t read_virtual_ipriorityr_w(struct vgic400 *vgic,
+                                         const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
     uint8_t *ipriorityr;
@@ -136,7 +141,8 @@ static errno_t read_virtual_ipriorityr_w(struct vgic400 *vgic, const struct insn
     ipriorityr = virtual_ipriorityr(vgic, reg);
 
     vgic400_lock(vgic);
-    d = ((uintptr_t)(ipriorityr[3]) << 24) | ((uintptr_t)(ipriorityr[2]) << 16) | ((uintptr_t)(ipriorityr[1]) << 8) | ipriorityr[0];
+    d = ((uintptr_t)(ipriorityr[3]) << 24) | ((uintptr_t)(ipriorityr[2]) << 16)
+        | ((uintptr_t)(ipriorityr[1]) << 8) | ipriorityr[0];
     vgic400_unlock(vgic);
 
     ret = insn_emulate_ldr(insn, d);
@@ -144,7 +150,9 @@ static errno_t read_virtual_ipriorityr_w(struct vgic400 *vgic, const struct insn
     return ret;
 }
 
-static errno_t write_virtual_ipriorityr_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t write_virtual_ipriorityr_b(struct vgic400 *vgic,
+                                          const struct insn *insn,
+                                          uintptr_t reg)
 {
     errno_t ret;
     uint8_t d;
@@ -178,7 +186,9 @@ static errno_t write_virtual_ipriorityr_b(struct vgic400 *vgic, const struct ins
     return ret;
 }
 
-static errno_t write_virtual_ipriorityr_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t write_virtual_ipriorityr_w(struct vgic400 *vgic,
+                                          const struct insn *insn,
+                                          uintptr_t reg)
 {
     errno_t ret;
     bool accept;
@@ -202,7 +212,8 @@ static errno_t write_virtual_ipriorityr_w(struct vgic400 *vgic, const struct ins
         if (priority > 0) {
             ipriorityr[i] = priority;
             d >>= 8;
-            if ((priority < vgic->priority_mask) && ((pending & BIT(idx + i)) != 0)) {
+            if ((priority < vgic->priority_mask)
+                && ((pending & BIT(idx + i)) != 0)) {
                 accept = true;
             }
         }
@@ -223,7 +234,8 @@ static errno_t write_virtual_ipriorityr_w(struct vgic400 *vgic, const struct ins
     return ret;
 }
 
-static errno_t read_virtual_ipriorityr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t read_virtual_ipriorityr(struct vgic400 *vgic,
+                                       const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
 
@@ -238,7 +250,8 @@ static errno_t read_virtual_ipriorityr(struct vgic400 *vgic, const struct insn *
     return ret;
 }
 
-static errno_t write_virtual_ipriorityr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t write_virtual_ipriorityr(struct vgic400 *vgic,
+                                        const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
 
@@ -262,7 +275,8 @@ static bool is_virtual_ipriorityr(struct vgic400 *vgic, uintptr_t reg)
     return ret;
 }
 
-errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic,
+                                       const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
     uint32_t virq;
@@ -274,7 +288,8 @@ errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic, const struct insn *
             ret = write_virtual_ipriorityr(vgic, insn, reg);
         }
     } else {
-        ret = vgic400_distributor_byte_register(vgic, insn, reg, GICD_IPRIORITYR(0));
+        ret = vgic400_distributor_byte_register(vgic, insn, reg,
+                                                GICD_IPRIORITYR(0));
         if ((ret == SUCCESS) && (insn->type == INSN_TYPE_STR)) {
             virq = reg - GICD_IPRIORITYR(0);
             if (insn->op.str.size == 1) {
@@ -287,4 +302,3 @@ errno_t vgic400_distributor_ipriorityr(struct vgic400 *vgic, const struct insn *
 
     return ret;
 }
-

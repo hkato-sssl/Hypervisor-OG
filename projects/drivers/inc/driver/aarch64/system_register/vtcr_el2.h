@@ -43,14 +43,15 @@
 #define VTCR_EL2_T0SZ(n)    (((n) << VTCR_EL2_T0SZ_LSB) & VTCR_EL2_T0SZ_MASK)
 #define VTCR_EL2_RES1       (BIT(31))
 
-#define VTCR_SH_NSH         0   /* Non-shareable */
-#define VTCR_SH_OSH         2   /* Outer Shareable */
-#define VTCR_SH_ISH         3   /* Inner Shareable */
+#define VTCR_SH_NSH         0 /* Non-shareable */
+#define VTCR_SH_OSH         2 /* Outer Shareable */
+#define VTCR_SH_ISH         3 /* Inner Shareable */
 
-#define VTCR_RGN_NC         0   /* Normal memory, Non-cacheable */
-#define VTCR_RGN_WBWA       1   /* Normal memory, Write-Back Write-Allocate Cacheable */
-#define VTCR_RGN_WT         2   /* Normal memory, Write-Through Cacheable */
-#define VTCR_RGN_WB         3   /* Normal memory, Write-Back no Write-Allocate Cacheable */
+#define VTCR_RGN_NC         0 /* Normal memory, Non-cacheable */
+#define VTCR_RGN_WBWA       1 /* Normal memory, Write-Back Write-Allocate Cacheable \
+                               */
+#define VTCR_RGN_WT         2 /* Normal memory, Write-Through Cacheable */
+#define VTCR_RGN_WB \
+    3 /* Normal memory, Write-Back no Write-Allocate Cacheable */
 
 #endif /* DRIVER_AARCH64_SYSTEM_REGISTER_VTCR_EL2_H */
-

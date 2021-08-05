@@ -13,8 +13,8 @@
 
 #ifndef ASSEMBLY
 
-#include <stddef.h>
 #include "lib/system/errno.h"
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,4 +54,3 @@ errno_t aarch64_dcache_clean_invd_range(void *addr, size_t size);
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_AARCH64_CACHE_H */
-

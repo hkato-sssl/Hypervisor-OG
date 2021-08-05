@@ -4,26 +4,26 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
 #include "driver/aarch64/system_register/esr_el2_iss.h"
+#include "hypervisor/emulator/insn.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/emulator/insn.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define OP_LDR_POST         0x38400400
-#define OP_LDR_PRE          0x38400c00
-#define OP_LDRSX_POST_W     0x38c00400
-#define OP_LDRSX_POST       0x38800400
-#define OP_LDRSX_PRE_W      0x38c00c00
-#define OP_LDRSX_PRE        0x38800c00
+#define OP_LDR_POST     0x38400400
+#define OP_LDR_PRE      0x38400c00
+#define OP_LDRSX_POST_W 0x38c00400
+#define OP_LDRSX_POST   0x38800400
+#define OP_LDRSX_PRE_W  0x38c00c00
+#define OP_LDRSX_PRE    0x38800c00
 
-#define OP_STR_POST         0x38000400
-#define OP_STR_PRE          0x38000c00
+#define OP_STR_POST     0x38000400
+#define OP_STR_PRE      0x38000c00
 
 /* types */
 
@@ -36,43 +36,43 @@
 /* Instruction code
  *
  * post-index
- * 
+ *
  *      10987654321098765432109876543210
  * LDR  SS111000010IIIIIIIII01sssssddddd  0x38400400
  * STR  SS111000000IIIIIIIII01sssssddddd  0x38000400
- * 
+ *
  * SS: 00 - 8-bit
  *     01 - 16-bit
  *     10 - 32-bit
  *     11 - 64-bit
- * 
+ *
  *      10987654321098765432109876543210
  * LDRS SS1110001A0IIIIIIIII01sssssddddd  0x38c00400(W), 0x38800400(X)
- * 
+ *
  * A: 1 - 32-bit variant
  *    0 - 64-bit variant
- * 
+ *
  * SS: 00 - 8-bit
  *     01 - 16-bit
  *     10 - 32-bit(always A=0)
- * 
+ *
  * pre-index, write-back
- *  
+ *
  *      10987654321098765432109876543210
  * LDR  SS111000010IIIIIIIII11sssssddddd  0x38400c00
  * STR  SS111000000IIIIIIIII11sssssddddd  0x38000c00
- * 
+ *
  * SS: 00 - 8-bit
  *     01 - 16-bit
  *     10 - 32-bit
  *     11 - 64-bit
- * 
+ *
  *      10987654321098765432109876543210
  * LDRS SS1110001A0IIIIIIIII11sssssddddd  0x38c00c00(W), 0x38800c00(X)
- * 
+ *
  * A: 1 - 32-bit variant
  *    0 - 64-bit variant
- * 
+ *
  * SS: 00 - 8-bit
  *     01 - 16-bit
  *     10 - 32-bit(always A=0)
@@ -210,7 +210,8 @@ static errno_t parse_system_register(struct insn *insn, struct vpc *vpc)
     uint64_t sas;
 
     esr = vpc->regs[VPC_ESR_EL2];
-    insn->type = ((esr & ISS_DATA_ABORT_WnR) != 0) ? INSN_TYPE_STR : INSN_TYPE_LDR;
+    insn->type =
+        ((esr & ISS_DATA_ABORT_WnR) != 0) ? INSN_TYPE_STR : INSN_TYPE_LDR;
     sas = EXTRACT_ISS_DATA_ABORT_SAS(esr);
     insn->op.ldr.size = 1 << sas;
 
@@ -258,7 +259,8 @@ static bool is_emulatable(const struct vpc *vpc)
     uint64_t dfsc;
 
     esr = vpc->regs[VPC_ESR_EL2];
-    if ((esr & (ISS_DATA_ABORT_EA | ISS_DATA_ABORT_CM | ISS_DATA_ABORT_S1PTW)) == 0) {
+    if ((esr & (ISS_DATA_ABORT_EA | ISS_DATA_ABORT_CM | ISS_DATA_ABORT_S1PTW))
+        == 0) {
         dfsc = EXTRACT_ISS_DATA_ABORT_DFSC(esr);
         if ((dfsc >= 13) && (dfsc <= 15)) {
             /* Permission fault */
@@ -285,4 +287,3 @@ errno_t insn_parse_aarch64_ldr_str(struct insn *insn, struct vpc *vpc)
 
     return ret;
 }
-

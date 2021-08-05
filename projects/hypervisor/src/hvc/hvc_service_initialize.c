@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "hypervisor/hvc.h"
+#include "lib/system/errno.h"
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/errno.h"
-#include "hypervisor/hvc.h"
 
 /* defines */
 
@@ -19,7 +19,8 @@
 
 /* functions */
 
-errno_t hvc_service_initialize(struct hvc_service *service, const struct hvc_service_configuration *config)
+errno_t hvc_service_initialize(struct hvc_service *service,
+                               const struct hvc_service_configuration *config)
 {
     memset(service, 0, sizeof(*service));
 
@@ -29,4 +30,3 @@ errno_t hvc_service_initialize(struct hvc_service *service, const struct hvc_ser
 
     return SUCCESS;
 }
-

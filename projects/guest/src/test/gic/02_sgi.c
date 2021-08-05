@@ -10,13 +10,13 @@
  * 複数回のSGI assertが出来れば成功とする。
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "driver/aarch64.h"
+#include "driver/arm/gic400.h"
+#include "driver/system/cpu.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "driver/arm/gic400.h"
-#include "driver/aarch64.h"
-#include "driver/system/cpu.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -68,7 +68,7 @@ static void init_interrupt(void)
         if (ret != SUCCESS) {
             printk("gic400_configure_interrupt(%u) -> %d\n", i, ret);
         }
-        
+
         ret = gic400_enable_interrupt(&gic, i);
         if (ret != SUCCESS) {
             printk("gic400_enable_interrupt(%u) -> %d\n", i, ret);
@@ -101,4 +101,3 @@ void test_gic_02(void)
 
     printk("<%s> Done.\n", __func__);
 }
-

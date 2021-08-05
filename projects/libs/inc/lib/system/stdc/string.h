@@ -43,4 +43,3 @@ char *strncpy(char *dst, const char *src, size_t n);
 #endif /* ASSEMBLY */
 
 #endif /* LIB_SYSTEM_STDC_STRING_H */
-

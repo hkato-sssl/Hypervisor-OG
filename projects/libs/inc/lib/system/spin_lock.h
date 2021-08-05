@@ -40,4 +40,3 @@ void system_spin_unlock(void);
 #endif /* ASSEMBLY */
 
 #endif /* LIB_SYSTEM_SPIN_LOCK_H */
-

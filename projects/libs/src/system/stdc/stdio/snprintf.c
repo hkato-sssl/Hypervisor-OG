@@ -4,8 +4,8 @@
  * (C) 2018 Hidekazu Kato
  */
 
-#include <stddef.h>
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdio.h>
 
 /* defines */
@@ -29,4 +29,3 @@ int snprintf(char *str, size_t size, const char *fmt, ...)
 
     return ret;
 }
-

@@ -34,4 +34,3 @@ extern "C" {
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_TEST_AARCH64_STAGE2_H */
-

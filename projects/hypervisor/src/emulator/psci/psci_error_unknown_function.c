@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
+#include "hypervisor/emulator/psci.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
-#include "hypervisor/emulator/psci.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -29,4 +29,3 @@ errno_t psci_error_unknown_function(struct vpc *vpc)
 
     return SUCCESS;
 }
-

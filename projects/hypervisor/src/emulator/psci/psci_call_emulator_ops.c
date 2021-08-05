@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "driver/arm/psci_common.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/psci.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -33,7 +33,8 @@ static errno_t call_op(struct vpc *vpc, vpc_exception_emulator_t op)
     return ret;
 }
 
-static errno_t call_aarch64_emulator_ops(struct vpc *vpc, const struct psci_emulator_ops *ops)
+static errno_t call_aarch64_emulator_ops(struct vpc *vpc,
+                                         const struct psci_emulator_ops *ops)
 {
     errno_t ret;
     uint32_t func;
@@ -106,7 +107,8 @@ static errno_t call_aarch64_emulator_ops(struct vpc *vpc, const struct psci_emul
     return ret;
 }
 
-static errno_t call_aarch32_emulator_ops(struct vpc *vpc, const struct psci_emulator_ops *ops)
+static errno_t call_aarch32_emulator_ops(struct vpc *vpc,
+                                         const struct psci_emulator_ops *ops)
 {
     errno_t ret;
     uint32_t func;
@@ -179,7 +181,8 @@ static errno_t call_aarch32_emulator_ops(struct vpc *vpc, const struct psci_emul
     return ret;
 }
 
-errno_t psci_call_emulator_ops(struct vpc *vpc, const struct psci_emulator_ops *ops)
+errno_t psci_call_emulator_ops(struct vpc *vpc,
+                               const struct psci_emulator_ops *ops)
 {
     errno_t ret;
 
@@ -192,7 +195,8 @@ errno_t psci_call_emulator_ops(struct vpc *vpc, const struct psci_emulator_ops *
     return ret;
 }
 
-errno_t psci_call_aarch64_emulator_ops(struct vpc *vpc, const struct psci_emulator_ops *ops)
+errno_t psci_call_aarch64_emulator_ops(struct vpc *vpc,
+                                       const struct psci_emulator_ops *ops)
 {
     errno_t ret;
 
@@ -205,7 +209,8 @@ errno_t psci_call_aarch64_emulator_ops(struct vpc *vpc, const struct psci_emulat
     return ret;
 }
 
-errno_t psci_call_aarch32_emulator_ops(struct vpc *vpc, const struct psci_emulator_ops *ops)
+errno_t psci_call_aarch32_emulator_ops(struct vpc *vpc,
+                                       const struct psci_emulator_ops *ops)
 {
     errno_t ret;
 
@@ -217,4 +222,3 @@ errno_t psci_call_aarch32_emulator_ops(struct vpc *vpc, const struct psci_emulat
 
     return ret;
 }
-

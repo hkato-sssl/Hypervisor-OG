@@ -4,11 +4,11 @@
  * (C) 2018 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdarg.h>
-#include "lib/system/errno.h"
 #include "lib/log.h"
+#include "lib/system/errno.h"
 #include "log_local.h"
+#include <stdarg.h>
+#include <stddef.h>
 
 /* defines */
 
@@ -20,50 +20,50 @@
 
 static int output_radix(struct log_context *ctx)
 {
-	errno_t ret;
-	const char *str;
-	size_t idx;
-	size_t len;
+    errno_t ret;
+    const char *str;
+    size_t idx;
+    size_t len;
 
-	if (ctx->syntax.flag.hash && (ctx->syntax.radix != NULL) && (ctx->syntax.radix->prefix.length > 0)) {
-		len = ctx->syntax.radix->prefix.length;
-		str = ctx->syntax.radix->prefix.string;
-		for (idx = 0; idx < len; ++idx) {
-			ret = put_char(ctx, str[idx]);
-			if (ret != SUCCESS) {
-				break;
-			}
-		}
-	} else {
-		/* no work */
-		ret = SUCCESS;
-	}
+    if (ctx->syntax.flag.hash && (ctx->syntax.radix != NULL)
+        && (ctx->syntax.radix->prefix.length > 0)) {
+        len = ctx->syntax.radix->prefix.length;
+        str = ctx->syntax.radix->prefix.string;
+        for (idx = 0; idx < len; ++idx) {
+            ret = put_char(ctx, str[idx]);
+            if (ret != SUCCESS) {
+                break;
+            }
+        }
+    } else {
+        /* no work */
+        ret = SUCCESS;
+    }
 
-	return ret;
+    return ret;
 }
 
 static int output_sign(struct log_context *ctx)
 {
-	errno_t ret;
+    errno_t ret;
 
-	if (ctx->output.sign != EOS) {
-		ret = put_char(ctx, ctx->output.sign);
-		if (ret == SUCCESS) {
-			ret = output_radix(ctx);
-		}
-	} else {
-		ret = output_radix(ctx);
-	}
+    if (ctx->output.sign != EOS) {
+        ret = put_char(ctx, ctx->output.sign);
+        if (ret == SUCCESS) {
+            ret = output_radix(ctx);
+        }
+    } else {
+        ret = output_radix(ctx);
+    }
 
-	return ret;
+    return ret;
 }
 
 int log_output_prefix(struct log_context *ctx)
 {
-	errno_t ret;
+    errno_t ret;
 
-	ret = output_sign(ctx);
+    ret = output_sign(ctx);
 
-	return ret;
+    return ret;
 }
-

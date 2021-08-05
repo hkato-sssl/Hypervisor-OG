@@ -4,15 +4,15 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
 #include "driver/arm.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
 #include "vpc_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -24,7 +24,8 @@
 
 /* functions */
 
-static errno_t wakeup_processor(struct vpc *vpc, const struct vpc_boot_configuration *boot)
+static errno_t wakeup_processor(struct vpc *vpc,
+                                const struct vpc_boot_configuration *boot)
 {
     vpc_set_boot_parameters(vpc, boot);
     vpc_set_status(vpc, VPC_STATUS_WAKEUP);
@@ -33,7 +34,8 @@ static errno_t wakeup_processor(struct vpc *vpc, const struct vpc_boot_configura
     return SUCCESS;
 }
 
-static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_configuration *boot)
+static errno_t validate_parameters(const struct vpc *vpc,
+                                   const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
 
@@ -52,7 +54,8 @@ static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_boot_
     return ret;
 }
 
-errno_t vpc_wakeup_processor(struct vpc *vpc, const struct vpc_boot_configuration *boot)
+errno_t vpc_wakeup_processor(struct vpc *vpc,
+                             const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
     enum vpc_status status;
@@ -71,4 +74,3 @@ errno_t vpc_wakeup_processor(struct vpc *vpc, const struct vpc_boot_configuratio
 
     return ret;
 }
-

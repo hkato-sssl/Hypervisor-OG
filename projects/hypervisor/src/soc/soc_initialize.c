@@ -4,17 +4,17 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/spin_lock.h"
 #include "driver/aarch64/mmu.h"
 #include "driver/aarch64/stage2.h"
 #include "hypervisor/mmu.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/soc.h"
 #include "hypervisor/parameter.h"
+#include "hypervisor/soc.h"
+#include "hypervisor/vm.h"
+#include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -26,7 +26,8 @@
 
 /* functions */
 
-static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const struct soc_device_region *region)
+static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr,
+                                       const struct soc_device_region *region)
 {
     errno_t ret;
     uint8_t sh;
@@ -71,20 +72,23 @@ static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, const s
     return ret;
 }
 
-static errno_t map_stage2(struct soc *soc, const struct soc_device_region *region)
+static errno_t map_stage2(struct soc *soc,
+                          const struct soc_device_region *region)
 {
     errno_t ret;
     struct aarch64_stage2_attr attr;
 
     ret = create_stage2_attribute(&attr, region);
     if (ret == SUCCESS) {
-        ret = aarch64_stage2_map(&(soc->vm.stage2), (void *)(region->ipa), (void *)(region->pa), region->size, &attr);
+        ret = aarch64_stage2_map(&(soc->vm.stage2), (void *)(region->ipa),
+                                 (void *)(region->pa), region->size, &attr);
     }
 
     return ret;
 }
 
-static errno_t create_trap_condition(struct vm_region_trap *trap, const struct soc_device_region *region)
+static errno_t create_trap_condition(struct vm_region_trap *trap,
+                                     const struct soc_device_region *region)
 {
     errno_t ret;
 
@@ -99,7 +103,8 @@ static errno_t create_trap_condition(struct vm_region_trap *trap, const struct s
     return ret;
 }
 
-static errno_t create_region_trap(struct soc *soc, const struct soc_device_region *region)
+static errno_t create_region_trap(struct soc *soc,
+                                  const struct soc_device_region *region)
 {
     errno_t ret;
     struct vm_region_trap *trap;
@@ -121,7 +126,8 @@ static errno_t create_region_trap(struct soc *soc, const struct soc_device_regio
     return ret;
 }
 
-static errno_t register_region_trap(struct soc *soc, const struct soc_device_region *region)
+static errno_t register_region_trap(struct soc *soc,
+                                    const struct soc_device_region *region)
 {
     errno_t ret;
 
@@ -133,7 +139,8 @@ static errno_t register_region_trap(struct soc *soc, const struct soc_device_reg
     return ret;
 }
 
-static errno_t map_region(struct soc *soc, const struct soc_device_region *region)
+static errno_t map_region(struct soc *soc,
+                          const struct soc_device_region *region)
 {
     errno_t ret;
 
@@ -160,7 +167,8 @@ static errno_t map_el2(struct soc *soc, const struct soc_device_region *region)
     attr.attrindx = HYP_MMU_MT_NORMAL_WB;
 
     va = region->pa + HYP_GUEST_REGION_BASE;
-    ret = aarch64_mmu_map(soc->mmu, (void *)va, (void *)region->pa, region->size, &attr);
+    ret = aarch64_mmu_map(soc->mmu, (void *)va, (void *)region->pa,
+                          region->size, &attr);
 
     return ret;
 }
@@ -204,7 +212,8 @@ static errno_t map_devices(struct soc *soc)
     return ret;
 }
 
-static errno_t initialize(struct soc *soc, const struct soc_configuration *soc_config)
+static errno_t initialize(struct soc *soc,
+                          const struct soc_configuration *soc_config)
 {
     errno_t ret;
     struct vm_configuration config;
@@ -236,7 +245,8 @@ static errno_t initialize(struct soc *soc, const struct soc_configuration *soc_c
     return ret;
 }
 
-static errno_t validate_parameters(struct soc *soc, const struct soc_configuration *config)
+static errno_t validate_parameters(struct soc *soc,
+                                   const struct soc_configuration *config)
 {
     errno_t ret;
 
@@ -268,4 +278,3 @@ errno_t soc_initialize(struct soc *soc, const struct soc_configuration *config)
 
     return ret;
 }
-

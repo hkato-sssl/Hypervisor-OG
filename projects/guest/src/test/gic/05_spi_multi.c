@@ -10,15 +10,15 @@
  * CPU#0がSPIを受信すれば成功とする。
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
+#include "driver/aarch64.h"
+#include "driver/arm/gic400.h"
+#include "driver/system/cpu.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
 #include "lib/system/spin_lock.h"
-#include "driver/arm/gic400.h"
-#include "driver/aarch64.h"
-#include "driver/system/cpu.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -105,7 +105,8 @@ static void test_gic_05_primary(void)
 
     gic400_set_priority_mask(&gic, 0xff);
 
-    while (start);
+    while (start)
+        ;
 
     printk("\n\n---------------------\n\n");
 
@@ -113,7 +114,7 @@ static void test_gic_05_primary(void)
     gic400_dump_ns_distributor(&gic);
 
     printk("<%s> Done.\n", __func__);
-    __asm volatile ("hvc #0");
+    __asm volatile("hvc #0");
 }
 
 static void test_gic_05_secondary(void)
@@ -122,7 +123,8 @@ static void test_gic_05_secondary(void)
 
     printk("<%s>\n", __func__);
 
-    while (! start);
+    while (! start)
+        ;
 
     assert_interrupt(130);
     assert_interrupt(131);
@@ -142,4 +144,3 @@ void test_gic_05(void)
         test_gic_05_secondary();
     }
 }
-

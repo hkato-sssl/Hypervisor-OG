@@ -4,10 +4,10 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "lib/list.h"
+#include "lib/system/errno.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/errno.h"
-#include "lib/list.h"
 
 /* defines */
 

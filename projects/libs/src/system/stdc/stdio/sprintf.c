@@ -4,8 +4,8 @@
  * (C) 2018 Hidekazu Kato
  */
 
-#include <stddef.h>
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdio.h>
 
 /* defines */
@@ -29,4 +29,3 @@ int sprintf(char *str, const char *fmt, ...)
 
     return ret;
 }
-

@@ -4,14 +4,14 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/printk.h"
 #include "driver/aarch64/mmu.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/system_register/mair_elx.h"
 #include "driver/aarch64/system_register/tcr_elx.h"
+#include "lib/system/errno.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
+#include <string.h>
 
 /* テスト項目：MMU 有効化
  *
@@ -21,29 +21,28 @@
 
 /* test parameters */
 
-#define RAM_START   0x00000000
-#define RAM_SIZE    0x80000000
-#define DEV_START   0xa0001000
-#define DEV_SIZE    4096
+#define RAM_START 0x00000000
+#define RAM_SIZE  0x80000000
+#define DEV_START 0xa0001000
+#define DEV_SIZE  4096
 
 /* defines */
 
-#define ATTRS       (MAIR_ATTR(0, MAIR_ATTR_NORMAL_NC) |\
-                     MAIR_ATTR(1, MAIR_ATTR_NORMAL_WB) |\
-                     MAIR_ATTR(2, MAIR_ATTR_NORMAL_WBWA) |\
-                     MAIR_ATTR(3, MAIR_ATTR_NORMAL_NC) |\
-                     MAIR_ATTR(4, MAIR_ATTR_DEVICE_nGnRnE) | \
-                     MAIR_ATTR(5, MAIR_ATTR_DEVICE_nGnRE) | \
-                     MAIR_ATTR(6, MAIR_ATTR_DEVICE_nGRE) | \
-                     MAIR_ATTR(7, MAIR_ATTR_DEVICE_GRE))
+#define ATTRS                                                                  \
+    (MAIR_ATTR(0, MAIR_ATTR_NORMAL_NC) | MAIR_ATTR(1, MAIR_ATTR_NORMAL_WB)     \
+     | MAIR_ATTR(2, MAIR_ATTR_NORMAL_WBWA) | MAIR_ATTR(3, MAIR_ATTR_NORMAL_NC) \
+     | MAIR_ATTR(4, MAIR_ATTR_DEVICE_nGnRnE)                                   \
+     | MAIR_ATTR(5, MAIR_ATTR_DEVICE_nGnRE)                                    \
+     | MAIR_ATTR(6, MAIR_ATTR_DEVICE_nGRE)                                     \
+     | MAIR_ATTR(7, MAIR_ATTR_DEVICE_GRE))
 
-#define MMU_ATTR_NC                     0
-#define MMU_ATTR_WB                     1
-#define MMU_ATTR_WBWA                   2
-#define MMU_ATTR_DEVICE_nGnRnE          4
-#define MMU_ATTR_DEVICE_nGnRE           5
-#define MMU_ATTR_DEVICE_nGRE            6
-#define MMU_ATTR_DEVICE_GRE             7
+#define MMU_ATTR_NC            0
+#define MMU_ATTR_WB            1
+#define MMU_ATTR_WBWA          2
+#define MMU_ATTR_DEVICE_nGnRnE 4
+#define MMU_ATTR_DEVICE_nGnRE  5
+#define MMU_ATTR_DEVICE_nGRE   6
+#define MMU_ATTR_DEVICE_GRE    7
 
 /* types */
 
@@ -51,7 +50,7 @@
 
 /* variables */
 
-static char block_pool_region[256][4096] __attribute__ ((aligned(4096)));
+static char block_pool_region[256][4096] __attribute__((aligned(4096)));
 static struct aarch64_mmu_block_pool pool;
 static struct aarch64_mmu mmu;
 
@@ -120,11 +119,13 @@ errno_t test_aarch64_mmu_st1_01(void)
     attr.sh = MMU_ATTR_SH_ISH;
     attr.attrindx = MMU_ATTR_WBWA;
 
-    ret = aarch64_mmu_map(&mmu, (void*)RAM_START, (void*)RAM_START, RAM_SIZE, &attr);
+    ret = aarch64_mmu_map(&mmu, (void *)RAM_START, (void *)RAM_START, RAM_SIZE,
+                          &attr);
     printk("aarch64_mmu_map() -> %d\n", ret);
 
     attr.attrindx = MMU_ATTR_DEVICE_nGnRnE;
-    ret = aarch64_mmu_map(&mmu, (void*)DEV_START, (void*)DEV_START, DEV_SIZE, &attr);
+    ret = aarch64_mmu_map(&mmu, (void *)DEV_START, (void *)DEV_START, DEV_SIZE,
+                          &attr);
     printk("aarch64_mmu_map() -> %d\n", ret);
 
     aarch64_mmu_dump_descriptor(&mmu);
@@ -134,4 +135,3 @@ errno_t test_aarch64_mmu_st1_01(void)
 
     return ret;
 }
-

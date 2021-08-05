@@ -15,10 +15,10 @@
 
 /* includes */
 
+#include "driver/aarch64/mmu_base.h"
+#include "lib/system/errno.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/errno.h"
-#include "driver/aarch64/mmu_base.h"
 
 /* defines */
 
@@ -32,9 +32,14 @@
 extern "C" {
 #endif
 
-uint64_t aarch64_stage2_table_descriptor(void *pa, const struct aarch64_stage2_attr *attr);
-uint64_t aarch64_stage2_block_descriptor(void *pa, const struct aarch64_stage2_attr *attr);
-uint64_t aarch64_stage2_page_descriptor(void *pa, const struct aarch64_stage2_attr *attr);
+uint64_t
+aarch64_stage2_table_descriptor(void *pa,
+                                const struct aarch64_stage2_attr *attr);
+uint64_t
+aarch64_stage2_block_descriptor(void *pa,
+                                const struct aarch64_stage2_attr *attr);
+uint64_t aarch64_stage2_page_descriptor(void *pa,
+                                        const struct aarch64_stage2_attr *attr);
 
 #ifdef __cplusplus
 }
@@ -43,4 +48,3 @@ uint64_t aarch64_stage2_page_descriptor(void *pa, const struct aarch64_stage2_at
 #endif /* ASSEMBLY */
 
 #endif /* AARCH64_STAGE2_STAGE2_LOCAL_H */
-

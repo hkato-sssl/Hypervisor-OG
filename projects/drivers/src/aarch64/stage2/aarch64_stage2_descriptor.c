@@ -4,9 +4,9 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
 #include "driver/aarch64/stage2.h"
 #include "stage2_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -18,7 +18,8 @@
 
 /* functions */
 
-uint64_t aarch64_stage2_table_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
+uint64_t aarch64_stage2_table_descriptor(void *pa,
+                                         const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 
@@ -27,7 +28,9 @@ uint64_t aarch64_stage2_table_descriptor(void *pa, const struct aarch64_stage2_a
     return desc;
 }
 
-static uint64_t block_page_descriptor(void *pa, const struct aarch64_stage2_attr *attr, uint64_t desc)
+static uint64_t block_page_descriptor(void *pa,
+                                      const struct aarch64_stage2_attr *attr,
+                                      uint64_t desc)
 {
     desc |= (uint64_t)pa;
     desc |= (uint64_t)attr->xn << 54;
@@ -42,7 +45,8 @@ static uint64_t block_page_descriptor(void *pa, const struct aarch64_stage2_attr
     return desc;
 }
 
-uint64_t aarch64_stage2_block_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
+uint64_t aarch64_stage2_block_descriptor(void *pa,
+                                         const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 
@@ -51,7 +55,8 @@ uint64_t aarch64_stage2_block_descriptor(void *pa, const struct aarch64_stage2_a
     return desc;
 }
 
-uint64_t aarch64_stage2_page_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
+uint64_t aarch64_stage2_page_descriptor(void *pa,
+                                        const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 
@@ -60,7 +65,8 @@ uint64_t aarch64_stage2_page_descriptor(void *pa, const struct aarch64_stage2_at
     return desc;
 }
 
-uint64_t aarch64_stage2_contiguous_block_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
+uint64_t aarch64_stage2_contiguous_block_descriptor(
+    void *pa, const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 
@@ -70,7 +76,8 @@ uint64_t aarch64_stage2_contiguous_block_descriptor(void *pa, const struct aarch
     return desc;
 }
 
-uint64_t aarch64_stage2_contiguous_page_descriptor(void *pa, const struct aarch64_stage2_attr *attr)
+uint64_t aarch64_stage2_contiguous_page_descriptor(
+    void *pa, const struct aarch64_stage2_attr *attr)
 {
     uint64_t desc;
 
@@ -79,4 +86,3 @@ uint64_t aarch64_stage2_contiguous_page_descriptor(void *pa, const struct aarch6
 
     return desc;
 }
-

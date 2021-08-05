@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "hypervisor/vpc.h"
 #include "hypervisor/vpc_register.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -25,4 +25,3 @@ errno_t hvc_set_result(struct vpc *vpc, uint64_t result)
 
     return SUCCESS;
 }
-

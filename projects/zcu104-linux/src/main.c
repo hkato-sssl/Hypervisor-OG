@@ -5,14 +5,14 @@
  */
 
 #include "config/system.h"
-#include <stdint.h>
-#include "lib/bit.h"
-#include "lib/system/memio.h"
-#include "lib/system/errno.h"
-#include "lib/system/printk.h"
-#include "driver/system/cpu.h"
-#include "driver/aarch64/system_register.h"
 #include "driver/aarch64/cache.h"
+#include "driver/aarch64/system_register.h"
+#include "driver/system/cpu.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
+#include "lib/system/memio.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 

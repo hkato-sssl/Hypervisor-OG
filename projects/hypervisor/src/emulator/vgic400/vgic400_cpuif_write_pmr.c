@@ -4,14 +4,14 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -49,4 +49,3 @@ errno_t vgic400_cpuif_write_pmr(struct vgic400 *vgic, const struct insn *insn)
 
     return ret;
 }
-

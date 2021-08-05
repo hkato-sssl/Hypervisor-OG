@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "driver/aarch64.h"
 #include "hypervisor/thread.h"
+#include "lib/system/errno.h"
 #include "thread_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -21,7 +21,8 @@
 
 /* functions */
 
-static volatile void launch_self(uintptr_t *params, const struct thread_parameter *parameter)
+static volatile void launch_self(uintptr_t *params,
+                                 const struct thread_parameter *parameter)
 {
     int i;
 
@@ -52,4 +53,3 @@ errno_t thread_launch_self(const struct thread_parameter *parameter)
 
     return ret;
 }
-

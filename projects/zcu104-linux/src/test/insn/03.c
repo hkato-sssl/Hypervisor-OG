@@ -17,19 +17,19 @@
  * テストの詳細はGuest側のテストコードに記述している。
  */
 
+#include "hypervisor/emulator/insn.h"
+#include "hypervisor/mmu.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "hypervisor/vpc_register.h"
+#include "lib/system/printk.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/printk.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/vpc_register.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/mmu.h"
-#include "hypervisor/emulator/insn.h"
 
 /* defines */
 
-#define TRAP_IPA        0x40000000
+#define TRAP_IPA 0x40000000
 
 /* types */
 
@@ -74,4 +74,3 @@ void test_insn_03(struct vm *vm)
     printk("%s()\n", __func__);
     init(vm);
 }
-

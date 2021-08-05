@@ -9,16 +9,16 @@
  * マルチコア関連の起動・停止処理の実装にはOS層の機能を利用する事が想定
  * される為、実装例という形で提供される。
  */
- 
-#include <stdint.h>
-#include <string.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
+
 #include "driver/arm/psci_common.h"
+#include "hypervisor/emulator/psci.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/emulator/psci.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -69,7 +69,9 @@ errno_t simple_psci_cpu_on(struct vpc *vpc)
 
     if (target >= vpc->vm->nr_procs) {
         ret = psci_set_error(vpc, PSCI_ERROR_INVALID_PARAMETERS);
-    } else if ((! IS_ALIGNED(addr, 4)) || (soc_test_executable_region(vpc->vm->soc, addr, 4) != SUCCESS)) {
+    } else if ((! IS_ALIGNED(addr, 4))
+               || (soc_test_executable_region(vpc->vm->soc, addr, 4)
+                   != SUCCESS)) {
         ret = psci_set_error(vpc, PSCI_ERROR_INVALID_ADDRESS);
     } else {
         ret = cpu_on(vpc, target, addr);
@@ -77,4 +79,3 @@ errno_t simple_psci_cpu_on(struct vpc *vpc)
 
     return ret;
 }
-

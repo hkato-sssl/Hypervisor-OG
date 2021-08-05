@@ -4,20 +4,20 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/spin_lock.h"
+#include "driver/aarch64/stage2.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
-#include "driver/aarch64/stage2.h"
+#include "hypervisor/emulator/vgic400.h"
 #include "hypervisor/mmu.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/emulator/vgic400.h"
+#include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
 #include "vgic400_local.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -43,7 +43,8 @@ static errno_t map_cpuif(struct vgic400 *vgic)
     attr.s2ap = STAGE2_S2AP_RW;
 
     addr = gic400_cpuif_register_base(vgic->gic);
-    ret = aarch64_stage2_map(&(vgic->vm->stage2), addr, vgic->base.virtual_cpuif, 4096, &attr);
+    ret = aarch64_stage2_map(&(vgic->vm->stage2), addr,
+                             vgic->base.virtual_cpuif, 4096, &attr);
 
     return ret;
 }
@@ -62,13 +63,16 @@ static errno_t register_trap_cpuif(struct vgic400 *vgic)
     trap->memory.shareability = HYP_MMU_SH_NSH;
     trap->memory.type = HYP_MMU_MT_DEVICE_nGnRE;
     trap->emulator.arg = vgic;
-    trap->emulator.handler = (vpc_emulator_t)vgic400_cpuif_emulate_memory_access;
+    trap->emulator.handler =
+        (vpc_emulator_t)vgic400_cpuif_emulate_memory_access;
     ret = vm_register_region_trap(vgic->vm, trap);
 
     return ret;
 }
 
-static errno_t register_trap_distributor(struct vgic400 *vgic, const struct vgic400_configuration *config)
+static errno_t
+register_trap_distributor(struct vgic400 *vgic,
+                          const struct vgic400_configuration *config)
 {
     errno_t ret;
     struct vm_region_trap *trap;
@@ -82,7 +86,8 @@ static errno_t register_trap_distributor(struct vgic400 *vgic, const struct vgic
     trap->memory.shareability = HYP_MMU_SH_OSH;
     trap->memory.type = HYP_MMU_MT_DEVICE_nGnRE;
     trap->emulator.arg = vgic;
-    trap->emulator.handler = (vpc_emulator_t)vgic400_distributor_emulate_memory_access;
+    trap->emulator.handler =
+        (vpc_emulator_t)vgic400_distributor_emulate_memory_access;
     ret = vm_register_region_trap(vgic->vm, trap);
     if (ret == SUCCESS) {
         if (config->boolean.trap_cpuif) {
@@ -95,13 +100,15 @@ static errno_t register_trap_distributor(struct vgic400 *vgic, const struct vgic
     return ret;
 }
 
-static errno_t initialize_virtual_spi(struct vgic400 *vgic, const struct vgic400_configuration *config)
+static errno_t
+initialize_virtual_spi(struct vgic400 *vgic,
+                       const struct vgic400_configuration *config)
 {
     errno_t ret;
     int i;
 
     if ((vgic->template_typer & BITS(4, 0)) < 0x1f) {
-        ++(vgic->template_typer);   /* Increment GICD_TYPER.ITLinesNumber */
+        ++(vgic->template_typer); /* Increment GICD_TYPER.ITLinesNumber */
         vgic->virtual_spi.base_no = (vgic->template_typer & BITS(4, 0)) * 32;
         for (i = 0; i < 32; ++i) {
             vgic->virtual_spi.ipriorityr[i] = vgic->priority_mask;
@@ -115,7 +122,8 @@ static errno_t initialize_virtual_spi(struct vgic400 *vgic, const struct vgic400
     return ret;
 }
 
-static errno_t initialize(struct vgic400 *vgic, const struct vgic400_configuration *config)
+static errno_t initialize(struct vgic400 *vgic,
+                          const struct vgic400_configuration *config)
 {
     errno_t ret;
     uint32_t d;
@@ -153,7 +161,8 @@ static errno_t initialize(struct vgic400 *vgic, const struct vgic400_configurati
     return ret;
 }
 
-errno_t vgic400_initialize(struct vgic400 *vgic, const struct vgic400_configuration *config)
+errno_t vgic400_initialize(struct vgic400 *vgic,
+                           const struct vgic400_configuration *config)
 {
     errno_t ret;
 
@@ -165,4 +174,3 @@ errno_t vgic400_initialize(struct vgic400 *vgic, const struct vgic400_configurat
 
     return ret;
 }
-

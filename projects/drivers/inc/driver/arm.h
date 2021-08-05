@@ -19,8 +19,8 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
 #include "driver/aarch64.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -97,17 +97,17 @@ static inline void arm_unlock_interrupts(uint32_t lock)
 
 static inline void arm_wfe(void)
 {
-    __asm volatile ("wfe" ::: "memory");
+    __asm volatile("wfe" ::: "memory");
 }
 
 static inline void arm_wfi(void)
 {
-    __asm volatile ("wfi" ::: "memory");
+    __asm volatile("wfi" ::: "memory");
 }
 
 static inline void arm_sev(void)
 {
-    __asm volatile ("sev" ::: "memory");
+    __asm volatile("sev" ::: "memory");
 }
 
 #ifdef __cplusplus
@@ -117,4 +117,3 @@ static inline void arm_sev(void)
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_ARM_H */
-

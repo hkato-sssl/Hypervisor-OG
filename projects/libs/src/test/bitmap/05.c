@@ -11,11 +11,11 @@
  * 2) 検索開始位置を１ビットずらしながら1)の処理をエラーとなるまで繰り返す
  */
 
+#include "lib/bitmap.h"
+#include "lib/system/printk.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/printk.h"
-#include "lib/bitmap.h"
 
 /* defines */
 
@@ -49,13 +49,12 @@ void test_bitmap_05(void)
     printk("<%s>\n", __func__);
 
     memset(map, 0, sizeof(map));
-    
+
     i = 1;
     do {
-        ret = bitmap_search_and_set(&no, map, sizeof(map), (i-1));
+        ret = bitmap_search_and_set(&no, map, sizeof(map), (i - 1));
         printk("#%d: bitmap_search_and_set() -> %d, no=%u\n", i, ret, no);
         dump_map();
         ++i;
     } while (ret == SUCCESS);
 }
-

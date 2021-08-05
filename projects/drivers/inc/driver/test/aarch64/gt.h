@@ -37,4 +37,3 @@ void test_gt_cntp_0(void);
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_TEST_AARCH64_GT_H */
-

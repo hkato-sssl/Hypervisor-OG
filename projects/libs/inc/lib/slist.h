@@ -19,22 +19,22 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include <stdbool.h>
 #include "lib/system/errno.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
 /* types */
 
 struct slist_node {
-    struct slist_node   *next;
-    void                *element;
+    struct slist_node *next;
+    void *element;
 };
 
 struct slist {
-    struct slist_node   *head;
-    struct slist_node   *tail;
+    struct slist_node *head;
+    struct slist_node *tail;
 };
 
 typedef bool (*slist_match_func_t)(void *element, void *arg);
@@ -45,7 +45,8 @@ typedef bool (*slist_match_func_t)(void *element, void *arg);
 
 void slist_init(struct slist *list);
 errno_t slist_append(struct slist *head, struct slist_node *node);
-void *slist_search_element(const struct slist *list, slist_match_func_t match, void *arg);
+void *slist_search_element(const struct slist *list, slist_match_func_t match,
+                           void *arg);
 
 #ifdef __cplusplus
 }
@@ -54,4 +55,3 @@ void *slist_search_element(const struct slist *list, slist_match_func_t match, v
 #endif /* ASSEMBLY */
 
 #endif /* LIB_SLIST_H */
-

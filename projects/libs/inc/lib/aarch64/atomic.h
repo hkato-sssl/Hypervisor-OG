@@ -40,4 +40,3 @@ uint8_t aarch64_atomic_swap_u8(uint8_t *p, uint8_t d);
 #endif /* ASSEMBLY */
 
 #endif /* LIB_AARCH64_ATOMIC_H */
-

@@ -4,9 +4,9 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/thread.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -36,4 +36,3 @@ void thread_write_tls(uint32_t index, uint64_t d)
     p = (uint64_t *)aarch64_read_tpidr_el2();
     p[index] = d;
 }
-

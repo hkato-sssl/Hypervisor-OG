@@ -4,9 +4,9 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/printk.h"
 #include "driver/aarch64/stage2.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -58,7 +58,8 @@ static void dump_block_page_attr(uint64_t desc)
     printk(", MemAttr=%x\n", BF_EXTRACT(desc, 4, 2));
 }
 
-static void dump_block_desc(struct aarch64_stage2 *stage2, uint64_t desc, int level)
+static void dump_block_desc(struct aarch64_stage2 *stage2, uint64_t desc,
+                            int level)
 {
     uint64_t out;
 
@@ -68,17 +69,19 @@ static void dump_block_desc(struct aarch64_stage2 *stage2, uint64_t desc, int le
     dump_block_page_attr(desc);
 }
 
-static void dump_table_desc(struct aarch64_stage2 *stage2, uint64_t desc, int level)
+static void dump_table_desc(struct aarch64_stage2 *stage2, uint64_t desc,
+                            int level)
 {
     uint64_t next;
 
     next = desc & BITS(47, 12);
     printk("%016llx Next-level=%016llx", desc, next);
     printk("\n");
-    dump_table(stage2, (uint64_t*)next, (level + 1));
+    dump_table(stage2, (uint64_t *)next, (level + 1));
 }
 
-static void dump_page_desc(struct aarch64_stage2 *stage2, uint64_t desc, int level)
+static void dump_page_desc(struct aarch64_stage2 *stage2, uint64_t desc,
+                           int level)
 {
     uint64_t out;
 
@@ -87,7 +90,8 @@ static void dump_page_desc(struct aarch64_stage2 *stage2, uint64_t desc, int lev
     dump_block_page_attr(desc);
 }
 
-static void dump_reserved_desc(struct aarch64_stage2 *stage2, uint64_t desc, int level)
+static void dump_reserved_desc(struct aarch64_stage2 *stage2, uint64_t desc,
+                               int level)
 {
     printk("%016x: reserved\n", desc);
 }
@@ -165,4 +169,3 @@ void aarch64_stage2_dump_descriptor(struct aarch64_stage2 *stage2)
         aarch64_mmu_base_unlock(&(stage2->base));
     }
 }
-

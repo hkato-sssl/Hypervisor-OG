@@ -4,12 +4,12 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -21,7 +21,8 @@
 
 /* functions */
 
-errno_t vgic400_distributor_igroupr(struct vgic400 *vgic, const struct insn *insn)
+errno_t vgic400_distributor_igroupr(struct vgic400 *vgic,
+                                    const struct insn *insn)
 {
     errno_t ret;
 

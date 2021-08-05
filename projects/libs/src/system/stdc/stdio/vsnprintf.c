@@ -4,23 +4,23 @@
  * (C) 2018 Hidekazu Kato
  */
 
+#include "lib/log.h"
+#include "lib/system/spin_lock.h"
+#include <limits.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
-#include <limits.h>
 #include <stdio.h>
-#include "lib/system/spin_lock.h"
-#include "lib/log.h"
 
 /* defines */
 
 /* types */
 
 struct arg_snprintf {
-    char    *buff;
-    size_t  buff_sz;
-    size_t  ct;
-    bool    over_flow;
+    char *buff;
+    size_t buff_sz;
+    size_t ct;
+    bool over_flow;
 };
 
 /* prototypes */
@@ -28,7 +28,7 @@ struct arg_snprintf {
 /* variables */
 
 static struct log_context ctx;
-static struct log_ops ops; 
+static struct log_ops ops;
 
 /* functions */
 
@@ -62,9 +62,9 @@ static int exec_vsnprintf(char *str, size_t size, const char *fmt, va_list ap)
     putc_arg.buff_sz = size;
     putc_arg.ct = 0;
     putc_arg.over_flow = false;
-    
+
     system_spin_lock();
-    
+
     ops.putc = put_char;
     ops.arg = &putc_arg;
     ctx.request.ops = &ops;
@@ -72,7 +72,7 @@ static int exec_vsnprintf(char *str, size_t size, const char *fmt, va_list ap)
     va_copy(ctx.request.vargs, ap);
     ret = log_cformat(&ctx);
     va_end(ctx.request.vargs);
-    
+
     system_spin_unlock();
 
     if (putc_arg.over_flow || (putc_arg.ct == size)) {
@@ -97,4 +97,3 @@ int vsnprintf(char *str, size_t size, const char *fmt, va_list ap)
 
     return ret;
 }
-

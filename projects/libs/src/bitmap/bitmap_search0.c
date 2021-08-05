@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "bitmap_local.h"
+#include "lib/aarch64.h"
+#include "lib/bitmap.h"
+#include "lib/system/errno.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/aarch64.h"
-#include "lib/system/errno.h"
-#include "lib/bitmap.h"
-#include "bitmap_local.h"
 
 /* defines */
 
@@ -21,7 +21,8 @@
 
 /* functions */
 
-static errno_t search0_offset(uint32_t *bit_no, const uint8_t *map, size_t map_size, uint32_t offset)
+static errno_t search0_offset(uint32_t *bit_no, const uint8_t *map,
+                              size_t map_size, uint32_t offset)
 {
     errno_t ret;
     uint8_t d;
@@ -40,13 +41,14 @@ static errno_t search0_offset(uint32_t *bit_no, const uint8_t *map, size_t map_s
     return ret;
 }
 
-static errno_t search0_bit(uint32_t *bit_no, const uint8_t *map, size_t map_size, uint32_t offset, uint32_t bit)
+static errno_t search0_bit(uint32_t *bit_no, const uint8_t *map,
+                           size_t map_size, uint32_t offset, uint32_t bit)
 {
     errno_t ret;
     uint8_t d;
     uint8_t mask;
 
-    mask = ~(0xff << bit); 
+    mask = ~(0xff << bit);
     d = map[offset] | mask;
     if (d != 0xff) {
         *bit_no = aarch64_clz(aarch64_rbit(~d)) + (offset * 8);
@@ -58,7 +60,8 @@ static errno_t search0_bit(uint32_t *bit_no, const uint8_t *map, size_t map_size
     return ret;
 }
 
-static errno_t search0(uint32_t *bit_no, const void *map, size_t map_size, uint32_t start_bit)
+static errno_t search0(uint32_t *bit_no, const void *map, size_t map_size,
+                       uint32_t start_bit)
 {
     errno_t ret;
     uint32_t bit;
@@ -79,7 +82,8 @@ static errno_t search0(uint32_t *bit_no, const void *map, size_t map_size, uint3
     return ret;
 }
 
-errno_t bitmap_search0(uint32_t *bit_no, const void *map, size_t map_size, uint32_t start_bit)
+errno_t bitmap_search0(uint32_t *bit_no, const void *map, size_t map_size,
+                       uint32_t start_bit)
 {
     errno_t ret;
 
@@ -91,4 +95,3 @@ errno_t bitmap_search0(uint32_t *bit_no, const void *map, size_t map_size, uint3
 
     return ret;
 }
-

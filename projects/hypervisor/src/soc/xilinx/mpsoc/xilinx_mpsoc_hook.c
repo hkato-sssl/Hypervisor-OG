@@ -4,13 +4,13 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "mpsoc_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -36,4 +36,3 @@ errno_t xilinx_mpsoc_previous_launch_hook(struct vpc *vpc)
 
     return ret;
 }
-

@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/vpc.h"
 #include "vpc_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -40,7 +40,8 @@ static void set_aarch32(struct vpc *vpc)
     vpc->regs[VPC_HCR_EL2] = HCR_AMO | HCR_IMO | HCR_FMO | HCR_VM;
 }
 
-void vpc_set_boot_parameters(struct vpc *vpc, const struct vpc_boot_configuration *boot)
+void vpc_set_boot_parameters(struct vpc *vpc,
+                             const struct vpc_boot_configuration *boot)
 {
     vpc->regs[VPC_PC] = boot->pc;
     vpc->regs[VPC_X0] = boot->arg;
@@ -51,4 +52,3 @@ void vpc_set_boot_parameters(struct vpc *vpc, const struct vpc_boot_configuratio
         set_aarch32(vpc);
     }
 }
-

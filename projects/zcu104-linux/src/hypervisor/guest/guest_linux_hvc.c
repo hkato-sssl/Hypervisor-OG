@@ -4,23 +4,23 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "driver/arm/gic400.h"
+#include "hypervisor/hvc/p128.h"
+#include "hypervisor/service/p2p_packet.h"
+#include "hypervisor/soc/xilinx/mpsoc.h"
 #include "lib/slist.h"
 #include "lib/system/errno.h"
-#include "driver/arm/gic400.h"
-#include "hypervisor/service/p2p_packet.h"
-#include "hypervisor/hvc/p128.h"
-#include "hypervisor/soc/xilinx/mpsoc.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define DEV_NAME        "P128"
-#define HVC_IMM         1
+#define DEV_NAME "P128"
+#define HVC_IMM  1
 
-#undef  ALLOCATE_VSPI
-#define INTR_EP0        130
-#define INTR_EP1        131
+#undef ALLOCATE_VSPI
+#define INTR_EP0 130
+#define INTR_EP1 131
 
 /* types */
 
@@ -42,7 +42,8 @@ static struct hvc_p128_service p128;
 
 /* functions */
 
-static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc, uint16_t interrupt_no)
+static errno_t init_ep(int no, struct xilinx_mpsoc *mpsoc,
+                       uint16_t interrupt_no)
 {
     errno_t ret;
     struct p2p_packet_ep_configuration config;
@@ -138,9 +139,9 @@ errno_t guest_linux_initialize_hvc(struct xilinx_mpsoc *mpsoc)
     }
 
     if (ret == SUCCESS) {
-        ret = hvc_service_append_slist(&(mpsoc->hvc_service_list), &(p128.service));
+        ret = hvc_service_append_slist(&(mpsoc->hvc_service_list),
+                                       &(p128.service));
     }
 
     return ret;
 }
-

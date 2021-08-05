@@ -19,8 +19,8 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
 #include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -29,13 +29,13 @@ extern "C" {
 struct list_element {
     struct list_element *prev;
     struct list_element *next;
-    void                *value;
+    void *value;
 };
 
 struct list {
     struct list_element *head;
     struct list_element *tail;
-    uint64_t            num;
+    uint64_t num;
 };
 
 /* variables */
@@ -53,4 +53,3 @@ struct list_element *list_get_front(struct list *list);
 #endif /* ASSEMBLY */
 
 #endif /* LIB_LIST_H */
-

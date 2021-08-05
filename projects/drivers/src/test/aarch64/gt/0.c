@@ -4,11 +4,11 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/printk.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/test/aarch64/gt.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -29,11 +29,11 @@ void test_gt_0(void)
     printk("<%s>\n", __func__);
 
     d = aarch64_read_cntfrq_el0();
-    printk("CNTFRQ_EL0: %llu\n", d);    
+    printk("CNTFRQ_EL0: %llu\n", d);
 
     aarch64_isb();
     d0 = aarch64_read_cntpct_el0();
-    printk("CNTPCT_EL0: %llu\n", d0);   
+    printk("CNTPCT_EL0: %llu\n", d0);
 
     for (i = 0; i < 10; ++i) {
         aarch64_isb();

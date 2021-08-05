@@ -4,15 +4,15 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include "lib/system/errno.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -24,7 +24,8 @@
 
 /* functions */
 
-static errno_t emulate_memory_insn(const struct insn *insn, struct vgic400 *vgic)
+static errno_t emulate_memory_insn(const struct insn *insn,
+                                   struct vgic400 *vgic)
 {
     errno_t ret;
     uintptr_t base;
@@ -41,7 +42,8 @@ static errno_t emulate_memory_insn(const struct insn *insn, struct vgic400 *vgic
     return ret;
 }
 
-errno_t vgic400_cpuif_emulate_memory_access(const struct insn *insn, struct vgic400 *vgic)
+errno_t vgic400_cpuif_emulate_memory_access(const struct insn *insn,
+                                            struct vgic400 *vgic)
 {
     errno_t ret;
 
@@ -53,4 +55,3 @@ errno_t vgic400_cpuif_emulate_memory_access(const struct insn *insn, struct vgic
 
     return ret;
 }
-

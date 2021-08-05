@@ -5,11 +5,11 @@
  */
 
 #include "config/system.h"
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "lib/system/printk.h"
-#include "lib/system/memio.h"
 #include "driver/aarch64/cache.h"
+#include "lib/system/errno.h"
+#include "lib/system/memio.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -26,7 +26,7 @@ void test_smmu_01(void)
     uint32_t *p;
     uint32_t d;
 
-    p = (void*)0xa0002000;
+    p = (void *)0xa0002000;
     REG_WRITE32(p, 0x08, 0x40000000);
     REG_WRITE32(p, 0x0c, 0xeeff9988);
 
@@ -50,4 +50,3 @@ void test_smmu_01(void)
     printk("d=0x%08x\n", d);
     printk("s=0x%08x\n", REG_READ32(p, 0x10));
 }
-

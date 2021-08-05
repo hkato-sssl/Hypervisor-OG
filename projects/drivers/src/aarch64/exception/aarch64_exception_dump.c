@@ -4,10 +4,10 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
+#include "driver/aarch64/exception.h"
 #include "lib/bit.h"
 #include "lib/system/printk.h"
-#include "driver/aarch64/exception.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -32,7 +32,8 @@ void aarch64_exception_dump(const uint64_t *ei)
     ec_msg = aarch64_exception_esr_ec_message((uint32_t)ec);
 
     printk("VECTOR: 0x%04x\n", ei[EXC_VECTOR]);
-    printk("   ESR: 0x%08x, EC=0x%02x, IL=%d, ISS=0x%07x\n", ei[EXC_ESR], ec, il, iss);
+    printk("   ESR: 0x%08x, EC=0x%02x, IL=%d, ISS=0x%07x\n", ei[EXC_ESR], ec,
+           il, iss);
     printk("        %s.\n", ec_msg);
     printk("  SPSR: 0x%08x\n", ei[EXC_SPSR]);
     printk("   ELR: 0x%016lx\n", ei[EXC_ELR]);
@@ -54,4 +55,3 @@ void aarch64_exception_dump(const uint64_t *ei)
     printk("X28: 0x%016lx X29: 0x%016lx\n", ei[EXC_X28], ei[EXC_X29]);
     printk("\n");
 }
-

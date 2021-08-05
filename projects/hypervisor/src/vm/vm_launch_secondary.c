@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "hypervisor/vpc.h"
-#include "hypervisor/vm.h"
 
 /* defines */
 
@@ -53,4 +53,3 @@ errno_t vm_launch_secondary(struct vm *vm, uint16_t vpc_no)
 
     return ret;
 }
-

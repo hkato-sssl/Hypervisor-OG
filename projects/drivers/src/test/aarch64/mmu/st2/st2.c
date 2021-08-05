@@ -4,19 +4,19 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "st2.h"
+#include "driver/aarch64/stage2.h"
+#include "driver/aarch64/system_register.h"
+#include "driver/aarch64/system_register/vtcr_el2.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "driver/aarch64/system_register.h"
-#include "driver/aarch64/system_register/vtcr_el2.h"
-#include "driver/aarch64/stage2.h"
-#include "st2.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define NR_MMU_MEMORY_BLOCKS    1024
+#define NR_MMU_MEMORY_BLOCKS 1024
 
 /* types */
 
@@ -24,7 +24,8 @@
 
 /* variables */
 
-static char memory_block_region[NR_MMU_MEMORY_BLOCKS][4096] __attribute__ ((aligned(4096)));
+static char memory_block_region[NR_MMU_MEMORY_BLOCKS][4096]
+    __attribute__((aligned(4096)));
 
 static struct aarch64_mmu_block_pool pool;
 struct aarch64_stage2 test_st2_mmu;
@@ -77,4 +78,3 @@ errno_t test_aarch64_stage2_init_memory_map(void)
 
     return ret;
 }
-

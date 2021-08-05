@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "mpsoc_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -30,12 +30,12 @@ static errno_t emulate_smc(const struct insn *insn)
     vpc = insn->vpc;
     func = (vpc->regs[VPC_X0] >> 24) & 0xff;
     switch (func) {
-    case 0x84:  /* PSCI 32-bit calls */
-    case 0xc4:  /* PSCI 64-bit calls */
+    case 0x84: /* PSCI 32-bit calls */
+    case 0xc4: /* PSCI 64-bit calls */
         ret = xilinx_mpsoc_emulate_psci(vpc);
         break;
-    case 0x82:  /* SiP service 32-bit calls */
-    case 0xc2:  /* SiP service 64-bit calls */
+    case 0x82: /* SiP service 32-bit calls */
+    case 0xc2: /* SiP service 64-bit calls */
         ret = xilinx_mpsoc_emulate_tz(vpc);
         break;
     default:
@@ -58,4 +58,3 @@ errno_t xilinx_mpsoc_emulate_smc(const struct insn *insn)
 
     return ret;
 }
-

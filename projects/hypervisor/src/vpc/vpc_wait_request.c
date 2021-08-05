@@ -7,12 +7,12 @@
  * 本APIはvm_ready()から呼び出される事を前提とした実装である。
  */
 
-#include <stdint.h>
-#include <assert.h>
-#include "lib/system/errno.h"
 #include "driver/arm.h"
 #include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "vpc_local.h"
+#include <assert.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -55,4 +55,3 @@ errno_t vpc_wait_request(struct vpc *vpc)
 
     return ret;
 }
-

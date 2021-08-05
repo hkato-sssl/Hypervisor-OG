@@ -36,4 +36,3 @@ int init_printk(void);
 #endif /* ASSEMBLY */
 
 #endif /* LIB_SYSTEM_INIT_H */
-

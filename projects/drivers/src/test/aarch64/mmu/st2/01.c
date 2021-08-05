@@ -4,15 +4,15 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "driver/aarch64/stage2.h"
+#include "driver/aarch64/system_register.h"
+#include "driver/aarch64/system_register/vtcr_el2.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "driver/aarch64/system_register.h"
-#include "driver/aarch64/system_register/vtcr_el2.h"
-#include "driver/aarch64/stage2.h"
 #include "st2.h"
+#include <stdint.h>
+#include <string.h>
 
 /* テスト項目：stage 2 translation mapping
  *
@@ -28,8 +28,8 @@
 
 /* test parameters */
 
-#define UART_IPA        0xa0001000
-#define UART_PA         0xafff0000
+#define UART_IPA 0xa0001000
+#define UART_PA  0xafff0000
 
 /* types */
 
@@ -60,7 +60,8 @@ errno_t test_aarch64_mmu_st2_01(void)
     attr.sh = STAGE2_SH_OSH;
     attr.s2ap = STAGE2_S2AP_RW;
     attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
-    ret = aarch64_stage2_map(&test_st2_mmu, (void *)UART_IPA, (void *)UART_PA, 4096, &attr);
+    ret = aarch64_stage2_map(&test_st2_mmu, (void *)UART_IPA, (void *)UART_PA,
+                             4096, &attr);
     printk("aarch64_stage2_map() -> %d\n", ret);
     aarch64_stage2_dump_descriptor(&test_st2_mmu);
 
@@ -68,4 +69,3 @@ errno_t test_aarch64_mmu_st2_01(void)
 
     return SUCCESS;
 }
-

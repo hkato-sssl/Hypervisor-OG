@@ -5,13 +5,13 @@
  */
 
 #include "config/system.h"
-#include <stdint.h>
-#include <string.h>
+#include "driver/aarch64/psci.h"
+#include "driver/arm/gic400.h"
+#include "driver/system/cpu.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "driver/arm/gic400.h"
-#include "driver/aarch64/psci.h"
-#include "driver/system/cpu.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 

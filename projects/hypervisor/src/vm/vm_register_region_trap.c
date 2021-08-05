@@ -4,15 +4,15 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "hypervisor/mmu.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
 #include "lib/slist.h"
 #include "lib/system.h"
-#include "lib/system/memio.h"
 #include "lib/system/errno.h"
-#include "hypervisor/mmu.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/vm.h"
+#include "lib/system/memio.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -24,7 +24,8 @@
 
 /* functions */
 
-static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr, struct vm_region_trap *trap)
+static errno_t create_stage2_attribute(struct aarch64_stage2_attr *attr,
+                                       struct vm_region_trap *trap)
 {
     errno_t ret;
     uint8_t sh;
@@ -67,7 +68,9 @@ static errno_t map_region_trap(struct vm *vm, struct vm_region_trap *trap)
 
     ret = create_stage2_attribute(&attr, trap);
     if (ret == SUCCESS) {
-        ret = aarch64_stage2_map(&(vm->stage2), (void *)trap->memory.ipa, (void *)trap->memory.pa, trap->memory.size, &attr);
+        ret = aarch64_stage2_map(&(vm->stage2), (void *)trap->memory.ipa,
+                                 (void *)trap->memory.pa, trap->memory.size,
+                                 &attr);
     }
 
     return ret;
@@ -99,7 +102,8 @@ static bool is_valid_condition(const struct vm_region_trap *trap)
     return ret;
 }
 
-static errno_t validate_parameters(const struct vm *vm, const struct vm_region_trap *trap)
+static errno_t validate_parameters(const struct vm *vm,
+                                   const struct vm_region_trap *trap)
 {
     errno_t ret;
 
@@ -132,4 +136,3 @@ errno_t vm_register_region_trap(struct vm *vm, struct vm_region_trap *trap)
 
     return ret;
 }
-

@@ -19,13 +19,13 @@ extern "C" {
 
 /* includes */
 
+#include "lib/system/errno.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/errno.h"
 
 /* defines */
 
-#define IS_VALID_SIZE(sz)   (((sz) > 0) && ((sz) <= MAX_LIB_BITMAP_SIZE))
+#define IS_VALID_SIZE(sz) (((sz) > 0) && ((sz) <= MAX_LIB_BITMAP_SIZE))
 
 /* types */
 
@@ -33,7 +33,8 @@ extern "C" {
 
 /* functions */
 
-errno_t bitmap_search_zero(uint32_t *bit_no, const uint8_t *map, size_t map_size, uint32_t offset);
+errno_t bitmap_search_zero(uint32_t *bit_no, const uint8_t *map,
+                           size_t map_size, uint32_t offset);
 
 #ifdef __cplusplus
 }
@@ -42,4 +43,3 @@ errno_t bitmap_search_zero(uint32_t *bit_no, const uint8_t *map, size_t map_size
 #endif /* ASSEMBLY */
 
 #endif /* BITMAP_BITMAP_LOCAL_H */
-

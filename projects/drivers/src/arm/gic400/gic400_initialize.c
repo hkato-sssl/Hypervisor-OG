@@ -4,19 +4,19 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include "lib/bit.h"
+#include "driver/arm/device/gic400.h"
+#include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
+#include "driver/system/cpu.h"
+#include "gic400_local.h"
 #include "lib/aarch64.h"
+#include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
 #include "lib/system/spin_lock.h"
-#include "driver/system/cpu.h"
-#include "driver/arm/gic400.h"
-#include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
-#include "gic400_local.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -99,7 +99,8 @@ static void initialize_banked_distributor(struct gic400 *gic)
     }
 }
 
-static errno_t initialize(struct gic400 *gic, const struct gic400_configuration *config)
+static errno_t initialize(struct gic400 *gic,
+                          const struct gic400_configuration *config)
 {
     uint32_t lock;
 
@@ -128,14 +129,16 @@ static errno_t initialize(struct gic400 *gic, const struct gic400_configuration 
     return SUCCESS;
 }
 
-static errno_t validate_parameters(struct gic400 *gic, const struct gic400_configuration *config)
+static errno_t validate_parameters(struct gic400 *gic,
+                                   const struct gic400_configuration *config)
 {
     errno_t ret;
 
     if (gic != NULL) {
         if (cpu_no() == 0) {
             /* conditions for a primary processor */
-            if ((config != NULL) && (config->base.distributor != NULL) && (config->base.cpuif != NULL)) {
+            if ((config != NULL) && (config->base.distributor != NULL)
+                && (config->base.cpuif != NULL)) {
                 ret = SUCCESS;
             } else {
                 ret = -EINVAL;
@@ -153,7 +156,8 @@ static errno_t validate_parameters(struct gic400 *gic, const struct gic400_confi
     return ret;
 }
 
-errno_t gic400_initialize(struct gic400 *gic, const struct gic400_configuration *config)
+errno_t gic400_initialize(struct gic400 *gic,
+                          const struct gic400_configuration *config)
 {
     errno_t ret;
 

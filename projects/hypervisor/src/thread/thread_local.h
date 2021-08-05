@@ -13,9 +13,9 @@
 
 /* defines */
 
-#define THREAD_PARAMETER_ENTRY      0
-#define THREAD_PARAMETER_ARG(n)     ((n) + 1)
-#define NR_THREAD_PARAMETERS        (1 + NR_THREAD_ARGS)
+#define THREAD_PARAMETER_ENTRY  0
+#define THREAD_PARAMETER_ARG(n) ((n) + 1)
+#define NR_THREAD_PARAMETERS    (1 + NR_THREAD_ARGS)
 
 #ifndef ASSEMBLY
 
@@ -46,4 +46,3 @@ volatile void thread_start(void);
 #endif /* ASSEMBLY */
 
 #endif /* THREAD_THREAD_LOCAL_H */
-

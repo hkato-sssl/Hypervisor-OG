@@ -4,10 +4,10 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "hypervisor/vpc.h"
-#include "hypervisor/vm.h"
 
 /* defines */
 
@@ -19,7 +19,8 @@
 
 /* functions */
 
-static errno_t validate_parameters(struct vm *vm, const uint16_t vpc_no, const struct vpc_boot_configuration *boot)
+static errno_t validate_parameters(struct vm *vm, const uint16_t vpc_no,
+                                   const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
 
@@ -40,7 +41,7 @@ static errno_t validate_parameters(struct vm *vm, const uint16_t vpc_no, const s
             ret = SUCCESS;
         }
     }
-        
+
     return ret;
 }
 
@@ -49,7 +50,8 @@ static errno_t validate_parameters(struct vm *vm, const uint16_t vpc_no, const s
  * 本APIではAPIを呼び出した実プロセッサの番号が暗黙の引数として利用される。
  * APIを呼び出した実プロセッサと仮想プロセッサが関連付けされる。
  */
-errno_t vm_launch(struct vm *vm, uint16_t vpc_no, const struct vpc_boot_configuration *boot)
+errno_t vm_launch(struct vm *vm, uint16_t vpc_no,
+                  const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
     struct vpc *vpc;
@@ -69,4 +71,3 @@ errno_t vm_launch(struct vm *vm, uint16_t vpc_no, const struct vpc_boot_configur
 
     return ret;
 }
-

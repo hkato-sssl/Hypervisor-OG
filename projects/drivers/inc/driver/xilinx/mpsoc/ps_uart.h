@@ -15,8 +15,8 @@
 
 /* includes */
 
-#include <stdint.h>
 #include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -39,4 +39,3 @@ errno_t ps_uart_putc_poll(uintptr_t reg_base, int ch);
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_XILINX_MPSOC_PS_UART_H */
-

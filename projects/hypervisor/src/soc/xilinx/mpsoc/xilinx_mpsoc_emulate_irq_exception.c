@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/vgic400.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -30,4 +30,3 @@ errno_t xilinx_mpsoc_emulate_irq_exception(struct vpc *vpc)
 
     return ret;
 }
-

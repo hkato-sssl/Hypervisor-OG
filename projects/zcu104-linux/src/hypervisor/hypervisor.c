@@ -4,22 +4,22 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/printk.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/smmu500.h"
 #include "driver/system/cpu.h"
 #include "driver/xilinx/device/mpsoc.h"
-#include "hypervisor/thread.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
+#include "hypervisor/thread.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
+#include <string.h>
 
 #include "driver/aarch64/system_register.h"
 
 /* defines */
 
-#define BOOT_ADDR       0x280000
-#define DTB_ADDR        0x100000
+#define BOOT_ADDR 0x280000
+#define DTB_ADDR  0x100000
 
 /* types */
 
@@ -36,7 +36,8 @@ extern struct gic400 sys_gic;
 
 /* functions */
 
-static void launch_linux_guest(struct xilinx_mpsoc *chip, uint32_t vpc_no, uintptr_t boot_addr, uintptr_t dtb_addr)
+static void launch_linux_guest(struct xilinx_mpsoc *chip, uint32_t vpc_no,
+                               uintptr_t boot_addr, uintptr_t dtb_addr)
 {
     errno_t ret;
     struct vpc_boot_configuration boot;
@@ -102,7 +103,7 @@ void hypervisor(void)
      * 本関数実行時は thread としては起動していないので TLS へアクセスする
      * API は実行不可能。
      * 本関数の役割は H/W に関する初期化処理や thread の生成となる。
-     */ 
+     */
 
     struct thread_parameter parameter;
 
@@ -111,4 +112,3 @@ void hypervisor(void)
     parameter.entry = (thread_entry_t)hypervisor_main;
     thread_launch_self(&parameter);
 }
-

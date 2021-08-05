@@ -4,18 +4,18 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include "driver/arm/gic400.h"
+#include "driver/arm/device/gic400.h"
+#include "driver/arm/gic400_io.h"
+#include "driver/system/cpu.h"
+#include "gic400_local.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
 #include "lib/system/spin_lock.h"
-#include "driver/system/cpu.h"
-#include "driver/arm/gic400.h"
-#include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
-#include "gic400_local.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -27,7 +27,7 @@
 
 /* functions */
 
-static bool is_valid_interrupt_no(const struct gic400 *gic,  uint16_t intr_no)
+static bool is_valid_interrupt_no(const struct gic400 *gic, uint16_t intr_no)
 {
     bool ret;
 
@@ -46,19 +46,21 @@ static void sync_dist_io(struct gic400 *gic)
     gic400_read_distributor(gic, GICD_CTLR);
 }
 
-static errno_t write_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg0)
+static errno_t write_dist_bit(struct gic400 *gic, uint16_t bit_no,
+                              uintptr_t reg0)
 {
     uint32_t reg;
     uint32_t bit;
 
     bit = 1UL << (bit_no & 31);
-    reg = reg0 + (bit_no / 32)  * sizeof(uint32_t);
+    reg = reg0 + (bit_no / 32) * sizeof(uint32_t);
     gic400_write_distributor(gic, reg, bit);
 
     return SUCCESS;
 }
 
-errno_t gic400_write_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg0)
+errno_t gic400_write_dist_bit(struct gic400 *gic, uint16_t bit_no,
+                              uintptr_t reg0)
 {
     errno_t ret;
 
@@ -71,7 +73,8 @@ errno_t gic400_write_dist_bit(struct gic400 *gic, uint16_t bit_no, uintptr_t reg
     return ret;
 }
 
-static void write_dist_byte(struct gic400 *gic, uint16_t byte_no, uintptr_t reg0, uint8_t byte_data)
+static void write_dist_byte(struct gic400 *gic, uint16_t byte_no,
+                            uintptr_t reg0, uint8_t byte_data)
 {
     uint32_t d;
     uint32_t mask;
@@ -218,7 +221,8 @@ static errno_t configure_icfg(struct gic400 *gic, uint16_t intr_no, uint32_t d)
     return SUCCESS;
 }
 
-static errno_t configure(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)
+static errno_t configure(struct gic400 *gic, uint16_t intr_no,
+                         const struct gic400_interrupt_configuration *config)
 {
     errno_t ret;
     uint32_t d;
@@ -239,7 +243,9 @@ static errno_t configure(struct gic400 *gic, uint16_t intr_no, const struct gic4
     return ret;
 }
 
-static errno_t configure_interrupt(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)
+static errno_t
+configure_interrupt(struct gic400 *gic, uint16_t intr_no,
+                    const struct gic400_interrupt_configuration *config)
 {
     errno_t ret;
     uint32_t lock;
@@ -255,7 +261,9 @@ static errno_t configure_interrupt(struct gic400 *gic, uint16_t intr_no, const s
     return ret;
 }
 
-static errno_t validate_parameters(const struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)
+static errno_t
+validate_parameters(const struct gic400 *gic, uint16_t intr_no,
+                    const struct gic400_interrupt_configuration *config)
 {
     errno_t ret;
 
@@ -274,7 +282,9 @@ static errno_t validate_parameters(const struct gic400 *gic, uint16_t intr_no, c
     return ret;
 }
 
-errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, const struct gic400_interrupt_configuration *config)
+errno_t
+gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no,
+                           const struct gic400_interrupt_configuration *config)
 {
     errno_t ret;
 
@@ -285,4 +295,3 @@ errno_t gic400_configure_interrupt(struct gic400 *gic, uint16_t intr_no, const s
 
     return ret;
 }
-

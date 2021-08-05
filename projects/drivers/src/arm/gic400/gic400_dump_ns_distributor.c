@@ -4,15 +4,15 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "driver/arm/device/gic400.h"
+#include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
+#include "gic400_local.h"
+#include "lib/system.h"
+#include "lib/system/printk.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "lib/system.h"
-#include "lib/system/printk.h"
-#include "driver/arm/gic400.h"
-#include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
-#include "gic400_local.h"
 
 /* defines */
 
@@ -26,33 +26,35 @@
 /* variables */
 
 static struct reg_type1 {
-    const char  *name;
-    uint32_t    reg;
-} list1[] = {
-    ELEMENT(GICD_CTLR),
-    ELEMENT(GICD_TYPER),
-    ELEMENT(GICD_IIDR),
-    { NULL, 0 }         /* terminator */
-}, list2[] = {
-    ELEMENT(GICD_PIDR4),
-    ELEMENT(GICD_PIDR5),
-    ELEMENT(GICD_PIDR6),
-    ELEMENT(GICD_PIDR7),
-    ELEMENT(GICD_PIDR0),
-    ELEMENT(GICD_PIDR1),
-    ELEMENT(GICD_PIDR2),
-    ELEMENT(GICD_PIDR3),
-    ELEMENT(GICD_CIDR0),
-    ELEMENT(GICD_CIDR1),
-    ELEMENT(GICD_CIDR2),
-    ELEMENT(GICD_CIDR3),
-    { NULL, 0 }         /* terminator */
-} ;
+    const char *name;
+    uint32_t reg;
+} list1[] =
+    {
+        ELEMENT(GICD_CTLR),
+        ELEMENT(GICD_TYPER),
+        ELEMENT(GICD_IIDR),
+        {NULL, 0} /* terminator */
+},
+  list2[] = {
+      ELEMENT(GICD_PIDR4),
+      ELEMENT(GICD_PIDR5),
+      ELEMENT(GICD_PIDR6),
+      ELEMENT(GICD_PIDR7),
+      ELEMENT(GICD_PIDR0),
+      ELEMENT(GICD_PIDR1),
+      ELEMENT(GICD_PIDR2),
+      ELEMENT(GICD_PIDR3),
+      ELEMENT(GICD_CIDR0),
+      ELEMENT(GICD_CIDR1),
+      ELEMENT(GICD_CIDR2),
+      ELEMENT(GICD_CIDR3),
+      {NULL, 0} /* terminator */
+};
 
 static struct reg_type2 {
-    const char  *name;
-    uint32_t    reg;
-    uint32_t    diff;
+    const char *name;
+    uint32_t reg;
+    uint32_t diff;
 } list3[] = {
     ELEMENT_A(GICD_ISENABLER, 32),
     ELEMENT_A(GICD_ISPENDR, 32),
@@ -60,7 +62,7 @@ static struct reg_type2 {
     ELEMENT_A(GICD_IPRIORITYR, 4),
     ELEMENT_A(GICD_ITARGETSR, 4),
     ELEMENT_A(GICD_ICFGR, 16),
-    { NULL, 0, 0 }      /* terminator */
+    {NULL, 0, 0} /* terminator */
 };
 
 static const char out_fmt[] = "%-17s: %08x\n";
@@ -111,7 +113,8 @@ static void dump(const struct gic400 *gic, const struct reg_type1 list[])
     int i;
 
     for (i = 0; list[i].name != NULL; ++i) {
-        printk(out_fmt, list[i].name, gic400_read_distributor(gic, list[i].reg));
+        printk(out_fmt, list[i].name,
+               gic400_read_distributor(gic, list[i].reg));
     }
 }
 
@@ -131,4 +134,3 @@ void gic400_dump_ns_distributor(const struct gic400 *gic)
         dump_ns_distributor(gic);
     }
 }
-

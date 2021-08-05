@@ -4,11 +4,11 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
 #include "driver/aarch64/stage2.h"
 #include "hypervisor/vm.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -36,7 +36,8 @@ static errno_t initialize(struct vm *vm, const struct vm_configuration *config)
     return ret;
 }
 
-static errno_t validate_parameters(const struct vm *vm, const struct vm_configuration *config)
+static errno_t validate_parameters(const struct vm *vm,
+                                   const struct vm_configuration *config)
 {
     errno_t ret;
 
@@ -62,4 +63,3 @@ errno_t vm_initialize(struct vm *vm, const struct vm_configuration *config)
 
     return ret;
 }
-

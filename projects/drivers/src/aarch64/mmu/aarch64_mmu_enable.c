@@ -4,11 +4,11 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "driver/aarch64/system_register.h"
 #include "driver/aarch64/mmu.h"
+#include "driver/aarch64/system_register.h"
+#include "lib/system/errno.h"
 #include "mmu_local.h"
+#include <stdint.h>
 
 /* defines */
 

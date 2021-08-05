@@ -15,10 +15,10 @@
 
 /* includes */
 
-#include <stdint.h>
+#include "driver/arm/gic400.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
-#include "driver/arm/gic400.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -32,7 +32,8 @@
 extern "C" {
 #endif
 
-errno_t gic400_distributor_write_bit(const struct gic400 *gic, uint16_t bit_no, uintptr_t reg0);
+errno_t gic400_distributor_write_bit(const struct gic400 *gic, uint16_t bit_no,
+                                     uintptr_t reg0);
 
 #ifdef __cplusplus
 }
@@ -41,4 +42,3 @@ errno_t gic400_distributor_write_bit(const struct gic400 *gic, uint16_t bit_no, 
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_ARM_GIC400_GIC400_LOCAL_H */
-

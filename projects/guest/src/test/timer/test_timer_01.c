@@ -4,17 +4,17 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/printk.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/system_register/cntv_ctl_el0.h"
 #include "driver/arm/gic400.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define CYC_RATE    1000    /* unit: ms */
+#define CYC_RATE 1000 /* unit: ms */
 
 /* types */
 
@@ -108,8 +108,7 @@ void test_timer_01(void)
     start_timer();
     aarch64_enable_irq();
     for (;;) {
-        __asm volatile ("wfi");
+        __asm volatile("wfi");
         printk("*");
     }
 }
-

@@ -4,18 +4,18 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
 #include "driver/aarch64/mmu.h"
-#include "driver/arm/smmu500.h"
 #include "driver/arm/device/smmu500.h"
+#include "driver/arm/device/smmuv2/smmu_cr0.h"
 #include "driver/arm/device/smmuv2/smmu_idr0.h"
 #include "driver/arm/device/smmuv2/smmu_idr1.h"
 #include "driver/arm/device/smmuv2/smmu_idr2.h"
-#include "driver/arm/device/smmuv2/smmu_cr0.h"
+#include "driver/arm/smmu500.h"
+#include "lib/system/errno.h"
 #include "smmu500_local.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -27,7 +27,8 @@
 
 /* functions */
 
-static errno_t initialize_device(struct smmu500 *smmu, const struct smmu500_configuration *config)
+static errno_t initialize_device(struct smmu500 *smmu,
+                                 const struct smmu500_configuration *config)
 {
     uint32_t i;
     uint32_t d;
@@ -54,17 +55,21 @@ static errno_t initialize_device(struct smmu500 *smmu, const struct smmu500_conf
     /* enable SMMU */
     d = 0;
     if (config->flag.interrupt) {
-        d |= SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GCFGFIE | SMMU_CR0_GFIE;
+        d |= SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GCFGFIE
+             | SMMU_CR0_GFIE;
     }
     if (config->flag.fault) {
-        d |= SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GCFGFRE | SMMU_CR0_GFRE;
+        d |= SMMU_CR0_SMCFCFG | SMMU_CR0_USFCFG | SMMU_CR0_GCFGFRE
+             | SMMU_CR0_GFRE;
     }
     smmu500_gr0_write32_sync(smmu, SMMU_sCR0, d);
 
     return SUCCESS;
 }
 
-static errno_t map(const struct smmu500 *smmu, const struct smmu500_configuration *config, uintptr_t offset, uint32_t nr_pages)
+static errno_t map(const struct smmu500 *smmu,
+                   const struct smmu500_configuration *config, uintptr_t offset,
+                   uint32_t nr_pages)
 {
     errno_t ret;
     void *addr;
@@ -77,7 +82,8 @@ static errno_t map(const struct smmu500 *smmu, const struct smmu500_configuratio
     return ret;
 }
 
-static errno_t map_register_region(const struct smmu500 *smmu, const struct smmu500_configuration *config)
+static errno_t map_register_region(const struct smmu500 *smmu,
+                                   const struct smmu500_configuration *config)
 {
     errno_t ret;
     uintptr_t offset;
@@ -135,7 +141,8 @@ static void probe_device(struct smmu500 *smmu)
     }
 }
 
-static errno_t initialize(struct smmu500 *smmu, const struct smmu500_configuration *config)
+static errno_t initialize(struct smmu500 *smmu,
+                          const struct smmu500_configuration *config)
 {
     errno_t ret;
 
@@ -145,15 +152,17 @@ static errno_t initialize(struct smmu500 *smmu, const struct smmu500_configurati
     if (ret == SUCCESS) {
         ret = initialize_device(smmu, config);
     }
-    
+
     return ret;
 }
 
-static errno_t validate_parameters(const struct smmu500 *smmu, const struct smmu500_configuration *config)
+static errno_t validate_parameters(const struct smmu500 *smmu,
+                                   const struct smmu500_configuration *config)
 {
     errno_t ret;
 
-    if ((smmu != NULL) && (config != NULL) && (config->smmu_base != 0) && (config->mmu != NULL) && (config->mmu_attr != NULL)) {
+    if ((smmu != NULL) && (config != NULL) && (config->smmu_base != 0)
+        && (config->mmu != NULL) && (config->mmu_attr != NULL)) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -162,7 +171,8 @@ static errno_t validate_parameters(const struct smmu500 *smmu, const struct smmu
     return ret;
 }
 
-errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configuration *config)
+errno_t smmu500_initialize(struct smmu500 *smmu,
+                           const struct smmu500_configuration *config)
 {
     errno_t ret;
 
@@ -173,4 +183,3 @@ errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configurat
 
     return ret;
 }
-

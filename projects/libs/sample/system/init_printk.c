@@ -4,11 +4,11 @@
  * (C) 2018 Hidekazu Kato
  */
 
+#include "lib/log.h"
+#include "lib/system/init.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "lib/system/init.h"
-#include "lib/log.h"
 
 /* defines */
 
@@ -22,32 +22,31 @@ static struct log_context ctx;
 
 static int put_char(struct log_context *ctx, char ch)
 {
-	putchar(ch);
+    putchar(ch);
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 int init_printk(void)
 {
-	int ret;
-	struct log_context_configuration conf;
+    int ret;
+    struct log_context_configuration conf;
 
-	conf.putc = put_char;
-	conf.arg = NULL;
-	ret = log_init_context(&ctx, &conf);
-	
-	return ret;
+    conf.putc = put_char;
+    conf.arg = NULL;
+    ret = log_init_context(&ctx, &conf);
+
+    return ret;
 }
 
 int printk(const char *fmt, ...)
 {
-	int ret;
+    int ret;
 
-	ctx.input.format = fmt;
-	va_start(ctx.input.vargs, fmt);
-	ret = log_cformat(&ctx);
-	va_end(ctx.input.vargs);
+    ctx.input.format = fmt;
+    va_start(ctx.input.vargs, fmt);
+    ret = log_cformat(&ctx);
+    va_end(ctx.input.vargs);
 
-	return ret;
+    return ret;
 }
-

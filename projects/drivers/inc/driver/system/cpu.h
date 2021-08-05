@@ -19,9 +19,9 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include <stdbool.h>
 #include "driver/aarch64.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -56,4 +56,3 @@ void cpu_enable_interrupts(void);
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_SYSTEM_CPU_H */
-

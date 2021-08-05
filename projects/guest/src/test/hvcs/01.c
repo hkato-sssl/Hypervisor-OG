@@ -11,16 +11,16 @@
  * 状態確認は行わない。
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "driver/arm/gic400.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "driver/arm/gic400.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define INT_EP0     130
-#define INT_EP1     131
+#define INT_EP0 130
+#define INT_EP1 131
 
 /* types */
 
@@ -69,7 +69,7 @@ static void dump_buff(const uint64_t *buff)
     int i;
 
     for (i = 0; i < 16; i += 2) {
-        printk("%02x: %016lx %016lx\n", i, buff[i], buff[i+1]);
+        printk("%02x: %016lx %016lx\n", i, buff[i], buff[i + 1]);
     }
     printk("\n");
 }

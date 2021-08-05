@@ -116,4 +116,3 @@
 #define RFBS_BYTE0_PAR_ERR              BIT(0)
 
 #endif /* DRIVER_XILIX_MPSOC_DEVICE_PS_UART_H */
-

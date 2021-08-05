@@ -15,10 +15,10 @@
 
 /* includes */
 
+#include "driver/aarch64/mmu_base.h"
+#include "lib/system/errno.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/errno.h"
-#include "driver/aarch64/mmu_base.h"
 
 /* defines */
 
@@ -32,9 +32,12 @@
 extern "C" {
 #endif
 
-uint64_t aarch64_mmu_table_descriptor(void *pa, const struct aarch64_mmu_attr *attr);
-uint64_t aarch64_mmu_block_descriptor(void *pa, const struct aarch64_mmu_attr *attr);
-uint64_t aarch64_mmu_page_descriptor(void *pa, const struct aarch64_mmu_attr *attr);
+uint64_t aarch64_mmu_table_descriptor(void *pa,
+                                      const struct aarch64_mmu_attr *attr);
+uint64_t aarch64_mmu_block_descriptor(void *pa,
+                                      const struct aarch64_mmu_attr *attr);
+uint64_t aarch64_mmu_page_descriptor(void *pa,
+                                     const struct aarch64_mmu_attr *attr);
 
 errno_t aarch64_mmu_set_translation_table(struct aarch64_mmu *mmu);
 errno_t aarch64_mmu_enable_asm(void);
@@ -48,4 +51,3 @@ void aarch64_mmu_tlbi_all(void);
 #endif /* ASSEMBLY */
 
 #endif /* AARCH64_MMU_MMU_LOCAL_H */
-

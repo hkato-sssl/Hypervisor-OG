@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
 #include "hypervisor/parameter.h"
 #include "hypervisor/vpc.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 

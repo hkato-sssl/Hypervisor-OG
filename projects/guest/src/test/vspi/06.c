@@ -16,16 +16,16 @@
  *   受信の順番は問わない
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
+#include "driver/aarch64.h"
+#include "driver/arm.h"
+#include "driver/arm/gic400.h"
+#include "driver/system/cpu.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
 #include "lib/system/printk.h"
-#include "driver/arm/gic400.h"
-#include "driver/arm.h"
-#include "driver/aarch64.h"
-#include "driver/system/cpu.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -150,7 +150,7 @@ static void vspi_06(void)
     printk("<%s> Done.\n", __func__);
     set_start(false);
 
-    __asm volatile ("hvc #0");
+    __asm volatile("hvc #0");
 }
 
 static void vspi_06_primary(void)
@@ -179,7 +179,7 @@ static void vspi_06_primary(void)
     printk("<%s> Done.\n", __func__);
     set_start(false);
 
-    __asm volatile ("hvc #0");
+    __asm volatile("hvc #0");
 }
 
 static void vspi_06_secondary(void)
@@ -210,4 +210,3 @@ void test_vspi_06m(void)
         vspi_06_secondary();
     }
 }
-

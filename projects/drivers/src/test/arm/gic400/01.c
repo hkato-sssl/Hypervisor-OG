@@ -9,19 +9,19 @@
  * 初期化APIを実行後、レジスタ情報を出力して実行結果を確認する。
  */
 
+#include "driver/arm/gic400.h"
+#include "lib/system/errno.h"
+#include "lib/system/printk.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/printk.h"
-#include "driver/arm/gic400.h"
 
 /* defines */
 
 /* test parameters */
 
-#define GIC400_DIST_BASE    0xf9010000
-#define GIC400_CPUIF_BASE   0xf9020000
+#define GIC400_DIST_BASE  0xf9010000
+#define GIC400_CPUIF_BASE 0xf9020000
 
 /* types */
 
@@ -64,5 +64,3 @@ errno_t test_arm_gic400_01(void)
 
     return SUCCESS;
 }
-
-

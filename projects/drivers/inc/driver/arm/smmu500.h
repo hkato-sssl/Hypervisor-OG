@@ -19,32 +19,32 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
+#include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
-#include "lib/bit.h"
+#include <stdint.h>
 
 /* defines */
 
-#define MAX_NR_SMMU_STREAM_MAPS     128
-#define MAX_NR_SMMU_CONTEXT_BANKS   128
+#define MAX_NR_SMMU_STREAM_MAPS         128
+#define MAX_NR_SMMU_CONTEXT_BANKS       128
 
 /* memory type */
 
-#define SMMU_MT_DEVICE_nGnRnE       0x0
-#define SMMU_MT_DEVICE_nGnRE        0x1
-#define SMMU_MT_DEVICE_nGRE         0x2
-#define SMMU_MT_DEVICE_GRE          0x3
+#define SMMU_MT_DEVICE_nGnRnE           0x0
+#define SMMU_MT_DEVICE_nGnRE            0x1
+#define SMMU_MT_DEVICE_nGRE             0x2
+#define SMMU_MT_DEVICE_GRE              0x3
 
-#define SMMU_MT_NORMAL_ONC          (0x1 << 2)
-#define SMMU_MT_NORMAL_OWT          (0x2 << 2)
-#define SMMU_MT_NORMAL_OWB          (0x3 << 2)
-#define SMMU_MT_NORMAL_INC          0x1
-#define SMMU_MT_NORMAL_IWT          0x2
-#define SMMU_MT_NORMAL_IWB          0x3
-#define SMMU_MT_NORMAL_NC           (SMMU_MT_NORMAL_ONC | SMMU_MT_NORMAL_INC)
-#define SMMU_MT_NORMAL_WT           (SMMU_MT_NORMAL_OWT | SMMU_MT_NORMAL_IWT)
-#define SMMU_MT_NORMAL_WB           (SMMU_MT_NORMAL_OWB | SMMU_MT_NORMAL_IWB)
+#define SMMU_MT_NORMAL_ONC              (0x1 << 2)
+#define SMMU_MT_NORMAL_OWT              (0x2 << 2)
+#define SMMU_MT_NORMAL_OWB              (0x3 << 2)
+#define SMMU_MT_NORMAL_INC              0x1
+#define SMMU_MT_NORMAL_IWT              0x2
+#define SMMU_MT_NORMAL_IWB              0x3
+#define SMMU_MT_NORMAL_NC               (SMMU_MT_NORMAL_ONC | SMMU_MT_NORMAL_INC)
+#define SMMU_MT_NORMAL_WT               (SMMU_MT_NORMAL_OWT | SMMU_MT_NORMAL_IWT)
+#define SMMU_MT_NORMAL_WB               (SMMU_MT_NORMAL_OWB | SMMU_MT_NORMAL_IWB)
 
 /* transient allocate configuration */
 
@@ -106,68 +106,68 @@ struct aarch64_stage2;
 
 struct smmu500 {
     spin_lock_t lock;
-    uintptr_t   smmu_base;              /* also used as SMMU_GR0_BASE */
-    uintptr_t   smmu_gr1_base;
-    uintptr_t   smmu_cb_base;
+    uintptr_t smmu_base; /* also used as SMMU_GR0_BASE */
+    uintptr_t smmu_gr1_base;
+    uintptr_t smmu_cb_base;
 
-    uint32_t    nr_pages;
-    uint32_t    page_size;              /* 4096 or 65536 */
+    uint32_t nr_pages;
+    uint32_t page_size; /* 4096 or 65536 */
 
-    uint8_t     nr_stream_matches;      /* SMMU_IDR0.SMRG */
-    uint8_t     nr_context_banks;       /* SMMU_IDR1.NUMCB */
-    uint8_t     nr_s2_context_banks;    /* SMMU_IDR1.NUMS2CB */
-    uint8_t     nr_context_fault_interrupts;
+    uint8_t nr_stream_matches;   /* SMMU_IDR0.SMRG */
+    uint8_t nr_context_banks;    /* SMMU_IDR1.NUMCB */
+    uint8_t nr_s2_context_banks; /* SMMU_IDR1.NUMS2CB */
+    uint8_t nr_context_fault_interrupts;
 
-    uint8_t     vmid_size;              /* 8 or 16 */
+    uint8_t vmid_size; /* 8 or 16 */
 
     struct {
-        uint8_t     stream_matches[MAX_NR_SMMU_STREAM_MAPS];
-        uint8_t     context_banks[MAX_NR_SMMU_CONTEXT_BANKS];
+        uint8_t stream_matches[MAX_NR_SMMU_STREAM_MAPS];
+        uint8_t context_banks[MAX_NR_SMMU_CONTEXT_BANKS];
     } allocation;
 };
 
 struct smmu500_configuration {
-    uintptr_t               smmu_base;
-    struct aarch64_mmu      *mmu;
+    uintptr_t smmu_base;
+    struct aarch64_mmu *mmu;
     struct aarch64_mmu_attr *mmu_attr;
     struct {
-        uint8_t             interrupt:1;    /* global interrupt */
-        uint8_t             fault:1;
+        uint8_t interrupt : 1; /* global interrupt */
+        uint8_t fault     : 1;
     } flag;
 };
 
 struct smmu_stream {
-    uint16_t    mask;
-    uint16_t    id;
+    uint16_t mask;
+    uint16_t id;
 };
 
 struct smmu_translation_stream_configuration {
-    struct smmu_stream  stream;
+    struct smmu_stream stream;
 
-    uint32_t    transientcfg:2;
-    uint32_t    instcfg:2;
-    uint32_t    privcfg:2;
-    uint32_t    wacfg:2;
-    uint32_t    racfg:2;
-    uint32_t    nscfg:2;
-    uint32_t    mtcfg:1;
-    uint32_t    shcfg:2;
+    uint32_t transientcfg : 2;
+    uint32_t instcfg      : 2;
+    uint32_t privcfg      : 2;
+    uint32_t wacfg        : 2;
+    uint32_t racfg        : 2;
+    uint32_t nscfg        : 2;
+    uint32_t mtcfg        : 1;
+    uint32_t shcfg        : 2;
 
     struct {
-        uint8_t exidvalid:1;
+        uint8_t exidvalid : 1;
     } flag;
 
-    uint8_t     memattr;
-    uint8_t     cbndx;
+    uint8_t memattr;
+    uint8_t cbndx;
 };
 
 struct smmu_context_bank_with_stage2_configuration {
-    struct aarch64_stage2   *stage2;
-    uint16_t    vmid;
-    uint8_t     interrupt_index;
+    struct aarch64_stage2 *stage2;
+    uint16_t vmid;
+    uint8_t interrupt_index;
     struct {
-        uint8_t interrupt:1;
-        uint8_t fault:1;
+        uint8_t interrupt : 1;
+        uint8_t fault     : 1;
     } flag;
 };
 
@@ -175,9 +175,14 @@ struct smmu_context_bank_with_stage2_configuration {
 
 /* functions */
 
-errno_t smmu500_initialize(struct smmu500 *smmu, const struct smmu500_configuration *config);
-errno_t smmu500_create_context_bank_with_stage2(struct smmu500 *smmu, uint8_t *cb, const struct smmu_context_bank_with_stage2_configuration *config);
-errno_t smmu500_create_translation_stream(struct smmu500 *smmu, uint8_t *id, const struct smmu_translation_stream_configuration *config);
+errno_t smmu500_initialize(struct smmu500 *smmu,
+                           const struct smmu500_configuration *config);
+errno_t smmu500_create_context_bank_with_stage2(
+    struct smmu500 *smmu, uint8_t *cb,
+    const struct smmu_context_bank_with_stage2_configuration *config);
+errno_t smmu500_create_translation_stream(
+    struct smmu500 *smmu, uint8_t *id,
+    const struct smmu_translation_stream_configuration *config);
 errno_t smmu500_enable(struct smmu500 *smmu, uint8_t id);
 errno_t smmu500_disable(struct smmu500 *smmu, uint8_t id);
 
@@ -193,4 +198,3 @@ void smmu500_dump_stream_match_register(struct smmu500 *smmu, uint8_t id);
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_ARM_SMMU500_H */
-

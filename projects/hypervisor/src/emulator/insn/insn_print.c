@@ -4,9 +4,9 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/printk.h"
 #include "hypervisor/emulator/insn.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -35,7 +35,8 @@ static void print_ldr(const struct insn *insn)
     printk("    va: 0x%016llx\n", insn->op.ldr.va);
     printk("    pa: 0x%016llx\n", insn->op.ldr.pa);
     if (insn->op.str.flag.isv == 0) {
-        printk("offset: 0x%016llx(%lld)\n", insn->op.ldr.offset, insn->op.ldr.offset);
+        printk("offset: 0x%016llx(%lld)\n", insn->op.ldr.offset,
+               insn->op.ldr.offset);
     }
     printk("  size: %u\n", insn->op.ldr.size);
     if (insn->op.str.flag.isv == 0) {
@@ -59,7 +60,10 @@ static void print_ldr(const struct insn *insn)
             printk("   dst: W%u\n", insn->op.ldr.gpr.dst);
         }
     }
-    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, pre=%u\n", insn->op.ldr.flag.isv, insn->op.ldr.flag.wreg, insn->op.ldr.flag.sign, insn->op.ldr.flag.post, insn->op.ldr.flag.pre);
+    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, pre=%u\n",
+           insn->op.ldr.flag.isv, insn->op.ldr.flag.wreg,
+           insn->op.ldr.flag.sign, insn->op.ldr.flag.post,
+           insn->op.ldr.flag.pre);
     printk("\n");
 }
 
@@ -69,20 +73,23 @@ static void print_str(const struct insn *insn)
     printk("    va: 0x%016llx\n", insn->op.str.va);
     printk("    pa: 0x%016llx\n", insn->op.str.pa);
     if (insn->op.str.flag.isv == 0) {
-        printk("offset: 0x%016llx(%lld)\n", insn->op.str.offset, insn->op.str.offset);
+        printk("offset: 0x%016llx(%lld)\n", insn->op.str.offset,
+               insn->op.str.offset);
     }
     printk("  size: %u\n", insn->op.str.size);
     if (insn->op.str.flag.wreg == 0) {
         if (insn->op.str.gpr.src == 31) {
             printk("   src: XZR(0x%016llx)\n", insn_str_src_value(insn));
         } else {
-            printk("   src: X%u(0x%016llx)\n", insn->op.str.gpr.src, insn_str_src_value(insn));
+            printk("   src: X%u(0x%016llx)\n", insn->op.str.gpr.src,
+                   insn_str_src_value(insn));
         }
     } else {
         if (insn->op.str.gpr.src == 31) {
             printk("   src: WZR(0x%016llx)\n", insn_str_src_value(insn));
         } else {
-            printk("   src: W%u(0x%016llx)\n", insn->op.str.gpr.src, insn_str_src_value(insn));
+            printk("   src: W%u(0x%016llx)\n", insn->op.str.gpr.src,
+                   insn_str_src_value(insn));
         }
     }
     if (insn->op.str.flag.isv == 0) {
@@ -92,7 +99,10 @@ static void print_str(const struct insn *insn)
             printk("   dst: X%u\n", insn->op.str.gpr.dst);
         }
     }
-    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, pre=%u\n", insn->op.str.flag.isv, insn->op.str.flag.wreg, insn->op.str.flag.sign, insn->op.str.flag.post, insn->op.str.flag.pre);
+    printk("  flag: isv=%u, wreg=%u, sign=%u, post=%u, pre=%u\n",
+           insn->op.str.flag.isv, insn->op.str.flag.wreg,
+           insn->op.str.flag.sign, insn->op.str.flag.post,
+           insn->op.str.flag.pre);
     printk("\n");
 }
 

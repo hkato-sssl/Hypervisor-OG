@@ -4,9 +4,9 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -31,4 +31,3 @@ errno_t vpc_event_loop(struct vpc *vpc)
 
     return ret;
 }
-

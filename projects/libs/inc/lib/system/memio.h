@@ -23,20 +23,28 @@ extern "C" {
 
 /* defines */
 
-#define REG_READ64(b, r)            reg_read64((uintptr_t)(b), (uintptr_t)(r))
-#define REG_READ32(b, r)            reg_read32((uintptr_t)(b), (uintptr_t)(r))
-#define REG_READ16(b, r)            reg_read16((uintptr_t)(b), (uintptr_t)(r))
-#define REG_READ8(b, r)             reg_read8((uintptr_t)(b), (uintptr_t)(r))
+#define REG_READ64(b, r) reg_read64((uintptr_t)(b), (uintptr_t)(r))
+#define REG_READ32(b, r) reg_read32((uintptr_t)(b), (uintptr_t)(r))
+#define REG_READ16(b, r) reg_read16((uintptr_t)(b), (uintptr_t)(r))
+#define REG_READ8(b, r)  reg_read8((uintptr_t)(b), (uintptr_t)(r))
 
-#define REG_WRITE64(b, r, d)        reg_write64((uintptr_t)(b), (uintptr_t)(r), (uint64_t)(d))
-#define REG_WRITE32(b, r, d)        reg_write32((uintptr_t)(b), (uintptr_t)(r), (uint32_t)(d))
-#define REG_WRITE16(b, r, d)        reg_write16((uintptr_t)(b), (uintptr_t)(r), (uint16_t)(d))
-#define REG_WRITE8(b, r, d)         reg_write8((uintptr_t)(b), (uintptr_t)(r), (uint8_t)(d))
+#define REG_WRITE64(b, r, d) \
+    reg_write64((uintptr_t)(b), (uintptr_t)(r), (uint64_t)(d))
+#define REG_WRITE32(b, r, d) \
+    reg_write32((uintptr_t)(b), (uintptr_t)(r), (uint32_t)(d))
+#define REG_WRITE16(b, r, d) \
+    reg_write16((uintptr_t)(b), (uintptr_t)(r), (uint16_t)(d))
+#define REG_WRITE8(b, r, d) \
+    reg_write8((uintptr_t)(b), (uintptr_t)(r), (uint8_t)(d))
 
-#define REG_WRITE64_SYNC(b, r, d)   reg_write64_sync((uintptr_t)(b), (uintptr_t)(r), (uint64_t)(d))
-#define REG_WRITE32_SYNC(b, r, d)   reg_write32_sync((uintptr_t)(b), (uintptr_t)(r), (uint32_t)(d))
-#define REG_WRITE16_SYNC(b, r, d)   reg_write16_sync((uintptr_t)(b), (uintptr_t)(r), (uint16_t)(d))
-#define REG_WRITE8_SYNC(b, r, d)    reg_write8_sync((uintptr_t)(b), (uintptr_t)(r), (uint8_t)(d))
+#define REG_WRITE64_SYNC(b, r, d) \
+    reg_write64_sync((uintptr_t)(b), (uintptr_t)(r), (uint64_t)(d))
+#define REG_WRITE32_SYNC(b, r, d) \
+    reg_write32_sync((uintptr_t)(b), (uintptr_t)(r), (uint32_t)(d))
+#define REG_WRITE16_SYNC(b, r, d) \
+    reg_write16_sync((uintptr_t)(b), (uintptr_t)(r), (uint16_t)(d))
+#define REG_WRITE8_SYNC(b, r, d) \
+    reg_write8_sync((uintptr_t)(b), (uintptr_t)(r), (uint8_t)(d))
 
 /* types */
 
@@ -46,12 +54,12 @@ extern "C" {
 
 static inline void memory_barrier(void)
 {
-	__asm volatile ("dmb sy" ::: "memory");
+    __asm volatile("dmb sy" ::: "memory");
 }
 
 static inline void memory_barrier_sync(void)
 {
-	__asm volatile ("dsb sy" ::: "memory");
+    __asm volatile("dsb sy" ::: "memory");
 }
 
 static inline uint64_t reg_read64(uintptr_t base, uintptr_t reg)
@@ -116,4 +124,3 @@ void reg_write8_sync(uintptr_t base, uintptr_t reg, uint8_t d);
 #endif /* ASSEMBLY */
 
 #endif /* LIB_SYSTEM_MEMIO_H */
-

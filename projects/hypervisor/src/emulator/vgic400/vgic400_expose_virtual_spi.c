@@ -4,17 +4,17 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "driver/arm/device/gic400.h"
+#include "driver/system/cpu.h"
+#include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/parameter.h"
+#include "hypervisor/vm.h"
 #include "lib/aarch64.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
-#include "driver/arm/device/gic400.h"
-#include "driver/system/cpu.h"
-#include "hypervisor/parameter.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/emulator/vgic400.h"
 #include "vgic400_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -33,7 +33,7 @@ errno_t inject_virtual_spi(struct vgic400 *vgic, uint16_t interrupt_no)
 
     virtual_id = interrupt_no + vgic->virtual_spi.base_no;
     d = (uint32_t)(vgic->virtual_spi.ipriorityr[interrupt_no]) << 20;
-    d |= BIT(28) | BIT(19) | virtual_id;    /* pending, EOI, VirtualID */
+    d |= BIT(28) | BIT(19) | virtual_id; /* pending, EOI, VirtualID */
     gic400_write_virtif_control(vgic, GICH_LR(0), d);
 
     vgic->virtual_spi.ipendr &= ~(uint32_t)BIT(interrupt_no);
@@ -46,7 +46,7 @@ static errno_t discontinue_virtual_spi(struct vgic400 *vgic)
     uint32_t d;
 
     d = gic400_read_virtif_control(vgic, GICH_HCR);
-    d &= ~(uint32_t)BIT(3);     /* NPIE: No Pending Interrupt Enable. */
+    d &= ~(uint32_t)BIT(3); /* NPIE: No Pending Interrupt Enable. */
     gic400_write_virtif_control(vgic, GICH_HCR, d);
 
     vgic->virtual_spi.asserting = false;
@@ -102,4 +102,3 @@ errno_t vgic400_expose_virtual_spi(struct vpc *vpc, struct vgic400 *vgic)
 
     return ret;
 }
-

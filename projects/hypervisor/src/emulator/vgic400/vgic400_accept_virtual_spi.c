@@ -4,15 +4,15 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "lib/system/errno.h"
-#include "driver/arm/gic400.h"
 #include "driver/arm/device/gic400.h"
+#include "driver/arm/gic400.h"
+#include "hypervisor/emulator/vgic400.h"
 #include "hypervisor/thread.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/emulator/vgic400.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -29,7 +29,7 @@ static errno_t accept(struct vpc *vpc, struct vgic400 *vgic)
     uint32_t d;
 
     d = gic400_read_virtif_control(vgic, GICH_HCR);
-    d |= BIT(3);    /* NPIE: No Pending Interrupt Enable. */
+    d |= BIT(3); /* NPIE: No Pending Interrupt Enable. */
     gic400_write_virtif_control(vgic, GICH_HCR, d);
 
     vgic->virtual_spi.asserting = true;
@@ -45,7 +45,7 @@ static errno_t accept_virtual_spi(struct vpc *vpc, struct vgic400 *vgic)
     if (! vgic->virtual_spi.asserting) {
         ret = accept(vpc, vgic);
     } else {
-        ret = SUCCESS;  /* no work */
+        ret = SUCCESS; /* no work */
     }
     vgic400_unlock(vgic);
 
@@ -68,7 +68,7 @@ static errno_t send_event(struct vpc *vpc, struct vgic400 *vgic)
         event->args[3] = 0;
         ret = vpc_send_event(dst, event);
     } else {
-        ret = SUCCESS;  /* no work */
+        ret = SUCCESS; /* no work */
     }
 
     return ret;
@@ -85,15 +85,15 @@ errno_t vgic400_accept_virtual_spi(struct vpc *vpc, struct vgic400 *vgic)
     errno_t ret;
 
     if (! vgic->virtual_spi.asserting) {
-        if ((vpc->proc_no == 0) && (vpc == (void *)thread_read_tls(TLS_CURRENT_VPC))) {
+        if ((vpc->proc_no == 0)
+            && (vpc == (void *)thread_read_tls(TLS_CURRENT_VPC))) {
             ret = accept(vpc, vgic);
         } else {
             ret = send_event(vpc, vgic);
         }
     } else {
-        ret = SUCCESS;  /* no work */
+        ret = SUCCESS; /* no work */
     }
 
     return ret;
 }
-

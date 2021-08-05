@@ -5,17 +5,17 @@
  */
 
 #include "config/system.h"
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/printk.h"
-#include "driver/arm/gic400.h"
-#include "driver/arm/smmu500.h"
 #include "driver/aarch64/mmu.h"
 #include "driver/aarch64/psci.h"
-#include "driver/xilinx/mpsoc.h"
+#include "driver/arm/gic400.h"
+#include "driver/arm/smmu500.h"
 #include "driver/system/cpu.h"
+#include "driver/xilinx/mpsoc.h"
 #include "hypervisor/mmu.h"
+#include "lib/system/errno.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -132,4 +132,3 @@ void init_hw(void)
         init_secondary_processor();
     }
 }
-

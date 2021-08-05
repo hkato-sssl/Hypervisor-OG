@@ -4,11 +4,11 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "hypervisor/vpc.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "hypervisor/vpc.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -34,7 +34,7 @@ void test_vpc_launch(void)
     printk("<%s>\n", __func__);
 
     memset(&config, 0, sizeof(config));
-    config.vm = (void*)0xff; // dummy
+    config.vm = (void *)0xff; // dummy
     config.regs = register_array;
     config.proc_no = 0;
 
@@ -50,4 +50,3 @@ void test_vpc_launch(void)
         vpc_launch(&vpc, &boot);
     }
 }
-

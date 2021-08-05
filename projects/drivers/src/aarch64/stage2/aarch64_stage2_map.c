@@ -4,10 +4,10 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "lib/system/errno.h"
 #include "driver/aarch64/stage2.h"
+#include "lib/system/errno.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -19,11 +19,13 @@
 
 /* functions */
 
-static bool is_valid_address(const struct aarch64_stage2 *stage2, void *ipa, void *pa)
+static bool is_valid_address(const struct aarch64_stage2 *stage2, void *ipa,
+                             void *pa)
 {
     bool ret;
 
-    if ((((uintptr_t)ipa & stage2->pa_mask) == 0) && (((uintptr_t)pa & stage2->pa_mask) == 0)) {
+    if ((((uintptr_t)ipa & stage2->pa_mask) == 0)
+        && (((uintptr_t)pa & stage2->pa_mask) == 0)) {
         ret = true;
     } else {
         ret = false;
@@ -32,7 +34,8 @@ static bool is_valid_address(const struct aarch64_stage2 *stage2, void *ipa, voi
     return ret;
 }
 
-static errno_t validate_parameters(const struct aarch64_stage2 *stage2, void *ipa, void *pa)
+static errno_t validate_parameters(const struct aarch64_stage2 *stage2,
+                                   void *ipa, void *pa)
 {
     errno_t ret;
 
@@ -50,7 +53,8 @@ static errno_t validate_parameters(const struct aarch64_stage2 *stage2, void *ip
     return ret;
 }
 
-errno_t aarch64_stage2_map(struct aarch64_stage2 *stage2, void *ipa, void *pa, size_t sz, const struct aarch64_stage2_attr *attr)
+errno_t aarch64_stage2_map(struct aarch64_stage2 *stage2, void *ipa, void *pa,
+                           size_t sz, const struct aarch64_stage2_attr *attr)
 {
     errno_t ret;
 
@@ -61,4 +65,3 @@ errno_t aarch64_stage2_map(struct aarch64_stage2 *stage2, void *ipa, void *pa, s
 
     return ret;
 }
-

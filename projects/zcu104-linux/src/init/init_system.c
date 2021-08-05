@@ -4,29 +4,29 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <stdarg.h>
-#include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/printk.h"
-#include "lib/system/spin_lock.h"
-#include "lib/system.h"
-#include "lib/log.h"
 #include "driver/aarch64.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/system/cpu.h"
 #include "driver/xilinx/axi/uart_lite.h"
+#include "lib/log.h"
+#include "lib/system.h"
+#include "lib/system/errno.h"
+#include "lib/system/printk.h"
+#include "lib/system/spin_lock.h"
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define UART_LITE_BASE      0xa0001000
+#define UART_LITE_BASE 0xa0001000
 
 /* types */
 
 struct arg_printk {
-    struct uart_lite    *uart;
-    int                 ct;
+    struct uart_lite *uart;
+    int ct;
 };
 
 /* prototypes */
@@ -39,7 +39,7 @@ static errno_t put_char(struct log_context *ctx, char ch);
 
 static struct log_context log_ctx;
 static struct uart_lite uart;
-static struct log_ops ops = { &uart, put_char };
+static struct log_ops ops = {&uart, put_char};
 static spin_lock_t lock;
 static spin_lock_t system_lock;
 
@@ -133,4 +133,3 @@ errno_t init_system(void)
 
     return ret;
 }
-

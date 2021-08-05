@@ -10,38 +10,38 @@
  * 本テストでは割り込みの仮想番号と物理番号が同じ環境を想定している。
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/printk.h"
+#include "driver/aarch64/mmu.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/smmu500.h"
-#include "driver/aarch64/mmu.h"
+#include "hypervisor/emulator/insn.h"
+#include "hypervisor/mmu.h"
+#include "hypervisor/soc/xilinx/mpsoc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/mmu.h"
-#include "hypervisor/emulator/insn.h"
-#include "hypervisor/soc/xilinx/mpsoc.h"
+#include "lib/system/errno.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define NR_CPUS             1
-#define GUEST_VMID          1
+#define NR_CPUS           1
+#define GUEST_VMID        1
 
-#define NR_SPIS             256
-#define DUMMY_DEVICE_ADDR   0xfff00000UL
-#define DUMMY_DEVICE_SIZE   4096UL
+#define NR_SPIS           256
+#define DUMMY_DEVICE_ADDR 0xfff00000UL
+#define DUMMY_DEVICE_SIZE 4096UL
 
-#define BOOT_ADDR           0x280000
-#define DTB_ADDR            0
+#define BOOT_ADDR         0x280000
+#define DTB_ADDR          0
 
-#define RAM_START_PA        0x00000000  /* 1GB */
-#define RAM_START_IPA       0x00000000
-#define RAM_SIZE            0x40000000
+#define RAM_START_PA      0x00000000 /* 1GB */
+#define RAM_START_IPA     0x00000000
+#define RAM_SIZE          0x40000000
 
-#define UART_IPA            0xff000000  /* PS UART0 */
-#define UART_PA             0xff000000
-#define UART_SIZE           4096
+#define UART_IPA          0xff000000 /* PS UART0 */
+#define UART_PA           0xff000000
+#define UART_SIZE         4096
 
 /* types */
 
@@ -58,7 +58,7 @@ static DESC_XILINX_MPSOC_STAGE2_LEVEL1_TABLE(table);
 
 static struct xilinx_mpsoc mpsoc;
 static struct vpc vpcs[NR_CPUS];
-static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__ ((aligned(32)));
+static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__((aligned(32)));
 static struct vpc_exception_ops ops;
 
 static struct soc_device_interrupt irqs[NR_SPIS];
@@ -90,22 +90,21 @@ static struct soc_device ram = {
     .regions = ram_regions,
 };
 
-static struct soc_device_region uart0_region = {
-    .pa = UART_PA,
-    .ipa = UART_IPA,
-    .size = UART_SIZE,
-    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
-    .shareability = HYP_MMU_SH_OSH,
-    .access.flag.read = 1,
-    .access.flag.write = 1,
-    .access.flag.exec = 0
-};
+static struct soc_device_region uart0_region = {.pa = UART_PA,
+                                                .ipa = UART_IPA,
+                                                .size = UART_SIZE,
+                                                .memory_type =
+                                                    HYP_MMU_MT_DEVICE_nGnRE,
+                                                .shareability = HYP_MMU_SH_OSH,
+                                                .access.flag.read = 1,
+                                                .access.flag.write = 1,
+                                                .access.flag.exec = 0};
 static struct soc_device_region *uart0_regions[] = {
     &uart0_region,
 };
 static struct soc_device uart0 = {
     .nr_irqs = 0,
-    .irqs = NULL,           /* 割り込み番号はdevices[]で設定されるので省略 */
+    .irqs = NULL, /* 割り込み番号はdevices[]で設定されるので省略 */
     .nr_regions = 1,
     .regions = uart0_regions,
 };
@@ -199,10 +198,9 @@ void launch(void)
 
 void test_xilinx_mpsoc_01(void)
 {
-    printk("<%s>\n",__func__);
+    printk("<%s>\n", __func__);
 
     if (init() == SUCCESS) {
         launch();
     }
 }
-

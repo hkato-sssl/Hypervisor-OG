@@ -4,16 +4,16 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vpc.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -56,7 +56,9 @@ static uint64_t read_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq)
     return result;
 }
 
-static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
+static errno_t read_byte_register_b(struct vgic400 *vgic,
+                                    const struct insn *insn, uintptr_t reg,
+                                    uintptr_t base)
 {
     errno_t ret;
     uint32_t virq;
@@ -70,7 +72,9 @@ static errno_t read_byte_register_b(struct vgic400 *vgic, const struct insn *ins
     return ret;
 }
 
-static errno_t read_byte_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
+static errno_t read_byte_register_w(struct vgic400 *vgic,
+                                    const struct insn *insn, uintptr_t reg,
+                                    uintptr_t base)
 {
     errno_t ret;
     uint32_t i;
@@ -90,7 +94,8 @@ static errno_t read_byte_register_w(struct vgic400 *vgic, const struct insn *ins
     return ret;
 }
 
-static void write_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq, uint32_t d)
+static void write_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq,
+                       uint32_t d)
 {
     uint32_t irq;
     uintptr_t reg;
@@ -101,7 +106,9 @@ static void write_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq, uint3
         gic400_write_distributor_b(vgic->gic, reg, d);
     }
 }
-static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
+static errno_t write_byte_register_b(struct vgic400 *vgic,
+                                     const struct insn *insn, uintptr_t reg,
+                                     uintptr_t base)
 {
     errno_t ret;
     uint32_t d;
@@ -118,7 +125,9 @@ static errno_t write_byte_register_b(struct vgic400 *vgic, const struct insn *in
     return ret;
 }
 
-static errno_t write_byte_register_w(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
+static errno_t write_byte_register_w(struct vgic400 *vgic,
+                                     const struct insn *insn, uintptr_t reg,
+                                     uintptr_t base)
 {
     errno_t ret;
     uint32_t i;
@@ -141,7 +150,9 @@ static errno_t write_byte_register_w(struct vgic400 *vgic, const struct insn *in
     return ret;
 }
 
-errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg, uintptr_t base)
+errno_t vgic400_distributor_byte_register(struct vgic400 *vgic,
+                                          const struct insn *insn,
+                                          uintptr_t reg, uintptr_t base)
 {
     errno_t ret;
 
@@ -165,4 +176,3 @@ errno_t vgic400_distributor_byte_register(struct vgic400 *vgic, const struct ins
 
     return ret;
 }
-

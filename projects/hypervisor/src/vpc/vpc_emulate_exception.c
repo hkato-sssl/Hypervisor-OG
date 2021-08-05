@@ -4,18 +4,18 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include "driver/aarch64/system_register/esr_elx.h"
+#include "driver/aarch64/system_register/hcr_el2.h"
+#include "hypervisor/emulator/insn.h"
+#include "hypervisor/thread.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "lib/bit.h"
-#include "driver/aarch64/system_register/hcr_el2.h"
-#include "driver/aarch64/system_register/esr_elx.h"
-#include "hypervisor/thread.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/emulator/insn.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -38,7 +38,8 @@ static uint8_t esr_el2_ec(struct vpc *vpc)
     return ec;
 }
 
-static errno_t call_syscall_emulator(struct insn *insn, vpc_syscall_emulator_t func)
+static errno_t call_syscall_emulator(struct insn *insn,
+                                     vpc_syscall_emulator_t func)
 {
     errno_t ret;
 
@@ -51,7 +52,8 @@ static errno_t call_syscall_emulator(struct insn *insn, vpc_syscall_emulator_t f
     return ret;
 }
 
-static errno_t call_exception_emulator(struct vpc *vpc, vpc_exception_emulator_t func)
+static errno_t call_exception_emulator(struct vpc *vpc,
+                                       vpc_exception_emulator_t func)
 {
     errno_t ret;
 
@@ -72,26 +74,27 @@ static errno_t emulate_aarch64_synchronous(struct vpc *vpc)
 
     ec = esr_el2_ec(vpc);
     switch (ec) {
-    case 0x15:  /* 010101 - SVC instruction execution in AArch64 state */
+    case 0x15: /* 010101 - SVC instruction execution in AArch64 state */
         ret = insn_parse_aarch64_svc(&insn, vpc);
         if (ret == SUCCESS) {
             ret = call_syscall_emulator(&insn, vpc->exception.ops->aarch64.svc);
         }
         break;
-    case 0x16:  /* 010110 - HVC instruction execution in AArch64 state */
+    case 0x16: /* 010110 - HVC instruction execution in AArch64 state */
         ret = insn_parse_aarch64_hvc(&insn, vpc);
         if (ret == SUCCESS) {
             ret = call_syscall_emulator(&insn, vpc->exception.ops->aarch64.hvc);
         }
         break;
-    case 0x17:  /* 010111 - SMC instruction execution in AArch64 state */
+    case 0x17: /* 010111 - SMC instruction execution in AArch64 state */
         ret = insn_parse_aarch64_smc(&insn, vpc);
         if (ret == SUCCESS) {
             ret = call_syscall_emulator(&insn, vpc->exception.ops->aarch64.smc);
         }
         break;
-    case 0x24:  /*100100 - Data Abort from a lower Exception level */
-        ret = call_exception_emulator(vpc, vpc->exception.ops->aarch64.data_abort);
+    case 0x24: /*100100 - Data Abort from a lower Exception level */
+        ret = call_exception_emulator(vpc,
+                                      vpc->exception.ops->aarch64.data_abort);
         break;
     default:
         printk("%s: ESR_EL2.EC=0x%02x\n", __func__, ec);
@@ -124,16 +127,16 @@ errno_t vpc_emulate_exception(struct vpc *vpc)
 
     d = thread_read_tls(TLS_EXCEPTION_VECTOR);
     switch (d) {
-    case 0x0400:    /* Synchronous */
+    case 0x0400: /* Synchronous */
         ret = emulate_aarch64_synchronous(vpc);
         break;
-    case 0x0480:    /* IRQ */
+    case 0x0480: /* IRQ */
         ret = emulate_irq(vpc);
         break;
-    case 0x0500:    /* FIQ */
+    case 0x0500: /* FIQ */
         ret = emulate_fiq(vpc);
         break;
-    case 0x0580:    /* SError */
+    case 0x0580: /* SError */
         ret = emulate_serror(vpc);
         break;
     default:
@@ -142,4 +145,3 @@ errno_t vpc_emulate_exception(struct vpc *vpc)
 
     return ret;
 }
-

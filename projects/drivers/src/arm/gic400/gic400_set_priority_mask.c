@@ -4,13 +4,13 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
 #include "gic400_local.h"
+#include "lib/system/errno.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 

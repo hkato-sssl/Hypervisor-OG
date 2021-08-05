@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
 #include "hypervisor/vpc.h"
 #include "mpsoc_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -30,4 +30,3 @@ const struct vpc_hook *xilinx_mpsoc_default_vpc_hook(void)
 {
     return &hook;
 }
-

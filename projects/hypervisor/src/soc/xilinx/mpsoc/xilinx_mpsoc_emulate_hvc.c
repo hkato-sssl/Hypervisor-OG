@@ -4,13 +4,13 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/hvc.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "mpsoc_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -32,4 +32,3 @@ errno_t xilinx_mpsoc_emulate_hvc(const struct insn *insn)
 
     return ret;
 }
-

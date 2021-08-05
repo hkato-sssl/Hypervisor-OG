@@ -4,16 +4,16 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
-#include "hypervisor/vm.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -58,7 +58,8 @@ static uint64_t read_icfgr(const struct vgic400 *vgic, uint32_t virq)
     return result;
 }
 
-static errno_t read_icfgr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t read_icfgr_w(const struct vgic400 *vgic, const struct insn *insn,
+                            uintptr_t reg)
 {
     errno_t ret;
     uint32_t i;
@@ -99,7 +100,8 @@ static void write_icfgr(const struct vgic400 *vgic, uint32_t virq, uint32_t d)
     }
 }
 
-static errno_t write_icfgr_w(const struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+static errno_t write_icfgr_w(const struct vgic400 *vgic,
+                             const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
     uint32_t i;
@@ -165,7 +167,8 @@ static bool is_virtual_icfgr(const struct vgic400 *vgic, uintptr_t reg)
     return ret;
 }
 
-errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn, uintptr_t reg)
+errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn,
+                                  uintptr_t reg)
 {
     errno_t ret;
 
@@ -193,4 +196,3 @@ errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn,
 
     return ret;
 }
-

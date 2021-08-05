@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "driver/aarch64/stage2.h"
 #include "hypervisor/mmu.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -19,7 +19,8 @@
 
 /* functions */
 
-errno_t hyp_mmu_stage2_memory_type(uint8_t *stage2_memory_type, uint8_t memory_type)
+errno_t hyp_mmu_stage2_memory_type(uint8_t *stage2_memory_type,
+                                   uint8_t memory_type)
 {
     errno_t ret;
 
@@ -53,4 +54,3 @@ errno_t hyp_mmu_stage2_memory_type(uint8_t *stage2_memory_type, uint8_t memory_t
 
     return ret;
 }
-

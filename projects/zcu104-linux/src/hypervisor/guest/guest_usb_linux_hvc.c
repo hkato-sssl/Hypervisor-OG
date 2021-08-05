@@ -4,19 +4,19 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "driver/arm/gic400.h"
+#include "hypervisor/hvc/p128.h"
+#include "hypervisor/service/p2p_packet.h"
+#include "hypervisor/soc/xilinx/mpsoc.h"
 #include "lib/slist.h"
 #include "lib/system/errno.h"
-#include "driver/arm/gic400.h"
-#include "hypervisor/service/p2p_packet.h"
-#include "hypervisor/hvc/p128.h"
-#include "hypervisor/soc/xilinx/mpsoc.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define DEV_NAME        "P128"
-#define HVC_IMM         1
+#define DEV_NAME "P128"
+#define HVC_IMM  1
 
 /* types */
 
@@ -115,9 +115,9 @@ errno_t guest_usb_linux_initialize_hvc(struct xilinx_mpsoc *mpsoc)
     }
 
     if (ret == SUCCESS) {
-        ret = hvc_service_append_slist(&(mpsoc->hvc_service_list), &(p128.service));
+        ret = hvc_service_append_slist(&(mpsoc->hvc_service_list),
+                                       &(p128.service));
     }
 
     return ret;
 }
-

@@ -4,16 +4,16 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/bit.h"
-#include "lib/aarch64.h"
-#include "lib/system/errno.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vpc.h"
+#include "lib/aarch64.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -37,4 +37,3 @@ errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic)
 
     return ret;
 }
-

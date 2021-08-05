@@ -19,8 +19,8 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
 #include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -38,35 +38,35 @@ enum insn_operand_type {
 };
 
 struct insn_ldr_str {
-    uint64_t        va;
-    uint64_t        pa;
-    uint64_t        offset;
-    uint8_t         size;
+    uint64_t va;
+    uint64_t pa;
+    uint64_t offset;
+    uint8_t size;
 
     struct {
-        uint8_t     src;
-        uint8_t     dst;
+        uint8_t src;
+        uint8_t dst;
     } gpr;
 
     struct {
-        uint8_t     isv:1;      /* ESR_ELx.ISS.ISV */
-        uint8_t     wreg:1;     /* 0: 64-bit, 1: 32-bit */
-        uint8_t     sign:1;     /* Sign-extention */
-        uint8_t     post:1;     /* Post-index */
-        uint8_t     pre:1;      /* Pre-index */
+        uint8_t isv  : 1; /* ESR_ELx.ISS.ISV */
+        uint8_t wreg : 1; /* 0: 64-bit, 1: 32-bit */
+        uint8_t sign : 1; /* Sign-extention */
+        uint8_t post : 1; /* Post-index */
+        uint8_t pre  : 1; /* Pre-index */
     } flag;
 };
 
 struct insn_system_call {
-    uint16_t        imm;
+    uint16_t imm;
 };
 
 struct insn {
-    struct vpc                  *vpc;
-    enum insn_operand_type      type;
+    struct vpc *vpc;
+    enum insn_operand_type type;
     union {
-        struct insn_ldr_str     ldr;
-        struct insn_ldr_str     str;
+        struct insn_ldr_str ldr;
+        struct insn_ldr_str str;
         struct insn_system_call system_call;
     } op;
 };
@@ -95,4 +95,3 @@ void insn_print(const struct insn *insn);
 #endif /* ASSEMBLY */
 
 #endif /* HYPERVISOR_EMULATOR_INSN_H */
-

@@ -19,8 +19,8 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
 #include "driver/system/cpu.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -42,4 +42,3 @@ static inline void udelay(uint32_t usec)
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_SYSTEM_H */
-

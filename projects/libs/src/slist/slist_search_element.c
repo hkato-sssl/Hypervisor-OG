@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "lib/slist.h"
+#include "lib/system/errno.h"
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
-#include "lib/system/errno.h"
-#include "lib/slist.h"
 
 /* defines */
 
@@ -20,7 +20,8 @@
 
 /* functions */
 
-static void *search_element(const struct slist *list, slist_match_func_t match, void *arg)
+static void *search_element(const struct slist *list, slist_match_func_t match,
+                            void *arg)
 {
     void *element;
     struct slist_node *node;
@@ -36,7 +37,8 @@ static void *search_element(const struct slist *list, slist_match_func_t match, 
     return element;
 }
 
-void *slist_search_element(const struct slist *list, slist_match_func_t match, void *arg)
+void *slist_search_element(const struct slist *list, slist_match_func_t match,
+                           void *arg)
 {
     void *element;
 
@@ -48,4 +50,3 @@ void *slist_search_element(const struct slist *list, slist_match_func_t match, v
 
     return element;
 }
-

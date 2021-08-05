@@ -11,11 +11,11 @@
  * 2) エラーになるまでbit 0からbitmap_clear()を実行
  */
 
+#include "lib/bitmap.h"
+#include "lib/system/printk.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/printk.h"
-#include "lib/bitmap.h"
 
 /* defines */
 
@@ -48,7 +48,7 @@ void test_bitmap_11(void)
     printk("<%s>\n", __func__);
 
     memset(map, 0xff, sizeof(map));
-    
+
     i = 1;
     for (i = 0;; ++i) {
         ret = bitmap_clear(map, sizeof(map), i);
@@ -59,4 +59,3 @@ void test_bitmap_11(void)
         }
     }
 }
-

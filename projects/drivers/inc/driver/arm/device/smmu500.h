@@ -14,4 +14,3 @@
 /* defines */
 
 #endif /* DRIVER_ARM_DEVICE_SMMU500_H */
-

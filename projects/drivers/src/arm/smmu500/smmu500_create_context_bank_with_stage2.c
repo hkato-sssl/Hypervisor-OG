@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "driver/arm/smmu500.h"
+#include "lib/system/errno.h"
+#include "smmu500_local.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/errno.h"
-#include "driver/arm/smmu500.h"
-#include "smmu500_local.h"
 
 /* defines */
 
@@ -20,7 +20,9 @@
 
 /* functions */
 
-errno_t smmu500_create_context_bank_with_stage2(struct smmu500 *smmu, uint8_t *cb, const struct smmu_context_bank_with_stage2_configuration *config)
+errno_t smmu500_create_context_bank_with_stage2(
+    struct smmu500 *smmu, uint8_t *cb,
+    const struct smmu_context_bank_with_stage2_configuration *config)
 {
     errno_t ret;
 
@@ -35,4 +37,3 @@ errno_t smmu500_create_context_bank_with_stage2(struct smmu500 *smmu, uint8_t *c
 
     return ret;
 }
-

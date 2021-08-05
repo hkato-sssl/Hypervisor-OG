@@ -4,14 +4,14 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "lib/system/errno.h"
-#include "lib/system/memio.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/emulator/insn.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
+#include "lib/system/memio.h"
 #include "vgic400_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -23,7 +23,8 @@
 
 /* functions */
 
-errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct insn *insn)
+errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic,
+                                             const struct insn *insn)
 {
     errno_t ret;
     uint64_t d;
@@ -42,4 +43,3 @@ errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic, const struct 
 
     return ret;
 }
-

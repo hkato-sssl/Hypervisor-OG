@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/soc/xilinx/mpsoc.h"
+#include "lib/system/errno.h"
 #include "mpsoc_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -24,4 +24,3 @@ struct soc_ops xilinx_mpsoc_ops = {
 };
 
 /* functions */
-

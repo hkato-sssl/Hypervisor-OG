@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
 #include "hypervisor/vpc.h"
 #include "vpc_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -33,4 +33,3 @@ bool vpc_is_aarch32t(const struct vpc *vpc)
 {
     return is_aarch32t(vpc);
 }
-

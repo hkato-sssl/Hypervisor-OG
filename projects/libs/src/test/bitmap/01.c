@@ -12,11 +12,11 @@
  * 3) 1)2)の処理をエラーとなるまで繰り返す
  */
 
+#include "lib/bitmap.h"
+#include "lib/system/printk.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/printk.h"
-#include "lib/bitmap.h"
 
 /* defines */
 
@@ -50,7 +50,7 @@ void test_bitmap_01(void)
     printk("<%s>\n", __func__);
 
     memset(map, 0, sizeof(map));
-    
+
     i = 1;
     do {
         ret = bitmap_search0(&no, map, sizeof(map), 0);
@@ -64,4 +64,3 @@ void test_bitmap_01(void)
         ++i;
     } while (ret == SUCCESS);
 }
-

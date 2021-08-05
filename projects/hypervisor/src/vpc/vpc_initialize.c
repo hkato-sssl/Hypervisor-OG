@@ -5,14 +5,14 @@
  *
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
 #include "driver/aarch64/system_register.h"
 #include "hypervisor/vpc.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -24,7 +24,8 @@
 
 /* functions */
 
-static errno_t initialize(struct vpc *vpc, const struct vpc_configuration *config)
+static errno_t initialize(struct vpc *vpc,
+                          const struct vpc_configuration *config)
 {
     memset(vpc, 0, sizeof(struct vpc));
     memset(config->regs, 0, (sizeof(uint64_t) * NR_VPC_REGS));
@@ -38,7 +39,8 @@ static errno_t initialize(struct vpc *vpc, const struct vpc_configuration *confi
     return SUCCESS;
 }
 
-static errno_t validate_parameters(const struct vpc *vpc, const struct vpc_configuration *config)
+static errno_t validate_parameters(const struct vpc *vpc,
+                                   const struct vpc_configuration *config)
 {
     errno_t ret;
 
@@ -72,4 +74,3 @@ errno_t vpc_initialize(struct vpc *vpc, const struct vpc_configuration *config)
 
     return ret;
 }
-

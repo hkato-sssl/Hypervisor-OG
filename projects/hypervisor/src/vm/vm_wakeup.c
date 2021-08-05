@@ -4,13 +4,13 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "hypervisor/soc.h"
+#include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/bit.h"
+#include "vm_local.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/bit.h"
-#include "hypervisor/soc.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/vm.h"
-#include "vm_local.h"
 
 /* defines */
 
@@ -22,7 +22,8 @@
 
 /* functions */
 
-static errno_t validate_parameters(struct vm *vm, const uint16_t proc_no, const struct vpc_boot_configuration *boot)
+static errno_t validate_parameters(struct vm *vm, const uint16_t proc_no,
+                                   const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
 
@@ -39,7 +40,8 @@ static errno_t validate_parameters(struct vm *vm, const uint16_t proc_no, const 
     return ret;
 }
 
-errno_t vm_wakeup(struct vm *vm, uint16_t proc_no, const struct vpc_boot_configuration *boot)
+errno_t vm_wakeup(struct vm *vm, uint16_t proc_no,
+                  const struct vpc_boot_configuration *boot)
 {
     errno_t ret;
 
@@ -54,4 +56,3 @@ errno_t vm_wakeup(struct vm *vm, uint16_t proc_no, const struct vpc_boot_configu
 
     return ret;
 }
-

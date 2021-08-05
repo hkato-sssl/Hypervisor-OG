@@ -4,15 +4,15 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
+#include "driver/aarch64/cache.h"
+#include "driver/aarch64/mmu.h"
 #include "lib/list.h"
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
-#include "driver/aarch64/cache.h"
-#include "driver/aarch64/mmu.h"
 #include "mmu_local.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -24,16 +24,17 @@
 
 /* functions */
 
-static errno_t validate_parameters(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config)
+static errno_t
+validate_parameters(struct aarch64_mmu_block_pool *pool,
+                    const struct aarch64_mmu_block_pool_configuration *config)
 {
     errno_t ret;
 
-    if ((pool != NULL) && (config != NULL) &&
-        (config->block_region.addr != NULL) &&
-        (IS_ALIGNED((uintptr_t)(config->block_region.addr), 4096)) &&
-        (config->block_sz == 4096) &&
-        (config->block_region.size > 0) &&
-        (IS_ALIGNED((uintptr_t)(config->block_region.size), 4096))) {
+    if ((pool != NULL) && (config != NULL)
+        && (config->block_region.addr != NULL)
+        && (IS_ALIGNED((uintptr_t)(config->block_region.addr), 4096))
+        && (config->block_sz == 4096) && (config->block_region.size > 0)
+        && (IS_ALIGNED((uintptr_t)(config->block_region.size), 4096))) {
         ret = SUCCESS;
     } else {
         ret = -EINVAL;
@@ -42,7 +43,9 @@ static errno_t validate_parameters(struct aarch64_mmu_block_pool *pool, const st
     return ret;
 }
 
-static errno_t mmu_block_pool_initialize(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config)
+static errno_t mmu_block_pool_initialize(
+    struct aarch64_mmu_block_pool *pool,
+    const struct aarch64_mmu_block_pool_configuration *config)
 {
     errno_t ret;
     size_t n;
@@ -72,7 +75,9 @@ static errno_t mmu_block_pool_initialize(struct aarch64_mmu_block_pool *pool, co
     return ret;
 }
 
-errno_t aarch64_mmu_block_pool_initialize(struct aarch64_mmu_block_pool *pool, const struct aarch64_mmu_block_pool_configuration *config)
+errno_t aarch64_mmu_block_pool_initialize(
+    struct aarch64_mmu_block_pool *pool,
+    const struct aarch64_mmu_block_pool_configuration *config)
 {
     errno_t ret;
 
@@ -86,7 +91,8 @@ errno_t aarch64_mmu_block_pool_initialize(struct aarch64_mmu_block_pool *pool, c
     return ret;
 }
 
-void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block_sz)
+void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool,
+                               size_t block_sz)
 {
     void *p;
 
@@ -111,7 +117,8 @@ void *aarch64_mmu_block_calloc(struct aarch64_mmu_block_pool *pool, size_t block
     return p;
 }
 
-errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block, size_t block_sz)
+errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block,
+                               size_t block_sz)
 {
     errno_t ret;
 
@@ -133,4 +140,3 @@ errno_t aarch64_mmu_block_free(struct aarch64_mmu_block_pool *pool, void *block,
 
     return ret;
 }
-

@@ -4,9 +4,9 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/printk.h"
 #include "driver/aarch64/mmu.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -14,7 +14,8 @@
 
 /* prototypes */
 
-static void dump_table(const struct aarch64_mmu_base *mmu, uint64_t *p, int level);
+static void dump_table(const struct aarch64_mmu_base *mmu, uint64_t *p,
+                       int level);
 
 /* variables */
 
@@ -40,7 +41,8 @@ static void dump_2bits(uint64_t desc)
     printk(buff);
 }
 
-static void dump_invalid_desc(uint64_t desc, int level, int index, int invalid_ct)
+static void dump_invalid_desc(uint64_t desc, int level, int index,
+                              int invalid_ct)
 {
     if (invalid_ct == 0) {
         indent(level);
@@ -89,7 +91,8 @@ static void dump_block_desc(uint64_t desc, int level, int index)
     dump_block_page_attr(desc);
 }
 
-static void dump_table_desc(const struct aarch64_mmu_base *mmu, uint64_t desc, int level, int index)
+static void dump_table_desc(const struct aarch64_mmu_base *mmu, uint64_t desc,
+                            int level, int index)
 {
     uint64_t next;
 
@@ -108,7 +111,7 @@ static void dump_table_desc(const struct aarch64_mmu_base *mmu, uint64_t desc, i
         printk(", PXNTable");
     }
     printk("\n");
-    dump_table(mmu, (uint64_t*)next, (level + 1));
+    dump_table(mmu, (uint64_t *)next, (level + 1));
 }
 
 static void dump_page_desc(uint64_t desc, int level, int index)
@@ -127,7 +130,8 @@ static void dump_reserved_desc(uint64_t desc, int level, int index)
     printk("%03x:%016x: reserved\n", index, desc);
 }
 
-static void dump_table(const struct aarch64_mmu_base *mmu, uint64_t *p, int level)
+static void dump_table(const struct aarch64_mmu_base *mmu, uint64_t *p,
+                       int level)
 {
     int i;
     int invalid;
@@ -172,4 +176,3 @@ void aarch64_mmu_dump_descriptor(const struct aarch64_mmu *mmu)
         dump_table(&(mmu->base), p, 0);
     }
 }
-

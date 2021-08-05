@@ -19,9 +19,9 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
 #include "lib/system/memio.h"
 #include "lib/system/spin_lock.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -41,7 +41,8 @@ static inline void smmu500_unlock(struct smmu500 *smmu)
     spin_unlock(&(smmu->lock));
 }
 
-static inline uint32_t smmu500_gr0_read32(const struct smmu500 *smmu, uint32_t regs)
+static inline uint32_t smmu500_gr0_read32(const struct smmu500 *smmu,
+                                          uint32_t regs)
 {
     uint32_t d;
 
@@ -50,17 +51,20 @@ static inline uint32_t smmu500_gr0_read32(const struct smmu500 *smmu, uint32_t r
     return d;
 }
 
-static inline void smmu500_gr0_write32(const struct smmu500 *smmu, uint32_t regs, uint32_t d)
+static inline void smmu500_gr0_write32(const struct smmu500 *smmu,
+                                       uint32_t regs, uint32_t d)
 {
     REG_WRITE32(smmu->smmu_base, regs, d);
 }
 
-static inline void smmu500_gr0_write32_sync(const struct smmu500 *smmu, uint32_t regs, uint32_t d)
+static inline void smmu500_gr0_write32_sync(const struct smmu500 *smmu,
+                                            uint32_t regs, uint32_t d)
 {
     REG_WRITE32_SYNC(smmu->smmu_base, regs, d);
 }
 
-static inline uint32_t smmu500_gr1_read32(const struct smmu500 *smmu, uint32_t regs)
+static inline uint32_t smmu500_gr1_read32(const struct smmu500 *smmu,
+                                          uint32_t regs)
 {
     uint32_t d;
 
@@ -69,7 +73,8 @@ static inline uint32_t smmu500_gr1_read32(const struct smmu500 *smmu, uint32_t r
     return d;
 }
 
-static inline void smmu500_gr1_write32(const struct smmu500 *smmu, uint32_t regs, uint32_t d)
+static inline void smmu500_gr1_write32(const struct smmu500 *smmu,
+                                       uint32_t regs, uint32_t d)
 {
     REG_WRITE32(smmu->smmu_gr1_base, regs, d);
 }
@@ -79,7 +84,8 @@ static inline uintptr_t smmu500_cb_base(const struct smmu500 *smmu, uint8_t cb)
     return (smmu->smmu_cb_base + (cb * smmu->page_size));
 }
 
-static inline uint32_t smmu500_cb_read32(const struct smmu500 *smmu, uint8_t cb, uint32_t regs)
+static inline uint32_t smmu500_cb_read32(const struct smmu500 *smmu, uint8_t cb,
+                                         uint32_t regs)
 {
     uint32_t d;
     uintptr_t base;
@@ -90,7 +96,8 @@ static inline uint32_t smmu500_cb_read32(const struct smmu500 *smmu, uint8_t cb,
     return d;
 }
 
-static inline void smmu500_cb_write32(const struct smmu500 *smmu, uint8_t cb, uint32_t regs, uint32_t d)
+static inline void smmu500_cb_write32(const struct smmu500 *smmu, uint8_t cb,
+                                      uint32_t regs, uint32_t d)
 {
     uintptr_t base;
 
@@ -98,7 +105,8 @@ static inline void smmu500_cb_write32(const struct smmu500 *smmu, uint8_t cb, ui
     REG_WRITE32(base, regs, d);
 }
 
-static inline uint32_t smmu500_cb_read64(const struct smmu500 *smmu, uint8_t cb, uint32_t regs)
+static inline uint32_t smmu500_cb_read64(const struct smmu500 *smmu, uint8_t cb,
+                                         uint32_t regs)
 {
     uint64_t d;
     uintptr_t base;
@@ -109,7 +117,8 @@ static inline uint32_t smmu500_cb_read64(const struct smmu500 *smmu, uint8_t cb,
     return d;
 }
 
-static inline void smmu500_cb_write64(const struct smmu500 *smmu, uint8_t cb, uint32_t regs, uint64_t d)
+static inline void smmu500_cb_write64(const struct smmu500 *smmu, uint8_t cb,
+                                      uint32_t regs, uint64_t d)
 {
     uintptr_t base;
 
@@ -117,12 +126,17 @@ static inline void smmu500_cb_write64(const struct smmu500 *smmu, uint8_t cb, ui
     REG_WRITE64(base, regs, d);
 }
 
-errno_t smmu500_allocate_stream_match_register(struct smmu500 *smmu, uint8_t *id);
+errno_t smmu500_allocate_stream_match_register(struct smmu500 *smmu,
+                                               uint8_t *id);
 errno_t smmu500_allocate_context_bank(struct smmu500 *smmu, uint8_t *cb);
 errno_t smmu500_allocate_s2_context_bank(struct smmu500 *smmu, uint8_t *cb);
 errno_t smmu500_free_context_bank(struct smmu500 *smmu, uint8_t cb);
-errno_t smmu500_configure_context_bank_with_stage2(struct smmu500 *smmu, uint8_t cb, const struct smmu_context_bank_with_stage2_configuration *config);
-errno_t smmu500_configure_translation_stream(struct smmu500 *smmu, uint8_t id, const struct smmu_translation_stream_configuration *config);
+errno_t smmu500_configure_context_bank_with_stage2(
+    struct smmu500 *smmu, uint8_t cb,
+    const struct smmu_context_bank_with_stage2_configuration *config);
+errno_t smmu500_configure_translation_stream(
+    struct smmu500 *smmu, uint8_t id,
+    const struct smmu_translation_stream_configuration *config);
 
 #ifdef __cplusplus
 }
@@ -131,4 +145,3 @@ errno_t smmu500_configure_translation_stream(struct smmu500 *smmu, uint8_t id, c
 #endif /* ASSEMBLY */
 
 #endif /* ARM_SMMU500_SMMU500_LOCAL_H */
-

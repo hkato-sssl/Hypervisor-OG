@@ -9,9 +9,9 @@
 
 /* includes */
 
-#include <stdint.h>
-#include <stdbool.h>
 #include "lib/system/errno.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -28,23 +28,24 @@ extern "C" {
 /* types */
 
 struct uart_lite_configuration {
-    uintptr_t   base;
-    uint8_t     intr_no;
+    uintptr_t base;
+    uint8_t intr_no;
     struct {
-        bool    init;
+        bool init;
     } boolean;
 };
 
 struct uart_lite {
-    uintptr_t   base;
-    uint8_t     intr_no;
+    uintptr_t base;
+    uint8_t intr_no;
 };
 
 /* variables */
 
 /* functions */
 
-errno_t uart_lite_init(struct uart_lite *uart, const struct uart_lite_configuration *conf);
+errno_t uart_lite_init(struct uart_lite *uart,
+                       const struct uart_lite_configuration *conf);
 errno_t uart_lite_putc_poll(struct uart_lite *uart, int ch);
 
 #ifdef __cplusplus
@@ -54,4 +55,3 @@ errno_t uart_lite_putc_poll(struct uart_lite *uart, int ch);
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_XILINX_AXI_UART_LITE_H */
-

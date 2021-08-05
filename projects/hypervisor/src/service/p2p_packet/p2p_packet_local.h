@@ -19,9 +19,9 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "hypervisor/service/p2p_packet.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -43,4 +43,3 @@ errno_t p2p_packet_call_empty_handler(struct p2p_packet_ep *ep);
 #endif /* ASSEMBLY */
 
 #endif /* SERVICE_P2P_PACKET_P2P_PACKET_LOCAL_H */
-

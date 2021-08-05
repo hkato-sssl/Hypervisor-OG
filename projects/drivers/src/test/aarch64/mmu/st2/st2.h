@@ -19,9 +19,9 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "driver/aarch64/stage2.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -40,4 +40,3 @@ errno_t test_aarch64_stage2_init_memory_map(void);
 #endif /* ASSEMBLY */
 
 #endif /* DRIVER_TEST_AARCH64_MMU_ST2_ST2_H */
-

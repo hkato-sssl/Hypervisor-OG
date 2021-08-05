@@ -5,12 +5,12 @@
  *
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "hypervisor/emulator/insn.h"
+#include "hypervisor/vpc.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/emulator/insn.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -22,7 +22,8 @@
 
 /* functions */
 
-static errno_t parse(struct insn *insn, struct vpc *vpc, enum insn_operand_type type)
+static errno_t parse(struct insn *insn, struct vpc *vpc,
+                     enum insn_operand_type type)
 {
     memset(insn, 0, sizeof(*insn));
     insn->vpc = vpc;
@@ -58,4 +59,3 @@ errno_t insn_parse_aarch64_smc(struct insn *insn, struct vpc *vpc)
 
     return ret;
 }
-

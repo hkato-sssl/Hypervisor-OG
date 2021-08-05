@@ -4,16 +4,16 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
+#include "driver/aarch64/mmu.h"
+#include "driver/aarch64/system_register.h"
+#include "driver/aarch64/system_register/mair_elx.h"
+#include "driver/aarch64/system_register/tcr_elx.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/printk.h"
-#include "driver/aarch64/system_register.h"
-#include "driver/aarch64/system_register/tcr_elx.h"
-#include "driver/aarch64/system_register/mair_elx.h"
-#include "driver/aarch64/mmu.h"
 #include "st1.h"
+#include <stdint.h>
+#include <string.h>
 
 /* テスト項目：ミラーリング(Write-through, Read-allocate)
  *
@@ -34,8 +34,8 @@
 
 /* test parameters */
 
-#define TEST_VA1                0xe0000000
-#define TEST_VA2                0xe0010000
+#define TEST_VA1 0xe0000000
+#define TEST_VA2 0xe0010000
 
 /* types */
 
@@ -73,18 +73,20 @@ errno_t test_aarch64_mmu_st1_02_wt(void)
     va1 = (void *)TEST_VA1;
     va2 = (void *)TEST_VA2;
 
-    ret = aarch64_mmu_map(&test_mmu, va1, test_region, sizeof(test_region), &attr);
+    ret = aarch64_mmu_map(&test_mmu, va1, test_region, sizeof(test_region),
+                          &attr);
     printk("VA1: aarch64_mmu_map() -> %d\n", ret);
     if (ret != SUCCESS) {
         return ret;
     }
 
-    ret = aarch64_mmu_map(&test_mmu, va2, test_region, sizeof(test_region), &attr);
+    ret = aarch64_mmu_map(&test_mmu, va2, test_region, sizeof(test_region),
+                          &attr);
     printk("VA2: aarch64_mmu_map() -> %d\n", ret);
     if (ret != SUCCESS) {
         return ret;
     }
-    
+
     memset(va1, 0, sizeof(test_region));
     printk("va1[0]=%d\n", va1[0]);
     printk("va2[0]=%d\n", va2[0]);
@@ -113,4 +115,3 @@ errno_t test_aarch64_mmu_st1_02_wt(void)
 
     return SUCCESS;
 }
-

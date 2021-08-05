@@ -19,11 +19,11 @@ extern "C" {
 
 /* includes */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -45,4 +45,3 @@ void udelay(uint32_t usec);
 #endif /* ASSEMBLY */
 
 #endif /* LIB_SYSTEM_H */
-

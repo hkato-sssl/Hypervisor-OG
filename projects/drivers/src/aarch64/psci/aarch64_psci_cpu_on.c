@@ -4,9 +4,9 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
 #include "driver/aarch64/psci.h"
 #include "psci_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -29,4 +29,3 @@ int32_t aarch64_psci_cpu_on(uint64_t target, void *entry, uintptr_t context)
 
     return aarch64_psci(request);
 }
-

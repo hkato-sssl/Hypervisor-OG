@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "driver/aarch64/stage2.h"
 #include "hypervisor/mmu.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -19,7 +19,8 @@
 
 /* functions */
 
-errno_t hyp_mmu_stage2_shareability(uint8_t *stage2_shareability, uint8_t shareability)
+errno_t hyp_mmu_stage2_shareability(uint8_t *stage2_shareability,
+                                    uint8_t shareability)
 {
     errno_t ret;
 
@@ -41,4 +42,3 @@ errno_t hyp_mmu_stage2_shareability(uint8_t *stage2_shareability, uint8_t sharea
 
     return ret;
 }
-

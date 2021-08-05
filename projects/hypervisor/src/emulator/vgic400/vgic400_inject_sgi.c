@@ -4,14 +4,14 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/bit.h"
-#include "lib/system/errno.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -23,7 +23,8 @@
 
 /* functions */
 
-static errno_t inject_sgi_at(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar, uint32_t list_no)
+static errno_t inject_sgi_at(struct vpc *vpc, struct vgic400 *vgic,
+                             uint32_t iar, uint32_t list_no)
 {
     uint32_t d;
     uint32_t id;
@@ -33,10 +34,10 @@ static errno_t inject_sgi_at(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar
     src = BF_EXTRACT(iar, 12, 10);
     src = vpc->vm->proc_map.virtual[src];
 
-    d = BIT(28) | BIT(19);                              /* State = pending, EOI */
-    d |= vgic->sgi[vpc->proc_no].priority[id] << 20;    /* priority */
-    d |= src << 10;                                     /* virtual CPUID */
-    d |= id;                                            /* Interrupt ID */
+    d = BIT(28) | BIT(19);                           /* State = pending, EOI */
+    d |= vgic->sgi[vpc->proc_no].priority[id] << 20; /* priority */
+    d |= src << 10;                                  /* virtual CPUID */
+    d |= id;                                         /* Interrupt ID */
 
     gic400_write_virtif_control(vgic, GICH_LR(list_no), d);
     vgic->lr[vpc->proc_no][list_no] = d;
@@ -45,7 +46,8 @@ static errno_t inject_sgi_at(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar
     return SUCCESS;
 }
 
-errno_t vgic400_inject_sgi_at(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar, uint32_t list_no)
+errno_t vgic400_inject_sgi_at(struct vpc *vpc, struct vgic400 *vgic,
+                              uint32_t iar, uint32_t list_no)
 {
     errno_t ret;
     uint32_t no;
@@ -82,4 +84,3 @@ errno_t vgic400_inject_sgi(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 
     return ret;
 }
-

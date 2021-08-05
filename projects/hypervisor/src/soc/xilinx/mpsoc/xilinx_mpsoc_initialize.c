@@ -4,20 +4,20 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/spin_lock.h"
+#include "driver/aarch64/stage2.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/smmu500.h"
-#include "driver/aarch64/stage2.h"
 #include "hypervisor/emulator/vgic400.h"
-#include "hypervisor/parameter.h"
 #include "hypervisor/hvc.h"
+#include "hypervisor/parameter.h"
 #include "hypervisor/soc.h"
+#include "hypervisor/soc/xilinx/mpsoc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/soc/xilinx/mpsoc.h"
+#include "lib/system/errno.h"
+#include "lib/system/spin_lock.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -31,7 +31,9 @@ extern const struct soc_ops xilinx_mpsoc_ops;
 
 /* functions */
 
-static errno_t init_hvc_service(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t
+init_hvc_service(struct xilinx_mpsoc *chip,
+                 const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     uint32_t i;
@@ -51,7 +53,9 @@ static errno_t init_hvc_service(struct xilinx_mpsoc *chip, const struct xilinx_m
     return ret;
 }
 
-static errno_t create_smmu_streams(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t
+create_smmu_streams(struct xilinx_mpsoc *chip,
+                    const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     uint8_t id;
@@ -63,7 +67,8 @@ static errno_t create_smmu_streams(struct xilinx_mpsoc *chip, const struct xilin
 
     for (i = 0; i < chip_config->smmu.nr_streams; ++i) {
         config.stream = *(chip_config->smmu.streams[i]);
-        ret = smmu500_create_translation_stream(chip->smmu.device, &id, &config);
+        ret =
+            smmu500_create_translation_stream(chip->smmu.device, &id, &config);
         if (ret != SUCCESS) {
             break;
         }
@@ -79,7 +84,9 @@ static errno_t create_smmu_streams(struct xilinx_mpsoc *chip, const struct xilin
     return ret;
 }
 
-static errno_t create_smmu_context_bank(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t
+create_smmu_context_bank(struct xilinx_mpsoc *chip,
+                         const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     struct smmu_context_bank_with_stage2_configuration config;
@@ -90,12 +97,15 @@ static errno_t create_smmu_context_bank(struct xilinx_mpsoc *chip, const struct 
     config.vmid = chip_config->vmid;
     config.flag.interrupt = 1;
     config.flag.fault = chip_config->smmu.flag.fault;
-    ret = smmu500_create_context_bank_with_stage2(chip->smmu.device, &(chip->smmu.context_bank), &config);
+    ret = smmu500_create_context_bank_with_stage2(
+        chip->smmu.device, &(chip->smmu.context_bank), &config);
 
     return ret;
 }
 
-static errno_t map_smmu_space(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t
+map_smmu_space(struct xilinx_mpsoc *chip,
+               const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
 
@@ -105,13 +115,15 @@ static errno_t map_smmu_space(struct xilinx_mpsoc *chip, const struct xilinx_mps
             ret = create_smmu_streams(chip, chip_config);
         }
     } else {
-        ret = SUCCESS;      /* no work */
+        ret = SUCCESS; /* no work */
     }
 
     return ret;
 }
 
-static errno_t init_virtual_sgis(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t
+init_virtual_sgis(struct xilinx_mpsoc *chip,
+                  const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     uint32_t i;
@@ -132,7 +144,9 @@ static errno_t init_virtual_sgis(struct xilinx_mpsoc *chip, const struct xilinx_
     return ret;
 }
 
-static errno_t init_virtual_ppis(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t
+init_virtual_ppis(struct xilinx_mpsoc *chip,
+                  const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     uint32_t i;
@@ -153,7 +167,9 @@ static errno_t init_virtual_ppis(struct xilinx_mpsoc *chip, const struct xilinx_
     return ret;
 }
 
-static errno_t init_virtual_interrupts(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t
+init_virtual_interrupts(struct xilinx_mpsoc *chip,
+                        const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     uint32_t i;
@@ -180,7 +196,9 @@ static errno_t init_virtual_interrupts(struct xilinx_mpsoc *chip, const struct x
     return ret;
 }
 
-static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t
+init_vgic400(struct xilinx_mpsoc *chip,
+             const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     struct vgic400_configuration config;
@@ -192,7 +210,8 @@ static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc
     config.base.virtif_control = (void *)REG_GIC400H;
     config.base.virtual_cpuif = (void *)REG_GIC400V;
     config.ops = chip_config->gic.ops;
-    config.boolean.ignore_priority0 = (chip_config->gic.flag.ignore_priority0 != 0) ? true : false;
+    config.boolean.ignore_priority0 =
+        (chip_config->gic.flag.ignore_priority0 != 0) ? true : false;
     config.boolean.trap_cpuif = true;
 
     if (chip_config->gic.flag.virtual_spi != 0) {
@@ -216,7 +235,8 @@ static errno_t init_vgic400(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc
     return ret;
 }
 
-static errno_t init_vpc(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t init_vpc(struct xilinx_mpsoc *chip,
+                        const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     uint8_t i;
@@ -225,12 +245,12 @@ static errno_t init_vpc(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_con
     memset(&config, 0, sizeof(config));
 
     config.vm = &(chip->soc.vm);
-    if (chip_config->vpc.hook ==  NULL) {
+    if (chip_config->vpc.hook == NULL) {
         config.hook = xilinx_mpsoc_default_vpc_hook();
     } else {
         config.hook = chip_config->vpc.hook;
     }
-    if (chip_config->vpc.ops ==  NULL) {
+    if (chip_config->vpc.ops == NULL) {
         config.exception.ops = xilinx_mpsoc_default_vpc_exception_ops();
     } else {
         config.exception.ops = chip_config->vpc.ops;
@@ -239,7 +259,8 @@ static errno_t init_vpc(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_con
     for (i = 0; i < chip_config->nr_procs; ++i) {
         config.regs = chip_config->vpc.register_arrays[i];
         config.proc_no = i;
-        ret = soc_initialize_vpc(&(chip->soc), chip_config->vpc.vpcs[i], &config);
+        ret =
+            soc_initialize_vpc(&(chip->soc), chip_config->vpc.vpcs[i], &config);
         if (ret != SUCCESS) {
             break;
         }
@@ -248,7 +269,8 @@ static errno_t init_vpc(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_con
     return ret;
 }
 
-static errno_t init_soc(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *chip_config)
+static errno_t init_soc(struct xilinx_mpsoc *chip,
+                        const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
     struct soc_configuration config;
@@ -281,7 +303,8 @@ static errno_t init_soc(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_con
     return ret;
 }
 
-static errno_t initialize(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *config)
+static errno_t initialize(struct xilinx_mpsoc *chip,
+                          const struct xilinx_mpsoc_configuration *config)
 {
     errno_t ret;
 
@@ -310,7 +333,8 @@ static errno_t initialize(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_c
     return ret;
 }
 
-static errno_t validate_parameters(const struct xilinx_mpsoc_configuration *config)
+static errno_t
+validate_parameters(const struct xilinx_mpsoc_configuration *config)
 {
     errno_t ret;
 
@@ -325,7 +349,8 @@ static errno_t validate_parameters(const struct xilinx_mpsoc_configuration *conf
     return ret;
 }
 
-errno_t xilinx_mpsoc_initialize(struct xilinx_mpsoc *chip, const struct xilinx_mpsoc_configuration *config)
+errno_t xilinx_mpsoc_initialize(struct xilinx_mpsoc *chip,
+                                const struct xilinx_mpsoc_configuration *config)
 {
     errno_t ret;
 

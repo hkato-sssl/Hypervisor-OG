@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <assert.h>
-#include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
 #include "hypervisor/vm.h"
+#include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "vm_local.h"
+#include <assert.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -48,4 +48,3 @@ errno_t vm_register_vpc(struct vm *vm, struct vpc *vpc)
 
     return ret;
 }
-

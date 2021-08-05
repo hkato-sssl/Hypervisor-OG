@@ -4,9 +4,9 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
 #include "driver/aarch64/psci.h"
 #include "psci_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -21,7 +21,7 @@
 int32_t aarch64_psci_cpu_off(void)
 {
     int32_t ret;
-    uint64_t    request[4];
+    uint64_t request[4];
 
     request[0] = PSCI_AARCH64_CPU_OFF;
     request[1] = 0;
@@ -31,4 +31,3 @@ int32_t aarch64_psci_cpu_off(void)
 
     return ret;
 }
-

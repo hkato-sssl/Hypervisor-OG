@@ -4,14 +4,14 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
+#include "driver/arm/smmu500.h"
+#include "lib/aarch64.h"
 #include "lib/bit.h"
 #include "lib/bitmap.h"
-#include "lib/aarch64.h"
 #include "lib/system/errno.h"
-#include "driver/arm/smmu500.h"
 #include "smmu500_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -23,7 +23,8 @@
 
 /* functions */
 
-errno_t smmu500_allocate_stream_match_register(struct smmu500 *smmu, uint8_t *id)
+errno_t smmu500_allocate_stream_match_register(struct smmu500 *smmu,
+                                               uint8_t *id)
 {
     errno_t ret;
     uint32_t no;
@@ -45,4 +46,3 @@ errno_t smmu500_allocate_stream_match_register(struct smmu500 *smmu, uint8_t *id
 
     return ret;
 }
-

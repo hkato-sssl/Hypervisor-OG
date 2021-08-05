@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
+#include "lib/slist.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
-#include "lib/slist.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -47,4 +47,3 @@ errno_t slist_append(struct slist *list, struct slist_node *node)
 
     return ret;
 }
-

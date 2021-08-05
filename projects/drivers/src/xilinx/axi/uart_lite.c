@@ -4,12 +4,12 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stddef.h>
-#include "lib/system/errno.h"
-#include "lib/system/memio.h"
 #include "driver/xilinx/axi/uart_lite.h"
 #include "driver/xilinx/axi/device/uart_lite.h"
+#include "lib/system/errno.h"
+#include "lib/system/memio.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -21,7 +21,8 @@
 
 /* functions */
 
-static errno_t init(struct uart_lite *uart, const struct uart_lite_configuration *config)
+static errno_t init(struct uart_lite *uart,
+                    const struct uart_lite_configuration *config)
 {
     uint32_t d;
 
@@ -40,7 +41,8 @@ static errno_t init(struct uart_lite *uart, const struct uart_lite_configuration
     return SUCCESS;
 }
 
-errno_t uart_lite_init(struct uart_lite *uart, const struct uart_lite_configuration *config)
+errno_t uart_lite_init(struct uart_lite *uart,
+                       const struct uart_lite_configuration *config)
 {
     errno_t ret;
 
@@ -78,4 +80,3 @@ errno_t uart_lite_putc_poll(struct uart_lite *uart, int ch)
 
     return ret;
 }
-

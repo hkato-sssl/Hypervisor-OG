@@ -4,10 +4,10 @@
  * (C) 2018 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include "lib/system/errno.h"
 #include "lib/log.h"
+#include "lib/system/errno.h"
 #include "log_local.h"
+#include <stddef.h>
 
 /* defines */
 
@@ -19,37 +19,36 @@
 
 static int string_length(struct log_context *ctx)
 {
-	int len;
+    int len;
 
-	len = ctx->output.string.length;
+    len = ctx->output.string.length;
 
-	if (ctx->syntax.flag.hash && (ctx->syntax.radix != NULL)) {
-		len += ctx->syntax.radix->prefix.length;
-	}
+    if (ctx->syntax.flag.hash && (ctx->syntax.radix != NULL)) {
+        len += ctx->syntax.radix->prefix.length;
+    }
 
-	if (ctx->output.sign != EOS) {
-		++len;
-	}
+    if (ctx->output.sign != EOS) {
+        ++len;
+    }
 
-	return len;
+    return len;
 }
 
 int log_output_pads(struct log_context *ctx)
 {
-	errno_t ret;
-	size_t len;
+    errno_t ret;
+    size_t len;
 
-	len = string_length(ctx);
+    len = string_length(ctx);
 
-	if (ctx->syntax.width > len) {
-		len = ctx->syntax.width - len;
-		do {
-			ret = put_char(ctx, ctx->output.pad);
-		} while ((ret == SUCCESS) && (--len > 0));
-	} else {
-		ret = SUCCESS;
-	}
+    if (ctx->syntax.width > len) {
+        len = ctx->syntax.width - len;
+        do {
+            ret = put_char(ctx, ctx->output.pad);
+        } while ((ret == SUCCESS) && (--len > 0));
+    } else {
+        ret = SUCCESS;
+    }
 
-	return ret;
+    return ret;
 }
-

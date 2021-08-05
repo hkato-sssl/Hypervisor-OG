@@ -4,13 +4,13 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
+#include "driver/arm/smmu500.h"
 #include "lib/bit.h"
 #include "lib/bitmap.h"
 #include "lib/system/errno.h"
-#include "driver/arm/smmu500.h"
 #include "smmu500_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -22,7 +22,8 @@
 
 /* functions */
 
-static errno_t allocate_context_bank(struct smmu500 *smmu, uint8_t *cb, uint32_t start_bit)
+static errno_t allocate_context_bank(struct smmu500 *smmu, uint8_t *cb,
+                                     uint32_t start_bit)
 {
     errno_t ret;
     size_t sz;
@@ -31,7 +32,8 @@ static errno_t allocate_context_bank(struct smmu500 *smmu, uint8_t *cb, uint32_t
     smmu500_lock(smmu);
 
     sz = ALIGN(smmu->nr_context_banks, 8);
-    ret = bitmap_search_and_set(&no, smmu->allocation.context_banks, sz, start_bit);
+    ret = bitmap_search_and_set(&no, smmu->allocation.context_banks, sz,
+                                start_bit);
     if (ret == SUCCESS) {
         if (no < smmu->nr_context_banks) {
             *cb = (uint8_t)no;
@@ -62,4 +64,3 @@ errno_t smmu500_allocate_s2_context_bank(struct smmu500 *smmu, uint8_t *cb)
 
     return ret;
 }
-

@@ -4,10 +4,10 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "hypervisor/vm.h"
 #include "hypervisor/emulator/vgic400.h"
+#include "hypervisor/vm.h"
 #include "vgic400_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -90,4 +90,3 @@ uint64_t vgic400_p2v_cpu_map_w(uint64_t src, const struct vm *vm)
 
     return d;
 }
-

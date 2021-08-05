@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include "lib/system/memio.h"
 #include "driver/system/cpu.h"
 #include "hypervisor/vpc.h"
+#include "lib/system/memio.h"
 #include "vpc_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -45,7 +45,8 @@ void vpc_call_event(struct vpc *vpc)
 
     event = get_event(vpc);
     while (event != NULL) {
-        (*(event->func))(event->args[0], event->args[1], event->args[2], event->args[3]); 
+        (*(event->func))(event->args[0], event->args[1], event->args[2],
+                         event->args[3]);
         next = event->next;
         event->next = NULL;
         event->func = NULL;

@@ -4,10 +4,10 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "lib/system.h"
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
-#include "lib/system.h"
 
 /* defines */
 
@@ -26,8 +26,8 @@ bool system_test_valid_stack_region(const void *addr, size_t size)
 {
     bool test;
 
-    if (((uintptr_t)__stack_start <= (uintptr_t)addr) &&
-        (((uintptr_t)addr + size) <= (uintptr_t)__stack_end)) {
+    if (((uintptr_t)__stack_start <= (uintptr_t)addr)
+        && (((uintptr_t)addr + size) <= (uintptr_t)__stack_end)) {
         test = true;
     } else {
         test = false;
@@ -35,4 +35,3 @@ bool system_test_valid_stack_region(const void *addr, size_t size)
 
     return test;
 }
-

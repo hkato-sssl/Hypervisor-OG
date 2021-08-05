@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "driver/aarch64.h"
 #include "hypervisor/thread.h"
+#include "lib/system/errno.h"
 #include "thread_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -21,7 +21,8 @@
 
 /* functions */
 
-static errno_t launch(uintptr_t *params, const struct thread_parameter *parameter)
+static errno_t launch(uintptr_t *params,
+                      const struct thread_parameter *parameter)
 {
     int i;
 
@@ -36,7 +37,8 @@ static errno_t launch(uintptr_t *params, const struct thread_parameter *paramete
     return SUCCESS;
 }
 
-errno_t thread_launch(uint32_t processor_no, const struct thread_parameter *parameter)
+errno_t thread_launch(uint32_t processor_no,
+                      const struct thread_parameter *parameter)
 {
     errno_t ret;
     uintptr_t *params;
@@ -54,4 +56,3 @@ errno_t thread_launch(uint32_t processor_no, const struct thread_parameter *para
 
     return ret;
 }
-

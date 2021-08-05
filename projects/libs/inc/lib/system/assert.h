@@ -21,7 +21,11 @@ extern "C" {
 
 /* defines */
 
-#define SYSTEM_ASSERT(exp) do { if (! (exp)) system_assert(__FILE__, __LINE__, #exp); } while (0)
+#define SYSTEM_ASSERT(exp)                           \
+    do {                                             \
+        if (! (exp))                                 \
+            system_assert(__FILE__, __LINE__, #exp); \
+    } while (0)
 
 /* types */
 
@@ -39,4 +43,3 @@ void system_error(const char *file, uint32_t line, const char *message);
 #endif /* ASSEMBLY */
 
 #endif /* SYSTEM_ASSERT_H */
-

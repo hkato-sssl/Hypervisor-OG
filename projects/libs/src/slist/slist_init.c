@@ -4,8 +4,8 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
 #include "lib/slist.h"
+#include <stddef.h>
 
 /* defines */
 
@@ -22,4 +22,3 @@ void slist_init(struct slist *list)
     list->head = NULL;
     list->tail = NULL;
 }
-

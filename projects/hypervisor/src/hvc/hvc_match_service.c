@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "hvc_local.h"
+#include "hypervisor/hvc.h"
 #include "lib/slist.h"
 #include "lib/system/errno.h"
-#include "hypervisor/hvc.h"
-#include "hvc_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -31,4 +31,3 @@ bool hvc_match_service(void *element, void *arg)
 
     return result;
 }
-

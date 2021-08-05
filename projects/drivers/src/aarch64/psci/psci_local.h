@@ -38,4 +38,3 @@ int32_t aarch64_psci(uint64_t request[4]);
 #endif /* ASSEMBLY */
 
 #endif /* AARCH64_PSCI_PSCI_LOCAL_H */
-

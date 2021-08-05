@@ -4,17 +4,17 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <string.h>
-#include "lib/system/errno.h"
-#include "lib/system/printk.h"
 #include "driver/aarch64/mmu.h"
 #include "driver/aarch64/stage2.h"
 #include "driver/arm/smmu500.h"
+#include "lib/system/errno.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
-#define TEST_VMID       1
+#define TEST_VMID 1
 
 /* types */
 
@@ -25,7 +25,7 @@
 extern struct aarch64_mmu sys_mmu;
 extern struct aarch64_mmu_block_pool sys_pool;
 
-static uint8_t stage2_table[4096 * 2] __attribute__ ((aligned(4096 * 2)));
+static uint8_t stage2_table[4096 * 2] __attribute__((aligned(4096 * 2)));
 static struct smmu500 smmu;
 static struct aarch64_stage2 stage2;
 
@@ -42,7 +42,8 @@ static errno_t map_stage2(void)
     attr.sh = STAGE2_SH_OSH;
     attr.s2ap = STAGE2_S2AP_RW;
     attr.memattr = STAGE2_MEMATTR_DEVICE_nGnRnE;
-    ret = aarch64_stage2_map(&stage2, (void *)0x40000000, (void *)0x50000000, 0x10000, &attr);
+    ret = aarch64_stage2_map(&stage2, (void *)0x40000000, (void *)0x50000000,
+                             0x10000, &attr);
     if (ret != SUCCESS) {
         printk("aarch64_stage2_map() -> %d\n", ret);
     }
@@ -85,7 +86,7 @@ static void init(struct smmu500 *smmu)
     attr.af = 1;
     attr.sh = MMU_ATTR_SH_OSH;
     attr.ap21 = MMU_ATTR_AP_RW;
-    attr.attrindx = 5;          /* Device-nGnRE */
+    attr.attrindx = 5; /* Device-nGnRE */
 
     memset(&config, 0, sizeof(config));
     config.smmu_base = 0xfd800000;
@@ -121,7 +122,7 @@ static void test_02(void)
     }
 
     if (ret == SUCCESS) {
-        ret = smmu500_enable(&smmu, id); 
+        ret = smmu500_enable(&smmu, id);
         printk("smmu500_enable() -> %d\n", ret);
     }
 
@@ -146,4 +147,3 @@ void test_arm_smmu500_02_dump(void)
 {
     smmu500_dump(&smmu);
 }
-

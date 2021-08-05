@@ -4,12 +4,12 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
+#include "driver/xilinx/mpsoc/device/ps_uart.h"
+#include "driver/xilinx/mpsoc/ps_uart.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
-#include "driver/xilinx/mpsoc/device/ps_uart.h"
-#include "driver/xilinx/mpsoc/ps_uart.h"
+#include <stdint.h>
 
 /* defines */
 

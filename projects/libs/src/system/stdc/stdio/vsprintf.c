@@ -4,19 +4,19 @@
  * (C) 2018 Hidekazu Kato
  */
 
+#include "lib/log.h"
+#include "lib/system/spin_lock.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "lib/system/spin_lock.h"
-#include "lib/log.h"
 
 /* defines */
 
 /* types */
 
 struct arg_sprintf {
-    char    *buff;
-    int     ct;
+    char *buff;
+    int ct;
 };
 
 /* prototypes */
@@ -24,7 +24,7 @@ struct arg_sprintf {
 /* variables */
 
 static struct log_context ctx;
-static struct log_ops ops; 
+static struct log_ops ops;
 
 /* functions */
 
@@ -69,4 +69,3 @@ int vsprintf(char *buff, const char *fmt, va_list ap)
 
     return ret;
 }
-

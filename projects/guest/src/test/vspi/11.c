@@ -24,19 +24,19 @@
  *   得る。
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
+#include "driver/aarch64.h"
+#include "driver/arm.h"
+#include "driver/arm/device/gic400.h"
+#include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
+#include "driver/system/cpu.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
 #include "lib/system/printk.h"
-#include "driver/arm/gic400.h"
-#include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
-#include "driver/arm.h"
-#include "driver/aarch64.h"
-#include "driver/system/cpu.h"
 #include "vspi.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 
 /* defines */
 
@@ -103,7 +103,7 @@ static void vspi_11(void)
     printk("<%s> Done.\n", __func__);
     vspi_set_start(false);
 
-    __asm volatile ("hvc #0");
+    __asm volatile("hvc #0");
 }
 
 static void vspi_11_primary(void)
@@ -131,7 +131,7 @@ static void vspi_11_primary(void)
     printk("<%s> Done.\n", __func__);
     vspi_set_start(false);
 
-    __asm volatile ("hvc #0");
+    __asm volatile("hvc #0");
 }
 
 static void vspi_11_secondary(void)
@@ -164,4 +164,3 @@ void test_vspi_11m(void)
         vspi_11_secondary();
     }
 }
-

@@ -11,11 +11,11 @@
  * 2) nを0から始めてエラーになるまで1)を実行
  */
 
+#include "lib/bitmap.h"
+#include "lib/system/printk.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include "lib/system/printk.h"
-#include "lib/bitmap.h"
 
 /* defines */
 
@@ -49,13 +49,12 @@ void test_bitmap_02(void)
     printk("<%s>\n", __func__);
 
     memset(map, 0, sizeof(map));
-    
+
     i = 1;
     do {
-        ret = bitmap_search0(&no, map, sizeof(map), (i-1));
+        ret = bitmap_search0(&no, map, sizeof(map), (i - 1));
         printk("#%d: bitmap_search0() -> %d, no=%u\n", i, ret, no);
         dump_map();
         ++i;
     } while (ret == SUCCESS);
 }
-

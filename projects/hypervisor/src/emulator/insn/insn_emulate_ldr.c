@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
+#include "hypervisor/emulator/insn.h"
+#include "hypervisor/vpc.h"
 #include "lib/bit.h"
 #include "lib/system/assert.h"
 #include "lib/system/errno.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/emulator/insn.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -121,4 +121,3 @@ errno_t insn_emulate_ldr(const struct insn *insn, uint64_t d)
 
     return ret;
 }
-

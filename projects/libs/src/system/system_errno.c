@@ -4,9 +4,9 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/printk.h"
 #include "lib/system/errno.h"
+#include "lib/system/printk.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -24,4 +24,3 @@ errno_t system_errno(errno_t code, const char *file, unsigned long line)
 
     return code;
 }
-

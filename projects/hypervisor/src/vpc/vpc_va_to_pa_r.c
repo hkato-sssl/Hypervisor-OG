@@ -4,14 +4,14 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "lib/system/errno.h"
 #include "driver/aarch64/at.h"
 #include "driver/system/cpu.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
+#include "lib/system/errno.h"
 #include "vpc_local.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -71,4 +71,3 @@ errno_t vpc_va_to_pa_r(const struct vpc *vpc, uint64_t *pa, uint64_t va)
 
     return ret;
 }
-

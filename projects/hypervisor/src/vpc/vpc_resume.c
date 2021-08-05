@@ -4,12 +4,12 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <assert.h>
 #include "hypervisor/vpc.h"
 #include "vpc_local.h"
+#include <assert.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -80,4 +80,3 @@ errno_t vpc_resume(struct vpc *vpc)
 
     return ret;
 }
-

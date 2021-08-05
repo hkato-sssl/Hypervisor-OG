@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
+#include "hypervisor/service/p2p_packet.h"
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
-#include "hypervisor/service/p2p_packet.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -43,7 +43,8 @@ static errno_t connect(struct p2p_packet_path *path, struct p2p_packet_ep *ep)
     return ret;
 }
 
-static errno_t validate_parameters(struct p2p_packet_path *path, struct p2p_packet_ep *ep)
+static errno_t validate_parameters(struct p2p_packet_path *path,
+                                   struct p2p_packet_ep *ep)
 {
     errno_t ret;
 
@@ -58,7 +59,8 @@ static errno_t validate_parameters(struct p2p_packet_path *path, struct p2p_pack
     return ret;
 }
 
-errno_t p2p_packet_connect(struct p2p_packet_path *path, struct p2p_packet_ep *ep)
+errno_t p2p_packet_connect(struct p2p_packet_path *path,
+                           struct p2p_packet_ep *ep)
 {
     errno_t ret;
 

@@ -9,19 +9,19 @@
  * 対象レジスタはGICD_SGIR以外全て
  */
 
-#include <stdint.h>
+#include "driver/arm/device/gic400.h"
+#include "driver/arm/gic400.h"
+#include "driver/arm/gic400_io.h"
 #include "lib/bit.h"
 #include "lib/system/memio.h"
 #include "lib/system/printk.h"
-#include "driver/arm/gic400.h"
-#include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
+#include <stdint.h>
 
 /* defines */
 
-#define PRINT_TITLE()   print_title(__func__)
+#define PRINT_TITLE() print_title(__func__)
 
-#define ALL_F           BITS(31, 0)
+#define ALL_F         BITS(31, 0)
 
 /* types */
 
@@ -41,7 +41,7 @@ static void hvc(void)
 
     ++ct;
     printk("DUMP#%u\n", ct);
-    __asm volatile ("mov x0, %0; hvc #0" :: "r"(ct));
+    __asm volatile("mov x0, %0; hvc #0" ::"r"(ct));
 }
 
 static uint32_t readw(uint32_t reg)
@@ -310,7 +310,7 @@ static void test_GICD_CIDR3(void)
 void guest_test_gic_01(void)
 {
     printk("<%s>\n", __func__);
-    
+
     dist = gic400_distributor_register_base(&gic);
     printk("GICD Base: %p\n", dist);
 
@@ -346,4 +346,3 @@ void guest_test_gic_01(void)
 
     printk("\nDone.\n");
 }
-

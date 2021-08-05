@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
+#include "hvc_local.h"
+#include "hypervisor/hvc.h"
 #include "lib/slist.h"
 #include "lib/system/errno.h"
-#include "hypervisor/hvc.h"
-#include "hvc_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -21,7 +21,8 @@
 
 /* functions */
 
-errno_t hvc_service_append_slist(struct slist *list, struct hvc_service *service)
+errno_t hvc_service_append_slist(struct slist *list,
+                                 struct hvc_service *service)
 {
     errno_t ret;
     void *id;
@@ -38,4 +39,3 @@ errno_t hvc_service_append_slist(struct slist *list, struct hvc_service *service
 
     return ret;
 }
-

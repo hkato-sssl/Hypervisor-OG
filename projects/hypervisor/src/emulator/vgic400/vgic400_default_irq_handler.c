@@ -4,19 +4,19 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include "lib/bit.h"
-#include "lib/aarch64.h"
-#include "lib/system/errno.h"
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
-#include "driver/arm/device/gic400.h"
+#include "hypervisor/emulator/vgic400.h"
 #include "hypervisor/parameter.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"
-#include "hypervisor/emulator/vgic400.h"
+#include "lib/aarch64.h"
+#include "lib/bit.h"
+#include "lib/system/errno.h"
 #include "vgic400_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -47,26 +47,27 @@ static void maintenance_misr_eoi(struct vpc *vpc, struct vgic400 *vgic)
     }
 }
 
-static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
+static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic,
+                                     uint32_t iar)
 {
     errno_t ret;
     uint32_t d;
 
     d = gic400_read_virtif_control(vgic, GICH_MISR);
 
-    if ((d & BIT(0)) != 0) {    /* EOI has issued by EL1 */
+    if ((d & BIT(0)) != 0) { /* EOI has issued by EL1 */
         maintenance_misr_eoi(vpc, vgic);
     }
 
-    if ((d & BIT(1)) != 0) {    /* Undeflow */
+    if ((d & BIT(1)) != 0) { /* Undeflow */
         d = gic400_read_virtif_control(vgic, GICH_HCR);
-        d ^= BIT(1);    /* GICH_HCR.UIE */
+        d ^= BIT(1); /* GICH_HCR.UIE */
         gic400_write_virtif_control(vgic, GICH_HCR, d);
         /* Enable EL1 interrupts */
         gic400_set_priority_mask(vgic->gic, 0xff);
     }
 
-    if ((d & BIT(3)) != 0) {     /* No pending */
+    if ((d & BIT(3)) != 0) { /* No pending */
         vgic400_expose_virtual_spi(vpc, vgic);
     }
 
@@ -82,9 +83,9 @@ static errno_t el1(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     uint32_t no;
 
     no = BF_EXTRACT(iar, 9, 0);
-    if (no < 16) {  /* SGI */
+    if (no < 16) { /* SGI */
         ret = vgic400_inject_sgi(vpc, vgic, iar);
-    } else {        /* PPI or SPI */
+    } else { /* PPI or SPI */
         ret = vgic400_inject_interrupt(vpc, vgic, iar);
     }
 
@@ -96,7 +97,7 @@ static errno_t el1(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
         }
         if (d == 0) {
             d = gic400_read_virtif_control(vgic, GICH_HCR);
-            d |= BIT(1);    /* GICH_HCR.UIE */
+            d |= BIT(1); /* GICH_HCR.UIE */
             gic400_write_virtif_control(vgic, GICH_HCR, d);
             /* Disable EL1 interrupts */
             ret = gic400_set_priority_mask(vgic->gic, 1);
@@ -106,7 +107,8 @@ static errno_t el1(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     return ret;
 }
 
-static errno_t receive_vpc_event(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
+static errno_t receive_vpc_event(struct vpc *vpc, struct vgic400 *vgic,
+                                 uint32_t iar)
 {
     errno_t ret;
 
@@ -136,7 +138,8 @@ static errno_t el2(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     return ret;
 }
 
-static errno_t irq_exception(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
+static errno_t irq_exception(struct vpc *vpc, struct vgic400 *vgic,
+                             uint32_t iar)
 {
     errno_t ret;
     uint32_t no;
@@ -171,4 +174,3 @@ errno_t vgic400_default_irq_handler(struct vpc *vpc, struct vgic400 *vgic)
 
     return ret;
 }
-

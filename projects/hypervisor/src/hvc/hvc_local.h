@@ -19,9 +19,9 @@ extern "C" {
 
 /* includes */
 
-#include <stdint.h>
-#include <stdbool.h>
 #include "lib/system/errno.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -40,4 +40,3 @@ bool hvc_match_service(void *element, void *arg);
 #endif /* ASSEMBLY */
 
 #endif /* SERVICE_HVC_HVC_LOCAL_H */
-

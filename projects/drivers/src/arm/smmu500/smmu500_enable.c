@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "driver/arm/device/smmuv2.h"
+#include "driver/arm/smmu500.h"
+#include "lib/system/errno.h"
+#include "smmu500_local.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/errno.h"
-#include "driver/arm/smmu500.h"
-#include "driver/arm/device/smmuv2.h"
-#include "smmu500_local.h"
 
 /* defines */
 

@@ -4,8 +4,8 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stdint.h>
 #include "hypervisor/vm.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -42,4 +42,3 @@ uint16_t vm_physical_proc_no(struct vm *vm, uint16_t virtual_no)
 
     return no;
 }
-

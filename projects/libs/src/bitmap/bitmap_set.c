@@ -4,11 +4,11 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "bitmap_local.h"
+#include "lib/bitmap.h"
+#include "lib/system/errno.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "lib/system/errno.h"
-#include "lib/bitmap.h"
-#include "bitmap_local.h"
 
 /* defines */
 
@@ -39,4 +39,3 @@ errno_t bitmap_set(void *map, size_t map_size, uint32_t bit_no)
 
     return ret;
 }
-

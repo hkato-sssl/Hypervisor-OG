@@ -4,10 +4,10 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
-#include "lib/system/errno.h"
 #include "hypervisor/emulator/psci.h"
 #include "hypervisor/emulator/simple_psci.h"
+#include "lib/system/errno.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -31,4 +31,3 @@ errno_t xilinx_mpsoc_emulate_psci(struct vpc *vpc)
 
     return ret;
 }
-

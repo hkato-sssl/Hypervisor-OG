@@ -4,11 +4,11 @@
  * (C) 2019 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
+#include "lib/system.h"
 #include "lib/system/errno.h"
 #include "lib/system/spin_lock.h"
-#include "lib/system.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 

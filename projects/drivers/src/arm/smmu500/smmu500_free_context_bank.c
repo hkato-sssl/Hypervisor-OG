@@ -4,13 +4,13 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stddef.h>
-#include <stdint.h>
+#include "driver/arm/smmu500.h"
 #include "lib/bit.h"
 #include "lib/bitmap.h"
 #include "lib/system/errno.h"
-#include "driver/arm/smmu500.h"
 #include "smmu500_local.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /* defines */
 
@@ -36,4 +36,3 @@ errno_t smmu500_free_context_bank(struct smmu500 *smmu, uint8_t idx)
 
     return ret;
 }
-

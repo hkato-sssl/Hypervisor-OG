@@ -4,12 +4,12 @@
  * (C) 2020 Hidekazu Kato
  */
 
-#include <stdint.h>
+#include "hypervisor/service/p2p_packet.h"
+#include "hypervisor/vpc.h"
 #include "lib/system/errno.h"
 #include "lib/system/memio.h"
-#include "hypervisor/vpc.h"
-#include "hypervisor/service/p2p_packet.h"
 #include "p2p_packet_local.h"
+#include <stdint.h>
 
 /* defines */
 
@@ -60,4 +60,3 @@ errno_t p2p_packet_receive(struct vpc *vpc, struct p2p_packet_ep *ep)
 
     return ret;
 }
-

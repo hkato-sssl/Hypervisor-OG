@@ -16,4 +16,3 @@
 #include "lib/aarch64/asm.h"
 
 #endif /* LIB_ASM_H */
-

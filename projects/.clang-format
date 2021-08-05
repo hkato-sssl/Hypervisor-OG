@@ -1,0 +1,10 @@
+Language: Cpp
+BasedOnStyle: LLVM
+ColumnLimit: 80 
+IndentWidth: 4
+BreakBeforeBraces: Linux
+AlignConsecutiveBitFields: AcrossEmptyLinesAndComments
+AlignConsecutiveMacros: AcrossEmptyLinesAndComments
+SpaceAfterLogicalNot: true
+AllowShortFunctionsOnASingleLine: Inline
+BreakBeforeBinaryOperators: NonAssignment

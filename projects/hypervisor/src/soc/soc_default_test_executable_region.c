@@ -67,7 +67,7 @@ errno_t soc_default_test_executable_region(struct soc *soc, uintptr_t addr, size
 
     if (soc->nr_devices == 0) {
         ret = -EPERM;
-    } if (size == 0) {
+    } else if (size == 0) {
         ret = -EINVAL;
     } else {
         ret = test_executable_region(soc, addr, size);

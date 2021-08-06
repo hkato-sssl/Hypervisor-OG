@@ -10,6 +10,8 @@ OUTPUT_ARCH(aarch64)
 
 GROUP(-lgcc -lc -lm)
 
+ENTRY(_start)
+
 SECTIONS
 {
   . = SEGMENT_START("text-segment", 0x10000);

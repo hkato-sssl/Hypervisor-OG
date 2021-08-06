@@ -31,7 +31,7 @@ add_executable(
 )
 
 target_link_libraries(${TARGET_NAME} -Wl,--start-group libs drivers hypervisor guest -Wl,--end-group)
-set(CMAKE_EXE_LINKER_FLAGS "-nostartfiles -static -T ${PROJECT_SOURCE_DIR}/config/memory.lds -T ${WORKSPACE_BASE}/scripts/ld/aarch64-zcu104-ram.lds")
+set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -nostartfiles -static -T ${PROJECT_SOURCE_DIR}/config/memory.lds -T ${WORKSPACE_BASE}/scripts/ld/aarch64-zcu104-ram.lds")
 
 add_custom_command(
     TARGET ${TARGET_NAME}

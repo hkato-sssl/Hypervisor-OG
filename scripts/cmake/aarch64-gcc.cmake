@@ -5,7 +5,7 @@
 # cmake ../project -DCMAKE_BUILD_TYPE=Debug
 
 set(ARM_COMPILE_OPTION "-march=armv8-a+nofp -mstrict-align")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARM_COMPILE_OPTION}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARM_COMPILE_OPTION} -ffunction-sections")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ARM_COMPILE_OPTION}")
 
 # cross compiler settings

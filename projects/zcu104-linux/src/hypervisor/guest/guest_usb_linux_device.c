@@ -16,10 +16,6 @@
 #define RAM_START_PA        0x20000000
 #define RAM_SIZE            0x20000000
 
-#define AXI_SMMU_TEST_IPA   0xa0002000
-#define AXI_SMMU_TEST_PA    0xa0002000
-#define AXI_SMMU_TEST_SIZE  4096
-
 /* types */
 
 /* prototypes */

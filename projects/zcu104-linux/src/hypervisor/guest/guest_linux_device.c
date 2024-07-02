@@ -20,10 +20,6 @@
 #define UART_PA             0xff000000
 #define UART_SIZE           4096
 
-#define AXI_SMMU_TEST_IPA   0xa0002000
-#define AXI_SMMU_TEST_PA    0xa0002000
-#define AXI_SMMU_TEST_SIZE  4096
-
 /* types */
 
 /* prototypes */
@@ -203,26 +199,6 @@ static struct soc_device hvcs_p128 = {
     .regions = NULL,
 };
 
-static struct soc_device_region axi_smmu_test_region = {
-    .ipa = AXI_SMMU_TEST_IPA,
-    .pa = AXI_SMMU_TEST_PA,
-    .size = AXI_SMMU_TEST_SIZE,
-    .memory_type = HYP_MMU_MT_DEVICE_nGnRE,
-    .shareability = HYP_MMU_SH_OSH,
-    .access.flag.read = 1,
-    .access.flag.write = 1,
-    .access.flag.exec = 0
-};
-static struct soc_device_region *axi_smmu_test_regions[] = {
-    &axi_smmu_test_region,
-};
-static struct soc_device axi_smmu_test = {
-    .nr_irqs = 0,
-    .irqs = NULL,
-    .nr_regions = 1,
-    .regions = axi_smmu_test_regions,
-};
-
 uint16_t nr_guest_linux_devices = 9;
 struct soc_device *guest_linux_devices[] = {
     &ram,
@@ -234,7 +210,6 @@ struct soc_device *guest_linux_devices[] = {
     &serdes0,
     &gem3,
     &hvcs_p128,
-    &axi_smmu_test,
 };
 
 static struct smmu_stream tbu2_sd1 = {

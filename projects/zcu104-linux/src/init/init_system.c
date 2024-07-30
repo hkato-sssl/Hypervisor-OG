@@ -5,9 +5,11 @@
  */
 
 #include "driver/aarch64.h"
+#include "driver/aarch64/mmu.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/system/cpu.h"
 #include "driver/xilinx/axi/uart_lite.h"
+#include "hypervisor/mmu.h"
 #include "lib/log.h"
 #include "lib/system.h"
 #include "lib/system/errno.h"
@@ -20,7 +22,8 @@
 
 /* defines */
 
-#define UART_LITE_BASE 0xa0001000
+#define UART_LITE_BASE 0xa0000000
+#define UART_LITE_SIZE 4096
 
 /* types */
 
@@ -32,10 +35,13 @@ struct arg_printk {
 /* prototypes */
 
 void *exc_stack_top(uint32_t no);
+errno_t init_memory_map(void);
 
 static errno_t put_char(struct log_context *ctx, char ch);
 
 /* variables */
+
+extern struct aarch64_mmu sys_mmu;
 
 static struct log_context log_ctx;
 static struct uart_lite uart;
@@ -116,6 +122,56 @@ static errno_t init_printk(void)
     return ret;
 }
 
+static errno_t epilogue(void)
+{
+    errno_t ret;
+    struct aarch64_mmu_attr attr;
+
+    memset(&attr, 0, sizeof(attr));
+    attr.af = 1;
+    attr.xn = 1;
+    attr.sh = MMU_ATTR_SH_OSH;
+    attr.ap21 = MMU_ATTR_AP_RW;
+    attr.attrindx = HYP_MMU_MT_DEVICE_nGnRE;
+
+    ret = aarch64_mmu_map(&sys_mmu, (void *)UART_LITE_BASE,
+                          (void *)UART_LITE_BASE, UART_LITE_SIZE, &attr);
+    if (ret != SUCCESS) {
+        printk("%s: aarch64_mmu_map() -> %d\n", __func__, ret);
+    }
+    return ret;
+}
+
+errno_t init_primary(void)
+{
+    errno_t ret;
+
+    ret = init_printk();
+
+    if (ret == SUCCESS) {
+        ret = system_register_spin_lock(&system_lock);
+    }
+
+    if (ret == SUCCESS) {
+        ret = init_memory_map();
+    }
+
+    if (ret == SUCCESS) {
+        ret = epilogue();
+    }
+
+    return ret;
+}
+
+errno_t init_secondary(void)
+{
+    errno_t ret;
+
+    ret = init_memory_map();
+
+    return ret;
+}
+
 errno_t init_system(void)
 {
     errno_t ret;
@@ -123,12 +179,11 @@ errno_t init_system(void)
 
     no = cpu_no();
     if (no == 0) {
-        ret = init_printk();
         if (ret == SUCCESS) {
-            ret = system_register_spin_lock(&system_lock);
+            ret = init_primary();
         }
     } else {
-        ret = SUCCESS;
+        ret = init_secondary();
     }
 
     return ret;

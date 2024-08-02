@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ARM_COMPILE_OPTION}")
 
 # cross compiler settings
 set(CMAKE_CROSSCOMPILING TRUE)
-set(CROSS_COMPILE "/usr/local/sssl/toolchain/aarch64/bin/aarch64-elf-")
+set(CROSS_COMPILE "$ENV{HOME}/tools/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-")
 set(CMAKE_ASM_COMPILER ${CROSS_COMPILE}gcc)
 set(CMAKE_C_COMPILER ${CROSS_COMPILE}gcc)
 set(CMAKE_CXX_COMPILER ${CROSS_COMPILE}g++)

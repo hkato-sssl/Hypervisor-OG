@@ -6,6 +6,7 @@
 
 #include "hypervisor/vpc.h"
 #include "lib/system/errno.h"
+#include "lib/system/printk.h"
 #include <stdint.h>
 
 /* defines */
@@ -26,6 +27,11 @@ errno_t vpc_event_loop(struct vpc *vpc)
         ret = vpc_emulate_exception(vpc);
         if (ret == SUCCESS) {
             ret = vpc_resume(vpc);
+            if (ret != SUCCESS) {
+                printk("vpc_resume() -> %d\n", ret);
+            }
+        } else {
+            printk("vpc_emulate_exception() -> %d\n", ret);
         }
     } while (ret == SUCCESS);
 

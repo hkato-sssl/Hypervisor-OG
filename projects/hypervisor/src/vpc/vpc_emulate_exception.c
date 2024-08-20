@@ -78,23 +78,33 @@ static errno_t emulate_aarch64_synchronous(struct vpc *vpc)
         ret = insn_parse_aarch64_svc(&insn, vpc);
         if (ret == SUCCESS) {
             ret = call_syscall_emulator(&insn, vpc->exception.ops->aarch64.svc);
+        } else {
+            printk("insn_parse_aarch64_svc() -> %d\n", ret);
         }
         break;
     case 0x16: /* 010110 - HVC instruction execution in AArch64 state */
         ret = insn_parse_aarch64_hvc(&insn, vpc);
         if (ret == SUCCESS) {
             ret = call_syscall_emulator(&insn, vpc->exception.ops->aarch64.hvc);
+        } else {
+            printk("insn_parse_aarch64_hvc() -> %d\n", ret);
         }
         break;
     case 0x17: /* 010111 - SMC instruction execution in AArch64 state */
         ret = insn_parse_aarch64_smc(&insn, vpc);
         if (ret == SUCCESS) {
             ret = call_syscall_emulator(&insn, vpc->exception.ops->aarch64.smc);
+        } else {
+            printk("insn_parse_aarch64_smc() -> %d\n", ret);
         }
         break;
     case 0x24: /*100100 - Data Abort from a lower Exception level */
         ret = call_exception_emulator(vpc,
                                       vpc->exception.ops->aarch64.data_abort);
+        if (ret != SUCCESS) {
+            printk("call_exception_emulator() -> %d\n", ret);
+            printk("  %p\n", vpc->exception.ops->aarch64.data_abort);
+        }
         break;
     default:
         printk("%s: ESR_EL2.EC=0x%02x\n", __func__, ec);
@@ -129,15 +139,27 @@ errno_t vpc_emulate_exception(struct vpc *vpc)
     switch (d) {
     case 0x0400: /* Synchronous */
         ret = emulate_aarch64_synchronous(vpc);
+        if (ret != SUCCESS) {
+            printk("emulate_aarch64_synchronous() -> %d\n", ret);
+        }
         break;
     case 0x0480: /* IRQ */
         ret = emulate_irq(vpc);
+        if (ret != SUCCESS) {
+            printk("emulate_irq() -> %d\n", ret);
+        }
         break;
     case 0x0500: /* FIQ */
         ret = emulate_fiq(vpc);
+        if (ret != SUCCESS) {
+            printk("emulate_fiq() -> %d\n", ret);
+        }
         break;
     case 0x0580: /* SError */
         ret = emulate_serror(vpc);
+        if (ret != SUCCESS) {
+            printk("emulate_serror() -> %d\n", ret);
+        }
         break;
     default:
         ret = -ENOSYS;

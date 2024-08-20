@@ -152,6 +152,34 @@ extern "C" {
  * AArch64 identification registers
  */
 
+/* Saved Program Status Register */
+
+static inline void aarch64_write_spsr_el1(uint32_t d)
+{
+    __asm volatile("msr SPSR_EL1, %0" ::"r"(d) : "memory");
+}
+
+static inline uint32_t aarch64_read_spsr_el1(void)
+{
+    uint32_t d;
+    __asm volatile("mrs %0, SPSR_EL1" : "=r"(d)::"memory");
+    return d;
+}
+
+/* Exception Link Register */
+
+static inline void aarch64_write_elr_el1(uint64_t d)
+{
+    __asm volatile("msr ELR_EL1, %0" ::"r"(d) : "memory");
+}
+
+static inline uint64_t aarch64_read_elr_el1(void)
+{
+    uint64_t d;
+    __asm volatile("mrs %0, ELR_EL1" : "=r"(d)::"memory");
+    return d;
+}
+
 /* Main ID Register */
 
 static inline uint32_t aarch64_read_midr_el1(void)

@@ -55,7 +55,7 @@ static errno_t maintenance_interrupt(struct vpc *vpc, struct vgic400 *vgic,
 
     d = gic400_read_virtif_control(vgic, GICH_MISR);
 
-    if ((d & BIT(0)) != 0) { /* EOI has issued by EL1 */
+    if ((d & BIT(0)) != 0) { /* EOI has been issued by EL1 */
         maintenance_misr_eoi(vpc, vgic);
     }
 

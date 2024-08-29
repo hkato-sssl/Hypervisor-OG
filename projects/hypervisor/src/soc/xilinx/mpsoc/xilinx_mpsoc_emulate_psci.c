@@ -18,6 +18,7 @@
 /* variables */
 
 static const struct psci_emulator_ops ops = {
+    .psci_version = simple_psci_version,
     .cpu_on = simple_psci_cpu_on,
 };
 

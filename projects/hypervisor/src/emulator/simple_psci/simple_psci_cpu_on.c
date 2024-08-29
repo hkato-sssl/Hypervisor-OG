@@ -12,6 +12,7 @@
 
 #include "driver/arm/psci_common.h"
 #include "hypervisor/emulator/psci.h"
+#include "hypervisor/emulator/simple_psci.h"
 #include "hypervisor/soc.h"
 #include "hypervisor/vm.h"
 #include "hypervisor/vpc.h"

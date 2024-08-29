@@ -4,13 +4,14 @@
  * (C) 2024 Hidekazu Kato
  */
 
+#include "hypervisor/emulator/simple_psci.h"
 #include "hypervisor/vpc.h"
 #include "lib/system/errno.h"
 #include <stdint.h>
 
 /* defines */
 
-#define EMULATE_VERSION 0x0002  /* 0.2 */
+#define EMULATE_VERSION 0x0002 /* 0.2 */
 
 /* types */
 

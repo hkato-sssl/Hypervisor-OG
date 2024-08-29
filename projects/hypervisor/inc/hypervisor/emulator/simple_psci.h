@@ -31,6 +31,7 @@ struct vpc;
 
 /* functions */
 
+errno_t simple_psci_version(struct vpc *vpc);
 errno_t simple_psci_cpu_on(struct vpc *vpc);
 
 #ifdef __cplusplus

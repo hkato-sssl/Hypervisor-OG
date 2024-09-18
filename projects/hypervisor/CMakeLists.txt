@@ -14,7 +14,9 @@ add_library(
     src/emulator/insn/insn_print.c
     src/emulator/insn/insn_str_src_value.c
     src/emulator/insn/insn_emulate_ldr.c
+    src/emulator/simple_psci/simple_psci_initialize.c
     src/emulator/simple_psci/simple_psci_cpu_on.c
+    src/emulator/simple_psci/simple_psci_version.c
     src/emulator/psci/psci_call_emulator_ops.c
     src/emulator/psci/psci_set_error.c
     src/emulator/psci/psci_error_unknown_function.c

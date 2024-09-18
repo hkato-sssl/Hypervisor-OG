@@ -19,6 +19,7 @@ extern "C" {
 
 /* includes */
 
+#include "hypervisor/emulator/psci.h"
 #include "lib/system/errno.h"
 
 /* defines */
@@ -30,6 +31,8 @@ struct vpc;
 /* variables */
 
 /* functions */
+
+void simple_psci_initialize(struct psci_emulator_ops *ops);
 
 errno_t simple_psci_version(struct vpc *vpc);
 errno_t simple_psci_cpu_on(struct vpc *vpc);

@@ -5,7 +5,7 @@ enable_language(C ASM)
 get_filename_component(WORKSPACE_BASE ../../ ABSOLUTE)
 set(TARGET_NAME "${PROJECT_NAME}.elf")
 
-include("${WORKSPACE_BASE}/scripts/cmake/aarch64-gcc.cmake")
+include(${WORKSPACE_BASE}/scripts/cmake/xilinx-ultrascale-mpsoc.cmake)
 
 add_executable(
     ${TARGET_NAME}

@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.10.2)
 project(guest)
 enable_language(C ASM)
-include(../../scripts/cmake/aarch64-gcc.cmake)
+get_filename_component(WORKSPACE_BASE ../../ ABSOLUTE)
+include(${WORKSPACE_BASE}/scripts/cmake/xilinx-ultrascale-mpsoc.cmake)
 
 add_library(
     guest STATIC

@@ -167,6 +167,8 @@ bool vgic400_test_virtual_spi(struct vgic400 *vgic, uint16_t interrupt_no);
 /* for debugging */
 
 void gic400_dump_virtif_control(struct vgic400 *vgic);
+void gic400_dump_virtual_cpuif(struct vgic400 *vgic);
+void gic400_dump_virtual_cpuif_at(struct vgic400 *vgic, uint8_t no);
 
 #ifdef __cplusplus
 }

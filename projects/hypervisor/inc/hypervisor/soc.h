@@ -81,7 +81,6 @@ struct soc_ops {
 
 struct soc {
     struct vm vm;
-    spin_lock_t lock;
     void *chip;
     struct aarch64_mmu *mmu;
     const struct soc_ops *ops;
@@ -113,12 +112,12 @@ errno_t soc_default_test_executable_region(struct soc *soc, uintptr_t addr,
 
 static inline void soc_lock(struct soc *soc)
 {
-    spin_lock(&(soc->lock));
+    spin_lock(&(soc->vm.lock));
 }
 
 static inline void soc_unlock(struct soc *soc)
 {
-    spin_unlock(&(soc->lock));
+    spin_unlock(&(soc->vm.lock));
 }
 
 static inline errno_t soc_test_executable_region(struct soc *soc,

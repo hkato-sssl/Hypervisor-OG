@@ -30,6 +30,7 @@ add_library(
     src/emulator/vgic400/vgic400_distributor_typer.c
     src/emulator/vgic400/vgic400_distributor_ixpendr.c
     src/emulator/vgic400/gic400_dump_virtif_control.c
+    src/emulator/vgic400/gic400_dump_virtual_cpuif.c
     src/emulator/vgic400/vgic400_cpuif_write_word_register.c
     src/emulator/vgic400/vgic400_assert_virtual_spi.c
     src/emulator/vgic400/vgic400_list_register.c

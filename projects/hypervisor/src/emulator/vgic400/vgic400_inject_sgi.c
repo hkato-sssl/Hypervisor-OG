@@ -71,15 +71,15 @@ errno_t vgic400_inject_sgi(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     uint32_t no;
 
     no = BF_EXTRACT(iar, 9, 0);
-    if (no >= 16) {
-        ret = -EINVAL;
-    } else {
+    if (no < 16) {
         idx = vgic400_list_register(vgic);
         if (idx >= 0) {
             ret = inject_sgi_at(vpc, vgic, iar, (uint32_t)idx);
         } else {
             ret = -EBUSY;
         }
+    } else {
+        ret = -EINVAL;
     }
 
     return ret;

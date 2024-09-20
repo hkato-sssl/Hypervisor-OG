@@ -20,7 +20,7 @@
 
 /* defines */
 
-#define NR_CPUS    4
+#define NR_CPUS    2
 #define GUEST_VMID 1
 
 /* types */
@@ -52,6 +52,7 @@ static struct vpc_exception_ops ops;
 static struct vgic400_ops xilinx_mpsoc_vgic400_ops = {
     .irq_handler = vgic400_default_irq_handler,
 };
+static struct vgic400_interrupt_event_array event_arrays[NR_CPUS];
 
 /* functions */
 
@@ -116,7 +117,11 @@ static void *init_mpsoc(void)
     config.gic.ppis[0] = 27;
     config.gic.ppis[1] = 30;
     config.gic.ops = &xilinx_mpsoc_vgic400_ops;
-    config.gic.flag.virtual_spi = 1;
+    config.gic.boolean.half_priority = true;
+    config.gic.boolean.virtual_spi = true;
+    for (i = 0; i < NR_CPUS; ++i) {
+        config.gic.event_arrays[i] = &(event_arrays[i]);
+    }
     config.smmu.device = &sys_smmu;
     config.smmu.nr_streams = nr_guest_linux_streams;
     config.smmu.streams = guest_linux_streams;
@@ -133,7 +138,61 @@ static void *init_mpsoc(void)
     return (ret == SUCCESS) ? &mpsoc : NULL;
 }
 
+static void test(void);
+
 void *guest_linux(void)
 {
-    return init_mpsoc();
+    void *p = init_mpsoc();
+    test();
+    return p;
+}
+
+#include "hypervisor/emulator/vgic400.h"
+
+static void pr(const struct vgic400_interrupt_event *event)
+{
+    printk("priority: 0x%02x\n", event->priority);
+    printk("src_proc: 0x%02x\n", event->src_proc);
+    printk("     irq: 0x%04x\n", event->irq);
+    printk("\n");
+}
+
+static void push(const struct vgic400_interrupt_event *event)
+{
+    struct vgic400 *vgic = &mpsoc.vgic400;
+    errno_t ret = vgic400_push_interrupt_event(vgic, 0, event);
+    printk("vgic400_push_interrupt_event() -> %d\n", ret);
+}
+
+static void pop(void)
+{
+    struct vgic400 *vgic = &mpsoc.vgic400;
+    struct vgic400_interrupt_event event;
+    memset(&event, 0xff, sizeof(event));
+    errno_t ret = vgic400_pop_interrupt_event(vgic, &event, 0);
+    printk("vgic400_pop_interrupt_event() -> %d\n", ret);
+    if (ret == SUCCESS) {
+        pr(&event);
+    }
+}
+
+static void test(void)
+{
+    struct vgic400_interrupt_event event;
+
+    memset(&event, 0, sizeof(event));
+    event.priority = 0x80;
+    event.irq = 48;
+
+    push(&event);
+    event.irq = 32;
+    push(&event);
+    event.priority = 1;
+    push(&event);
+    pop();
+    pop();
+    pop();
+
+    for (;;)
+        ;
 }

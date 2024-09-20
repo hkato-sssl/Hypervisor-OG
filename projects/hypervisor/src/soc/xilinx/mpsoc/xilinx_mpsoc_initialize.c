@@ -201,6 +201,7 @@ init_vgic400(struct xilinx_mpsoc *chip,
              const struct xilinx_mpsoc_configuration *chip_config)
 {
     errno_t ret;
+    int i;
     struct vgic400_configuration config;
 
     memset(&config, 0, sizeof(config));
@@ -210,12 +211,11 @@ init_vgic400(struct xilinx_mpsoc *chip,
     config.base.virtif_control = (void *)REG_GIC400H;
     config.base.virtual_cpuif = (void *)REG_GIC400V;
     config.ops = chip_config->gic.ops;
-    config.boolean.ignore_priority0 =
-        (chip_config->gic.flag.ignore_priority0 != 0) ? true : false;
+    config.boolean.half_priority = chip_config->gic.boolean.half_priority;
+    config.boolean.virtual_spi = chip_config->gic.boolean.virtual_spi;
     config.boolean.trap_cpuif = true;
-
-    if (chip_config->gic.flag.virtual_spi != 0) {
-        config.boolean.virtual_spi = true;
+    for (i = 0; i < chip_config->nr_procs; ++i) {
+        config.event_arrays[i] = chip_config->gic.event_arrays[i];
     }
 
     ret = vgic400_initialize(&(chip->vgic400), &config);

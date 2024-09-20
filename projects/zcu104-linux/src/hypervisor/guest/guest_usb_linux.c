@@ -112,7 +112,8 @@ static void *init_mpsoc(void)
     config.gic.ppis[0] = 27;
     config.gic.ppis[1] = 30;
     config.gic.ops = &xilinx_mpsoc_vgic400_ops;
-    config.gic.flag.virtual_spi = 1;
+    config.gic.boolean.half_priority = true;
+    config.gic.boolean.virtual_spi = true;
     config.smmu.device = &sys_smmu;
     config.smmu.nr_streams = nr_guest_usb_linux_streams;
     config.smmu.streams = guest_usb_linux_streams;

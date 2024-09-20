@@ -185,6 +185,41 @@ static inline bool is_virtual_spi_bit_register(const struct vgic400 *vgic,
     return ret;
 }
 
+static inline uint32_t
+vgic400_encode_interrupt_event(const struct vgic400_interrupt_event *event)
+{
+    uint32_t d;
+
+    d = ((uint32_t)event->priority << 24) | ((uint32_t)event->irq << 8)
+        | event->src_proc;
+
+    return d;
+}
+
+static inline uint8_t vgic400_decode_interrupt_event_priority(uint32_t event)
+{
+    return (uint8_t)(event >> 24);
+}
+
+static inline uint8_t vgic400_decode_interrupt_event_src_proc(uint32_t event)
+{
+    return (uint8_t)event;
+}
+
+static inline uint16_t vgic400_decode_interrupt_event_irq(uint32_t event)
+{
+    return (uint16_t)(event >> 8);
+}
+
+static inline void
+vgic400_decode_interrupt_event(struct vgic400_interrupt_event *event,
+                               uint32_t d)
+{
+    event->priority = vgic400_decode_interrupt_event_priority(d);
+    event->src_proc = vgic400_decode_interrupt_event_src_proc(d);
+    event->irq = vgic400_decode_interrupt_event_irq(d);
+}
+
 /* functions */
 
 errno_t vgic400_distributor_ro_word_register(struct vgic400 *vgic,
@@ -222,10 +257,10 @@ errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn);
 errno_t vgic400_distributor_icfgr(struct vgic400 *vgic, const struct insn *insn,
                                   uintptr_t reg);
 
-errno_t vgic400_cpuif_write_pmr(struct vgic400 *vgic, const struct insn *insn);
-errno_t vgic400_cpuif_write_word_register(struct vgic400 *vgic,
-                                          const struct insn *insn,
-                                          uintptr_t reg);
+errno_t vgic400_cpuif_write_word_register(const struct insn *insn,
+                                          struct vgic400 *vgic);
+errno_t vgic400_cpuif_read_word_register(const struct insn *insn,
+                                         struct vgic400 *vgic);
 
 uint64_t vgic400_p2v_cpu_map_b(uint64_t src, const struct vm *vm);
 uint64_t vgic400_p2v_cpu_map_w(uint64_t src, const struct vm *vm);

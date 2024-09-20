@@ -23,11 +23,25 @@
 
 /* functions */
 
-static errno_t cpuif_write_word_register(struct vgic400 *vgic,
-                                         const struct insn *insn, uintptr_t reg)
+static errno_t cpuif_write_pmr(const struct insn *insn, struct vgic400 *vgic)
 {
     errno_t ret;
-    uint64_t d;
+    uint32_t d;
+
+    d = (uint32_t)insn_str_src_value(insn);
+    d &= vgic->priority_mask;
+    gic400_write_virtual_cpuif(vgic, GICV_PMR, d);
+
+    ret = insn_emulate_str(insn);
+
+    return ret;
+}
+
+static errno_t cpuif_write_word_register(const struct insn *insn,
+                                         struct vgic400 *vgic, uintptr_t reg)
+{
+    errno_t ret;
+    uint32_t d;
 
     d = insn_str_src_value(insn);
     gic400_write_virtual_cpuif(vgic, reg, (uint32_t)d);
@@ -37,14 +51,22 @@ static errno_t cpuif_write_word_register(struct vgic400 *vgic,
     return ret;
 }
 
-errno_t vgic400_cpuif_write_word_register(struct vgic400 *vgic,
-                                          const struct insn *insn,
-                                          uintptr_t reg)
+errno_t vgic400_cpuif_write_word_register(const struct insn *insn,
+                                          struct vgic400 *vgic)
 {
     errno_t ret;
+    uintptr_t reg;
 
-    if (is_aligned_word_access(insn) && (reg <= GICC_DIR)) {
-        ret = cpuif_write_word_register(vgic, insn, reg);
+    reg = (uintptr_t)insn->op.str.pa - (uintptr_t)vgic->base.virtual_cpuif;
+
+    if (is_aligned_word_access(insn)) {
+        if (reg == GICV_PMR) {
+            ret = cpuif_write_pmr(insn, vgic);
+        } else if ((reg >= GICV_CTLR) && (reg <= GICV_DIR)) {
+            ret = cpuif_write_word_register(insn, vgic, reg);
+        } else {
+            ret = -EPERM;
+        }
     } else {
         ret = -EPERM;
     }

@@ -45,15 +45,7 @@ static bool is_writable(struct vgic400 *vgic, uintptr_t virq, uint8_t priority)
 {
     bool ret;
 
-    if (is_target_virq(vgic, virq)) {
-        if ((priority == 0) && vgic->boolean.ignore_priority0) {
-            ret = false;
-        } else {
-            ret = true;
-        }
-    } else {
-        ret = false;
-    }
+    ret = is_target_virq(vgic, virq);
 
     return ret;
 }
@@ -68,9 +60,9 @@ static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn,
 {
     uint32_t *p;
 
-    priority &= vgic->priority_mask;
-
     if (is_writable(vgic, virq, priority)) {
+        priority &= vgic->priority_mask;
+
         if (virq < 16) {
             vgic->sgi[insn->vpc->proc_no].priority[virq] = priority;
         } else if (virq < 32) {
@@ -209,6 +201,9 @@ static errno_t write_virtual_ipriorityr_w(struct vgic400 *vgic,
     pending = vgic->virtual_spi.ipendr & vgic->virtual_spi.ienabler;
     for (i = 0; i < 4; ++i) {
         priority = (uint8_t)d & vgic->priority_mask;
+        if (vgic->boolean.half_priority) {
+            d = 0x80 | (d >> 1);
+        }
         if (priority > 0) {
             ipriorityr[i] = priority;
             d >>= 8;

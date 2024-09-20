@@ -92,9 +92,10 @@ struct xilinx_mpsoc_configuration {
         uint16_t ppis[NR_GIC400_PPIS];
         const struct vgic400_ops *ops;
         struct {
-            uint8_t ignore_priority0 : 1;
-            uint8_t virtual_spi      : 1;
-        } flag;
+            bool half_priority;
+            bool virtual_spi;
+        } boolean;
+        struct vgic400_interrupt_event_array *event_arrays[NR_VGIC400_CPUS];
     } gic;
 
     struct {

@@ -4,6 +4,7 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "driver/arm/device/gic400.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/gic400_io.h"
 #include "hypervisor/emulator/insn.h"
@@ -39,7 +40,7 @@ static uintptr_t reg_addr(uintptr_t base, uint32_t irq)
     return (base + irq);
 }
 
-static uint64_t read_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq)
+static uint64_t read_byte(struct vgic400 *vgic, uintptr_t base, uint32_t virq)
 {
     uint64_t result;
     uint32_t irq;
@@ -49,6 +50,9 @@ static uint64_t read_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq)
     if (irq < NR_GIC400_INTERRUPTS) {
         reg = reg_addr(base, irq);
         result = gic400_read_distributor_b(vgic->gic, reg);
+        if ((base == GICD_IPRIORITYR(0)) && vgic->boolean.half_priority) {
+            result = (result << 1) & vgic->priority_mask;
+        }
     } else {
         result = 0;
     }
@@ -94,7 +98,7 @@ static errno_t read_byte_register_w(struct vgic400 *vgic,
     return ret;
 }
 
-static void write_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq,
+static void write_byte(struct vgic400 *vgic, uintptr_t base, uint32_t virq,
                        uint32_t d)
 {
     uint32_t irq;
@@ -102,10 +106,15 @@ static void write_byte(struct vgic400 *vgic, uint32_t base, uint32_t virq,
 
     irq = vgic400_virq_to_irq(vgic, virq);
     if (irq < NR_GIC400_INTERRUPTS) {
+        if ((base == GICD_IPRIORITYR(0)) && vgic->boolean.half_priority) {
+            d = 0x80 | ((d & vgic->priority_mask) >> 1);
+        }
+
         reg = reg_addr(base, irq);
         gic400_write_distributor_b(vgic->gic, reg, d);
     }
 }
+
 static errno_t write_byte_register_b(struct vgic400 *vgic,
                                      const struct insn *insn, uintptr_t reg,
                                      uintptr_t base)

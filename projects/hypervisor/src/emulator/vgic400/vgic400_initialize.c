@@ -54,18 +54,26 @@ static errno_t register_trap_cpuif(struct vgic400 *vgic)
     errno_t ret;
     struct vm_region_trap *trap;
 
-    trap = &(vgic->trap.cpuif);
+    trap = &(vgic->trap.cpuif[0]);
     trap->condition.read = false;
     trap->condition.write = true;
     trap->memory.ipa = (uint64_t)gic400_cpuif_register_base(vgic->gic);
     trap->memory.pa = (uint64_t)vgic->base.virtual_cpuif;
-    trap->memory.size = 4096;
+    trap->memory.size = 0x1000;
     trap->memory.shareability = HYP_MMU_SH_NSH;
     trap->memory.type = HYP_MMU_MT_DEVICE_nGnRE;
     trap->emulator.arg = vgic;
     trap->emulator.handler =
         (vpc_emulator_t)vgic400_cpuif_emulate_memory_access;
+
+    vgic->trap.cpuif[1] = *trap;
+    vgic->trap.cpuif[1].memory.ipa += GICC_DIR;
+    vgic->trap.cpuif[1].memory.pa += GICV_DIR;
+
     ret = vm_register_region_trap(vgic->vm, trap);
+    if (ret == SUCCESS) {
+        ret = vm_register_region_trap(vgic->vm, &(vgic->trap.cpuif[1]));
+    }
 
     return ret;
 }
@@ -126,6 +134,7 @@ static errno_t initialize(struct vgic400 *vgic,
                           const struct vgic400_configuration *config)
 {
     errno_t ret;
+    int i;
     uint32_t d;
 
     memset(vgic, 0, sizeof(*vgic));
@@ -140,6 +149,10 @@ static errno_t initialize(struct vgic400 *vgic,
     vgic->priority_mask = gic400_priority_mask(vgic->gic);
     vgic->ops = config->ops;
 
+    for (i = 0; i < NR_VGIC400_CPUS; ++i) {
+        vgic->interrupt.event_arrays[i] = config->event_arrays[i];
+    }
+
     /* probe the # of List Register */
 
     d = gic400_read_virtif_control(vgic, GICH_VTR);
@@ -150,7 +163,11 @@ static errno_t initialize(struct vgic400 *vgic,
     d = gic400_read_distributor(vgic->gic, GICD_TYPER);
     vgic->template_typer = d & ~(uint32_t)BITS(7, 5);
 
-    vgic->boolean.ignore_priority0 = config->boolean.ignore_priority0;
+    vgic->boolean.half_priority = config->boolean.half_priority;
+    if (vgic->boolean.half_priority) {
+        vgic->priority_mask <<= 1;
+    }
+
     vgic->boolean.virtual_spi = config->boolean.virtual_spi;
     if (vgic->boolean.virtual_spi) {
         initialize_virtual_spi(vgic, config);

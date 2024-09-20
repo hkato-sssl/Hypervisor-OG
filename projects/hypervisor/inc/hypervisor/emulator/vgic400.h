@@ -30,8 +30,11 @@ extern "C" {
 #define NR_VGIC400_TARGET_MAPS        ((NR_GIC400_INTERRUPTS + 31) / 32)
 #define NR_VGIC400_CPUS               8
 #define NR_VGIC400_PRIORITIES         16
+#define NR_VIGC400_LIST_REGISTERS     4
 #define MAX_NR_VGIC400_LIST_REGISTERS 32
-#define VGIC400_NAME_LEN              16
+#define NR_VGIC400_INTERRUPT_EVENTS \
+    ((NR_GIC400_SGIS * NR_VGIC400_CPUS) + NR_GIC400_PPIS + NR_GIC400_SPIS)
+#define VGIC400_NAME_LEN 16
 
 /* types */
 
@@ -54,6 +57,18 @@ struct vgic400_virtual_spi {
     uint8_t ipriorityr[32];
     uint32_t ienabler;
     uint32_t ipendr;
+};
+
+struct vgic400_interrupt_event {
+    uint8_t priority;
+    uint8_t src_proc;
+    uint16_t irq;
+};
+
+struct vgic400_interrupt_event_array {
+    spin_lock_t lock;
+    uint32_t num;
+    uint32_t events[NR_VGIC400_INTERRUPT_EVENTS];
 };
 
 struct vgic400 {
@@ -97,16 +112,20 @@ struct vgic400 {
 
     struct {
         struct vm_region_trap distributor;
-        struct vm_region_trap cpuif;
+        struct vm_region_trap cpuif[2];
     } trap;
 
     struct {
-        bool ignore_priority0;
+        bool half_priority;
         bool virtual_spi;
     } boolean;
 
     struct vgic400_virtual_spi virtual_spi;
     struct vpc_event accept_event;
+
+    struct {
+        struct vgic400_interrupt_event_array *event_arrays[NR_VGIC400_CPUS];
+    } interrupt;
 };
 
 struct vgic400_configuration {
@@ -122,9 +141,11 @@ struct vgic400_configuration {
 
     struct {
         bool trap_cpuif;
-        bool ignore_priority0;
+        bool half_priority;
         bool virtual_spi;
     } boolean;
+
+    struct vgic400_interrupt_event_array *event_arrays[NR_VGIC400_CPUS];
 };
 
 struct vgic400_interrupt_configuration {
@@ -163,6 +184,12 @@ errno_t vgic400_assert_virtual_spi(struct vpc *vpc, struct vgic400 *vgic,
 errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic,
                                      uint16_t *interrupt_no, const char *name);
 bool vgic400_test_virtual_spi(struct vgic400 *vgic, uint16_t interrupt_no);
+errno_t
+vgic400_push_interrupt_event(struct vgic400 *vgic, uint32_t proc_no,
+                             const struct vgic400_interrupt_event *event);
+errno_t vgic400_pop_interrupt_event(struct vgic400 *vgic,
+                                    struct vgic400_interrupt_event *event,
+                                    uint32_t proc_no);
 
 /* for debugging */
 

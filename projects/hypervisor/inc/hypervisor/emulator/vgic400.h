@@ -32,7 +32,7 @@ extern "C" {
 #define NR_VGIC400_PRIORITIES         16
 #define NR_VIGC400_LIST_REGISTERS     4
 #define MAX_NR_VGIC400_LIST_REGISTERS 32
-#define NR_VGIC400_INTERRUPT_EVENTS \
+#define MAX_NR_VGIC400_INTERRUPT_EVENTS \
     ((NR_GIC400_SGIS * NR_VGIC400_CPUS) + NR_GIC400_PPIS + NR_GIC400_SPIS)
 #define VGIC400_NAME_LEN 16
 
@@ -68,7 +68,7 @@ struct vgic400_interrupt_event {
 struct vgic400_interrupt_event_array {
     spin_lock_t lock;
     uint32_t num;
-    uint32_t events[NR_VGIC400_INTERRUPT_EVENTS];
+    uint32_t events[MAX_NR_VGIC400_INTERRUPT_EVENTS];
 };
 
 struct vgic400 {
@@ -185,7 +185,7 @@ errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic,
                                      uint16_t *interrupt_no, const char *name);
 bool vgic400_test_virtual_spi(struct vgic400 *vgic, uint16_t interrupt_no);
 errno_t
-vgic400_push_interrupt_event(struct vgic400 *vgic, uint32_t proc_no,
+vgic400_push_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
                              const struct vgic400_interrupt_event *event);
 errno_t vgic400_pop_interrupt_event(struct vgic400 *vgic,
                                     struct vgic400_interrupt_event *event,

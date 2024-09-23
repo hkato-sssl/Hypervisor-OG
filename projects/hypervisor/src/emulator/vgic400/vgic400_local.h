@@ -41,7 +41,7 @@ extern "C" {
 #define VGIC400_WRITE8(a, d)  REG_WRITE8((a), 0, (d))
 #define VGIC400_WRITE32(a, d) REG_WRITE32((a), 0, (d))
 
-#define VGIC400_NO_ASSIGNED   0xffff
+#define VGIC400_NO_ASSIGNED   0xffffUL
 
 /* types */
 
@@ -185,39 +185,32 @@ static inline bool is_virtual_spi_bit_register(const struct vgic400 *vgic,
     return ret;
 }
 
-static inline uint32_t
+static inline uint64_t
 vgic400_encode_interrupt_event(const struct vgic400_interrupt_event *event)
 {
-    uint32_t d;
+    uint64_t d;
 
-    d = ((uint32_t)event->priority << 24) | ((uint32_t)event->irq << 8)
-        | event->src_proc;
+    d = (uint64_t)(event->iar) << 32;
+    d |= event->priority << 24;
+    d |= event->irq << 8;
+    d |= event->cpuid;
 
     return d;
 }
 
-static inline uint8_t vgic400_decode_interrupt_event_priority(uint32_t event)
-{
-    return (uint8_t)(event >> 24);
-}
-
-static inline uint8_t vgic400_decode_interrupt_event_src_proc(uint32_t event)
-{
-    return (uint8_t)event;
-}
-
-static inline uint16_t vgic400_decode_interrupt_event_irq(uint32_t event)
-{
-    return (uint16_t)(event >> 8);
-}
-
 static inline void
 vgic400_decode_interrupt_event(struct vgic400_interrupt_event *event,
-                               uint32_t d)
+                               uint64_t d)
 {
-    event->priority = vgic400_decode_interrupt_event_priority(d);
-    event->src_proc = vgic400_decode_interrupt_event_src_proc(d);
-    event->irq = vgic400_decode_interrupt_event_irq(d);
+    event->cpuid = (uint8_t)d;
+    event->irq = (uint16_t)(d >> 8);
+    event->priority = (uint8_t)(d >> 24);
+    event->iar = d >> 32;
+}
+
+static inline bool is_less(uint64_t a, uint64_t b)
+{
+    return ((uint32_t)a < (uint32_t)b);
 }
 
 /* functions */
@@ -272,6 +265,10 @@ errno_t vgic400_distributor_error(const struct insn *insn, const char *msg);
 int vgic400_list_register(struct vgic400 *vgic);
 errno_t vgic400_accept_virtual_spi(struct vpc *vpc, struct vgic400 *vgic);
 errno_t vgic400_expose_virtual_spi(struct vpc *vpc, struct vgic400 *vgic);
+
+errno_t vgic400_create_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
+                                       struct vgic400_interrupt_event *event,
+                                       uint32_t iar);
 
 #ifdef __cplusplus
 }

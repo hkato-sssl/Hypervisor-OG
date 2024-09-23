@@ -27,13 +27,11 @@ static errno_t write_sgir(struct vgic400 *vgic, const struct insn *insn)
 {
     errno_t ret;
     uint64_t d;
-    uint64_t irq;
     uint64_t v_target_list;
     uint64_t p_target_list;
     uint64_t filter;
 
     d = insn_str_src_value(insn);
-    irq = d & BITS(3, 0);
 
     filter = BF_EXTRACT(d, 25, 24);
     switch (filter) {

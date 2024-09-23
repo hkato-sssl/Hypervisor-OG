@@ -15,19 +15,19 @@
 /* prototypes */
 
 static void insert_event(struct vgic400_interrupt_event_array *array,
-                         uint32_t event, uint32_t i);
+                         uint64_t event, uint32_t i);
 
 /* variables */
 
 /* functions */
 
 static void swap_event(struct vgic400_interrupt_event_array *array,
-                       uint32_t event, uint32_t i, uint32_t child)
+                       uint64_t event, uint32_t i, uint32_t child)
 {
-    uint32_t d;
+    uint64_t d;
 
     d = array->events[child];
-    if (d < event) {
+    if (is_less(d, event)) {
         array->events[i] = d;
         insert_event(array, event, child);
     } else {
@@ -36,14 +36,14 @@ static void swap_event(struct vgic400_interrupt_event_array *array,
 }
 
 static void insert_event(struct vgic400_interrupt_event_array *array,
-                         uint32_t event, uint32_t i)
+                         uint64_t event, uint32_t i)
 {
     uint32_t child;
 
     child = i * 2 + 1;
     if (child < array->num) {
         if ((child + 1) < array->num) {
-            if (array->events[child] < array->events[child + 1]) {
+            if (is_less(array->events[child], array->events[child + 1])) {
                 swap_event(array, event, i, child);
             } else {
                 swap_event(array, event, i, (child + 1));
@@ -56,25 +56,30 @@ static void insert_event(struct vgic400_interrupt_event_array *array,
     }
 }
 
+static errno_t pop(struct vgic400_interrupt_event_array *array,
+                   struct vgic400_interrupt_event *event)
+{
+    vgic400_decode_interrupt_event(event, array->events[0]);
+
+    --(array->num);
+    if (array->num > 0) {
+        insert_event(array, array->events[array->num], 0);
+    }
+
+    return SUCCESS;
+}
+
 static errno_t pop_interrupt_event(struct vgic400_interrupt_event_array *array,
                                    struct vgic400_interrupt_event *event)
 {
     errno_t ret;
-    uint32_t d;
 
     spin_lock(&(array->lock));
 
     if (array->num > 0) {
-        d = array->events[0];
-        vgic400_decode_interrupt_event(event, d);
-
-        --(array->num);
-        if (array->num > 0) {
-            insert_event(array, array->events[array->num], 0);
-        }
-        ret = SUCCESS;
+        ret = pop(array, event);
     } else {
-        ret = -EIO;
+        ret = -ENODATA;
     }
 
     spin_unlock(&(array->lock));
@@ -82,15 +87,15 @@ static errno_t pop_interrupt_event(struct vgic400_interrupt_event_array *array,
     return ret;
 }
 
-errno_t vgic400_pop_interrupt_event(struct vgic400 *vgic,
-                                    struct vgic400_interrupt_event *event,
-                                    uint32_t proc_no)
+errno_t vgic400_pop_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
+                                    struct vgic400_interrupt_event *event)
 {
     errno_t ret;
+    struct vgic400_interrupt_event_array *array;
 
-    if ((proc_no < NR_VGIC400_CPUS)
-        && (vgic->interrupt.event_arrays[proc_no] != NULL)) {
-        ret = pop_interrupt_event(vgic->interrupt.event_arrays[proc_no], event);
+    array = vgic->interrupt.event_arrays[vpc->proc_no];
+    if (array != NULL) {
+        ret = pop_interrupt_event(array, event);
     } else {
         ret = -EINVAL;
     }

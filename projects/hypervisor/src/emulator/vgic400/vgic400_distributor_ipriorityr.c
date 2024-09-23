@@ -41,7 +41,7 @@ static uint8_t *virtual_ipriorityr(struct vgic400 *vgic, uintptr_t reg)
     return ipriorityr;
 }
 
-static bool is_writable(struct vgic400 *vgic, uintptr_t virq, uint8_t priority)
+static bool is_writable(struct vgic400 *vgic, uintptr_t virq)
 {
     bool ret;
 
@@ -60,18 +60,20 @@ static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn,
 {
     uint32_t *p;
 
-    if (is_writable(vgic, virq, priority)) {
+    if (is_writable(vgic, virq)) {
         priority &= vgic->priority_mask;
 
         if (virq < 16) {
             vgic->sgi[insn->vpc->proc_no].priority[virq] = priority;
+            p = &(vgic->sgi[insn->vpc->proc_no].list_register[virq]);
         } else if (virq < 32) {
+            vgic->ppi[insn->vpc->proc_no].priority[virq - 16] = priority;
             p = &(vgic->ppi[insn->vpc->proc_no].list_register[virq - 16]);
-            update_priority_field(p, priority);
         } else {
+            vgic->spi.priority[virq - 32] = priority;
             p = &(vgic->spi.list_register[virq - 32]);
-            update_priority_field(p, priority);
         }
+        update_priority_field(p, priority);
     }
 
     return SUCCESS;

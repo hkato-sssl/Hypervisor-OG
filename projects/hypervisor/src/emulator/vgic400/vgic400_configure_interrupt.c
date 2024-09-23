@@ -42,10 +42,15 @@ configure_interrupt(struct vgic400 *vgic,
         d |= BIT(30); /* Grp1 */
     }
     d |= (uint32_t)(vgic->priority_mask) << 20;
-    d |= (uint32_t)(config->physical_id) << 10;
     d |= (uint32_t)(config->virtual_id);
 
-    if (config->virtual_id >= 16) {
+    if (config->virtual_id < 16) {
+        d |= BIT(19); /* EOI */
+        for (i = 0; i < vgic->vm->nr_procs; ++i) {
+            vgic->sgi[i].list_register[config->virtual_id] = d;
+        }
+    } else {
+        d |= (uint32_t)(config->physical_id) << 10;
         if (config->virtual_id < 32) {
             idx = config->virtual_id - 16;
             for (i = 0; i < vgic->vm->nr_procs; ++i) {

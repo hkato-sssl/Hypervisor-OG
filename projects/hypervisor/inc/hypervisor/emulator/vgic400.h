@@ -27,13 +27,14 @@ extern "C" {
 
 /* defines */
 
-#define NR_VGIC400_TARGET_MAPS        ((NR_GIC400_INTERRUPTS + 31) / 32)
-#define NR_VGIC400_CPUS               8
-#define NR_VGIC400_PRIORITIES         16
-#define NR_VIGC400_LIST_REGISTERS     4
-#define MAX_NR_VGIC400_LIST_REGISTERS 32
-#define MAX_NR_VGIC400_INTERRUPT_EVENTS \
-    ((NR_GIC400_SGIS * NR_VGIC400_CPUS) + NR_GIC400_PPIS + NR_GIC400_SPIS)
+#define NR_VGIC400_TARGET_MAPS    ((NR_GIC400_INTERRUPTS + 31) / 32)
+#define NR_VGIC400_CPUS           8
+#define NR_VGIC400_PRIORITIES     16
+#define NR_VGIC400_LIST_REGISTERS 4
+#define NR_VGIC400_VIRTUAL_SPIS   32
+#define NR_VGIC400_INTERRUPT_EVENTS                                       \
+    ((NR_GIC400_SGIS * NR_VGIC400_CPUS) + NR_GIC400_PPIS + NR_GIC400_SPIS \
+     + NR_VGIC400_VIRTUAL_SPIS)
 #define VGIC400_NAME_LEN 16
 
 /* types */
@@ -69,7 +70,7 @@ struct vgic400_interrupt_event {
 struct vgic400_interrupt_event_array {
     spin_lock_t lock;
     uint32_t num;
-    uint64_t events[MAX_NR_VGIC400_INTERRUPT_EVENTS];
+    uint64_t events[NR_VGIC400_INTERRUPT_EVENTS];
 };
 
 struct vgic400 {
@@ -93,6 +94,7 @@ struct vgic400 {
     } target;
 
     struct {
+        uint32_t list_register[NR_GIC400_SGIS];
         uint8_t priority[NR_GIC400_SGIS];
     } sgi[MAX_NR_VM_PROCESSORS];
 
@@ -110,8 +112,8 @@ struct vgic400 {
         } map;
     } spi;
 
-    uint32_t lr[MAX_NR_VM_PROCESSORS][MAX_NR_VGIC400_LIST_REGISTERS];
-    uint32_t iar[MAX_NR_VM_PROCESSORS][MAX_NR_VGIC400_LIST_REGISTERS];
+    uint32_t lr[MAX_NR_VM_PROCESSORS][NR_VGIC400_LIST_REGISTERS];
+    uint32_t iar[MAX_NR_VM_PROCESSORS][NR_VGIC400_LIST_REGISTERS];
 
     struct {
         struct vm_region_trap distributor;

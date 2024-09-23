@@ -66,10 +66,10 @@ static errno_t update_priority(struct vgic400 *vgic, const struct insn *insn,
         if (virq < 16) {
             vgic->sgi[insn->vpc->proc_no].priority[virq] = priority;
         } else if (virq < 32) {
-            p = &(vgic->ppi[insn->vpc->proc_no].template[virq - 16]);
+            p = &(vgic->ppi[insn->vpc->proc_no].list_register[virq - 16]);
             update_priority_field(p, priority);
         } else {
-            p = &(vgic->spi.template[virq - 32]);
+            p = &(vgic->spi.list_register[virq - 32]);
             update_priority_field(p, priority);
         }
     }

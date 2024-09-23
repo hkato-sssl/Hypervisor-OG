@@ -61,14 +61,15 @@ struct vgic400_virtual_spi {
 
 struct vgic400_interrupt_event {
     uint8_t priority;
-    uint8_t src_proc;
+    uint8_t cpuid;
     uint16_t irq;
+    uint32_t iar;
 };
 
 struct vgic400_interrupt_event_array {
     spin_lock_t lock;
     uint32_t num;
-    uint32_t events[MAX_NR_VGIC400_INTERRUPT_EVENTS];
+    uint64_t events[MAX_NR_VGIC400_INTERRUPT_EVENTS];
 };
 
 struct vgic400 {
@@ -96,11 +97,13 @@ struct vgic400 {
     } sgi[MAX_NR_VM_PROCESSORS];
 
     struct {
-        uint32_t template[NR_GIC400_PPIS];
+        uint32_t list_register[NR_GIC400_PPIS];
+        uint8_t priority[NR_GIC400_PPIS];
     } ppi[MAX_NR_VM_PROCESSORS];
 
     struct {
-        uint32_t template[NR_GIC400_SPIS];
+        uint32_t list_register[NR_GIC400_SPIS];
+        uint8_t priority[NR_GIC400_SPIS];
         struct {
             uint16_t virtual[NR_GIC400_SPIS];
             uint16_t physical[NR_GIC400_SPIS];
@@ -184,12 +187,19 @@ errno_t vgic400_assert_virtual_spi(struct vpc *vpc, struct vgic400 *vgic,
 errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic,
                                      uint16_t *interrupt_no, const char *name);
 bool vgic400_test_virtual_spi(struct vgic400 *vgic, uint16_t interrupt_no);
+errno_t vgic400_write_list_register(struct vpc *vpc, struct vgic400 *vgic400,
+                                    uint32_t iar);
+errno_t vgic400_create_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
+                                       struct vgic400_interrupt_event *event,
+                                       uint32_t iar);
+errno_t
+vgic400_inject_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
+                               const struct vgic400_interrupt_event *event);
 errno_t
 vgic400_push_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
                              const struct vgic400_interrupt_event *event);
-errno_t vgic400_pop_interrupt_event(struct vgic400 *vgic,
-                                    struct vgic400_interrupt_event *event,
-                                    uint32_t proc_no);
+errno_t vgic400_pop_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
+                                    struct vgic400_interrupt_event *event);
 
 /* for debugging */
 

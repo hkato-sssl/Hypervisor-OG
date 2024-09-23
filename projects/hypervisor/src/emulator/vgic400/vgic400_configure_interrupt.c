@@ -45,15 +45,19 @@ configure_interrupt(struct vgic400 *vgic,
     d |= (uint32_t)(config->physical_id) << 10;
     d |= (uint32_t)(config->virtual_id);
 
-    if ((config->virtual_id >= 16) && (config->virtual_id < 32)) {
-        idx = config->virtual_id - 16;
-        for (i = 0; i < vgic->vm->nr_procs; ++i) {
-            vgic->ppi[i].template[idx] = d;
+    if (config->virtual_id >= 16) {
+        if (config->virtual_id < 32) {
+            idx = config->virtual_id - 16;
+            for (i = 0; i < vgic->vm->nr_procs; ++i) {
+                vgic->ppi[i].list_register[idx] = d;
+            }
+        } else {
+            vgic->spi.list_register[config->virtual_id - 32] = d;
+            vgic->spi.map.virtual[config->physical_id - 32] = config
+                                                                  ->virtual_id;
+            vgic->spi.map.physical[config->virtual_id - 32] =
+                config->physical_id;
         }
-    } else if (config->virtual_id >= 32) {
-        vgic->spi.template[config->virtual_id - 32] = d;
-        vgic->spi.map.virtual[config->physical_id - 32] = config->virtual_id;
-        vgic->spi.map.physical[config->virtual_id - 32] = config->physical_id;
     }
 
     set_target_bit(vgic->target.virq, config->virtual_id);

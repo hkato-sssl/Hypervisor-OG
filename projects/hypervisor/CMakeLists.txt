@@ -38,7 +38,6 @@ add_library(
     src/emulator/vgic400/vgic400_inject_sgi.c
     src/emulator/vgic400/vgic400_accept_virtual_spi.c
     src/emulator/vgic400/vgic400_expose_virtual_spi.c
-    src/emulator/vgic400/vgic400_inject_interrupt.c
     src/emulator/vgic400/vgic400_push_interrupt_event.c
     src/emulator/vgic400/vgic400_pop_interrupt_event.c
     src/emulator/vgic400/vgic400_default_irq_handler.c

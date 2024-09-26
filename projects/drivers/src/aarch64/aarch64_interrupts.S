@@ -18,6 +18,7 @@
 aarch64_lock_interrupts:
         mrs             x1,  DAIF
         eor             x0,  x1,  #(PSTATE_I | PSTATE_F)
+        and             x1,  x1,  #(PSTATE_I | PSTATE_F)
         msr             DAIFset,  #(DAIF_I | DAIF_F)
         ret
 
@@ -25,9 +26,11 @@ aarch64_lock_interrupts:
         .type           aarch64_unlock_interrupts, %function
         .balign         4
 aarch64_unlock_interrupts:
+        cbz             x0,  0f
         mrs             x1,  DAIF
         bic             x2,  x1,  x0
         msr             DAIF, x2
+0:
         ret
 
         .section        ".text.aarch64_disable_interrupts", "ax", %progbits

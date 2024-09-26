@@ -41,7 +41,7 @@ static inline uint32_t cpu_lock_interrupts(void)
     return aarch64_lock_interrupts();
 }
 
-static inline void cpu_unlock_interrupts(bool lock)
+static inline void cpu_unlock_interrupts(uint32_t lock)
 {
     aarch64_unlock_interrupts(lock);
 }

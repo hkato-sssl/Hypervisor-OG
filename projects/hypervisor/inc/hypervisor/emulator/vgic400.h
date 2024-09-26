@@ -44,7 +44,8 @@ struct insn;
 struct vgic400;
 
 struct vgic400_ops {
-    errno_t (*el2_irq_handler)(struct vpc *, struct vgic400 *, uint32_t iar);
+    errno_t (*el2_irq_handler)(struct vpc *vpc, struct vgic400 *vgic,
+                               uint32_t iar);
 };
 
 struct vgic400_virtual_spi {
@@ -181,7 +182,6 @@ errno_t vgic400_inject_sgi(struct vpc *, struct vgic400 *vgic, uint32_t iar);
 errno_t vgic400_inject_sgi_at(struct vpc *, struct vgic400 *vgic, uint32_t iar,
                               uint32_t list_no);
 errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
-errno_t vgic400_default_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
 errno_t vgic400_assert_virtual_spi(struct vpc *vpc, struct vgic400 *vgic,
                                    uint16_t interrupt_no);
 errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic,

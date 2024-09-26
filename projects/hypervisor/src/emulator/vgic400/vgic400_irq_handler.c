@@ -1,5 +1,5 @@
 /*
- * emulator/vgic400/vgic400_default_irq_handler.c
+ * emulator/vgic400/vgic400_irq_handler.c
  *
  * (C) 2020 Hidekazu Kato
  */
@@ -116,7 +116,6 @@ static errno_t el1(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
     struct vgic400_interrupt_event event;
-    struct vgic400_interrupt_event_array *array;
 
     gic400_eoi(vgic->gic, iar);
 
@@ -126,20 +125,17 @@ static errno_t el1(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
         return ret;
     }
 
-    array = vgic->interrupt.event_arrays[vpc->proc_no];
-    spin_lock(&(array->lock));
-
-    if (array->num > 0) {
+    if (nr_queued_interrupt_events(vpc, vgic) > 0) {
+        printk("%s#%u\n", __func__, __LINE__);
         ret = vgic400_push_interrupt_event(vpc, vgic, &event);
     } else {
         ret = vgic400_inject_interrupt_event(vpc, vgic, &event);
         if (ret == -EBUSY) {
+        printk("%s#%u\n", __func__, __LINE__);
             ret = vgic400_push_interrupt_event(vpc, vgic, &event);
             enable_underflow_interrupt(vgic);
         }
     }
-
-    spin_unlock(&(array->lock));
 
     return ret;
 }
@@ -168,7 +164,15 @@ static errno_t el2(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
         if (vgic->ops->el2_irq_handler != NULL) {
             ret = (*(vgic->ops->el2_irq_handler))(vpc, vgic, iar);
         } else {
-            ret = -ENOTSUP;
+            printk("\n#\n# EL2 interrupt is asserted.\n#\n");
+            printk("CPU#%u\n", vpc->proc_no);
+            gic400_dump_virtif_control(vgic);
+            gic400_dump_virtual_cpuif(vgic);
+            printk("\n");
+            gic400_dump_ns_distributor(vgic->gic);
+            *(volatile uint32_t *)0xa0010120 = *(volatile uint32_t *)0xa0010120;
+            gic400_eoi_and_deactivate(vgic->gic, iar);
+            ret = SUCCESS;
         }
     }
 
@@ -193,7 +197,7 @@ static errno_t irq_exception(struct vpc *vpc, struct vgic400 *vgic,
     return ret;
 }
 
-errno_t vgic400_default_irq_handler(struct vpc *vpc, struct vgic400 *vgic)
+errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic)
 {
     errno_t ret;
     uint32_t iar;

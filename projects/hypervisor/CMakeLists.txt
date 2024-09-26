@@ -42,7 +42,7 @@ add_library(
     src/emulator/vgic400/vgic400_inject_interrupt_event.c
     src/emulator/vgic400/vgic400_push_interrupt_event.c
     src/emulator/vgic400/vgic400_pop_interrupt_event.c
-    src/emulator/vgic400/vgic400_default_irq_handler.c
+    src/emulator/vgic400/vgic400_irq_handler.c
     src/emulator/vgic400/vgic400_distributor_ipriorityr.c
     src/emulator/vgic400/vgic400_distributor_ixenabler.c
     src/emulator/vgic400/vgic400_distributor_error.c

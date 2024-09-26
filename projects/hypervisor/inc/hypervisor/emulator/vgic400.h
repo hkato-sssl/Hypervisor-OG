@@ -44,8 +44,6 @@ struct insn;
 struct vgic400;
 
 struct vgic400_ops {
-    errno_t (*activate)(struct vgic400 *);
-    errno_t (*irq_handler)(struct vpc *, struct vgic400 *);
     errno_t (*el2_irq_handler)(struct vpc *, struct vgic400 *, uint32_t iar);
 };
 

@@ -50,7 +50,6 @@ static struct vpc vpcs[NR_CPUS];
 static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__((aligned(32)));
 static struct vpc_exception_ops ops;
 static struct vgic400_ops xilinx_mpsoc_vgic400_ops = {
-    .irq_handler = vgic400_default_irq_handler,
 };
 static struct vgic400_interrupt_event_array event_arrays[NR_CPUS];
 

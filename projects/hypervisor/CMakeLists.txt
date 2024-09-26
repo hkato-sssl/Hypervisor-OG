@@ -54,7 +54,6 @@ add_library(
     src/emulator/vgic400/vgic400_distributor_sgir.c
     src/emulator/vgic400/vgic400_distributor_ro_word_register.c
     src/emulator/vgic400/vgic400_distributor_igroupr.c
-    src/emulator/vgic400/vgic400_irq_handler.c
     src/emulator/vgic400/vgic400_cpuif_emulate_memory_access.c
     src/emulator/vgic400/vgic400_initialize.c
     src/emulator/vgic400/vgic400_distributor_bit_register.c

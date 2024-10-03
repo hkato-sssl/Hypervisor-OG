@@ -13,7 +13,7 @@
         .type           xilinx_mpsoc_emulate_tz_asm, %function
         .balign         4
         /*
-         * 本関数は単純にTrustZoneへの要求を中継するのみ
+         * Relaying requests to Secure-mode.
          */
 xilinx_mpsoc_emulate_tz_asm:
         stp             x0,  lr,  [sp, #-16]!

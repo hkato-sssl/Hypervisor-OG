@@ -1,5 +1,5 @@
 /*
- * /home/hide/hypervisor-og/projects/hypervisor/src/emulator/vgic400/vgic400_create_interrupt_event.c
+ * emulator/vgic400/vgic400_create_interrupt_event.c
  *
  * (C) 2024 Hidekazu Kato
  */

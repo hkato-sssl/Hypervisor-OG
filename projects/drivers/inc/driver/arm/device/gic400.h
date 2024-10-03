@@ -1,5 +1,5 @@
 /*
- * driver/arm/device/gic-400.h
+ * driver/arm/device/gic400.h
  *
  * (C) 2019 Hidekazu Kato
  */
@@ -16,21 +16,21 @@
 #define GICD_CTLR          0x0000
 #define GICD_TYPER         0x0004
 #define GICD_IIDR          0x0008
-#define GICD_IGROUPR(n)    (0x0080 + (n)*4)
-#define GICD_ISENABLER(n)  (0x0100 + (n)*4)
-#define GICD_ICENABLER(n)  (0x0180 + (n)*4)
-#define GICD_ISPENDR(n)    (0x0200 + (n)*4)
-#define GICD_ICPENDR(n)    (0x0280 + (n)*4)
-#define GICD_ISACTIVER(n)  (0x0300 + (n)*4)
-#define GICD_ICACTIVER(n)  (0x0380 + (n)*4)
-#define GICD_IPRIORITYR(n) (0x0400 + (n)*4)
-#define GICD_ITARGETSR(n)  (0x0800 + (n)*4)
-#define GICD_ICFGR(n)      (0x0c00 + (n)*4)
+#define GICD_IGROUPR(n)    (0x0080 + (n) * 4)
+#define GICD_ISENABLER(n)  (0x0100 + (n) * 4)
+#define GICD_ICENABLER(n)  (0x0180 + (n) * 4)
+#define GICD_ISPENDR(n)    (0x0200 + (n) * 4)
+#define GICD_ICPENDR(n)    (0x0280 + (n) * 4)
+#define GICD_ISACTIVER(n)  (0x0300 + (n) * 4)
+#define GICD_ICACTIVER(n)  (0x0380 + (n) * 4)
+#define GICD_IPRIORITYR(n) (0x0400 + (n) * 4)
+#define GICD_ITARGETSR(n)  (0x0800 + (n) * 4)
+#define GICD_ICFGR(n)      (0x0c00 + (n) * 4)
 #define GICD_PPISR         0x0d00
-#define GICD_SPISR(n)      (0x0d04 + (n)*4)
+#define GICD_SPISR(n)      (0x0d04 + (n) * 4)
 #define GICD_SGIR          0x0f00
-#define GICD_CPENDSGIR(n)  (0x0f10 + (n)*4)
-#define GICD_SPENDSGIR(n)  (0x0f20 + (n)*4)
+#define GICD_CPENDSGIR(n)  (0x0f10 + (n) * 4)
+#define GICD_SPENDSGIR(n)  (0x0f20 + (n) * 4)
 #define GICD_PIDR4         0x0fd0
 #define GICD_PIDR5         0x0fd4
 #define GICD_PIDR6         0x0fd8
@@ -76,19 +76,19 @@
 #define GICH_EISR0           0x0020
 #define GICH_ELRSR0          0x0030
 #define GICH_APR0            0x00f0
-#define GICH_LR(n)           (0x0100 + (n)*4)
+#define GICH_LR(n)           (0x0100 + (n) * 4)
 
-#define GICH_HCR_ALIAS(n)    (0x0000 + (n)*0x0200)
-#define GICH_VTR_ALIAS(n)    (0x0004 + (n)*0x0200)
-#define GICH_VMCR_ALIAS(n)   (0x0008 + (n)*0x0200)
-#define GICH_MISR_ALIAS(n)   (0x0010 + (n)*0x0200)
-#define GICH_EISR0_ALIAS(n)  (0x0020 + (n)*0x0200)
-#define GICH_ELRSR0_ALIAS(n) (0x0030 + (n)*0x0200)
-#define GICH_APR0_ALIAS(n)   (0x00f0 + (n)*0x0200)
-#define GICH_LR0_ALIAS(n)    (0x0100 + (n)*0x0200)
-#define GICH_LR1_ALIAS(n)    (0x0104 + (n)*0x0200)
-#define GICH_LR2_ALIAS(n)    (0x0108 + (n)*0x0200)
-#define GICH_LR3_ALIAS(n)    (0x010c + (n)*0x0200)
+#define GICH_HCR_ALIAS(n)    (0x0000 + (n) * 0x0200)
+#define GICH_VTR_ALIAS(n)    (0x0004 + (n) * 0x0200)
+#define GICH_VMCR_ALIAS(n)   (0x0008 + (n) * 0x0200)
+#define GICH_MISR_ALIAS(n)   (0x0010 + (n) * 0x0200)
+#define GICH_EISR0_ALIAS(n)  (0x0020 + (n) * 0x0200)
+#define GICH_ELRSR0_ALIAS(n) (0x0030 + (n) * 0x0200)
+#define GICH_APR0_ALIAS(n)   (0x00f0 + (n) * 0x0200)
+#define GICH_LR0_ALIAS(n)    (0x0100 + (n) * 0x0200)
+#define GICH_LR1_ALIAS(n)    (0x0104 + (n) * 0x0200)
+#define GICH_LR2_ALIAS(n)    (0x0108 + (n) * 0x0200)
+#define GICH_LR3_ALIAS(n)    (0x010c + (n) * 0x0200)
 
 #define GICV_CTLR            0x0000
 #define GICV_PMR             0x0004

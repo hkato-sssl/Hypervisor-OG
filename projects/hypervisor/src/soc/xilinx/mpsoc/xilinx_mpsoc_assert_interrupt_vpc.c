@@ -30,9 +30,12 @@ errno_t xilinx_mpsoc_assert_interrupt_vpc(struct soc *soc,
 
     mpsoc = soc->chip;
 
-    if (interrupt_no < 32) {
+    if (interrupt_no < 16) {
         targets = 1UL << vm_physical_proc_no(vpc->vm, vpc->proc_no);
         ret = gic400_assert_sgi(mpsoc->vgic400.gic, targets, interrupt_no);
+    } else if (interrupt_no < 32) {
+        /* asserting PPI interrupts is not supported. */
+        ret = -ENOTSUP;
     } else {
         ret = gic400_assert_spi(mpsoc->vgic400.gic, interrupt_no);
     }

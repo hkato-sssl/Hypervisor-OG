@@ -34,7 +34,7 @@ errno_t vgic400_distributor_igroupr(struct vgic400 *vgic,
             ret = insn_emulate_str(insn);
         }
     } else {
-        ret = -EPERM;
+        ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
     }
 
     return ret;

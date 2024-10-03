@@ -79,13 +79,6 @@ static bool is_valid_id(const struct vgic400 *vgic, uint16_t id)
         || (id == GIC400_MAINTENANCE_INTERRUPT)
         || (id == GIC400_HYPERVISOR_TIMER) || (id >= NR_GIC400_INTERRUPTS)) {
         ret = false;
-    } else if (vgic->boolean.virtual_spi) {
-        if ((id >= vgic->virtual_spi.base_no)
-            && (id <= (vgic->virtual_spi.base_no + 31))) {
-            ret = false;
-        } else {
-            ret = true;
-        }
     } else {
         ret = true;
     }

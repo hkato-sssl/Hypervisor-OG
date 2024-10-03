@@ -23,105 +23,12 @@
 
 /* functions */
 
-errno_t read_virtual_ixpendr(struct vgic400 *vgic, const struct insn *insn)
-{
-    errno_t ret;
-    uint32_t d;
-
-    vgic400_lock(vgic);
-    d = vgic->virtual_spi.ipendr;
-    vgic400_unlock(vgic);
-
-    ret = insn_emulate_ldr(insn, d);
-
-    return ret;
-}
-
-errno_t write_virtual_ispendr(struct vgic400 *vgic, const struct insn *insn)
-{
-    errno_t ret;
-    uint32_t d;
-
-    d = (uint32_t)insn_str_src_value(insn);
-    if (d != 0) {
-        vgic400_lock(vgic);
-        vgic->virtual_spi.ipendr |= d;
-        if ((vgic->virtual_spi.ienabler & vgic->virtual_spi.ipendr) != 0) {
-            ret = vgic400_accept_virtual_spi(insn->vpc, vgic);
-        } else {
-            ret = SUCCESS;
-        }
-        vgic400_unlock(vgic);
-
-        if (ret == SUCCESS) {
-            ret = insn_emulate_str(insn);
-        }
-    } else {
-        ret = insn_emulate_str(insn);
-    }
-
-    return ret;
-}
-
-errno_t write_virtual_icpendr(struct vgic400 *vgic, const struct insn *insn)
-{
-    errno_t ret;
-    uint32_t d;
-    uint32_t mask;
-
-    d = (uint32_t)insn_str_src_value(insn);
-    if (d != 0) {
-        mask = ~d;
-        vgic400_lock(vgic);
-        vgic->virtual_spi.ipendr &= mask;
-        vgic400_unlock(vgic);
-    }
-
-    ret = insn_emulate_str(insn);
-
-    return ret;
-}
-
-static bool is_virtual_spi(struct vgic400 *vgic, uintptr_t reg, uintptr_t base)
-{
-    bool ret;
-    uintptr_t vreg;
-
-    if (vgic->boolean.virtual_spi) {
-        vreg = base + (vgic->virtual_spi.base_no / 32) * 4;
-        ret = (vreg == reg) ? true : false;
-    } else {
-        ret = false;
-    }
-
-    return ret;
-}
-
-static bool is_virtual_ispendr(struct vgic400 *vgic, uintptr_t reg)
-{
-    return is_virtual_spi(vgic, reg, GICD_ISPENDR(0));
-}
-
-static bool is_virtual_icpendr(struct vgic400 *vgic, uintptr_t reg)
-{
-    return is_virtual_spi(vgic, reg, GICD_ICPENDR(0));
-}
-
 errno_t vgic400_distributor_ispendr(struct vgic400 *vgic,
                                     const struct insn *insn, uintptr_t reg)
 {
     errno_t ret;
 
-    if (is_virtual_ispendr(vgic, reg)) {
-        if (insn->type == INSN_TYPE_LDR) {
-            ret = read_virtual_ixpendr(vgic, insn);
-        } else {
-            ret = write_virtual_ispendr(vgic, insn);
-        }
-    } else {
-        ret =
-            vgic400_distributor_bit_register(vgic, insn, reg, GICD_ISPENDR(0));
-    }
+    ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ISPENDR(0));
 
     return ret;
 }
@@ -131,16 +38,7 @@ errno_t vgic400_distributor_icpendr(struct vgic400 *vgic,
 {
     errno_t ret;
 
-    if (is_virtual_icpendr(vgic, reg)) {
-        if (insn->type == INSN_TYPE_LDR) {
-            ret = read_virtual_ixpendr(vgic, insn);
-        } else {
-            ret = write_virtual_icpendr(vgic, insn);
-        }
-    } else {
-        ret =
-            vgic400_distributor_bit_register(vgic, insn, reg, GICD_ICPENDR(0));
-    }
+    ret = vgic400_distributor_bit_register(vgic, insn, reg, GICD_ICPENDR(0));
 
     return ret;
 }

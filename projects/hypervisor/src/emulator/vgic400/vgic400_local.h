@@ -116,9 +116,6 @@ static inline uint16_t vgic400_virq_to_irq(const struct vgic400 *vgic,
 
     if (virq < 32) {
         irq = is_target_virq(vgic, virq) ? virq : VGIC400_NO_ASSIGNED;
-    } else if (vgic->boolean.virtual_spi && (virq >= vgic->virtual_spi.base_no)
-               && (virq <= (vgic->virtual_spi.base_no + 31))) {
-        irq = virq;
     } else if (virq < NR_GIC400_INTERRUPTS) {
         irq = vgic->spi.map.physical[virq - 32];
     } else {
@@ -148,36 +145,6 @@ static inline bool is_aligned_word_access(const struct insn *insn)
 
     if (IS_ALIGNED(insn->op.ldr.pa, 4) && (insn->op.ldr.size == 4)) {
         ret = true;
-    } else {
-        ret = false;
-    }
-
-    return ret;
-}
-
-static inline bool is_virtual_spi_byte_register(const struct vgic400 *vgic,
-                                                uintptr_t reg, uintptr_t base)
-{
-    bool ret;
-
-    if (vgic->boolean.virtual_spi) {
-        base += vgic->virtual_spi.base_no;
-        ret = ((base <= reg) && (reg < (base + 32))) ? true : false;
-    } else {
-        ret = false;
-    }
-
-    return ret;
-}
-
-static inline bool is_virtual_spi_bit_register(const struct vgic400 *vgic,
-                                               uintptr_t reg, uintptr_t base)
-{
-    bool ret;
-
-    if (vgic->boolean.virtual_spi) {
-        base += (vgic->virtual_spi.base_no / 32) * 4;
-        ret = ((base <= reg) && (reg < (base + 4))) ? true : false;
     } else {
         ret = false;
     }
@@ -263,12 +230,13 @@ uint64_t vgic400_v2p_cpu_map_w(uint64_t src, const struct vm *vm);
 errno_t vgic400_distributor_error(const struct insn *insn, const char *msg);
 
 int vgic400_list_register(struct vgic400 *vgic);
-errno_t vgic400_accept_virtual_spi(struct vpc *vpc, struct vgic400 *vgic);
-errno_t vgic400_expose_virtual_spi(struct vpc *vpc, struct vgic400 *vgic);
 
 errno_t vgic400_create_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
                                        struct vgic400_interrupt_event *event,
                                        uint32_t iar);
+errno_t vgic400_write_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
+                                      struct vgic400_interrupt_event *event,
+                                      int list_no);
 
 #ifdef __cplusplus
 }

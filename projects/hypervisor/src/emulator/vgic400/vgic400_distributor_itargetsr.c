@@ -143,35 +143,6 @@ static errno_t write_itargetsr_w(const struct vgic400 *vgic,
     return ret;
 }
 
-static errno_t read_virtual_itargetsr(const struct insn *insn)
-{
-    errno_t ret;
-
-    ret = insn_emulate_ldr(insn, 0x01010101);
-
-    return ret;
-}
-
-static errno_t write_virtual_itargetsr(const struct insn *insn)
-{
-    errno_t ret;
-
-    /* Ignore a write operation. */
-
-    ret = insn_emulate_str(insn);
-
-    return ret;
-}
-
-static bool is_virtual_itargetsr(const struct vgic400 *vgic, uintptr_t reg)
-{
-    bool ret;
-
-    ret = is_virtual_spi_byte_register(vgic, reg, GICD_ITARGETSR(0));
-
-    return ret;
-}
-
 errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic,
                                       const struct insn *insn, uintptr_t reg)
 {
@@ -179,33 +150,17 @@ errno_t vgic400_distributor_itargetsr(struct vgic400 *vgic,
 
     if (insn->type == INSN_TYPE_LDR) {
         if (insn->op.ldr.size == 1) {
-            if (is_virtual_itargetsr(vgic, reg)) {
-                ret = read_virtual_itargetsr(insn);
-            } else {
-                ret = read_itargetsr_b(vgic, insn, reg);
-            }
+            ret = read_itargetsr_b(vgic, insn, reg);
         } else if (is_aligned_word_access(insn)) {
-            if (is_virtual_itargetsr(vgic, reg)) {
-                ret = read_virtual_itargetsr(insn);
-            } else {
-                ret = read_itargetsr_w(vgic, insn, reg);
-            }
+            ret = read_itargetsr_w(vgic, insn, reg);
         } else {
             ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }
     } else {
         if (insn->op.str.size == 1) {
-            if (is_virtual_itargetsr(vgic, reg)) {
-                ret = write_virtual_itargetsr(insn);
-            } else {
-                ret = write_itargetsr_b(vgic, insn, reg);
-            }
+            ret = write_itargetsr_b(vgic, insn, reg);
         } else if (is_aligned_word_access(insn)) {
-            if (is_virtual_itargetsr(vgic, reg)) {
-                ret = write_virtual_itargetsr(insn);
-            } else {
-                ret = write_itargetsr_w(vgic, insn, reg);
-            }
+            ret = write_itargetsr_w(vgic, insn, reg);
         } else {
             ret = vgic400_distributor_error(insn, ERR_MSG_UNAUTH);
         }

@@ -18,7 +18,6 @@
 #define DEV_NAME "P128"
 #define HVC_IMM  1
 
-#undef ALLOCATE_VSPI
 #define INTR_EP0 130
 #define INTR_EP1 131
 
@@ -82,26 +81,6 @@ static errno_t init_p2p_eps(struct xilinx_mpsoc *mpsoc)
     errno_t ret;
     uint16_t irq;
 
-#ifdef ALLOCATE_VSPI
-    ret = vgic400_allocate_virtual_spi(&(mpsoc->vgic400), &irq, "p128#0");
-    if (ret == SUCCESS) {
-        ret = init_ep(0, mpsoc, irq);
-        if (ret == SUCCESS) {
-            ret = p2p_packet_connect(&p2p_path, &(eps[0]));
-        }
-    }
-
-    if (ret == SUCCESS) {
-        ret = vgic400_allocate_virtual_spi(&(mpsoc->vgic400), &irq, "p128#1");
-    }
-
-    if (ret == SUCCESS) {
-        ret = init_ep(1, mpsoc, irq);
-        if (ret == SUCCESS) {
-            ret = p2p_packet_connect(&p2p_path, &(eps[1]));
-        }
-    }
-#else
     ret = init_ep(0, mpsoc, INTR_EP0);
     if (ret == SUCCESS) {
         ret = p2p_packet_connect(&p2p_path, &(eps[0]));
@@ -113,7 +92,6 @@ static errno_t init_p2p_eps(struct xilinx_mpsoc *mpsoc)
             ret = p2p_packet_connect(&p2p_path, &(eps[1]));
         }
     }
-#endif
 
     if (ret == SUCCESS) {
         ret = vgic400_allocate_virtual_spi(&(mpsoc->vgic400), &irq, "p128#2");

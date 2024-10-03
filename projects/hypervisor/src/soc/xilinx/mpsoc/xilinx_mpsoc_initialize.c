@@ -130,7 +130,6 @@ init_virtual_sgis(struct xilinx_mpsoc *chip,
     struct vgic400_interrupt_configuration config;
 
     memset(&config, 0, sizeof(config));
-    config.flag.hw = 1;
 
     for (i = 0; i < chip_config->gic.nr_sgis; ++i) {
         config.virtual_id = chip_config->gic.sgis[i];
@@ -212,7 +211,6 @@ init_vgic400(struct xilinx_mpsoc *chip,
     config.base.virtual_cpuif = (void *)REG_GIC400V;
     config.ops = chip_config->gic.ops;
     config.boolean.half_priority = chip_config->gic.boolean.half_priority;
-    config.boolean.virtual_spi = chip_config->gic.boolean.virtual_spi;
     config.boolean.trap_cpuif = true;
     for (i = 0; i < chip_config->nr_procs; ++i) {
         config.event_arrays[i] = chip_config->gic.event_arrays[i];

@@ -108,28 +108,6 @@ register_trap_distributor(struct vgic400 *vgic,
     return ret;
 }
 
-static errno_t
-initialize_virtual_spi(struct vgic400 *vgic,
-                       const struct vgic400_configuration *config)
-{
-    errno_t ret;
-    int i;
-
-    if ((vgic->template_typer & BITS(4, 0)) < 0x1f) {
-        ++(vgic->template_typer); /* Increment GICD_TYPER.ITLinesNumber */
-        vgic->virtual_spi.base_no = (vgic->template_typer & BITS(4, 0)) * 32;
-        for (i = 0; i < 32; ++i) {
-            vgic->virtual_spi.ipriorityr[i] = vgic->priority_mask;
-        }
-        vgic->virtual_spi.used = 0;
-        ret = SUCCESS;
-    } else {
-        ret = -EPERM;
-    }
-
-    return ret;
-}
-
 static errno_t initialize(struct vgic400 *vgic,
                           const struct vgic400_configuration *config)
 {
@@ -166,11 +144,6 @@ static errno_t initialize(struct vgic400 *vgic,
     vgic->boolean.half_priority = config->boolean.half_priority;
     if (vgic->boolean.half_priority) {
         vgic->priority_mask <<= 1;
-    }
-
-    vgic->boolean.virtual_spi = config->boolean.virtual_spi;
-    if (vgic->boolean.virtual_spi) {
-        initialize_virtual_spi(vgic, config);
     }
 
     ret = register_trap_distributor(vgic, config);

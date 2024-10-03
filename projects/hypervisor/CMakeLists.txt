@@ -21,7 +21,6 @@ add_library(
     src/emulator/psci/psci_call_emulator_ops.c
     src/emulator/psci/psci_set_error.c
     src/emulator/psci/psci_error_unknown_function.c
-    src/emulator/vgic400/vgic400_alloc_virtual_spi.c
     src/emulator/vgic400/vgic400_configure_interrupt.c
     src/emulator/vgic400/vgic400_activate_virtual_cpuif.c
     src/emulator/vgic400/vgic400_distributor_ixactiver.c
@@ -32,12 +31,9 @@ add_library(
     src/emulator/vgic400/gic400_dump_virtif_control.c
     src/emulator/vgic400/gic400_dump_virtual_cpuif.c
     src/emulator/vgic400/vgic400_cpuif_write_word_register.c
-    src/emulator/vgic400/vgic400_assert_virtual_spi.c
     src/emulator/vgic400/vgic400_list_register.c
     src/emulator/vgic400/vgic400_distributor_byte_register.c
     src/emulator/vgic400/vgic400_inject_sgi.c
-    src/emulator/vgic400/vgic400_accept_virtual_spi.c
-    src/emulator/vgic400/vgic400_expose_virtual_spi.c
     src/emulator/vgic400/vgic400_create_interrupt_event.c
     src/emulator/vgic400/vgic400_inject_interrupt_event.c
     src/emulator/vgic400/vgic400_push_interrupt_event.c
@@ -46,7 +42,6 @@ add_library(
     src/emulator/vgic400/vgic400_distributor_ipriorityr.c
     src/emulator/vgic400/vgic400_distributor_ixenabler.c
     src/emulator/vgic400/vgic400_distributor_error.c
-    src/emulator/vgic400/vgic400_test_virtual_spi.c
     src/emulator/vgic400/vgic400_distributor_spisr.c
     src/emulator/vgic400/vgic400_distributor_icfgr.c
     src/emulator/vgic400/vgic400_cpu_map.c

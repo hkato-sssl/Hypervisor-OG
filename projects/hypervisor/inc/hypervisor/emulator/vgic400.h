@@ -48,17 +48,6 @@ struct vgic400_ops {
                                uint32_t iar);
 };
 
-struct vgic400_virtual_spi {
-    bool asserting;
-    uint32_t base_no;
-    uint32_t used;
-    char name[32][VGIC400_NAME_LEN];
-
-    uint8_t ipriorityr[32];
-    uint32_t ienabler;
-    uint32_t ipendr;
-};
-
 struct vgic400_interrupt_event {
     uint8_t priority;
     uint8_t cpuid;
@@ -121,10 +110,8 @@ struct vgic400 {
 
     struct {
         bool half_priority;
-        bool virtual_spi;
     } boolean;
 
-    struct vgic400_virtual_spi virtual_spi;
     struct vpc_event accept_event;
 
     struct {
@@ -146,7 +133,6 @@ struct vgic400_configuration {
     struct {
         bool trap_cpuif;
         bool half_priority;
-        bool virtual_spi;
     } boolean;
 
     struct vgic400_interrupt_event_array *event_arrays[NR_VGIC400_CPUS];
@@ -182,11 +168,6 @@ errno_t vgic400_inject_sgi(struct vpc *, struct vgic400 *vgic, uint32_t iar);
 errno_t vgic400_inject_sgi_at(struct vpc *, struct vgic400 *vgic, uint32_t iar,
                               uint32_t list_no);
 errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic);
-errno_t vgic400_assert_virtual_spi(struct vpc *vpc, struct vgic400 *vgic,
-                                   uint16_t interrupt_no);
-errno_t vgic400_allocate_virtual_spi(struct vgic400 *vgic,
-                                     uint16_t *interrupt_no, const char *name);
-bool vgic400_test_virtual_spi(struct vgic400 *vgic, uint16_t interrupt_no);
 errno_t vgic400_write_list_register(struct vpc *vpc, struct vgic400 *vgic400,
                                     uint32_t iar);
 errno_t vgic400_create_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
@@ -200,6 +181,7 @@ vgic400_push_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
                              const struct vgic400_interrupt_event *event);
 errno_t vgic400_pop_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
                                     struct vgic400_interrupt_event *event);
+errno_t vgic400_update_list_registers(struct vpc *vpc, struct vgic400 *vgic);
 
 /* for debugging */
 

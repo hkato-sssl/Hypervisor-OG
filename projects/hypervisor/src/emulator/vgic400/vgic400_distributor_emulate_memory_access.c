@@ -24,6 +24,19 @@
 
 /* functions */
 
+static errno_t ignore_access(const struct insn *insn, struct vgic400 *vgic)
+{
+    errno_t ret;
+
+    if (insn->type == INSN_TYPE_STR) {
+        ret = insn_emulate_str(insn);
+    } else {
+        ret = insn_emulate_ldr(insn, 0U);
+    }
+
+    return ret;
+}
+
 static errno_t emulate_memory_insn(const struct insn *insn,
                                    struct vgic400 *vgic)
 {
@@ -33,11 +46,11 @@ static errno_t emulate_memory_insn(const struct insn *insn,
 
     base = (uintptr_t)gic400_distributor_register_base(vgic->gic);
     reg = (insn->op.ldr.pa - base);
-    if (reg == 0x0000) { /* GICD_CTLR */
+    if ((0x0000 <= reg) && (reg <= 0x0003)) { /* GICD_CTLR */
         ret = vgic400_distributor_ctlr(vgic, insn);
-    } else if (reg == 0x0004) { /* GICD_TYPER */
+    } else if ((0x0004 <= reg) && (reg <= 0x0007)) { /* GICD_TYPER */
         ret = vgic400_distributor_typer(vgic, insn);
-    } else if (reg == 0x0008) { /* GICD_IIDR */
+    } else if ((0x0008 <= reg) && (reg <= 0x000b)) { /* GICD_IIDR */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
     } else if ((0x0080 <= reg) && (reg <= 0x00bf)) { /* GICD_IGROUPRn */
         ret = vgic400_distributor_igroupr(vgic, insn);
@@ -59,11 +72,11 @@ static errno_t emulate_memory_insn(const struct insn *insn,
         ret = vgic400_distributor_itargetsr(vgic, insn, reg);
     } else if ((0x0c00 <= reg) && (reg <= 0x0c7f)) { /* GICD_ICFGRn */
         ret = vgic400_distributor_icfgr(vgic, insn, reg);
-    } else if (reg == 0x0d00) { /* GICD_PPISR */
+    } else if ((0x0d00 <= reg) && (reg <= 0x0d03)) { /* GICD_PPISR */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
     } else if ((0x0d04 <= reg) && (reg <= 0x0d3f)) { /* GICD_SPISRn */
         ret = vgic400_distributor_spisr(vgic, insn, reg);
-    } else if (reg == 0x0f00) { /* GICD_SGIR */
+    } else if ((0x0f00 <= reg) && (reg <= 0x0f03)) { /* GICD_SGIR */
         ret = vgic400_distributor_sgir(vgic, insn);
     } else if ((0x0f10 <= reg) && (reg <= 0x0f1f)) { /* GICD_CPENDSGIRn */
         ret = vgic400_distributor_byte_register(vgic, insn, reg,
@@ -71,32 +84,32 @@ static errno_t emulate_memory_insn(const struct insn *insn,
     } else if ((0x0f20 <= reg) && (reg <= 0x0f2f)) { /* GICD_SPENDSGIRn */
         ret = vgic400_distributor_byte_register(vgic, insn, reg,
                                                 GICD_SPENDSGIR(0));
-    } else if (reg == 0x0fd0) { /* GICD_PIDR4 */
+    } else if ((0x0fd0 <= reg) && (reg <= 0x0fd3)) { /* GICD_PIDR4 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0fd4) { /* GICD_PIDR5 */
+    } else if ((0x0fd4 <= reg) && (reg <= 0x0fd7)) { /* GICD_PIDR5 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0fd8) { /* GICD_PIDR6 */
+    } else if ((0x0fd8 <= reg) && (reg <= 0x0fdb)) { /* GICD_PIDR6 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0fdc) { /* GICD_PIDR7 */
+    } else if ((0x0fdc <= reg) && (reg <= 0x0fdf)) { /* GICD_PIDR7 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0fe0) { /* GICD_PIDR0 */
+    } else if ((0x0fe0 <= reg) && (reg <= 0x0fe3)) { /* GICD_PIDR0 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0fe4) { /* GICD_PIDR1 */
+    } else if ((0x0fe4 <= reg) && (reg <= 0x0fe7)) { /* GICD_PIDR1 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0fe8) { /* GICD_PIDR2 */
+    } else if ((0x0fe8 <= reg) && (reg <= 0x0feb)) { /* GICD_PIDR2 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0fec) { /* GICD_PIDR3 */
+    } else if ((0x0fec <= reg) && (reg <= 0x0fef)) { /* GICD_PIDR3 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0ff0) { /* GICD_CIDR0 */
+    } else if ((0x0ff0 <= reg) && (reg <= 0x0ff3)) { /* GICD_CIDR0 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0ff4) { /* GICD_CIDR1 */
+    } else if ((0x0ff4 <= reg) && (reg <= 0x0ff7)) { /* GICD_CIDR1 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0ff8) { /* GICD_CIDR2 */
+    } else if ((0x0ff8 <= reg) && (reg <= 0x0ffb)) { /* GICD_CIDR2 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
-    } else if (reg == 0x0ffc) { /* GICD_CIDR3 */
+    } else if ((0x0ffc <= reg) && (reg <= 0x0fff)) { /* GICD_CIDR3 */
         ret = vgic400_distributor_ro_word_register(vgic, insn);
     } else {
-        ret = vgic400_distributor_error(insn, ERR_MSG_OOR);
+        ret = ignore_access(insn, vgic);
     }
 
     return ret;

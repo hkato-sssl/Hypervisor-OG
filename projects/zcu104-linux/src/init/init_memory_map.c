@@ -103,7 +103,7 @@ static errno_t init_map(void)
     if (ret == SUCCESS) {
         attr.sh = MMU_ATTR_SH_NSH;
         attr.attrindx = HYP_MMU_MT_DEVICE_nGnRE;
-        ret = map((void *)CONFIG_GICV_BASE, (void *)(CONFIG_GICV_BASE + 4096),
+        ret = map((void *)CONFIG_GICV_BASE, (void *)(CONFIG_GICV_BASE + 4096 * 2),
                   &attr);
     }
 

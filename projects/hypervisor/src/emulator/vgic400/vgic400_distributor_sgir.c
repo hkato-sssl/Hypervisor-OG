@@ -23,24 +23,21 @@
 
 /* functions */
 
-static errno_t write_sgir(struct vgic400 *vgic, const struct insn *insn)
+static errno_t write_sgir(struct vgic400 *vgic, const struct insn *insn, uint32_t value)
 {
     errno_t ret;
-    uint64_t d;
-    uint64_t v_target_list;
-    uint64_t p_target_list;
-    uint64_t filter;
+    uint32_t v_target_list;
+    uint32_t p_target_list;
+    uint32_t filter;
 
-    d = insn_str_src_value(insn);
-
-    filter = BF_EXTRACT(d, 25, 24);
+    filter = BF_EXTRACT(value, 25, 24);
     switch (filter) {
     case 0:
-        v_target_list = BF_EXTRACT(d, 23, 16);
+        v_target_list = BF_EXTRACT(value, 23, 16);
         p_target_list = vgic400_v2p_cpu_map_b(v_target_list, insn->vpc->vm);
         if (p_target_list != 0) {
-            d = (d & ~(uint32_t)BITS(23, 16)) | (p_target_list << 16);
-            VGIC400_WRITE32(insn->op.str.pa, d);
+            value = (value & ~(uint32_t)BITS(23, 16)) | (p_target_list << 16);
+            VGIC400_WRITE32(insn->op.str.pa, value);
         }
         ret = insn_emulate_str(insn);
         break;
@@ -56,10 +53,17 @@ static errno_t write_sgir(struct vgic400 *vgic, const struct insn *insn)
 errno_t vgic400_distributor_sgir(struct vgic400 *vgic, const struct insn *insn)
 {
     errno_t ret;
+    uint32_t value;
 
     if (is_aligned_word_access(insn)) {
         if (insn->type == INSN_TYPE_STR) {
-            ret = write_sgir(vgic, insn);
+            value = (uint32_t)insn_str_src_value(insn);
+            if (BF_EXTRACT(value, 3, 0) < 7) {
+                ret = write_sgir(vgic, insn, value);
+            } else {
+                /* ignore invalid value writes. */
+                ret = insn_emulate_str(insn);
+            }
         } else {
             ret = insn_emulate_ldr(insn, 0);
         }

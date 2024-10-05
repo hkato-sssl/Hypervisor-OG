@@ -222,7 +222,6 @@ static errno_t initialize(struct soc *soc,
 
     memset(soc, 0, sizeof(*soc));
 
-    spin_lock_init(&(soc->lock));
     soc->chip = soc_config->chip;
     soc->mmu = soc_config->mmu;
     soc->ops = soc_config->ops;

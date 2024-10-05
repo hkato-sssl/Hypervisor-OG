@@ -21,6 +21,11 @@
 
 /* functions */
 
+static uint32_t nr_queued_interrupt_events(struct vpc *vpc, struct vgic400 *vgic)
+{
+    return vgic->interrupt.event_arrays[vpc->proc_no]->num;
+}
+
 static errno_t
 inject_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
                        const struct vgic400_interrupt_event *event, int list_no)
@@ -52,16 +57,23 @@ vgic400_inject_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
     errno_t ret;
     int no;
 
-    spin_lock(&(vpc->lock));
+    vgic400_lock(vgic);
 
+    if (nr_queued_interrupt_events(vpc, vgic) > 0) {
+        ret = vgic400_push_interrupt_event(vpc, vgic, event);
+    } else {
     no = vgic400_list_register(vgic);
     if (no >= 0) {
-        ret = inject_interrupt_event(vpc, vgic, event, no);
+            ret = vgic400_write_interrupt_event(vpc, vgic, event, no);
     } else {
-        ret = -EBUSY;
+            ret = vgic400_push_interrupt_event(vpc, vgic, event);
+            if (ret == SUCCESS) {
+                ret = -EBUSY; /* all List Regsters are used. */
+            }
+        }
     }
 
-    spin_unlock(&(vpc->lock));
+    vgic400_unlock(vgic);
 
     return ret;
 }

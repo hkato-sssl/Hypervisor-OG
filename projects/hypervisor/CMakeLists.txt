@@ -52,6 +52,8 @@ add_library(
     src/emulator/vgic400/vgic400_cpuif_emulate_memory_access.c
     src/emulator/vgic400/vgic400_initialize.c
     src/emulator/vgic400/vgic400_distributor_bit_register.c
+    src/emulator/vgic400/vgic400_update_list_registers.c
+    src/emulator/vgic400/vgic400_write_interrupt_event.c
     src/vpc/vpc_wakeup_processor.c
     src/vpc/vpc_ctx_fpu.S
     src/vpc/vpc_dump.c

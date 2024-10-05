@@ -75,15 +75,12 @@ static errno_t maintenance_interrupt_underflow(struct vpc *vpc,
                                                struct vgic400 *vgic)
 {
     errno_t ret;
-    struct vgic400_interrupt_event event;
 
-    ret = vgic400_pop_interrupt_event(vpc, vgic, &event);
-    if (ret == SUCCESS) {
-        ret = vgic400_inject_interrupt_event(vpc, vgic, &event);
-    } else if (ret == -ENODATA) {
+    ret = vgic400_update_list_registers(vpc, vgic);
+    if (ret == -ENODATA) {
         disable_underflow_interrupt(vgic);
         ret = SUCCESS;
-    } else {
+    } else if (ret != SUCCESS) {
         printk("%s: vgic400_pop_interrupt_event() -> %d\n", __func__, ret);
     }
 
@@ -120,21 +117,15 @@ static errno_t el1(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     gic400_eoi(vgic->gic, iar);
 
     ret = vgic400_create_interrupt_event(vpc, vgic, &event, iar);
-    if (ret != SUCCESS) {
-        printk("%s: An illegal interrupt has been issued.\n", __func__);
-        return ret;
-    }
-
-    if (nr_queued_interrupt_events(vpc, vgic) > 0) {
-        printk("%s#%u\n", __func__, __LINE__);
-        ret = vgic400_push_interrupt_event(vpc, vgic, &event);
-    } else {
+    if (ret == SUCCESS) {
         ret = vgic400_inject_interrupt_event(vpc, vgic, &event);
         if (ret == -EBUSY) {
-        printk("%s#%u\n", __func__, __LINE__);
-            ret = vgic400_push_interrupt_event(vpc, vgic, &event);
+            /* all List Registers are used. */
             enable_underflow_interrupt(vgic);
+            ret = SUCCESS;
         }
+    } else {
+        printk("%s: An illegal interrupt has been issued.\n", __func__);
     }
 
     return ret;
@@ -152,12 +143,11 @@ static errno_t receive_vpc_event(struct vpc *vpc, struct vgic400 *vgic,
     return ret;
 }
 
-static errno_t el2(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
+static errno_t el2(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar,
+                   uint32_t no)
 {
     errno_t ret;
-    uint32_t no;
 
-    no = BF_EXTRACT(iar, 9, 0);
     if (no == HYP_INTR_VPC_EVENT) {
         ret = receive_vpc_event(vpc, vgic, iar);
     } else {
@@ -179,8 +169,7 @@ static errno_t el2(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
     return ret;
 }
 
-static errno_t irq_exception(struct vpc *vpc, struct vgic400 *vgic,
-                             uint32_t iar)
+static errno_t irq_handler(struct vpc *vpc, struct vgic400 *vgic, uint32_t iar)
 {
     errno_t ret;
     uint32_t no;
@@ -191,7 +180,7 @@ static errno_t irq_exception(struct vpc *vpc, struct vgic400 *vgic,
     } else if (is_target_irq(vgic, no)) {
         ret = el1(vpc, vgic, iar);
     } else {
-        ret = el2(vpc, vgic, iar);
+        ret = el2(vpc, vgic, iar, no);
     }
 
     return ret;
@@ -205,7 +194,7 @@ errno_t vgic400_irq_handler(struct vpc *vpc, struct vgic400 *vgic)
     ret = SUCCESS;
     iar = gic400_ack(vgic->gic);
     while (iar != GIC400_SPURIOUS_INTERRUPT) {
-        ret = irq_exception(vpc, vgic, iar);
+        ret = irq_handler(vpc, vgic, iar);
         if (ret != SUCCESS) {
             break;
         }

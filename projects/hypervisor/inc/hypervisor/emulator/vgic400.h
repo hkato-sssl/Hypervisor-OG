@@ -126,7 +126,6 @@ struct vgic400_configuration {
         void *virtif_control;
         void *virtual_cpuif;
     } base;
-    uint8_t priority_mask;
 
     const struct vgic400_ops *ops;
 

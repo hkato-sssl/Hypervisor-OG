@@ -32,7 +32,6 @@ inject_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
 {
     uint32_t d;
 
-    asm volatile ("yield");
     if (event->irq < 16) {
         d = vgic->sgi[vpc->proc_no].list_register[event->irq];
         d = (d & ~BITS(17, 10)) | ((uint32_t)(event->cpuid) << 10);
@@ -41,7 +40,6 @@ inject_interrupt_event(struct vpc *vpc, struct vgic400 *vgic,
     } else {
         d = vgic->spi.list_register[event->irq - 32];
     }
-    asm volatile ("yield");
 
     vgic->lr[vpc->proc_no][list_no] = d;
     vgic->iar[vpc->proc_no][list_no] = event->iar;

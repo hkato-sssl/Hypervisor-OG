@@ -151,15 +151,47 @@ static errno_t initialize(struct vgic400 *vgic,
     return ret;
 }
 
+static bool validate_event_arrays(const struct vgic400_configuration *config)
+{
+    bool result;
+    int i;
+
+    result = true;
+
+    for (i = 0; i < config->vm->nr_procs; ++i) {
+        if (config->event_arrays[i] == NULL) {
+            result = false;
+            break;
+        }
+    }
+
+    return result;
+}
+
+static bool validate_parameters(const struct vgic400_configuration *config)
+{
+    bool result;
+
+    if ((config != NULL) && (config->vm != NULL) && (config->gic != NULL)
+        && (config->base.virtif_control != NULL)
+        && (config->base.virtual_cpuif != NULL) && (config->ops != NULL)) {
+        result = validate_event_arrays(config);
+    } else {
+        result = false;
+    }
+
+    return result;
+}
+
 errno_t vgic400_initialize(struct vgic400 *vgic,
                            const struct vgic400_configuration *config)
 {
     errno_t ret;
 
-    if (config->ops == NULL) {
-        ret = -EINVAL;
-    } else {
+    if (validate_parameters(config)) {
         ret = initialize(vgic, config);
+    } else {
+        ret = -EINVAL;
     }
 
     return ret;

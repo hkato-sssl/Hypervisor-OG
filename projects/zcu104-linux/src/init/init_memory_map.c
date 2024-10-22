@@ -5,6 +5,7 @@
  */
 
 #include "config/system.h"
+
 #include "driver/aarch64/mmu.h"
 #include "driver/aarch64/system_register.h"
 #include "driver/aarch64/system_register/tcr_elx.h"
@@ -14,6 +15,7 @@
 #include "hypervisor/mmu.h"
 #include "lib/bit.h"
 #include "lib/system/errno.h"
+#include "lib/system/printk.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -47,6 +49,9 @@ static errno_t map(char *start, char *end, const struct aarch64_mmu_attr *attr)
 
     sz = ALIGN((end - start), 4096);
     ret = aarch64_mmu_map(&sys_mmu, start, start, sz, attr);
+    if (ret != SUCCESS) {
+        printk("map(start=%p, end=%p) -> %d\n", start, end, ret);
+    }
 
     return ret;
 }
@@ -103,8 +108,8 @@ static errno_t init_map(void)
     if (ret == SUCCESS) {
         attr.sh = MMU_ATTR_SH_NSH;
         attr.attrindx = HYP_MMU_MT_DEVICE_nGnRE;
-        ret = map((void *)CONFIG_GICV_BASE, (void *)(CONFIG_GICV_BASE + 4096 * 2),
-                  &attr);
+        ret = map((void *)CONFIG_GICV_BASE,
+                  (void *)(CONFIG_GICV_BASE + 4096 * 2), &attr);
     }
 
     if (ret == SUCCESS) {

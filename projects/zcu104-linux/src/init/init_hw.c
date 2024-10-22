@@ -76,7 +76,9 @@ static errno_t init_smmu500(void)
         config.targets = 1;
         config.priority = 0x01;
         ret = gic400_configure_interrupt(&sys_gic, IRQ_SMMU500, &config);
-        printk("gic400_configure_interrupt() -> %d\n", ret);
+        if (ret != SUCCESS) {
+            printk("gic400_configure_interrupt() -> %d\n", ret);
+        }
     }
 
     return ret;

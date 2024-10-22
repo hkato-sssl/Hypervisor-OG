@@ -84,7 +84,7 @@ static errno_t cmd_get_status(struct vpc *vpc,
         d = 0;
     }
 
-    if (ep->peer->status.empty != 0) {
+    if ((ep->peer != NULL) && (ep->peer->status.empty != 0)) {
         d |= P128_STATUS_TX_EMPTY;
     }
 
@@ -106,7 +106,7 @@ static errno_t cmd_get_event(struct vpc *vpc,
         d = 0;
     }
 
-    if (ep->event.peer_ready != 0) {
+    if ((ep->peer != NULL) && (ep->event.peer_ready != 0)) {
         ep->event.peer_ready = 0;
         d |= P128_STATUS_TX_EMPTY;
     }

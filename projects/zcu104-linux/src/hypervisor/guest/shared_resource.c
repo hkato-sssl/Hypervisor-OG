@@ -16,7 +16,7 @@
 
 /* variables */
 
-struct p2p_packet_path p2p_os_path;
+struct p2p_packet_path guest_to_guest_path;
 
 /* functions */
 
@@ -24,7 +24,7 @@ errno_t guest_initialize_shared_resource(void)
 {
     errno_t ret;
 
-    ret = p2p_packet_initialize_path(&p2p_os_path);
+    ret = p2p_packet_initialize_path(&guest_to_guest_path);
 
     return ret;
 }

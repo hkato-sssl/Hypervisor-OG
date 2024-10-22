@@ -17,3 +17,6 @@
 #define CONFIG_GICC_BASE            0xf9020000
 #define CONFIG_GICH_BASE            0xf9040000
 #define CONFIG_GICV_BASE            0xf9060000
+
+#define CONFIG_HYP_UART_BASE        0xa0000000
+#define CONFIG_HYP_UART_SIZE        0x1000

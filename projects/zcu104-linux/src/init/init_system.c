@@ -4,6 +4,8 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "config/system.h"
+
 #include "driver/aarch64.h"
 #include "driver/aarch64/mmu.h"
 #include "driver/aarch64/system_register.h"
@@ -21,9 +23,6 @@
 #include <string.h>
 
 /* defines */
-
-#define UART_LITE_BASE 0xa0000000
-#define UART_LITE_SIZE 4096
 
 /* types */
 
@@ -105,7 +104,7 @@ static errno_t init_uart(void)
     struct uart_lite_configuration config;
 
     memset(&config, 0, sizeof(config));
-    config.base = UART_LITE_BASE;
+    config.base = CONFIG_HYP_UART_BASE;
     config.boolean.init = true;
     ret = uart_lite_init(&uart, &config);
 
@@ -134,11 +133,13 @@ static errno_t epilogue(void)
     attr.ap21 = MMU_ATTR_AP_RW;
     attr.attrindx = HYP_MMU_MT_DEVICE_nGnRE;
 
-    ret = aarch64_mmu_map(&sys_mmu, (void *)UART_LITE_BASE,
-                          (void *)UART_LITE_BASE, UART_LITE_SIZE, &attr);
+    ret = aarch64_mmu_map(&sys_mmu, (void *)CONFIG_HYP_UART_BASE,
+                          (void *)CONFIG_HYP_UART_BASE, CONFIG_HYP_UART_SIZE, &attr);
     if (ret != SUCCESS) {
-        printk("%s: aarch64_mmu_map() -> %d\n", __func__, ret);
+        printk("%s#%u: aarch64_mmu_map() -> %d\n", __func__, __LINE__, ret);
+        return ret;
     }
+
     return ret;
 }
 
@@ -179,9 +180,7 @@ errno_t init_system(void)
 
     no = cpu_no();
     if (no == 0) {
-        if (ret == SUCCESS) {
-            ret = init_primary();
-        }
+        ret = init_primary();
     } else {
         ret = init_secondary();
     }

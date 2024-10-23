@@ -4,6 +4,8 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "config/system.h"
+
 #include "driver/aarch64/mmu.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/smmu500.h"
@@ -20,15 +22,13 @@
 
 /* defines */
 
-#define NR_CPUS    4
-#define GUEST_VMID 2
-
 /* types */
 
 /* prototypes */
 
 static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic,
                                uint32_t iar);
+errno_t guest_usb_linux_initialize_hvc(struct xilinx_mpsoc *mpsoc);
 
 /* variables */
 
@@ -45,23 +45,13 @@ extern const struct smmu_stream *guest_usb_linux_streams[];
 static DESC_XILINX_MPSOC_STAGE2_LEVEL1_TABLE(table);
 
 static struct xilinx_mpsoc mpsoc;
-static struct vpc vpcs[NR_CPUS];
-static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__((aligned(32)));
+static struct vpc vpcs[CONFIG_GUEST2_NR_CPUS];
+static uint64_t regs[CONFIG_GUEST2_NR_CPUS][NR_VPC_REGS] __attribute__((aligned(32)));
 static struct vpc_exception_ops ops;
-static struct vgic400_ops xilinx_mpsoc_vgic400_ops = {
-};
+static struct vgic400_ops xilinx_mpsoc_vgic400_ops = {el2_irq_handler};
+static struct vgic400_interrupt_event_array event_arrays[CONFIG_GUEST2_NR_CPUS];
 
 /* functions */
-
-static errno_t emulate_hvc(const struct insn *insn)
-{
-    gic400_dump_ns_cpuif(&sys_gic);
-    gic400_dump_ns_distributor(&sys_gic);
-    smmu500_dump(&sys_smmu);
-    smmu500_dump_stream_match_register(&sys_smmu, 0);
-
-    return -ENOSYS;
-}
 
 static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic,
                                uint32_t iar)
@@ -88,17 +78,16 @@ static void *init_mpsoc(void)
 
     memset(&config, 0, sizeof(config));
 
-    for (i = 0; i < NR_CPUS; ++i) {
+    for (i = 0; i < CONFIG_GUEST2_NR_CPUS; ++i) {
         config.vpc.vpcs[i] = &(vpcs[i]);
         config.vpc.register_arrays[i] = regs[i];
     }
 
     ops = *xilinx_mpsoc_default_vpc_exception_ops();
-    // ops.aarch64.hvc = emulate_hvc;
     config.vpc.ops = &ops;
 
-    config.vmid = GUEST_VMID;
-    config.nr_procs = NR_CPUS;
+    config.vmid = CONFIG_GUEST2_VMID;
+    config.nr_procs = CONFIG_GUEST2_NR_CPUS;
     config.mmu = &sys_mmu;
     config.stage2.pool = &sys_pool;
     config.stage2.level1_table = table;
@@ -112,6 +101,9 @@ static void *init_mpsoc(void)
     config.gic.ppis[1] = 30;
     config.gic.ops = &xilinx_mpsoc_vgic400_ops;
     config.gic.boolean.half_priority = true;
+    for (i = 0; i < CONFIG_GUEST2_NR_CPUS; ++i) {
+        config.gic.event_arrays[i] = &(event_arrays[i]);
+    }
     config.smmu.device = &sys_smmu;
     config.smmu.nr_streams = nr_guest_usb_linux_streams;
     config.smmu.streams = guest_usb_linux_streams;

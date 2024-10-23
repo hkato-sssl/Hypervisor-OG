@@ -4,6 +4,8 @@
  * (C) 2020 Hidekazu Kato
  */
 
+#include "config/system.h"
+
 #include "driver/aarch64/mmu.h"
 #include "driver/arm/gic400.h"
 #include "driver/arm/smmu500.h"
@@ -19,9 +21,6 @@
 #include <string.h>
 
 /* defines */
-
-#define NR_CPUS    2
-#define GUEST_VMID 1
 
 /* types */
 
@@ -46,27 +45,14 @@ extern const struct smmu_stream *guest_linux_streams[];
 static DESC_XILINX_MPSOC_STAGE2_LEVEL1_TABLE(table);
 
 static struct xilinx_mpsoc mpsoc;
-static struct vpc vpcs[NR_CPUS];
-static uint64_t regs[NR_CPUS][NR_VPC_REGS] __attribute__((aligned(32)));
+static struct vpc vpcs[CONFIG_GUEST1_NR_CPUS];
+static uint64_t regs[CONFIG_GUEST1_NR_CPUS][NR_VPC_REGS]
+    __attribute__((aligned(32)));
 static struct vpc_exception_ops ops;
-static struct vgic400_ops xilinx_mpsoc_vgic400_ops = {
-};
-static struct vgic400_interrupt_event_array event_arrays[NR_CPUS];
+static struct vgic400_ops xilinx_mpsoc_vgic400_ops = {el2_irq_handler};
+static struct vgic400_interrupt_event_array event_arrays[CONFIG_GUEST1_NR_CPUS];
 
 /* functions */
-
-static errno_t emulate_hvc(const struct insn *insn)
-{
-    struct xilinx_mpsoc *mpsoc = insn->vpc->vm->soc->chip;
-
-    gic400_dump_ns_cpuif(&sys_gic);
-    gic400_dump_ns_distributor(&sys_gic);
-    gic400_dump_virtif_control(&(mpsoc->vgic400));
-    // smmu500_dump(&sys_smmu);
-    // smmu500_dump_stream_match_register(&sys_smmu, 0);
-
-    return SUCCESS;
-}
 
 static errno_t el2_irq_handler(struct vpc *vpc, struct vgic400 *vgic,
                                uint32_t iar)
@@ -93,17 +79,16 @@ static void *init_mpsoc(void)
 
     memset(&config, 0, sizeof(config));
 
-    for (i = 0; i < NR_CPUS; ++i) {
+    for (i = 0; i < CONFIG_GUEST1_NR_CPUS; ++i) {
         config.vpc.vpcs[i] = &(vpcs[i]);
         config.vpc.register_arrays[i] = regs[i];
     }
 
     ops = *xilinx_mpsoc_default_vpc_exception_ops();
-    // ops.aarch64.hvc = emulate_hvc;
     config.vpc.ops = &ops;
 
-    config.vmid = GUEST_VMID;
-    config.nr_procs = NR_CPUS;
+    config.vmid = CONFIG_GUEST1_VMID;
+    config.nr_procs = CONFIG_GUEST1_NR_CPUS;
     config.mmu = &sys_mmu;
     config.stage2.pool = &sys_pool;
     config.stage2.level1_table = table;
@@ -117,8 +102,7 @@ static void *init_mpsoc(void)
     config.gic.ppis[1] = 30;
     config.gic.ops = &xilinx_mpsoc_vgic400_ops;
     config.gic.boolean.half_priority = true;
-    config.gic.boolean.virtual_spi = true;
-    for (i = 0; i < NR_CPUS; ++i) {
+    for (i = 0; i < CONFIG_GUEST1_NR_CPUS; ++i) {
         config.gic.event_arrays[i] = &(event_arrays[i]);
     }
     config.smmu.device = &sys_smmu;
@@ -137,61 +121,11 @@ static void *init_mpsoc(void)
     return (ret == SUCCESS) ? &mpsoc : NULL;
 }
 
-static void test(void);
-
 void *guest_linux(void)
 {
-    void *p = init_mpsoc();
-    test();
+    struct xilinx_mpsoc *p;
+
+    p = init_mpsoc();
+
     return p;
-}
-
-#include "hypervisor/emulator/vgic400.h"
-
-static void pr(const struct vgic400_interrupt_event *event)
-{
-    printk("priority: 0x%02x\n", event->priority);
-    printk("src_proc: 0x%02x\n", event->src_proc);
-    printk("     irq: 0x%04x\n", event->irq);
-    printk("\n");
-}
-
-static void push(const struct vgic400_interrupt_event *event)
-{
-    struct vgic400 *vgic = &mpsoc.vgic400;
-    errno_t ret = vgic400_push_interrupt_event(vgic, 0, event);
-    printk("vgic400_push_interrupt_event() -> %d\n", ret);
-}
-
-static void pop(void)
-{
-    struct vgic400 *vgic = &mpsoc.vgic400;
-    struct vgic400_interrupt_event event;
-    memset(&event, 0xff, sizeof(event));
-    errno_t ret = vgic400_pop_interrupt_event(vgic, &event, 0);
-    printk("vgic400_pop_interrupt_event() -> %d\n", ret);
-    if (ret == SUCCESS) {
-        pr(&event);
-    }
-}
-
-static void test(void)
-{
-    struct vgic400_interrupt_event event;
-
-    memset(&event, 0, sizeof(event));
-    event.priority = 0x80;
-    event.irq = 48;
-
-    push(&event);
-    event.irq = 32;
-    push(&event);
-    event.priority = 1;
-    push(&event);
-    pop();
-    pop();
-    pop();
-
-    for (;;)
-        ;
 }

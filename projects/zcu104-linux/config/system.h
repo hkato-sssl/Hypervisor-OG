@@ -6,6 +6,8 @@
 
 /* defines */
 
+#define SYSTEM_VERSION              "1.0.0"
+
 #define CONFIG_NR_CPUS              4
 
 #define CONFIG_STACK_SIZE           (4 * 1024)
@@ -20,3 +22,13 @@
 
 #define CONFIG_HYP_UART_BASE        0xa0000000
 #define CONFIG_HYP_UART_SIZE        0x1000
+
+#define CONFIG_GUEST1_NR_CPUS       2
+#define CONFIG_GUEST1_VMID          1
+#define CONFIG_GUEST1_BASE          0x00000000
+#define CONFIG_GUEST1_SIZE          0x40000000
+
+#define CONFIG_GUEST2_NR_CPUS       2
+#define CONFIG_GUEST2_VMID          2
+#define CONFIG_GUEST2_BASE          0x40000000
+#define CONFIG_GUEST2_SIZE          0x3f000000

@@ -1,4 +1,4 @@
 MEMORY
 {
-  RAM (rwx) : ORIGIN = 0x40000000, LENGTH = 128M
+  RAM (rwx) : ORIGIN = 0x7f000000, LENGTH = 16M
 }

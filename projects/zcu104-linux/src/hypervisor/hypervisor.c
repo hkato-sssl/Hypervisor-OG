@@ -4,6 +4,8 @@
  * (C) 2019 Hidekazu Kato
  */
 
+#include "config/system.h"
+
 #include "driver/arm/gic400.h"
 #include "driver/arm/smmu500.h"
 #include "driver/system/cpu.h"
@@ -115,7 +117,7 @@ void hypervisor(void)
 
     struct thread_parameter parameter;
 
-    printk("Start a startup thread.\n");
+    printk("\n\nStart HypervisorOG ver." SYSTEM_VERSION "\n");
 
     memset(&parameter, 0, sizeof(parameter));
     parameter.entry = (thread_entry_t)hypervisor_main;

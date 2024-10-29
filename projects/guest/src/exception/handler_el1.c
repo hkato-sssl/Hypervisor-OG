@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * exception/handler_el1.c - the default exception handler
  *

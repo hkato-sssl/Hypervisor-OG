@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * soc/xilinx/mpsoc/mpsoc_local.h
  *

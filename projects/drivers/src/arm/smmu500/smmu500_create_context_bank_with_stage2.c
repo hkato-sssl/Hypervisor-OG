@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * arm/smmu500/smmu500_create_context_bank_with_stage2.c
  *

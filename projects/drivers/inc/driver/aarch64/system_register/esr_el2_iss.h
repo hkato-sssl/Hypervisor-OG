@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/aarch64/system_register/esr_el2_iss.h
  *
@@ -30,7 +31,7 @@ extern "C" {
 #define ISS_DATA_ABORT_SAS(n) \
     (((n) << ISS_DATA_ABORT_SAS_LSB) & ISS_DATA_ABORT_SAS_MASK)
 #define EXTRACT_ISS_DATA_ABORT_SAS(d) \
-    (((d)&ISS_DATA_ABORT_SAS_MASK) >> ISS_DATA_ABORT_SAS_LSB)
+    (((d) & ISS_DATA_ABORT_SAS_MASK) >> ISS_DATA_ABORT_SAS_LSB)
 #define ISS_DATA_ABORT_SSE      BIT(21)
 #define ISS_DATA_ABORT_SRT_MASK BITS(20, 16)
 #define ISS_DATA_ABORT_SRT_MSB  20
@@ -38,7 +39,7 @@ extern "C" {
 #define ISS_DATA_ABORT_SRT(n) \
     (((n) << ISS_DATA_ABORT_SRT_LSB) & ISS_DATA_ABORT_SRT_MASK)
 #define EXTRACT_ISS_DATA_ABORT_SRT(d) \
-    (((d)&ISS_DATA_ABORT_SRT_MASK) >> ISS_DATA_ABORT_SRT_LSB)
+    (((d) & ISS_DATA_ABORT_SRT_MASK) >> ISS_DATA_ABORT_SRT_LSB)
 #define ISS_DATA_ABORT_SF        BIT(15)
 #define ISS_DATA_ABORT_AR        BIT(14)
 #define ISS_DATA_ABORT_FnV       BIT(10)
@@ -52,7 +53,7 @@ extern "C" {
 #define ISS_DATA_ABORT_DFSC(n) \
     (((n) << ISS_DATA_ABORT_DFSC_LSB) & ISS_DATA_ABORT_DFSC_MASK)
 #define EXTRACT_ISS_DATA_ABORT_DFSC(d) \
-    (((d)&ISS_DATA_ABORT_DFSC_MASK) >> ISS_DATA_ABORT_DFSC_LSB)
+    (((d) & ISS_DATA_ABORT_DFSC_MASK) >> ISS_DATA_ABORT_DFSC_LSB)
 
 /* types */
 

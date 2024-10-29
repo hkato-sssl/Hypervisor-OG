@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * lib/aarch64/asm.h
  *
@@ -12,7 +13,7 @@
 /* defines */
 
 #ifdef ASSEMBLY
-        .macro      BR_EL, table
+.macro      BR_EL, table
         adr         ip0, \table
         mrs         ip1, CurrentEL
         add         ip0, ip0, ip1, lsl #1
@@ -40,4 +41,3 @@
 #endif /* ASSEMBLY */
 
 #endif /* LIB_AARCH64_ASM_H */
-

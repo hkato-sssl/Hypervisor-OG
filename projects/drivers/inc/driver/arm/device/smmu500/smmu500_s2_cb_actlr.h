@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/arm/device/smmu500/smmu500_s2_cb_actlr.h
  *

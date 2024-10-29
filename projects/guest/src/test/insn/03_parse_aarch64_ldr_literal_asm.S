@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * test/insn/03_parse_aarch64_ldr_literal_asm.S
  *

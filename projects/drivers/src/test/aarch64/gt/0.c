@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * aarch64/test/gt/0.c -- test of Generic Timer
  *

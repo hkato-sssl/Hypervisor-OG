@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * xilinx/mpsoc/ps_uart/ps_uart_putc_poll.c
  *

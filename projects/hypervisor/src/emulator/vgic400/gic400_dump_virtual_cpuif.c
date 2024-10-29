@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * gic400_dump_virtual_cpuif.c
  *

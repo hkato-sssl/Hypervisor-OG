@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * test/vpc/launch.c - VPC 起動テスト
  *

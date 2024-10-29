@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/arm/device/smmuv2/smmu_cba2r.h
  *
@@ -19,7 +20,7 @@
 #define SMMU_CBA2R_VMID16(n) \
     (((n) << SMMU_CBA2R_VMID16_LSB) & SMMU_CBA2R_VMID16_MASK)
 #define EXTRACT_SMMU_CBA2R_VMID16(d) \
-    (((d)&SMMU_CBA2R_VMID16_MASK) >> SMMU_CBA2R_VMID16_LSB)
+    (((d) & SMMU_CBA2R_VMID16_MASK) >> SMMU_CBA2R_VMID16_LSB)
 #define SMMU_CBA2R_MONC BIT(1)
 #define SMMU_CBA2R_VA64 BIT(0)
 

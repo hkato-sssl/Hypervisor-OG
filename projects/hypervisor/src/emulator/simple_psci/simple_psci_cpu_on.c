@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * emulator/psci/simple/simple_psci_cpu_on.c
  *

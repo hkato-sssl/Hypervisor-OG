@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * aarch64/mmu/aarch64_mmu_map_4KB.c - mapping function with 4KB granule
  *

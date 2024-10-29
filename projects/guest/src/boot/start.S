@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * boot/start.S - the startup routine for the primary processor
  *

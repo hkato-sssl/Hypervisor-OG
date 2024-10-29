@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * arm/smmu500/smmu500_allocate_context_bank.c
  *

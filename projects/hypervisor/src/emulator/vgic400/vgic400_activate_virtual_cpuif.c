@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * emulator/vgic400/vgic400_activate_virtual_cpuif.c
  *

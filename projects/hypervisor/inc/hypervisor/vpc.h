@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * hypervisor/vpc.h - the access library for Virtual Processor Core
  *

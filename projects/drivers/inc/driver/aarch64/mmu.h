@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/aarch64/mmu.h
  *
@@ -37,7 +38,7 @@ extern "C" {
 /* Next-level descriptor attriutes */
 
 #define MMU_DESC_NSTABLE     BIT(63)
-#define MMU_DESC_APTABLE(n)  (((n)&3ULL) << 61)
+#define MMU_DESC_APTABLE(n)  (((n) & 3ULL) << 61)
 #define MMU_DESC_UXNTABLE    BIT(60)
 #define MMU_DESC_XNTABLE     BIT(60)
 #define MMU_DESC_PXNTABLE    BIT(59)
@@ -48,17 +49,17 @@ extern "C" {
  */
 
 #define MMU_DESC_UXN         BIT(54)
-#define MMU_DESC_PBHA(n)     (((n)&0x0fULL) << 59)
+#define MMU_DESC_PBHA(n)     (((n) & 0x0fULL) << 59)
 #define MMU_DESC_XN          BIT(54)
 #define MMU_DESC_PXN         BIT(53)
 #define MMU_DESC_CONTIGUOUS  BIT(52)
 
 #define MMU_DESC_NG          BIT(11)
 #define MMU_DESC_AF          BIT(10)
-#define MMU_DESC_SH(n)       (((n)&3ULL) << 8)
-#define MMU_DESC_AP21(n)     (((n)&3ULL) << 6)
+#define MMU_DESC_SH(n)       (((n) & 3ULL) << 8)
+#define MMU_DESC_AP21(n)     (((n) & 3ULL) << 6)
 #define MMU_DESC_NS          BIT(5)
-#define MMU_DESC_ATTRINDX(n) (((n)&7ULL) << 2)
+#define MMU_DESC_ATTRINDX(n) (((n) & 7ULL) << 2)
 
 #define MMU_ATTR_AP_RW       0 /* Read-Wirte, EL0 isn't accessible */
 #define MMU_ATTR_AP_RW_EL0   1 /* Read-Write, EL0 is accessible */

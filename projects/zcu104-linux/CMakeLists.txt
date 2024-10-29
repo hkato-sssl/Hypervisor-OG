@@ -3,12 +3,12 @@ project(zcu104-linux)
 enable_language(C ASM)
 
 get_filename_component(WORKSPACE_BASE ../../ ABSOLUTE)
-set(TARGET_NAME "${PROJECT_NAME}.elf")
+set(TARGET_NAME "hypervisor")
 
 include(${WORKSPACE_BASE}/scripts/cmake/xilinx-ultrascale-mpsoc.cmake)
 
 add_executable(
-    ${TARGET_NAME}
+    ${TARGET_NAME}.elf
     config/memory.c
     config/memory_asm.S
     src/boot/init_processor_el2.S
@@ -30,13 +30,13 @@ add_executable(
     src/init/init_memory_map.c
 )
 
-target_link_libraries(${TARGET_NAME} -Wl,--start-group libs drivers hypervisor -Wl,--end-group)
+target_link_libraries(${TARGET_NAME}.elf -Wl,--start-group libs drivers hypervisor -Wl,--end-group)
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -nostartfiles -static -T ${PROJECT_SOURCE_DIR}/config/memory.lds -T ${WORKSPACE_BASE}/scripts/ld/aarch64-zcu104-ram.lds")
 
 add_custom_command(
-    TARGET ${TARGET_NAME}
+    TARGET ${TARGET_NAME}.elf
     POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} ARGS -O binary ${TARGET_NAME} ${PROJECT_NAME}.bin 
+    COMMAND ${CMAKE_OBJCOPY} ARGS -O binary ${TARGET_NAME}.elf ${TARGET_NAME}.bin 
 )
 
 include_directories(.)

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/arm/device/smmuv2.h
  *
@@ -75,14 +76,14 @@
 #define SMMU_NSGATS12PW         0x538
 #define SMMU_NSGPAR             0x580
 #define SMMU_NSGATSR            0x588
-#define SMMU_SMR(n)             (0x800 + (n)*4)
-#define SMMU_S2CR(n)            (0xC00 + (n)*4)
+#define SMMU_SMR(n)             (0x800 + (n) * 4)
+#define SMMU_S2CR(n)            (0xC00 + (n) * 4)
 
 /* SMMU Global Register Space 1 */
 
-#define SMMU_CBAR(n)            ((n)*4)
-#define SMMU_CBFRSYNRA(n)       (0x0400 + ((n)*4))
-#define SMMU_CBA2R(n)           (0x0800 + ((n)*4))
+#define SMMU_CBAR(n)            ((n) * 4)
+#define SMMU_CBFRSYNRA(n)       (0x0400 + ((n) * 4))
+#define SMMU_CBA2R(n)           (0x0800 + ((n) * 4))
 
 /* Stage 1 Translation Context Bank */
 
@@ -117,8 +118,8 @@
 #define SMMU_S1_CB_ATS1UR       0x00810
 #define SMMU_S1_CB_ATS1UW       0x00818
 #define SMMU_S1_CB_ATSR         0x008F0
-#define SMMU_S1_CB_PMEVCNTR(m)  (0x00E00 + ((m)*4))
-#define SMMU_S1_CB_PMEVTYPER(m) (0x00E80 + ((m)*4))
+#define SMMU_S1_CB_PMEVCNTR(m)  (0x00E00 + ((m) * 4))
+#define SMMU_S1_CB_PMEVTYPER(m) (0x00E80 + ((m) * 4))
 #define SMMU_S1_CB_PMCFGR       0x00F00
 #define SMMU_S1_CB_PMCR         0x00F04
 #define SMMU_S1_CB_PMCEID0      0x00F20
@@ -148,8 +149,8 @@
 #define SMMU_S2_CB_TLBIIPAS2L   0x00638
 #define SMMU_S2_CB_TLBSYNC      0x007F0
 #define SMMU_S2_CB_TLBSTATUS    0x007F4
-#define SMMU_S2_CB_PMEVCNTR(m)  (0x00E00 + ((m)*4))
-#define SMMU_S2_CB_PMEVTYPER(m) (0x00E80 + ((m)*4))
+#define SMMU_S2_CB_PMEVCNTR(m)  (0x00E00 + ((m) * 4))
+#define SMMU_S2_CB_PMEVTYPER(m) (0x00E80 + ((m) * 4))
 #define SMMU_S2_CB_PMCFGR       0x00F00
 #define SMMU_S2_CB_PMCR         0x00F04
 #define SMMU_S2_CB_PMCEID0      0x00F20

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * hypervisor/test/vm/01_launch.c
  *

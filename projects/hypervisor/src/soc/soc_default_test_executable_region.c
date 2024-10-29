@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * soc/soc_default_test_executable_region.c
  *

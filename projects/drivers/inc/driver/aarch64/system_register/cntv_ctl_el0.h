@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/aarch64/system_register/cntv_ctl_el0.h
  *

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * aarch64/exception/aarch64_exception_esr_ec_message.c
  *

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * hypervisor/guest/guest_usb_linux.c
  *

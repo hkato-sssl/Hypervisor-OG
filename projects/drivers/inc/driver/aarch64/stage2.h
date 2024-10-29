@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/aarch64/stage2.h
  *
@@ -43,9 +44,9 @@ extern "C" {
 #define STAGE2_DESC_CONTIGUOUS       BIT(52)
 
 #define STAGE2_DESC_AF               BIT(10)
-#define STAGE2_DESC_SH(n)            (((n)&3ULL) << 8)
-#define STAGE2_DESC_S2AP(n)          (((n)&3ULL) << 6)
-#define STAGE2_DESC_MEMATTR(n)       (((n)&0x0fULL) << 2)
+#define STAGE2_DESC_SH(n)            (((n) & 3ULL) << 8)
+#define STAGE2_DESC_S2AP(n)          (((n) & 3ULL) << 6)
+#define STAGE2_DESC_MEMATTR(n)       (((n) & 0x0fULL) << 2)
 
 #define STAGE2_PA_RANGE_32BITS       0
 #define STAGE2_PA_RANGE_36BITS       1

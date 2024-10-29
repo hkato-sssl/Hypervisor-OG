@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/aarch64/system_register/hcr_el2.h
  *

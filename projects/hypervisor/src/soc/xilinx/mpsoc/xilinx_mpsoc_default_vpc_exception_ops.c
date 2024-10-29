@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * soc/xilinx/mpsoc/xilinx_mpsoc_default_vpc_exception_ops.c
  *

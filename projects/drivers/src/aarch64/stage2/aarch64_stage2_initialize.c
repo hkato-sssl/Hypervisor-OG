@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * aarch64/stage2/aarch64_stage2_initialize.c
  *

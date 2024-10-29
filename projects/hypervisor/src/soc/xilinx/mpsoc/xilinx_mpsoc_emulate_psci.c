@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * hypervisor/src/soc/xilinx/mpsoc/xilinx_mpsoc_emulate_psci.c
  *

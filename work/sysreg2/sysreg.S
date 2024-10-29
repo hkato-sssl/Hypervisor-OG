@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
         .global         aarch64_write_mair
         .global         aarch64_read_mair
         .global         aarch64_write_amair

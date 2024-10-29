@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/xilinx/mpsoc/ps_uart.h
  *

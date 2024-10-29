@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * test/aarch64/gt/cntp_0.c - test of EL1 physical timer
  *

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * hvc/p128/hvc_p128_service_initialize.c
  *

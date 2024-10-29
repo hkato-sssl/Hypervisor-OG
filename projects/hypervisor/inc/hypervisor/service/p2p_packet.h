@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * hypervisor/service/p2p/p2p_packet.h
  *

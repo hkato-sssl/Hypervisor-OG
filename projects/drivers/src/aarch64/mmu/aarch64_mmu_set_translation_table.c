@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /* * aarch64/mmu/aarch64_mmu_set_translation_table.c
  *
  * (C) 2019 Hidekazu Kato

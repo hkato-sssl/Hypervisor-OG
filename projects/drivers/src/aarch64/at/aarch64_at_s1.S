@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * aatch64/at/aarch64_at_s1.S
  *

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/aarch64/system_register/vtcr_el2.h
  *
@@ -48,9 +49,10 @@
 #define VTCR_SH_ISH         3 /* Inner Shareable */
 
 #define VTCR_RGN_NC         0 /* Normal memory, Non-cacheable */
-#define VTCR_RGN_WBWA       1 /* Normal memory, Write-Back Write-Allocate Cacheable \
-                               */
-#define VTCR_RGN_WT         2 /* Normal memory, Write-Through Cacheable */
+#define VTCR_RGN_WBWA                                                       \
+    1                 /* Normal memory, Write-Back Write-Allocate Cacheable \
+                       */
+#define VTCR_RGN_WT 2 /* Normal memory, Write-Through Cacheable */
 #define VTCR_RGN_WB \
     3 /* Normal memory, Write-Back no Write-Allocate Cacheable */
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * driver/aarch64/system_register/tcr_elx.h
  *
@@ -123,10 +124,12 @@
 #define TCR_SH_ISH         3 /* Inner Shareable */
 
 #define TCR_RGN_NC         0 /* Normal memory, Non-cacheable */
-#define TCR_RGN_WBWA       1 /* Normal memory, Write-Back Write-Allocate Cacheable \
-                              */
-#define TCR_RGN_WT         2 /* Normal memory, Write-Through Cacheable */
-#define TCR_RGN_WB         3 /* Normal memory, Write-Back no Write-Allocate Cacheable \
-                              */
+#define TCR_RGN_WBWA                                                       \
+    1                /* Normal memory, Write-Back Write-Allocate Cacheable \
+                      */
+#define TCR_RGN_WT 2 /* Normal memory, Write-Through Cacheable */
+#define TCR_RGN_WB                                             \
+    3 /* Normal memory, Write-Back no Write-Allocate Cacheable \
+       */
 
 #endif /* DRIVER_AARCH64_SYSTEM_REGISTER_TCR_ELX_H */
